@@ -1,3 +1,4 @@
+@import "@/assets/fonts/roboto.css";
 @import "normalize.css/normalize.css" layer(vendor);
 @import "./scaffoling.css" layer(scaffoling);
 @import "./utility.css" layer(utility);
