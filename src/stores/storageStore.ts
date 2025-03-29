@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import { FileStorageRegistry, IdbStorage } from '@/services';
 import { computed, ref } from 'vue';
+import { FileStorageRegistry, IdbStorage } from '@/services';
 
 const directoryHandleKey = IdbStorage.key<FileSystemDirectoryHandle>('storage-directory');
 
@@ -12,9 +12,18 @@ export const useStorageStore = defineStore('storage', () => {
   async function loadState(): Promise<void> {
     directoryHandle.value ??= await IdbStorage.instance.getItem(directoryHandleKey);
 
-    if (directoryHandle.value) {
-      registry = await FileStorageRegistry.create(directoryHandle.value);
+    if (!directoryHandle.value) {
+      return;
     }
+
+    const permission = await directoryHandle.value.queryPermission({ mode: 'readwrite' });
+
+    if (permission !== 'granted') {
+      directoryHandle.value = null;
+      return;
+    }
+
+    registry = await FileStorageRegistry.create(directoryHandle.value);
   }
 
   async function selectDirectory(): Promise<void> {
@@ -24,6 +33,7 @@ export const useStorageStore = defineStore('storage', () => {
       startIn: 'documents',
     });
 
+    directoryHandle.value = handle;
     await IdbStorage.instance.setItem(directoryHandleKey, handle);
     registry = await FileStorageRegistry.create(directoryHandle.value!);
   }

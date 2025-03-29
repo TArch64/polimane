@@ -9,9 +9,9 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import { Button } from '@/components/button';
 import { useStorageStore } from '@/stores';
-import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const storageStore = useStorageStore();

@@ -2,6 +2,7 @@ import pluginVue from 'eslint-plugin-vue';
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
 import oxlint from 'eslint-plugin-oxlint';
 import stylistic from '@stylistic/eslint-plugin';
+import pluginImport from 'eslint-plugin-import';
 
 export default defineConfigWithVueTs(
   {
@@ -33,6 +34,44 @@ export default defineConfigWithVueTs(
     files: ['**/*.vue'],
     rules: {
       'vue/multi-word-component-names': 'off',
+    },
+  },
+
+  {
+    name: 'ts-override',
+    files: ['**/*.vue', '**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-expressions': 'off',
+    },
+  },
+
+  {
+    name: 'import',
+    plugins: {
+      ...pluginImport.flatConfigs.recommended.plugins,
+    },
+    rules: {
+      'import/order': [
+        'error',
+        {
+          pathGroups: [
+            {
+              pattern: '@/**',
+              group: 'internal',
+              position: 'after',
+            },
+          ],
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+            'object',
+          ],
+        },
+      ],
     },
   },
 );

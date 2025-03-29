@@ -17,5 +17,9 @@ export const router = createRouter({
       children: [...routes],
       beforeEnter: checkStorageDirMiddleware,
     },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: { name: 'home' },
+    },
   ],
 });

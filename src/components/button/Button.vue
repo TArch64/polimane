@@ -9,9 +9,9 @@
 </template>
 
 <script setup lang="ts">
-import ButtonRoot from './ButtonRoot.vue';
 import { computed, type Slot } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
+import ButtonRoot from './ButtonRoot.vue';
 
 type ButtonSize = 'md' | 'lg';
 type ButtonVariant = 'primary';
