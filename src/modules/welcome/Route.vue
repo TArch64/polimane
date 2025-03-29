@@ -1,7 +1,12 @@
 <template>
   <WelcomeLayout>
-    <h1 class="welcome-header">Polimane</h1>
-    <p class="welcome-description">Твій помічник у створенні схем для бісеру</p>
+    <h1 class="welcome-header">
+      Polimane
+    </h1>
+
+    <p class="welcome-description">
+      Твій помічник у створенні схем для бісеру
+    </p>
 
     <Button
       size="lg"

@@ -1,7 +1,7 @@
 import pluginVue from 'eslint-plugin-vue';
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
 import oxlint from 'eslint-plugin-oxlint';
-import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
+import stylistic from '@stylistic/eslint-plugin';
 
 export default defineConfigWithVueTs(
   {
@@ -11,13 +11,20 @@ export default defineConfigWithVueTs(
 
   {
     name: 'app/files-to-ignore',
-    ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
+    ignores: ['**/dist/**'],
   },
+
+  stylistic.configs.customize({
+    indent: 2,
+    quotes: 'single',
+    semi: true,
+    jsx: true,
+    commaDangle: 'always-multiline',
+  }),
 
   pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
   ...oxlint.configs['flat/recommended'],
-  skipFormatting,
 
   {
     name: 'vue-override',

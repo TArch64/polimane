@@ -26,7 +26,10 @@ defineSlots<{
   default: Slot;
 }>();
 
-const classes = computed(() => [props.size && `button--${props.size}`, props.variant && `button--${props.variant}`]);
+const classes = computed(() => [
+  props.size && `button--${props.size}`,
+  props.variant && `button--${props.variant}`,
+]);
 </script>
 
 <style scoped>
