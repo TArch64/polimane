@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "bun --bun vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
@@ -15,6 +15,7 @@
     "update-deps": "npm-check-updates -u"
   },
   "dependencies": {
+    "@iconify-json/eva": "^1.2.1",
     "@tsconfig/node22": "^22.0.1",
     "@types/bun": "^1.2.6",
     "@types/wicg-file-system-access": "^2023.10.5",
@@ -28,6 +29,7 @@
     "pinia": "^3.0.1",
     "postcss-nesting": "^13.0.1",
     "typescript": "^5.8.2",
+    "unplugin-icons": "^22.1.0",
     "valibot": "^1.0.0",
     "vite": "^6.2.3",
     "vue": "^3.5.13",

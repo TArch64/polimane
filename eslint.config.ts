@@ -2,6 +2,7 @@ import pluginVue from 'eslint-plugin-vue';
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
 import oxlint from 'eslint-plugin-oxlint';
 import stylistic from '@stylistic/eslint-plugin';
+// @ts-expect-error fails on importing types
 import pluginImport from 'eslint-plugin-import';
 
 export default defineConfigWithVueTs(

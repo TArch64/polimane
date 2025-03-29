@@ -4,14 +4,21 @@
       Polimane
     </h1>
 
-    <Button size="md" variant="primary" class="home-top-bar__add">
-      Додати Схему
-    </Button>
+    <div class="home-top-bar__actions">
+      <Button icon size="md" variant="secondary">
+        <SettingsIcon />
+      </Button>
+
+      <Button size="md" variant="primary">
+        Додати Схему
+      </Button>
+    </div>
   </header>
 </template>
 
 <script setup lang="ts">
 import { Button } from '@/components/button';
+import { SettingsIcon } from '@/components/icon';
 </script>
 
 <style scoped>
@@ -31,9 +38,12 @@ import { Button } from '@/components/button';
     font-weight: 500;
   }
 
-  .home-top-bar__add {
+  .home-top-bar__actions {
     margin-left: auto;
     margin-right: 2px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
   }
 }
 </style>
