@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { IdbStorage } from '../services';
+import { IdbStorage } from '@/services';
 import { computed, ref } from 'vue';
 
 const directoryHandleKey = IdbStorage.key<FileSystemDirectoryHandle>('storage-directory');
@@ -13,8 +13,14 @@ export const useStorageStore = defineStore('storage', () => {
   }
 
   async function selectDirectory() {
-    const handle = await window.showDirectoryPicker();
+    const handle = await showDirectoryPicker({
+      id: 'polimane-storage',
+      mode: 'readwrite',
+      startIn: 'documents',
+    });
+
+    await IdbStorage.instance.setItem(directoryHandleKey, handle);
   }
 
-  return { loadState, isDirectorySelected };
+  return { loadState, isDirectorySelected, selectDirectory };
 });

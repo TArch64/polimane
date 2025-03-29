@@ -11,6 +11,7 @@
     <Button
       size="lg"
       variant="primary"
+      @click="selectDirectory"
     >
       Обрати Директорію
     </Button>
@@ -19,7 +20,14 @@
 
 <script setup lang="ts">
 import { WelcomeLayout } from './components';
-import { Button } from '../../components/button';
+import { Button } from '@/components/button';
+import { useStorageStore } from '@/stores';
+
+const storageStore = useStorageStore();
+
+async function selectDirectory(): Promise<void> {
+  await storageStore.selectDirectory();
+}
 </script>
 
 <style scoped>
