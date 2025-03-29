@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { IdbStorage } from '@/services';
+import { FileStorageRegistry, IdbStorage } from '@/services';
 import { computed, ref } from 'vue';
 
 const directoryHandleKey = IdbStorage.key<FileSystemDirectoryHandle>('storage-directory');
@@ -7,9 +7,14 @@ const directoryHandleKey = IdbStorage.key<FileSystemDirectoryHandle>('storage-di
 export const useStorageStore = defineStore('storage', () => {
   const directoryHandle = ref<FileSystemDirectoryHandle | null>(null);
   const isDirectorySelected = computed(() => !!directoryHandle.value);
+  let registry: FileStorageRegistry;
 
   async function loadState(): Promise<void> {
     directoryHandle.value ??= await IdbStorage.instance.getItem(directoryHandleKey);
+
+    if (directoryHandle.value) {
+      registry = await FileStorageRegistry.create(directoryHandle.value);
+    }
   }
 
   async function selectDirectory(): Promise<void> {
@@ -20,6 +25,7 @@ export const useStorageStore = defineStore('storage', () => {
     });
 
     await IdbStorage.instance.setItem(directoryHandleKey, handle);
+    registry = await FileStorageRegistry.create(directoryHandle.value!);
   }
 
   return { loadState, isDirectorySelected, selectDirectory };

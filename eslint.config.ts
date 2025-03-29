@@ -20,6 +20,8 @@ export default defineConfigWithVueTs(
     semi: true,
     jsx: true,
     commaDangle: 'always-multiline',
+    braceStyle: '1tbs',
+    arrowParens: true,
   }),
 
   pluginVue.configs['flat/essential'],
