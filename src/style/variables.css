@@ -1,0 +1,9 @@
+:root {
+  --color-primary: rgba(0, 0, 0, 0.9);
+  --color-white: #fff;
+
+  --font-sm: 14px;
+  --font-md: 16px;
+
+  --rounded-md: 8px;
+}

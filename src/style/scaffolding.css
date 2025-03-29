@@ -1,11 +1,12 @@
-body {
-  font-family: 'Roboto', sans-serif;
-}
-
 body,
 html,
 #app {
   height: 100%;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: var(--font-md);
 }
 
 p,
