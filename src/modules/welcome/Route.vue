@@ -17,11 +17,13 @@ import { WelcomeLayout, WelcomeSelectDirectory } from './components';
 </script>
 
 <style scoped>
-.welcome-header {
-  margin-bottom: 4px;
-}
+@layer page {
+  .welcome-header {
+    margin-bottom: 4px;
+  }
 
-.welcome-description {
-  margin-bottom: 24px;
+  .welcome-description {
+    margin-bottom: 24px;
+  }
 }
 </style>

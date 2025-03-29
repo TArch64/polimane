@@ -1,3 +1,7 @@
 <template>
-  <p>home</p>
+  <HomeTopBar />
 </template>
+
+<script setup lang="ts">
+import { HomeTopBar } from './components';
+</script>
