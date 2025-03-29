@@ -1,9 +1,12 @@
-import { createRouter, createWebHistory, type NavigationGuardReturn } from 'vue-router';
-import { useStorageStore } from '../stores';
-import { homeRoute } from '../modules/home';
-import { welcomeRoute } from '../modules/welcome';
+import { createRouter, createWebHistory } from 'vue-router';
+import { homeRoute } from '@/modules/home';
+import { welcomeRoute } from '@/modules/welcome';
+import { checkStorageDirMiddleware } from './middleware';
 
-export const routes = [welcomeRoute, homeRoute] as const;
+export const routes = [
+  welcomeRoute,
+  homeRoute,
+] as const;
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,19 +15,7 @@ export const router = createRouter({
     {
       path: '/',
       children: [...routes],
-
-      async beforeEnter(to): Promise<NavigationGuardReturn> {
-        if (to.name === 'welcome') {
-          return;
-        }
-
-        const storageStore = useStorageStore();
-        await storageStore.loadState();
-
-        if (!storageStore.isDirectorySelected) {
-          return { name: 'welcome' };
-        }
-      },
+      beforeEnter: checkStorageDirMiddleware,
     },
   ],
 });

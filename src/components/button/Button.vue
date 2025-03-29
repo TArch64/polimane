@@ -71,6 +71,12 @@ const classes = computed(() => [
     background-color: var(--button-primary-background);
     color: var(--button-primary-foreground);
     border-radius: var(--rounded-md);
+    transition: opacity 0.15s ease-out;
+    will-change: opacity;
+
+    &:hover {
+      opacity: 0.8;
+    }
   }
 }
 </style>

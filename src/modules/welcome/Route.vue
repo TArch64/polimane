@@ -8,34 +8,20 @@
       Твій помічник у створенні схем для бісеру
     </p>
 
-    <Button
-      size="lg"
-      variant="primary"
-      @click="selectDirectory"
-    >
-      Обрати Директорію
-    </Button>
+    <WelcomeSelectDirectory />
   </WelcomeLayout>
 </template>
 
 <script setup lang="ts">
-import { WelcomeLayout } from './components';
-import { Button } from '@/components/button';
-import { useStorageStore } from '@/stores';
-
-const storageStore = useStorageStore();
-
-async function selectDirectory(): Promise<void> {
-  await storageStore.selectDirectory();
-}
+import { WelcomeLayout, WelcomeSelectDirectory } from './components';
 </script>
 
 <style scoped>
 .welcome-header {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .welcome-description {
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 </style>

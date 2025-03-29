@@ -11,4 +11,7 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 
-app.mount('#app');
+document.startViewTransition(async () => {
+  app.mount('#app');
+  return router.isReady();
+});

@@ -12,7 +12,7 @@ export const useStorageStore = defineStore('storage', () => {
     directoryHandle.value ??= await IdbStorage.instance.getItem(directoryHandleKey);
   }
 
-  async function selectDirectory() {
+  async function selectDirectory(): Promise<void> {
     const handle = await showDirectoryPicker({
       id: 'polimane-storage',
       mode: 'readwrite',
