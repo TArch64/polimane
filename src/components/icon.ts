@@ -1,7 +1,7 @@
 import { type AsyncComponentLoader, defineAsyncComponent, type FunctionalComponent, h } from 'vue';
 
 export interface IIconProps {
-  size?: number;
+  size?: number | string;
 }
 
 const makeIcon = (loader: AsyncComponentLoader): FunctionalComponent<IIconProps> => {
@@ -14,3 +14,4 @@ const makeIcon = (loader: AsyncComponentLoader): FunctionalComponent<IIconProps>
 };
 
 export const SettingsIcon = makeIcon(() => import(`~icons/eva/settings-outline`));
+export const CloseIcon = makeIcon(() => import(`~icons/eva/close-outline`));

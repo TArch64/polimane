@@ -5,9 +5,11 @@
     </h1>
 
     <div class="home-top-bar__actions">
-      <Button icon size="md" variant="secondary">
-        <SettingsIcon />
-      </Button>
+      <HomeSettingsModal v-slot="{ open }">
+        <Button icon size="md" variant="secondary" @click="open">
+          <SettingsIcon />
+        </Button>
+      </HomeSettingsModal>
 
       <Button size="md" variant="primary">
         Додати Схему
@@ -19,6 +21,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/button';
 import { SettingsIcon } from '@/components/icon';
+import HomeSettingsModal from './HomeSettingsModal.vue';
 </script>
 
 <style scoped>
@@ -30,7 +33,7 @@ import { SettingsIcon } from '@/components/icon';
     align-items: center;
     padding: 12px 16px;
     background-color: var(--color-white);
-    border-bottom: 1px solid color-mix(in srgb, var(--color-primary), transparent 90%);
+    border-bottom: 1px solid var(--color-divider);
   }
 
   .home-top-bar__title {
