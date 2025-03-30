@@ -36,12 +36,26 @@ services:
       context: .
       dockerfile: ./ci/dev/backend/Dockerfile
     command: make dev
+    stop_grace_period: 1s
     volumes:
     - ./backend:/app
     - gomod_cache:/go/pkg/mod
+    depends_on:
+    - dynamodb
+
+  dynamodb:
+    <<: *common
+    image: "amazon/dynamodb-local:2.6.0"
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    user: root
+    working_dir: /home/dynamodblocal
+    volumes:
+    - dynamodb_data:/home/dynamodblocal/data
 
 volumes:
   bun_cache:
     driver: local
   gomod_cache:
+    driver: local
+  dynamodb_data:
     driver: local
