@@ -1,6 +1,12 @@
 package api
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/helmet"
+	recover2 "github.com/gofiber/fiber/v2/middleware/recover"
+
+	"polimane/backend/api/users"
+)
 
 type ConfigureApp func(config *fiber.Config)
 
@@ -15,11 +21,14 @@ func New(configFns ...ConfigureApp) *fiber.App {
 
 	app := fiber.New(config)
 
-	group := app.Group("/api")
+	app.Use(recover2.New(recover2.Config{
+		EnableStackTrace: true,
+	}))
 
-	group.Get("", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
+	app.Use(helmet.New())
+
+	group := app.Group("/api")
+	users.Group(group)
 
 	return app
 }
