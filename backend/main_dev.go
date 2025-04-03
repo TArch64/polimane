@@ -5,6 +5,7 @@ package main
 import (
 	"context"
 	"log"
+	"polimane/backend/env"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -14,9 +15,16 @@ import (
 )
 
 func main() {
-	err := awsdynamodb.Init(context.Background())
+	var err error
+
+	err = env.Init()
 	if err != nil {
-		panic(err)
+		log.Panic(err)
+	}
+
+	err = awsdynamodb.Init(context.Background())
+	if err != nil {
+		log.Panic(err)
 	}
 
 	app := api.New(func(config *fiber.Config) {
@@ -27,7 +35,7 @@ func main() {
 
 	err = app.Listen(":3000")
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
 	defer func() {

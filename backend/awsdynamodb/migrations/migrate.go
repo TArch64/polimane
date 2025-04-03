@@ -3,6 +3,7 @@ package migrations
 import (
 	"context"
 	"errors"
+	"github.com/guregu/dynamo/v2"
 	"log"
 	"strconv"
 
@@ -16,6 +17,7 @@ type Migration func(ctx *migrationCtx) error
 var migrations = []Migration{
 	v0,
 	v1,
+	v2,
 }
 
 func getVersionKey() map[string]types.AttributeValue {
@@ -49,11 +51,13 @@ func getTableVersion(ctx *migrationCtx) (int, error) {
 	return version, nil
 }
 
-func Migrate(ctx_ context.Context, api *dynamodb.Client) error {
+func Migrate(ctx_ context.Context, db *dynamo.DB) error {
+	table := db.Table("polimane")
 	ctx := &migrationCtx{
 		Context:   ctx_,
-		Api:       api,
-		TableName: "polimane",
+		Api:       db.Client().(*dynamodb.Client),
+		Table:     &table,
+		TableName: table.Name(),
 	}
 
 	version, err := getTableVersion(ctx)

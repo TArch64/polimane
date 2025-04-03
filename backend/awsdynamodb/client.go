@@ -3,7 +3,6 @@ package awsdynamodb
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/guregu/dynamo/v2"
 
 	"polimane/backend/awsdynamodb/migrations"
@@ -23,7 +22,7 @@ func Init(ctx context.Context) error {
 
 	db := dynamo.New(*cfg, configureClient)
 
-	err = migrations.Migrate(ctx, db.Client().(*dynamodb.Client))
+	err = migrations.Migrate(ctx, db)
 	if err != nil {
 		return err
 	}

@@ -8,8 +8,8 @@ import (
 
 type ID string
 
-func NewID(modelType string) string {
-	return modelType + "#" + ulid.Make().String()
+func NewID(modelType string) ID {
+	return ID(modelType + "#" + ulid.Make().String())
 }
 
 func (id ID) ULID() ulid.ULID {
