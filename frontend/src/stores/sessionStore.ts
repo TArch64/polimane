@@ -17,9 +17,19 @@ export const useSessionStore = defineStore('session', () => {
     user.value = await httpClient.post<IUser, ILoginInput>('/auth/login', input);
   }
 
+  async function refresh(): Promise<void> {
+    try {
+      user.value = await httpClient.get<IUser>('/users/current');
+    } catch (error) {
+      user.value = null;
+      console.error(error);
+    }
+  }
+
   return {
     user: user as Ref<IUser>,
     isLoginedIn,
     login,
+    refresh,
   };
 });

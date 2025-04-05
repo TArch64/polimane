@@ -27,12 +27,14 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
 import { Button } from '@/components/button';
 import { Form, TextField } from '@/components/form';
 import { Card } from '@/components/card';
 import { useAsyncAction } from '@/composables';
 import { type ILoginInput, useSessionStore } from '@/stores';
 
+const router = useRouter();
 const sessionStore = useSessionStore();
 
 const form = reactive<ILoginInput>({
@@ -40,7 +42,10 @@ const form = reactive<ILoginInput>({
   password: '',
 });
 
-const login = useAsyncAction(() => sessionStore.login(form));
+const login = useAsyncAction(async () => {
+  await sessionStore.login(form);
+  document.startViewTransition(() => router.push({ name: 'home' }));
+});
 </script>
 
 <style scoped>
