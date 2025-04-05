@@ -12,14 +12,18 @@ func NewID(modelType string) ID {
 	return ID(NewKey(modelType, strings.ToLower(ulid.Make().String())))
 }
 
-func (id ID) Type() string {
-	return Key(id).Type()
+func (i ID) String() string {
+	return string(i)
 }
 
-func (id ID) Value() string {
-	return Key(id).Value()
+func (i ID) Type() string {
+	return Key(i).Type()
 }
 
-func (id ID) ULID() ulid.ULID {
-	return ulid.MustParse(id.Value())
+func (i ID) Value() string {
+	return Key(i).Value()
+}
+
+func (i ID) ULID() ulid.ULID {
+	return ulid.MustParse(i.Value())
 }

@@ -10,6 +10,10 @@ func NewKey(keyType, keyValue string) Key {
 	return Key(keyType + KeyDivider + keyValue)
 }
 
+func (k Key) String() string {
+	return string(k)
+}
+
 func (k Key) Entries() []string {
 	return strings.Split(string(k), KeyDivider)
 }
