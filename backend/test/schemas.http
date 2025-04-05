@@ -1,4 +1,23 @@
-# @name users-current
+# @name schemas-list
 GET http://polimane.localhost/api/schemas
 Content-Type: application/json
 Cookie: {{ auth_cookie }}
+
+###
+
+# @name schemas-create
+POST http://polimane.localhost/api/schemas
+Content-Type: application/json
+Cookie: {{ auth_cookie }}
+
+{
+  "name": "test",
+  "content": {
+    "patterns": [
+      {
+        "type": "linear",
+        "rows": []
+      }
+    ]
+  }
+}

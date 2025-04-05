@@ -5,11 +5,12 @@ import "encoding/json"
 const SKSchema = "SCHEMA"
 const IndexSchemaID = "SchemaIdIndex"
 
-type SchemaContent map[string]struct{}
+type SchemaContent map[string]interface{}
 
 type Schema struct {
 	*Base
-	Content SchemaContent
+	Name    string        `dynamo:"Name"`
+	Content SchemaContent `dynamo:"Content"`
 }
 
 func (u *Schema) MarshalJSON() ([]byte, error) {

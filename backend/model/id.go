@@ -16,6 +16,10 @@ func (i ID) String() string {
 	return string(i)
 }
 
+func (i ID) Key() Key {
+	return Key(i)
+}
+
 func (i ID) Type() string {
 	return Key(i).Type()
 }

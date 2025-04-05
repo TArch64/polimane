@@ -6,10 +6,9 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 	recover2 "github.com/gofiber/fiber/v2/middleware/recover"
 
-	"polimane/backend/api/schemas"
-
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/api/schemas"
 	"polimane/backend/api/users"
 	"polimane/backend/env"
 )
