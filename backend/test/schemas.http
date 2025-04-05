@@ -1,14 +1,12 @@
 # @name schemas-list
 GET http://polimane.localhost/api/schemas
 Content-Type: application/json
-Cookie: {{ auth_cookie }}
 
 ###
 
 # @name schemas-create
 POST http://polimane.localhost/api/schemas
 Content-Type: application/json
-Cookie: {{ auth_cookie }}
 
 {
   "name": "test {{ $random.uuid }}",
@@ -27,28 +25,24 @@ Cookie: {{ auth_cookie }}
 # @name schemas-by-id
 GET http://polimane.localhost/api/schemas/01jr3avfvywafqwj9g534w2jtp
 Content-Type: application/json
-Cookie: {{ auth_cookie }}
 
 ###
 
 # @name schemas-by-id-not-found
 GET http://polimane.localhost/api/schemas/unknown-id
 Content-Type: application/json
-Cookie: {{ auth_cookie }}
 
 ###
 
 # @name schemas-delete
 DELETE http://polimane.localhost/api/schemas/01jr3a3ctpw759dg1beqdfhag0
 Content-Type: application/json
-Cookie: {{ auth_cookie }}
 
 ###
 
 # @name schemas-update
 PATCH http://polimane.localhost/api/schemas/01jr3avfvywafqwj9g534w2jtp
 Content-Type: application/json
-Cookie: {{ auth_cookie }}
 
 {
   "name": "test 1"
