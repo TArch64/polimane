@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { homeRoute } from '@/modules/home';
 import { welcomeRoute } from '@/modules/welcome';
-import { checkStorageDirMiddleware } from './middleware';
 
 export const routes = [
   welcomeRoute,
@@ -15,7 +14,7 @@ export const router = createRouter({
     {
       path: '/',
       children: [...routes],
-      beforeEnter: checkStorageDirMiddleware,
+      // beforeEnter: checkStorageDirMiddleware,
     },
     {
       path: '/:pathMatch(.*)*',

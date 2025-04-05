@@ -1,6 +1,8 @@
 <template>
   <div class="welcome-layout">
-    <slot />
+    <div class="welcome-layout">
+      <slot />
+    </div>
   </div>
 </template>
 

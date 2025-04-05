@@ -8,12 +8,12 @@
       Твій помічник у створенні схем для бісеру
     </p>
 
-    <WelcomeSelectDirectory />
+    <WelcomeLogin />
   </WelcomeLayout>
 </template>
 
 <script setup lang="ts">
-import { WelcomeLayout, WelcomeSelectDirectory } from './components';
+import { WelcomeLayout, WelcomeLogin } from './components';
 </script>
 
 <style scoped>

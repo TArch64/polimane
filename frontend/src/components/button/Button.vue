@@ -41,10 +41,12 @@ const classes = computed(() => [
   :global(:root) {
     --button-primary-background: var(--color-primary);
     --button-primary-hover-background: color-mix(in srgb, var(--color-primary), transparent 20%);
+    --button-primary-disabled-background: color-mix(in srgb, var(--color-primary), transparent 70%);
     --button-primary-foreground: var(--color-white);
 
     --button-secondary-background: var(--color-white);
     --button-secondary-hover-background: color-mix(in srgb, var(--color-primary), transparent 90%);
+    --button-secondary-disabled-background: color-mix(in srgb, var(--color-primary), transparent 70%);
     --button-secondary-foreground: var(--color-primary);
   }
 
@@ -92,20 +94,26 @@ const classes = computed(() => [
     transition: background-color 0.15s ease-out;
     will-change: background-color;
 
-    &:hover {
+    &:hover:not([disabled]) {
       background-color: var(--button-hover-background);
+    }
+
+    &[disabled] {
+      background-color: var(--button-disabled-background);
     }
   }
 
   .button--primary {
     --button-background: var(--button-primary-background);
     --button-hover-background: var(--button-primary-hover-background);
+    --button-disabled-background: var(--button-primary-disabled-background);
     --button-foreground: var(--button-primary-foreground);
   }
 
   .button--secondary {
     --button-background: var(--button-secondary-background);
     --button-hover-background: var(--button-secondary-hover-background);
+    --button-disabled-background: var(--button-secondary-disabled-background);
     --button-foreground: var(--button-secondary-foreground);
   }
 }

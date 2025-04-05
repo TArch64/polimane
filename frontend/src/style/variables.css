@@ -2,7 +2,11 @@
   --color-white: #fff;
   --color-black: rgba(0, 0, 0, 0.9);
   --color-primary: var(--color-black);
+
   --color-divider: color-mix(in srgb, var(--color-black), transparent 90%);
+
+  --color-background-1: var(--color-white);
+  --color-background-2: color-mix(in srgb, var(--color-black), transparent 97%);
 
   --font-sm: 14px;
   --font-md: 16px;

@@ -3,6 +3,10 @@ html {
   height: 100%;
 }
 
+html {
+  background-color: var(--color-background-1);
+}
+
 body {
   font-family: 'Roboto', sans-serif;
   font-size: var(--font-md);
