@@ -31,15 +31,16 @@ import { Button } from '@/components/button';
 import { Form, TextField } from '@/components/form';
 import { Card } from '@/components/card';
 import { useAsyncAction } from '@/composables';
+import { type ILoginInput, useSessionStore } from '@/stores';
 
-const form = reactive({
+const sessionStore = useSessionStore();
+
+const form = reactive<ILoginInput>({
   username: '',
   password: '',
 });
 
-const login = useAsyncAction(async () => {
-  return new Promise((resolve) => setTimeout(resolve, 1000));
-});
+const login = useAsyncAction(() => sessionStore.login(form));
 </script>
 
 <style scoped>

@@ -7,6 +7,7 @@ import icons from 'unplugin-icons/vite';
 
 export default defineConfig({
   clearScreen: false,
+  envPrefix: 'FRONTEND_PUBLIC_',
 
   resolve: {
     alias: {
