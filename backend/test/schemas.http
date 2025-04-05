@@ -11,7 +11,7 @@ Content-Type: application/json
 Cookie: {{ auth_cookie }}
 
 {
-  "name": "test",
+  "name": "test {{ $random.uuid }}",
   "content": {
     "patterns": [
       {
@@ -21,3 +21,24 @@ Cookie: {{ auth_cookie }}
     ]
   }
 }
+
+###
+
+# @name schemas-by-id
+GET http://polimane.localhost/api/schemas/01jr3a53wjpcpq9bhw8krbatva
+Content-Type: application/json
+Cookie: {{ auth_cookie }}
+
+###
+
+# @name schemas-by-id-not-found
+GET http://polimane.localhost/api/schemas/unknown-id
+Content-Type: application/json
+Cookie: {{ auth_cookie }}
+
+###
+
+# @name schemas-delete
+DELETE http://polimane.localhost/api/schemas/01jr3a3ctpw759dg1beqdfhag0
+Content-Type: application/json
+Cookie: {{ auth_cookie }}

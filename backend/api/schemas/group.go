@@ -9,4 +9,5 @@ func Group(group fiber.Router) {
 
 	group = group.Group(":schemaId")
 	group.Get("", apiById)
+	group.Delete("", apiDelete)
 }

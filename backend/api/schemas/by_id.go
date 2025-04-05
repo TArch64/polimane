@@ -6,10 +6,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/guregu/dynamo/v2"
 
-	"polimane/backend/repositoryschemas"
-
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/repositoryschemas"
 )
 
 func apiById(ctx *fiber.Ctx) error {
