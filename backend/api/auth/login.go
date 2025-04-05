@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"polimane/backend/argon"
+
 	"github.com/guregu/dynamo/v2"
 
 	"polimane/backend/api/base"
@@ -11,6 +13,10 @@ import (
 	"polimane/backend/model"
 
 	"github.com/gofiber/fiber/v2"
+)
+
+var (
+	invalidCredentialsErr = base.NewReasonedError(fiber.StatusForbidden, "InvalidCredentials")
 )
 
 type loginBody struct {
@@ -39,9 +45,13 @@ func apiLogin(ctx *fiber.Ctx) error {
 	user, err := fetchUserByName(ctx.Context(), body.Username)
 	if err != nil {
 		if errors.Is(err, dynamo.ErrNotFound) {
-			return base.NewReasonedError(fiber.StatusForbidden, "invalid_credentials")
+			return invalidCredentialsErr
 		}
 		return err
+	}
+
+	if !argon.Compare(body.Password, user.PasswordHash) {
+		return invalidCredentialsErr
 	}
 
 	return ctx.JSON(user)
