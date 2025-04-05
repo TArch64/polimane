@@ -5,13 +5,13 @@ package main
 import (
 	"context"
 	"log"
-	"polimane/backend/env"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 
 	"polimane/backend/api"
 	"polimane/backend/awsdynamodb"
+	"polimane/backend/env"
 )
 
 func main() {

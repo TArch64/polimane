@@ -1,18 +1,23 @@
 package model
 
 import (
-	"strings"
-
 	"github.com/oklog/ulid/v2"
 )
 
-type ID string
+type ID Key
 
 func NewID(modelType string) ID {
-	return ID(modelType + "#" + ulid.Make().String())
+	return ID(NewKey(modelType, ulid.Make().String()))
+}
+
+func (id ID) Type() string {
+	return Key(id).Type()
+}
+
+func (id ID) Value() string {
+	return Key(id).Value()
 }
 
 func (id ID) ULID() ulid.ULID {
-	ulidStr := strings.Split(string(id), "#")[1]
-	return ulid.MustParse(ulidStr)
+	return ulid.MustParse(id.Value())
 }

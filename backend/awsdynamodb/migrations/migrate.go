@@ -17,15 +17,14 @@ type Migration func(ctx *migrationCtx) error
 var migrations = []Migration{
 	v0,
 	v1,
-	v2,
 }
 
 func getVersionKey() map[string]types.AttributeValue {
 	return map[string]types.AttributeValue{
-		"pk": &types.AttributeValueMemberS{
+		"PK": &types.AttributeValueMemberS{
 			Value: "#VERSION",
 		},
-		"sk": &types.AttributeValueMemberS{
+		"SK": &types.AttributeValueMemberS{
 			Value: "#METADATA",
 		},
 	}
@@ -35,18 +34,18 @@ func getTableVersion(ctx *migrationCtx) (int, error) {
 	item, err := ctx.Api.GetItem(ctx, &dynamodb.GetItemInput{
 		TableName:            &ctx.TableName,
 		Key:                  getVersionKey(),
-		ProjectionExpression: aws.String("version"),
+		ProjectionExpression: aws.String("Version"),
 	})
 
 	if err != nil {
 		var notFoundErr *types.ResourceNotFoundException
 		if errors.As(err, &notFoundErr) {
-			return 0, nil
+			return -1, nil
 		}
 		return 0, err
 	}
 
-	attr := item.Item["version"].(*types.AttributeValueMemberN)
+	attr := item.Item["Version"].(*types.AttributeValueMemberN)
 	version, _ := strconv.Atoi(attr.Value)
 	return version, nil
 }
@@ -83,7 +82,7 @@ func Migrate(ctx_ context.Context, db *dynamo.DB) error {
 
 		log.Printf("[DynamoDB] Migration %d complete\n", i)
 
-		versionKey["version"] = &types.AttributeValueMemberN{
+		versionKey["Version"] = &types.AttributeValueMemberN{
 			Value: strconv.Itoa(i),
 		}
 

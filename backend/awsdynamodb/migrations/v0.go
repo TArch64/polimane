@@ -12,22 +12,36 @@ func v0(ctx *migrationCtx) error {
 		BillingMode: types.BillingModePayPerRequest,
 		AttributeDefinitions: []types.AttributeDefinition{
 			{
-				AttributeName: aws.String("pk"),
+				AttributeName: aws.String("PK"),
 				AttributeType: types.ScalarAttributeTypeS,
 			},
 			{
-				AttributeName: aws.String("sk"),
+				AttributeName: aws.String("SK"),
 				AttributeType: types.ScalarAttributeTypeS,
 			},
 		},
 		KeySchema: []types.KeySchemaElement{
 			{
-				AttributeName: aws.String("pk"),
+				AttributeName: aws.String("PK"),
 				KeyType:       types.KeyTypeHash,
 			},
 			{
-				AttributeName: aws.String("sk"),
+				AttributeName: aws.String("SK"),
 				KeyType:       types.KeyTypeRange,
+			},
+		},
+		GlobalSecondaryIndexes: []types.GlobalSecondaryIndex{
+			{
+				IndexName: aws.String("UserNameIndex"),
+				KeySchema: []types.KeySchemaElement{
+					{
+						AttributeName: aws.String("SK"),
+						KeyType:       types.KeyTypeHash,
+					},
+				},
+				Projection: &types.Projection{
+					ProjectionType: types.ProjectionTypeAll,
+				},
 			},
 		},
 	})

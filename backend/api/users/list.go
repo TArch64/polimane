@@ -13,7 +13,7 @@ func usersList(ctx *fiber.Ctx) error {
 	err := awsdynamodb.
 		Table().
 		Scan().
-		Filter(model.TypeFilter(model.TypeUser)).
+		Filter(model.TypeFilter(model.PKUser)).
 		All(ctx.Context(), &users)
 
 	if err != nil {
