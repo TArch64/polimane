@@ -8,7 +8,6 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
-
 	"polimane/backend/api/users"
 	"polimane/backend/env"
 )
@@ -41,6 +40,8 @@ func New(configFns ...ConfigureApp) *fiber.App {
 
 	group := app.Group("/api")
 	auth.Group(group)
+
+	group.Use(auth.Middleware)
 	users.Group(group)
 
 	return app

@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"context"
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
@@ -9,28 +8,14 @@ import (
 
 	"polimane/backend/api/base"
 	"polimane/backend/argon"
-	"polimane/backend/awsdynamodb"
-	"polimane/backend/model"
+	"polimane/backend/repositoryusers"
 )
 
-var (
-	invalidCredentialsErr = base.NewReasonedError(fiber.StatusForbidden, "InvalidCredentials")
-)
+var invalidCredentialsErr = base.NewReasonedError(fiber.StatusForbidden, "InvalidCredentials")
 
 type loginBody struct {
 	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
-}
-
-func fetchUserByName(ctx context.Context, username string) (*model.User, error) {
-	var user model.User
-
-	err := awsdynamodb.Table().
-		Get("SK", model.NewKey(model.SKUser, username)).
-		Index(model.IndexUserName).
-		One(ctx, &user)
-
-	return &user, err
 }
 
 func apiLogin(ctx *fiber.Ctx) error {
@@ -40,7 +25,7 @@ func apiLogin(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := fetchUserByName(ctx.Context(), body.Username)
+	user, err := repositoryusers.ByName(ctx.Context(), body.Username)
 	if err != nil {
 		if errors.Is(err, dynamo.ErrNotFound) {
 			return invalidCredentialsErr
@@ -53,10 +38,10 @@ func apiLogin(ctx *fiber.Ctx) error {
 	}
 
 	expiresAt := newTokenExpiresAt()
-	token, err := newToken(user, expiresAt)
+	token, err := newCookieToken(user, expiresAt)
 
 	ctx.Cookie(&fiber.Cookie{
-		Name:     "pa",
+		Name:     cookieName,
 		Value:    token,
 		HTTPOnly: true,
 		Expires:  expiresAt,

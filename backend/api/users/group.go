@@ -4,5 +4,5 @@ import "github.com/gofiber/fiber/v2"
 
 func Group(group fiber.Router) {
 	group = group.Group("users")
-	group.Get("", apiList)
+	group.Get("current", apiCurrent)
 }
