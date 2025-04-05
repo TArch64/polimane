@@ -1,0 +1,8 @@
+# @name auth-login
+POST http://polimane.localhost/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "yulyko",
+  "password": "{{ user_password }}"
+}

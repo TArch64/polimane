@@ -6,6 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 	recover2 "github.com/gofiber/fiber/v2/middleware/recover"
 
+	"polimane/backend/api/schemas"
+
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/api/users"
@@ -43,6 +45,7 @@ func New(configFns ...ConfigureApp) *fiber.App {
 
 	group.Use(auth.Middleware)
 	users.Group(group)
+	schemas.Group(group)
 
 	return app
 }

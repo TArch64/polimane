@@ -1,0 +1,4 @@
+# @name users-current
+GET http://polimane.localhost/api/users/current
+Content-Type: application/json
+Cookie: {{ auth_cookie }}
