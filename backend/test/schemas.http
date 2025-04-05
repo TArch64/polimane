@@ -25,7 +25,7 @@ Cookie: {{ auth_cookie }}
 ###
 
 # @name schemas-by-id
-GET http://polimane.localhost/api/schemas/01jr3a53wjpcpq9bhw8krbatva
+GET http://polimane.localhost/api/schemas/01jr3avfvywafqwj9g534w2jtp
 Content-Type: application/json
 Cookie: {{ auth_cookie }}
 
@@ -42,3 +42,14 @@ Cookie: {{ auth_cookie }}
 DELETE http://polimane.localhost/api/schemas/01jr3a3ctpw759dg1beqdfhag0
 Content-Type: application/json
 Cookie: {{ auth_cookie }}
+
+###
+
+# @name schemas-update
+PATCH http://polimane.localhost/api/schemas/01jr3avfvywafqwj9g534w2jtp
+Content-Type: application/json
+Cookie: {{ auth_cookie }}
+
+{
+  "name": "test 1"
+}

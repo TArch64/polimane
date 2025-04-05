@@ -3,10 +3,9 @@ package schemas
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"polimane/backend/repositoryschemas"
-
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/repositoryschemas"
 )
 
 func apiDelete(ctx *fiber.Ctx) error {
@@ -22,5 +21,5 @@ func apiDelete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return base.NewSuccessResponse().AsJSON(ctx)
+	return base.NewSuccessResponse(ctx)
 }

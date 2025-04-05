@@ -23,6 +23,10 @@ func Create(ctx context.Context, options *CreateOptions) (*model.Schema, error) 
 		Content: options.Content,
 	}
 
-	err := awsdynamodb.Table().Put(schema).Run(ctx)
+	err := awsdynamodb.Table().
+		Put(schema).
+		If("attribute_not_exists(PR)").
+		Run(ctx)
+
 	return schema, err
 }
