@@ -6,4 +6,7 @@ func Group(group fiber.Router) {
 	group = group.Group("schemas")
 	group.Get("", apiList)
 	group.Post("", apiCreate)
+
+	group = group.Group(":schemaId")
+	group.Get("", apiById)
 }

@@ -24,7 +24,7 @@ func Middleware(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := repositoryusers.ById(ctx.Context(), claims.UserID)
+	user, err := repositoryusers.ByPK(ctx.Context(), claims.UserID)
 	if err != nil {
 		if errors.Is(err, dynamo.ErrNotFound) {
 			return unauthorizedErr

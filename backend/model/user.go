@@ -19,7 +19,7 @@ type NewUserOptions struct {
 func NewUser(options *NewUserOptions) *User {
 	return &User{
 		Base: &Base{
-			ID: NewID(PKUser),
+			ID: RandomID(PKUser),
 			SK: NewKey(SKUser, options.Username),
 		},
 		PasswordHash: options.PasswordHash,

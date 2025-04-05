@@ -17,7 +17,6 @@ type Migration func(ctx *migrationCtx) error
 var migrations = []Migration{
 	v0,
 	v1,
-	v2,
 }
 
 func getTableVersion(ctx *migrationCtx) (*model.Version, error) {

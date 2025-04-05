@@ -61,7 +61,7 @@ func Validate(data interface{}) error {
 		}
 
 		return &fiber.Error{
-			Code:    fiber.ErrBadRequest.Code,
+			Code:    fiber.StatusBadRequest,
 			Message: strings.Join(errMsgs, " and "),
 		}
 	}

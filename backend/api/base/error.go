@@ -1,5 +1,7 @@
 package base
 
+import "github.com/gofiber/fiber/v2"
+
 type CustomErrorData map[string]interface{}
 
 type CustomError struct {
@@ -23,3 +25,7 @@ func NewCustomError(code int, message string, data CustomErrorData) *CustomError
 func NewReasonedError(code int, reason string) *CustomError {
 	return NewCustomError(code, reason, CustomErrorData{"reason": reason})
 }
+
+var (
+	NotFoundErr = NewReasonedError(fiber.StatusNotFound, "NotFound")
+)

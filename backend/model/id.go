@@ -8,8 +8,12 @@ import (
 
 type ID Key
 
-func NewID(modelType string) ID {
-	return ID(NewKey(modelType, strings.ToLower(ulid.Make().String())))
+func NewID(modelType string, id string) ID {
+	return ID(NewKey(modelType, id))
+}
+
+func RandomID(modelType string) ID {
+	return NewID(modelType, strings.ToLower(ulid.Make().String()))
 }
 
 func (i ID) String() string {

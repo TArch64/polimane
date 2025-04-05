@@ -16,9 +16,11 @@ type Schema struct {
 func (u *Schema) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		ID      string        `json:"id"`
+		Name    string        `json:"name"`
 		Content SchemaContent `json:"content"`
 	}{
 		ID:      u.SK.Value(),
+		Name:    u.Name,
 		Content: u.Content,
 	})
 }

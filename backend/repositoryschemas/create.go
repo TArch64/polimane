@@ -17,8 +17,9 @@ func Create(ctx context.Context, options *CreateOptions) (*model.Schema, error) 
 	schema := &model.Schema{
 		Base: &model.Base{
 			ID: options.User.ID,
-			SK: model.NewID(model.SKSchema).Key(),
+			SK: model.RandomID(model.SKSchema).Key(),
 		},
+		Name:    options.Name,
 		Content: options.Content,
 	}
 
