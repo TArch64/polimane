@@ -7,7 +7,7 @@ import (
 	"polimane/backend/model"
 )
 
-func usersList(ctx *fiber.Ctx) error {
+func apiList(ctx *fiber.Ctx) error {
 	var users []model.User
 
 	err := awsdynamodb.

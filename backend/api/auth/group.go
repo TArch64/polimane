@@ -1,8 +1,8 @@
-package users
+package auth
 
 import "github.com/gofiber/fiber/v2"
 
 func Group(group fiber.Router) {
-	group = group.Group("users")
-	group.Get("", apiList)
+	group = group.Group("auth")
+	group.Post("login", apiLogin)
 }

@@ -5,6 +5,8 @@ import (
 )
 
 type Environment struct {
+	SecretKey string `env:"BACKEND_SECRET_KEY"`
+
 	DefaultUser struct {
 		User     string `env:"BACKEND_DEFAULT_USER"`
 		Password string `env:"BACKEND_DEFAULT_PASSWORD"`
