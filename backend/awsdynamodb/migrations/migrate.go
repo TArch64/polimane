@@ -3,9 +3,10 @@ package migrations
 import (
 	"context"
 	"errors"
-	"github.com/guregu/dynamo/v2"
 	"log"
 	"strconv"
+
+	"github.com/guregu/dynamo/v2"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
