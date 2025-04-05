@@ -4,15 +4,13 @@ import (
 	"context"
 	"errors"
 
-	"polimane/backend/argon"
-
+	"github.com/gofiber/fiber/v2"
 	"github.com/guregu/dynamo/v2"
 
 	"polimane/backend/api/base"
+	"polimane/backend/argon"
 	"polimane/backend/awsdynamodb"
 	"polimane/backend/model"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 var (
@@ -53,6 +51,16 @@ func apiLogin(ctx *fiber.Ctx) error {
 	if !argon.Compare(body.Password, user.PasswordHash) {
 		return invalidCredentialsErr
 	}
+
+	expiresAt := newTokenExpiresAt()
+	token, err := newToken(user, expiresAt)
+
+	ctx.Cookie(&fiber.Cookie{
+		Name:     "pa",
+		Value:    token,
+		HTTPOnly: true,
+		Expires:  expiresAt,
+	})
 
 	return ctx.JSON(user)
 }
