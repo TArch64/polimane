@@ -4,13 +4,12 @@ import (
 	"context"
 	"errors"
 	"log"
-	"strconv"
 
-	"github.com/guregu/dynamo/v2"
+	"polimane/backend/model"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/guregu/dynamo/v2"
 )
 
 type Migration func(ctx *migrationCtx) error
@@ -20,35 +19,23 @@ var migrations = []Migration{
 	v1,
 }
 
-func getVersionKey() map[string]types.AttributeValue {
-	return map[string]types.AttributeValue{
-		"PK": &types.AttributeValueMemberS{
-			Value: "#VERSION",
-		},
-		"SK": &types.AttributeValueMemberS{
-			Value: "#METADATA",
-		},
-	}
-}
+func getTableVersion(ctx *migrationCtx) (*model.Version, error) {
+	var version model.Version
 
-func getTableVersion(ctx *migrationCtx) (int, error) {
-	item, err := ctx.Api.GetItem(ctx, &dynamodb.GetItemInput{
-		TableName:            &ctx.TableName,
-		Key:                  getVersionKey(),
-		ProjectionExpression: aws.String("Version"),
-	})
+	err := ctx.Table.
+		Get("PK", model.PKVersion).
+		Range("SK", dynamo.Equal, model.SKVersion).
+		One(ctx, &version)
 
 	if err != nil {
 		var notFoundErr *types.ResourceNotFoundException
 		if errors.As(err, &notFoundErr) {
-			return -1, nil
+			return model.NewVersion(), nil
 		}
-		return 0, err
+		return nil, err
 	}
 
-	attr := item.Item["Version"].(*types.AttributeValueMemberN)
-	version, _ := strconv.Atoi(attr.Value)
-	return version, nil
+	return &version, nil
 }
 
 func Migrate(ctx_ context.Context, db *dynamo.DB) error {
@@ -65,16 +52,16 @@ func Migrate(ctx_ context.Context, db *dynamo.DB) error {
 		return err
 	}
 
-	if version+1 >= len(migrations) {
-		log.Printf("[DynamoDB] Table is already at version %d\n", version)
+	if version.IsLatest(len(migrations)) {
+		log.Printf("[DynamoDB] Table is already at version %d\n", version.Version)
 		return nil
 	}
 
-	log.Printf("[DynamoDB] Current version: %d\n", version)
+	log.Printf("[DynamoDB] Current version: %d\n", version.Version)
 
-	versionKey := getVersionKey()
+	startVersion := version.NextVersion()
 
-	for i := version + 1; i < len(migrations); i++ {
+	for i := startVersion; i < len(migrations); i++ {
 		log.Printf("[DynamoDB] Running migration %d\n", i)
 		err = migrations[i](ctx)
 		if err != nil {
@@ -83,14 +70,8 @@ func Migrate(ctx_ context.Context, db *dynamo.DB) error {
 
 		log.Printf("[DynamoDB] Migration %d complete\n", i)
 
-		versionKey["Version"] = &types.AttributeValueMemberN{
-			Value: strconv.Itoa(i),
-		}
-
-		_, err = ctx.Api.PutItem(ctx, &dynamodb.PutItemInput{
-			TableName: &ctx.TableName,
-			Item:      versionKey,
-		})
+		version.Version = i
+		err = ctx.Table.Put(version).Run(ctx)
 
 		if err != nil {
 			return err

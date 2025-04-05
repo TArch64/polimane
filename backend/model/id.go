@@ -1,13 +1,15 @@
 package model
 
 import (
+	"strings"
+
 	"github.com/oklog/ulid/v2"
 )
 
 type ID Key
 
 func NewID(modelType string) ID {
-	return ID(NewKey(modelType, ulid.Make().String()))
+	return ID(NewKey(modelType, strings.ToLower(ulid.Make().String())))
 }
 
 func (id ID) Type() string {

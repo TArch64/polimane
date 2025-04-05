@@ -1,16 +1,32 @@
 package auth
 
 import (
-	"log"
+	"context"
+	"errors"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/guregu/dynamo/v2"
 
 	"polimane/backend/api/base"
+	"polimane/backend/awsdynamodb"
+	"polimane/backend/model"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type loginBody struct {
 	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
+}
+
+func fetchUserByName(ctx context.Context, username string) (*model.User, error) {
+	var user model.User
+
+	err := awsdynamodb.Table().
+		Get("SK", model.NewKey(model.SKUser, username)).
+		Index(model.IndexUserName).
+		One(ctx, &user)
+
+	return &user, err
 }
 
 func apiLogin(ctx *fiber.Ctx) error {
@@ -20,7 +36,13 @@ func apiLogin(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	log.Println(body)
+	user, err := fetchUserByName(ctx.Context(), body.Username)
+	if err != nil {
+		if errors.Is(err, dynamo.ErrNotFound) {
+			return base.NewReasonedError(fiber.StatusForbidden, "invalid_credentials")
+		}
+		return err
+	}
 
-	return nil
+	return ctx.JSON(user)
 }
