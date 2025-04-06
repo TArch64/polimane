@@ -4,14 +4,17 @@
       Поки що не створено жодної схеми для бісеру
     </p>
 
-    <Button variant="primary" size="lg">
-      Створити Схему
-    </Button>
+    <HomeCreateSchemaModal v-slot="{ open }">
+      <Button variant="primary" size="lg" @click="open">
+        Створити Схему
+      </Button>
+    </HomeCreateSchemaModal>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Button } from '@/components/button';
+import HomeCreateSchemaModal from './HomeCreateSchemaModal.vue';
 </script>
 
 <style scoped>

@@ -2,7 +2,14 @@
   <slot name="activator" :open />
 
   <Teleport to="body" v-if="isOpened">
-    <ModalOpened :title :width @closed="close" v-slot="ctx">
+    <ModalOpened
+      :title
+      :width
+      :saveButton
+      @closed="close"
+      @save="$emit('save')"
+      v-slot="ctx"
+    >
       <slot v-bind="ctx" />
     </ModalOpened>
   </Teleport>
@@ -17,9 +24,15 @@ import type { ModalActivatorSlot, ModalContentSlot } from './slots';
 withDefaults(defineProps<{
   title: string;
   width?: number;
+  saveButton?: string;
 }>(), {
   width: ModalWidth.MD,
+  saveButton: 'Зберегти',
 });
+
+defineEmits<{
+  save: [];
+}>();
 
 defineSlots<{
   activator: ModalActivatorSlot;

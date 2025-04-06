@@ -44,7 +44,7 @@ const classes = computed(() => [
     --button-primary-disabled-background: color-mix(in srgb, var(--color-primary), transparent 70%);
     --button-primary-foreground: var(--color-white);
 
-    --button-secondary-background: var(--color-white);
+    --button-secondary-background: tranparent;
     --button-secondary-hover-background: color-mix(in srgb, var(--color-primary), transparent 90%);
     --button-secondary-disabled-background: color-mix(in srgb, var(--color-primary), transparent 70%);
     --button-secondary-foreground: var(--color-primary);
@@ -70,6 +70,7 @@ const classes = computed(() => [
 
   .button--md {
     font-size: var(--font-sm);
+    line-height: 18px;
     padding: 6px 12px;
 
     &.button--icon {
