@@ -6,7 +6,7 @@
 
     <div class="home-top-bar__actions">
       <Button size="md" variant="primary">
-        Додати Схему
+        Створити Схему
       </Button>
     </div>
   </header>

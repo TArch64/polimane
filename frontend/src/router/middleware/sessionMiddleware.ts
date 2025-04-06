@@ -1,7 +1,7 @@
-import type { NavigationGuardWithThis } from 'vue-router';
+import type { NavigationGuard } from 'vue-router';
 import { useSessionStore } from '@/stores';
 
-export const sessionMiddleware: NavigationGuardWithThis<undefined> = async (to, from, next) => {
+export const sessionMiddleware: NavigationGuard = async (to, from, next) => {
   const sessionStore = useSessionStore();
 
   if (to.name === 'welcome') {
