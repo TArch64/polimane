@@ -8,7 +8,7 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
-	"polimane/backend/repositoryschemas"
+	repositoryschemas "polimane/backend/repository/schemas"
 )
 
 func apiById(ctx *fiber.Ctx) error {

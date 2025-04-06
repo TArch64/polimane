@@ -9,7 +9,7 @@ import (
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
-	"polimane/backend/repositoryschemas"
+	repositoryschemas "polimane/backend/repository/schemas"
 	awsdynamodb "polimane/backend/services/dynamodb"
 )
 

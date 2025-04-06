@@ -5,7 +5,7 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/model"
-	"polimane/backend/repositoryschemas"
+	repositoryschemas "polimane/backend/repository/schemas"
 )
 
 func apiList(ctx *fiber.Ctx) error {
