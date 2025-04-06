@@ -7,7 +7,7 @@ import (
 	"github.com/guregu/dynamo/v2"
 
 	"polimane/backend/api/base"
-	"polimane/backend/repositoryusers"
+	repositoryusers "polimane/backend/repository/users"
 )
 
 var unauthorizedErr = base.NewReasonedError(fiber.StatusUnauthorized, "Unauthorized")
