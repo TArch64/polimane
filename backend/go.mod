@@ -4,9 +4,11 @@ go 1.24.1
 
 require (
 	github.com/Netflix/go-env v0.1.2
+	github.com/aws/aws-lambda-go v1.47.0
 	github.com/aws/aws-sdk-go-v2 v1.36.3
 	github.com/aws/aws-sdk-go-v2/config v1.29.13
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.42.1
+	github.com/awslabs/aws-lambda-go-api-proxy v0.16.2
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/golang-jwt/jwt/v5 v5.2.2
