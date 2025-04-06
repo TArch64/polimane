@@ -5,7 +5,7 @@
     </h1>
 
     <div class="home-top-bar__actions">
-      <Button size="md" variant="primary">
+      <Button size="md" variant="primary" v-if="schemasStore.hasSchemas">
         Створити Схему
       </Button>
     </div>
@@ -14,6 +14,9 @@
 
 <script setup lang="ts">
 import { Button } from '@/components/button';
+import { useSchemasStore } from '../stores';
+
+const schemasStore = useSchemasStore();
 </script>
 
 <style scoped>

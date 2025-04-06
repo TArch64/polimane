@@ -1,10 +1,11 @@
 <template>
   <HomeTopBar />
+  <HomeSchemasEmpty />
 </template>
 
 <script setup lang="ts">
 import { definePreload } from '@/router/define';
-import { HomeTopBar } from './components';
+import { HomeSchemasEmpty, HomeTopBar } from './components';
 import { useSchemasStore } from './stores';
 
 defineOptions({

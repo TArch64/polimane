@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { computed } from 'vue';
 import { useAsyncData, useHttpClient } from '@/composables';
 import type { ISchema } from '@/models';
 
@@ -10,5 +11,7 @@ export const useSchemasStore = defineStore('schemas', () => {
     default: [],
   });
 
-  return { schemas };
+  const hasSchemas = computed(() => !!schemas.data.length);
+
+  return { schemas, hasSchemas };
 });
