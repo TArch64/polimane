@@ -81,7 +81,7 @@ onBackdropClick(dialogRef, close);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 8px 4px 16px;
+    padding: 8px 8px 4px 16px;
   }
 
   .modal__title {
@@ -90,11 +90,11 @@ onBackdropClick(dialogRef, close);
   }
 
   .modal__body {
-    padding: 8px 16px 12px;
+    padding: 8px 16px;
   }
 
   .modal__footer {
-    padding: 4px 16px 8px;
+    padding: 8px 16px 12px;
     display: flex;
     justify-content: flex-end;
   }
