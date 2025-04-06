@@ -3,8 +3,8 @@ package repositoryusers
 import (
 	"context"
 
-	"polimane/backend/awsdynamodb"
 	"polimane/backend/model"
+	awsdynamodb "polimane/backend/services/dynamodb"
 )
 
 func ByName(ctx context.Context, username string) (*model.User, error) {

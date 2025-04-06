@@ -3,8 +3,8 @@ package repositoryschemas
 import (
 	"context"
 
-	"polimane/backend/awsdynamodb"
 	"polimane/backend/model"
+	awsdynamodb "polimane/backend/services/dynamodb"
 )
 
 type CreateOptions struct {

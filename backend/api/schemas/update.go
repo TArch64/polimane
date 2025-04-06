@@ -8,9 +8,9 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
-	"polimane/backend/awsdynamodb"
 	"polimane/backend/model"
 	"polimane/backend/repositoryschemas"
+	awsdynamodb "polimane/backend/services/dynamodb"
 )
 
 type updateBody struct {

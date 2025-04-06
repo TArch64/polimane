@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/guregu/dynamo/v2"
 
-	"polimane/backend/awsdynamodb"
 	"polimane/backend/model"
+	awsdynamodb "polimane/backend/services/dynamodb"
 )
 
 func Update(ctx context.Context, user *model.User, id string, patch awsdynamodb.UpdateMap) error {

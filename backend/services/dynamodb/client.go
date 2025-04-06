@@ -5,7 +5,7 @@ import (
 
 	"github.com/guregu/dynamo/v2"
 
-	"polimane/backend/awsdynamodb/migrations"
+	"polimane/backend/services/dynamodb/migrations"
 )
 
 var table *dynamo.Table

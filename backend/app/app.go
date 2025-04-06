@@ -6,8 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"polimane/backend/api"
-	"polimane/backend/awsdynamodb"
 	"polimane/backend/env"
+	awsdynamodb "polimane/backend/services/dynamodb"
 )
 
 type Config struct {

@@ -5,8 +5,8 @@ import (
 
 	"github.com/guregu/dynamo/v2"
 
-	"polimane/backend/awsdynamodb"
 	"polimane/backend/model"
+	awsdynamodb "polimane/backend/services/dynamodb"
 )
 
 func ByPK(ctx context.Context, pk model.ID) (*model.User, error) {
