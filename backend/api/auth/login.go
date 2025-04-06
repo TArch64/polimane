@@ -7,8 +7,8 @@ import (
 	"github.com/guregu/dynamo/v2"
 
 	"polimane/backend/api/base"
-	"polimane/backend/argon"
 	"polimane/backend/repositoryusers"
+	"polimane/backend/services/argon"
 )
 
 var invalidCredentialsErr = base.NewReasonedError(fiber.StatusForbidden, "InvalidCredentials")

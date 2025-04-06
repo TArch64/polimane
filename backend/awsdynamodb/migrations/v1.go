@@ -1,9 +1,9 @@
 package migrations
 
 import (
-	"polimane/backend/argon"
 	"polimane/backend/env"
 	"polimane/backend/model"
+	"polimane/backend/services/argon"
 )
 
 func v1(ctx *migrationCtx) error {
