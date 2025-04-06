@@ -3,6 +3,7 @@
     <input
       :type
       :placeholder
+      :required
       class="text-field__input"
       v-model="model"
     >
@@ -14,6 +15,7 @@ import { computed } from 'vue';
 
 const props = withDefaults(defineProps<{
   placeholder: string;
+  required?: boolean;
   type?: 'text' | 'password';
   variant?: 'main' | 'control';
 }>(), {

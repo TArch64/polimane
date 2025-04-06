@@ -10,6 +10,7 @@
     </template>
 
     <TextField
+      required
       placeholder="Назва"
       variant="control"
       v-model="schema.name"

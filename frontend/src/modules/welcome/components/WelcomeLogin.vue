@@ -2,11 +2,13 @@
   <Card class="welcome-login">
     <Form class="welcome-login__form" @submit="login.call">
       <TextField
+        required
         placeholder="Користувач"
         v-model="form.username"
       />
 
       <TextField
+        required
         type="password"
         placeholder="Пароль"
         v-model="form.password"
