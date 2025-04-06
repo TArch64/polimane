@@ -5,12 +5,6 @@
     </h1>
 
     <div class="home-top-bar__actions">
-      <HomeSettingsModal v-slot="{ open }">
-        <Button icon size="md" variant="secondary" @click="open">
-          <SettingsIcon />
-        </Button>
-      </HomeSettingsModal>
-
       <Button size="md" variant="primary">
         Додати Схему
       </Button>
@@ -20,8 +14,6 @@
 
 <script setup lang="ts">
 import { Button } from '@/components/button';
-import { SettingsIcon } from '@/components/icon';
-import HomeSettingsModal from './HomeSettingsModal.vue';
 </script>
 
 <style scoped>
