@@ -1,7 +1,10 @@
 package schemas
 
 import (
+	"errors"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/guregu/dynamo/v2"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
@@ -18,6 +21,9 @@ func apiDelete(ctx *fiber.Ctx) error {
 
 	err = repositoryschemas.Delete(ctx.Context(), user, schemaId)
 	if err != nil {
+		if errors.Is(err, dynamo.ErrNotFound) {
+			return base.NotFoundErr
+		}
 		return err
 	}
 

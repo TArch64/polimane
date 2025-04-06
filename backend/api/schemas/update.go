@@ -1,7 +1,10 @@
 package schemas
 
 import (
+	"errors"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/guregu/dynamo/v2"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
@@ -50,6 +53,9 @@ func apiUpdate(ctx *fiber.Ctx) error {
 
 	err = repositoryschemas.Update(ctx.Context(), user, schemaId, updates)
 	if err != nil {
+		if errors.Is(err, dynamo.ErrNotFound) {
+			return base.NotFoundErr
+		}
 		return err
 	}
 

@@ -35,7 +35,7 @@ Content-Type: application/json
 ###
 
 # @name schemas-delete
-DELETE http://polimane.localhost/api/schemas/01jr3a3ctpw759dg1beqdfhag0
+DELETE http://polimane.localhost/api/schemas/01jr3avfvywafqwj9g534w2jtp
 Content-Type: application/json
 
 ###
