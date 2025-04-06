@@ -1,11 +1,12 @@
 <template>
   <HomeTopBar />
-  <HomeSchemasEmpty />
+  <HomeSchemasList v-if="schemasStore.hasSchemas" />
+  <HomeSchemasEmpty v-else />
 </template>
 
 <script setup lang="ts">
 import { definePreload } from '@/router/define';
-import { HomeSchemasEmpty, HomeTopBar } from './components';
+import { HomeSchemasEmpty, HomeSchemasList, HomeTopBar } from './components';
 import { useSchemasStore } from './stores';
 
 defineOptions({
@@ -14,4 +15,6 @@ defineOptions({
     await store.schemas.load();
   }),
 });
+
+const schemasStore = useSchemasStore();
 </script>

@@ -55,17 +55,6 @@ const classes = computed(() => [
     align-items: center;
     justify-content: center;
     cursor: pointer;
-
-    &:where(a) {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    &:where(button) {
-      border: none;
-      background: none;
-      padding: 0;
-    }
   }
 
   .button--md {

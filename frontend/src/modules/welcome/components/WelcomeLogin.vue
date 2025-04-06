@@ -1,5 +1,5 @@
 <template>
-  <Card class="welcome-login">
+  <Card variant="control" class="welcome-login">
     <Form class="welcome-login__form" @submit="login.call">
       <TextField
         required
@@ -54,13 +54,15 @@ const login = useAsyncAction(async () => {
 @layer page {
   .welcome-login {
     width: 100%;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
   .welcome-login__form {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
   }
 
   .welcome-login__submit {
