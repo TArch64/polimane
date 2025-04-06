@@ -3,37 +3,25 @@
 package main
 
 import (
-	"context"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 
-	"polimane/backend/api"
-	"polimane/backend/awsdynamodb"
-	"polimane/backend/env"
+	"polimane/backend/app"
 )
 
 func main() {
-	var err error
-
-	err = env.Init()
-	if err != nil {
-		log.Panic(err)
-	}
-
-	err = awsdynamodb.Init(context.Background())
-	if err != nil {
-		log.Panic(err)
-	}
-
-	app := api.New(func(config *fiber.Config) {
-		config.EnablePrintRoutes = true
+	api, err := app.New(&app.Config{
+		ApiConfig: func(config *fiber.Config) {
+			config.EnablePrintRoutes = true
+		},
 	})
 
-	app.Use(cors.New())
+	if err != nil {
+		log.Panic(err)
+	}
 
-	err = app.Listen(":3000")
+	err = api.Listen(":3000")
 	if err != nil {
 		log.Panic(err)
 	}
@@ -41,7 +29,7 @@ func main() {
 	defer func() {
 		log.Println("Shutting down application")
 
-		if err = app.Shutdown(); err != nil {
+		if err = api.Shutdown(); err != nil {
 			log.Println(err)
 		}
 	}()

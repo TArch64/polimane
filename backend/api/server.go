@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 	recover2 "github.com/gofiber/fiber/v2/middleware/recover"
@@ -13,11 +14,11 @@ import (
 	"polimane/backend/env"
 )
 
-type ConfigureApp func(config *fiber.Config)
+type Config func(config *fiber.Config)
 
-func New(configFns ...ConfigureApp) *fiber.App {
+func New(configFns ...Config) *fiber.App {
 	config := fiber.Config{
-		AppName:      "Polymane",
+		AppName:      "Polimane",
 		ErrorHandler: base.ErrorHandler,
 	}
 
@@ -32,6 +33,10 @@ func New(configFns ...ConfigureApp) *fiber.App {
 	}))
 
 	app.Use(helmet.New())
+
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: env.Env().FrontendOrigin,
+	}))
 
 	app.Use(encryptcookie.New(encryptcookie.Config{
 		Key: env.Env().SecretKey,
