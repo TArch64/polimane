@@ -50,4 +50,9 @@ function toggle(toOpen: boolean): void {
 
 const open = () => toggle(true);
 const close = () => toggle(false);
+
+defineExpose({
+  close,
+  open,
+});
 </script>

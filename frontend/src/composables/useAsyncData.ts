@@ -24,11 +24,12 @@ export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
   }, options.default, {
     immediate: options.immediate ?? false,
     throwError: true,
+    shallow: false,
   });
 
   async function load() {
     await execute();
   }
 
-  return reactive({ data, isInitial, isLoading, load });
+  return reactive({ data, isInitial, isLoading, load }) as IAsyncData<D>;
 }
