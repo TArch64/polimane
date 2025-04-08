@@ -10,12 +10,12 @@ import { Card } from '@/components/card';
 import type { ISchema } from '@/models';
 import { makeBinding } from '@/components/binding';
 
-defineProps<{
+const props = defineProps<{
   schema: ISchema;
 }>();
 
 const cardBinding = makeBinding(RouterLink, () => ({
-  to: { name: 'home' },
+  to: { name: 'schema-editor', params: { schemaId: props.schema.id } },
   viewTransition: true,
 }));
 </script>

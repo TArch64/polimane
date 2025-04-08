@@ -18,3 +18,9 @@ defineOptions({
 
 const schemasStore = useSchemasStore();
 </script>
+
+<style>
+.app--home {
+    background-color: var(--color-background-2);
+}
+</style>

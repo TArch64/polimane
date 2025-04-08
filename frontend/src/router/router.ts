@@ -1,18 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { sessionMiddleware } from '@/router/middleware';
 import { homeRoute } from '@/modules/home';
 import { welcomeRoute } from '@/modules/welcome';
-import { sessionMiddleware } from '@/router/middleware';
+import { schemasRoute } from '@/modules/schemas';
 
-export const routes = [
+const routes = [
   welcomeRoute,
   homeRoute,
-] as const;
+  schemasRoute,
+];
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
 
   routes: [
-    ...routes,
+    ...Object.values(routes),
     {
       path: '/:pathMatch(.*)*',
       redirect: { name: 'home' },

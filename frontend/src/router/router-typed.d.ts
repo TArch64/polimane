@@ -1,16 +1,8 @@
-import type { RouteRecordInfo } from 'vue-router';
-import { routes } from './router';
+import type { HomeRouteInfo } from '@/modules/home';
+import type { WelcomeRouteInfo } from '@/modules/welcome';
+import type { SchemasRouteInfo } from '@/modules/schemas';
 
-type AppRoutes = (typeof routes)[number];
-
-type RouteNamedMap = {
-  [R in AppRoutes as R['name']]: RouteRecordInfo<
-    R['name'],
-    R['path'],
-    Record<never, never>,
-    Record<never, never>
-  >;
-};
+type RouteNamedMap = WelcomeRouteInfo & HomeRouteInfo & SchemasRouteInfo;
 
 declare module 'vue-router' {
   interface TypesConfig {

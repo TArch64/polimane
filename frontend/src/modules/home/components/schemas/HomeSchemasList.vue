@@ -27,7 +27,6 @@ const schemasStore = useSchemasStore();
     max-width: 1024px;
     padding: 12px;
     margin: 0 auto;
-    background-color: var(--color-background-2);
   }
 }
 </style>
