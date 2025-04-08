@@ -1,5 +1,6 @@
 import type { Component } from 'vue';
-import type { RouteRecordInfo } from 'vue-router';
+import type { RouteParamValueRaw, RouteRecordInfo } from 'vue-router';
+import type { ComponentProps } from '@/types';
 
 export interface IAppRoute {
   path: string;
@@ -7,7 +8,7 @@ export interface IAppRoute {
 
 export interface IAppViewRoute extends IAppRoute {
   name: string;
-  component: () => Promise<Component>;
+  component: () => Promise<{ default: Component }>;
 }
 
 export interface IAppWrapperRoute extends IAppRoute {
@@ -22,11 +23,22 @@ export function defineRoute<const R extends AppRoute>(route: R): R {
   return { ...route, props: true };
 }
 
-export type InferViewRouteInfo<R extends IAppViewRoute> = Record<R['name'], RouteRecordInfo<
+type InferRouteProps<P> = {
+  [K in keyof P]: P[K] extends RouteParamValueRaw ? P[K] : never;
+};
+
+type InferRouteNormalizedProps<P> = {
+  [K in keyof P]: P[K] extends RouteParamValueRaw ? string : never;
+};
+
+export type InferViewRouteInfo<
+  R extends IAppViewRoute,
+  P = ComponentProps<Awaited<ReturnType<R['component']>>['default']>,
+> = Record<R['name'], RouteRecordInfo<
   R['name'],
   R['path'],
-  Record<never, never>,
-  Record<never, never>
+  InferRouteProps<P>,
+  InferRouteNormalizedProps<P>
 >>;
 
 export type InferWrapperRouteInfo<R extends IAppWrapperRoute, M extends Record<string, RouteRecordInfo>> = {

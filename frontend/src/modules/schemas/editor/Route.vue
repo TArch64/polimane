@@ -6,7 +6,7 @@
 import { useRoute } from 'vue-router';
 
 const props = defineProps<{
-  schemaId: number;
+  schemaId: string;
 }>();
 
 console.log(props);

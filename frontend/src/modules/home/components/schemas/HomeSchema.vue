@@ -15,7 +15,12 @@ const props = defineProps<{
 }>();
 
 const cardBinding = makeBinding(RouterLink, () => ({
-  to: { name: 'schema-editor', params: { schemaId: props.schema.id } },
+  to: {
+    name: 'schema-editor',
+    params: {
+      schemaId: props.schema.id,
+    },
+  },
   viewTransition: true,
 }));
 </script>
