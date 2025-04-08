@@ -20,7 +20,9 @@ const schemasStore = useSchemasStore();
 </script>
 
 <style>
-.app--home {
+@layer page {
+  .app--home {
     background-color: var(--color-background-2);
+  }
 }
 </style>
