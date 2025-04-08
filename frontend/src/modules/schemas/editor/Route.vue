@@ -1,16 +1,21 @@
 <template>
-  editor
+  editor {{ store.schema }}
 </template>
 
 <script lang="ts" setup>
-import { useRoute } from 'vue-router';
+import { definePreload } from '@/router/define';
+import { useEditorStore } from '../stores';
 
-const props = defineProps<{
+defineProps<{
   schemaId: string;
 }>();
 
-console.log(props);
+defineOptions({
+  beforeRouteEnter: definePreload<'schema-editor'>(async (route) => {
+    const store = useEditorStore();
+    await store.loadSchema(route.params.schemaId);
+  }),
+});
 
-const route = useRoute<'schema-editor'>();
-console.log(route.params);
+const store = useEditorStore();
 </script>
