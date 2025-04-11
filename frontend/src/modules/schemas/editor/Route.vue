@@ -1,11 +1,12 @@
 <template>
   <EditorTopBar />
+  <EditorCanvas class="editor__canvas" />
 </template>
 
 <script lang="ts" setup>
 import { definePreload } from '@/router/define';
 import { useEditorStore } from '../stores';
-import { EditorTopBar } from './components';
+import { EditorCanvas, EditorTopBar } from './components';
 
 defineProps<{
   schemaId: string;
@@ -19,11 +20,15 @@ defineOptions({
 });
 </script>
 
-<style>
+<style scoped>
 @layer page {
-  .app--schema-editor {
+  :global(.app--schema-editor) {
     background-color: var(--color-background-2);
     overflow: hidden;
+  }
+
+  .editor__canvas {
+    flex-grow: 1;
   }
 }
 </style>
