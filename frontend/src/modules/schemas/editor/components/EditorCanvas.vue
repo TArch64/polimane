@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { markRaw, onMounted, type Ref, ref } from 'vue';
 import { Canvas, Rect } from 'fabric';
-import { useCanvasZoom } from '../composables';
+import { useCanvasNavigation, useCanvasZoom } from '../composables';
 
 const canvasRef = ref<HTMLCanvasElement>(null!);
 const wrapperRef = ref<HTMLElement>(null!);
@@ -35,4 +35,5 @@ onMounted(() => {
 });
 
 useCanvasZoom(canvas);
+useCanvasNavigation(canvas);
 </script>
