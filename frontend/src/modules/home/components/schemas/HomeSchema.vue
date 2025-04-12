@@ -5,8 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
 import { Card } from '@/components/card';
+import { RouterLink } from '@/components/button';
 import type { ISchema } from '@/models';
 import { makeBinding } from '@/components/binding';
 
@@ -17,11 +17,8 @@ const props = defineProps<{
 const cardBinding = makeBinding(RouterLink, () => ({
   to: {
     name: 'schema-editor',
-    params: {
-      schemaId: props.schema.id,
-    },
+    params: { schemaId: props.schema.id },
   },
-  viewTransition: true,
 }));
 </script>
 

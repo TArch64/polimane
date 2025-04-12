@@ -6,8 +6,9 @@
 
 <script setup lang="ts">
 import { computed, type Slot } from 'vue';
-import { type RouteLocationRaw, RouterLink } from 'vue-router';
+import type { RouteLocationRaw } from 'vue-router';
 import { makeBinding } from '../binding';
+import RouterLink from './RouterLink.vue';
 
 const props = defineProps<{
   to?: RouteLocationRaw;
