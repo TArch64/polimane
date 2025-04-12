@@ -1,5 +1,5 @@
 <template>
-  <div ref="wrapperRef">
+  <div ref="wrapperRef" @contextmenu.prevent>
     <canvas ref="canvasRef" />
   </div>
 </template>
@@ -7,12 +7,13 @@
 <script setup lang="ts">
 import { markRaw, onMounted, type Ref, ref } from 'vue';
 import { Canvas, Rect } from 'fabric';
-import { useCanvasNavigation, useCanvasZoom } from '../composables';
+import { provideCanvas, useCanvasNavigation, useCanvasZoom } from '../composables';
 
 const canvasRef = ref<HTMLCanvasElement>(null!);
 const wrapperRef = ref<HTMLElement>(null!);
 
 const canvas: Ref<Canvas> = ref(null!);
+provideCanvas(canvas);
 
 onMounted(() => {
   canvas.value = markRaw(new Canvas(canvasRef.value, {
@@ -34,6 +35,6 @@ onMounted(() => {
   canvas.value.centerObject(rect);
 });
 
-useCanvasZoom(canvas);
-useCanvasNavigation(canvas);
+useCanvasZoom();
+useCanvasNavigation();
 </script>
