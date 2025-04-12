@@ -5,21 +5,21 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { markRaw, onMounted, type Ref, ref } from 'vue';
 import { Canvas, Rect } from 'fabric';
+import { useCanvasZoom } from '../composables';
 
 const canvasRef = ref<HTMLCanvasElement>(null!);
 const wrapperRef = ref<HTMLElement>(null!);
 
-let canvas: Canvas;
+const canvas: Ref<Canvas> = ref(null!);
 
 onMounted(() => {
-  canvas = new Canvas(canvasRef.value, {
+  canvas.value = markRaw(new Canvas(canvasRef.value, {
     selection: false,
     width: wrapperRef.value.offsetWidth,
     height: wrapperRef.value.offsetHeight,
-    centeredScaling: true,
-  });
+  }));
 
   const rect = new Rect({
     selectable: false,
@@ -30,7 +30,9 @@ onMounted(() => {
     hoverCursor: 'default',
   });
 
-  canvas.add(rect);
-  canvas.centerObject(rect);
+  canvas.value.add(rect);
+  canvas.value.centerObject(rect);
 });
+
+useCanvasZoom(canvas);
 </script>
