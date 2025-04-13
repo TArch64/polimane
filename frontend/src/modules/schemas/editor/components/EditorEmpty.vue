@@ -4,15 +4,18 @@
       Додати першу схему
     </p>
 
-    <Button variant="primary" size="md">
-      Додати
-    </Button>
+    <EditorAddSchemaModal v-slot="{ open }">
+      <Button variant="primary" size="md" @click="open">
+        Додати
+      </Button>
+    </EditorAddSchemaModal>
   </main>
 </template>
 
 <script setup lang="ts">
 
 import { Button } from '@/components/button';
+import EditorAddSchemaModal from './EditorAddSchemaModal.vue';
 </script>
 
 <style scoped>
