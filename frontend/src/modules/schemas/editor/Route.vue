@@ -1,15 +1,18 @@
 <template>
   <EditorTopBar />
-  <div class="editor__row">
+
+  <div class="editor__fill editor__row" v-if="patternsStore.hasPatterns">
     <EditorSidebar class="editor__sidebar" />
-    <EditorCanvas class="editor__canvas" />
+    <EditorCanvas class="editor__fill" />
   </div>
+
+  <EditorEmpty class="editor__fill" v-else />
 </template>
 
 <script lang="ts" setup>
 import { definePreload } from '@/router/define';
-import { useEditorStore } from '../stores';
-import { EditorCanvas, EditorSidebar, EditorTopBar } from './components';
+import { useEditorStore, usePatternsStore } from '../stores';
+import { EditorCanvas, EditorEmpty, EditorSidebar, EditorTopBar } from './components';
 
 defineProps<{
   schemaId: string;
@@ -21,6 +24,8 @@ defineOptions({
     await store.loadSchema(route.params.schemaId);
   }),
 });
+
+const patternsStore = usePatternsStore();
 </script>
 
 <style scoped>
@@ -31,8 +36,6 @@ defineOptions({
   }
 
   .editor__row {
-    flex-grow: 1;
-    flex-basis: 0;
     display: flex;
   }
 
@@ -41,7 +44,7 @@ defineOptions({
     flex-shrink: 0;
   }
 
-  .editor__canvas {
+  .editor__fill {
     flex-grow: 1;
     flex-basis: 0;
   }
