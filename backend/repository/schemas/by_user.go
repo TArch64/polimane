@@ -9,13 +9,18 @@ import (
 	awsdynamodb "polimane/backend/services/dynamodb"
 )
 
-func ByUser(ctx context.Context, user *model.User) ([]*model.Schema, error) {
+func ByUser(ctx context.Context, user *model.User, attributes []string) ([]*model.Schema, error) {
 	var schemas []*model.Schema
 
-	err := awsdynamodb.Table().
+	query := awsdynamodb.Table().
 		Get("PK", user.ID).
-		Range("SK", dynamo.BeginsWith, model.SKSchema+"#").
-		All(ctx, &schemas)
+		Range("SK", dynamo.BeginsWith, model.SKSchema+"#")
 
+	if attributes != nil && len(attributes) > 0 {
+		attributes = append([]string{"PK", "SK"}, attributes...)
+		query = query.Project(attributes...)
+	}
+
+	err := query.All(ctx, &schemas)
 	return schemas, err
 }

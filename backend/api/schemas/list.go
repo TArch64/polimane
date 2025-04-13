@@ -11,7 +11,7 @@ import (
 func apiList(ctx *fiber.Ctx) error {
 	user := auth.GetSessionUser(ctx)
 
-	schemas, err := repositoryschemas.ByUser(ctx.Context(), user)
+	schemas, err := repositoryschemas.ByUser(ctx.Context(), user, []string{"Name"})
 	if err != nil {
 		return err
 	}

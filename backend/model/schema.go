@@ -17,7 +17,7 @@ func (u *Schema) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		ID      string        `json:"id"`
 		Name    string        `json:"name"`
-		Content SchemaContent `json:"content"`
+		Content SchemaContent `json:"content,omitempty"`
 	}{
 		ID:      u.SK.Value(),
 		Name:    u.Name,
