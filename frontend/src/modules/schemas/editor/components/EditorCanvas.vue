@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { markRaw, onMounted, onUnmounted, type Ref, ref } from 'vue';
-import { Canvas, Rect } from 'fabric';
+import { Canvas } from 'fabric';
 import { provideCanvas, useCanvasNavigation, useCanvasZoom } from '../composables';
 
 const canvasRef = ref<HTMLCanvasElement>(null!);
@@ -22,17 +22,17 @@ onMounted(() => {
     height: wrapperRef.value.offsetHeight,
   }));
 
-  const rect = new Rect({
-    selectable: false,
-    hasControls: false,
-    hasBorders: false,
-    width: 10,
-    height: 10,
-    hoverCursor: 'default',
-  });
-
-  canvas.value.add(rect);
-  canvas.value.centerObject(rect);
+  // const rect = new Rect({
+  //   selectable: false,
+  //   hasControls: false,
+  //   hasBorders: false,
+  //   width: 10,
+  //   height: 10,
+  //   hoverCursor: 'default',
+  // });
+  //
+  // canvas.value.add(rect);
+  // canvas.value.centerObject(rect);
 });
 
 onUnmounted(() => {
