@@ -1,28 +1,38 @@
-import { Point } from 'fabric';
+import { Point, type TPointerEventInfo } from 'fabric';
 import { onCanvasReady } from './onCanvasReady';
+import { useCanvasCursor } from './useCanvasCursor';
 
-const MIN_ZOOM = 0.1;
+const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 10;
 
-export const useCanvasZoom = () => onCanvasReady((canvas) => {
-  function getZoom(delta: number): number {
-    let zoom = canvas.getZoom();
+export function useCanvasZoom() {
+  const cursor = useCanvasCursor();
+  let timeoutId: TimeoutId | null = null;
 
-    zoom *= 0.999 ** delta;
+  onCanvasReady((canvas) => {
+    canvas.on('mouse:wheel', (options: TPointerEventInfo<WheelEvent>) => {
+      options.e.preventDefault();
 
-    if (zoom > MAX_ZOOM) return MAX_ZOOM;
-    if (zoom < MIN_ZOOM) return MIN_ZOOM;
+      const scaleFactor = 1 - options.e.deltaY / 100;
+      const pointer = canvas.getViewportPoint(options.e);
+      const point = new Point(pointer.x, pointer.y);
 
-    return zoom;
-  }
+      const zoom = canvas.getZoom();
+      const limitedZoom = Math.min(Math.max(zoom * scaleFactor, MIN_ZOOM), MAX_ZOOM);
 
-  canvas.on('mouse:wheel', (options) => {
-    const { deltaY, offsetX, offsetY } = options.e;
-    const zoom = getZoom(deltaY);
-    const point = new Point(offsetX, offsetY);
+      canvas.zoomToPoint(point, limitedZoom);
 
-    canvas.zoomToPoint(point, zoom);
-    options.e.preventDefault();
-    options.e.stopPropagation();
+      const affectedObject = canvas.findTarget(options.e);
+      cursor.change(zoom > limitedZoom ? 'zoom-out' : 'zoom-in', affectedObject);
+
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
+      timeoutId = setTimeout(() => {
+        cursor.change('default');
+        timeoutId = null;
+      }, 100);
+    });
   });
-});
+}

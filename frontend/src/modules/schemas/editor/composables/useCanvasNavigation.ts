@@ -1,5 +1,5 @@
 import { Point, type TPointerEventInfo } from 'fabric';
-import type { BrowserCursor } from '@/types';
+import { useCanvasCursor } from './useCanvasCursor';
 import { onCanvasReady } from './onCanvasReady';
 
 function pointFromEvent(options: TPointerEventInfo): Point {
@@ -7,46 +7,39 @@ function pointFromEvent(options: TPointerEventInfo): Point {
   return new Point(event.clientX, event.clientY);
 }
 
-export const useCanvasNavigation = () => onCanvasReady((canvas) => {
-  let lastPosition = new Point();
+export function useCanvasNavigation() {
+  const cursor = useCanvasCursor();
 
-  function onMouseMove(options: TPointerEventInfo): void {
-    const newPosition = pointFromEvent(options);
+  onCanvasReady((canvas) => {
+    let lastPosition = new Point();
 
-    canvas.viewportTransform[4] += newPosition.x - lastPosition.x;
-    canvas.viewportTransform[5] += newPosition.y - lastPosition.y;
+    function onMouseMove(options: TPointerEventInfo): void {
+      const newPosition = pointFromEvent(options);
 
-    lastPosition = newPosition;
-    canvas.requestRenderAll();
-  }
+      canvas.viewportTransform[4] += newPosition.x - lastPosition.x;
+      canvas.viewportTransform[5] += newPosition.y - lastPosition.y;
 
-  function setCursor(options: TPointerEventInfo, cursor: BrowserCursor) {
-    canvas.defaultCursor = cursor;
-    canvas.setCursor(cursor);
-
-    const affectedObject = canvas.findTarget(options.e);
-
-    if (affectedObject) {
-      affectedObject.hoverCursor = cursor;
+      lastPosition = newPosition;
+      canvas.requestRenderAll();
     }
 
-    canvas.requestRenderAll();
-  }
+    canvas.on('mouse:down', (downOptions) => {
+      if (!(downOptions.e as MouseEvent).altKey) {
+        return;
+      }
 
-  canvas.on('mouse:down', (downOptions) => {
-    if (!(downOptions.e as MouseEvent).altKey) {
-      return;
-    }
+      const affectedObject = canvas.findTarget(downOptions.e);
+      cursor.change('move', affectedObject);
 
-    setCursor(downOptions, 'move');
-    lastPosition = pointFromEvent(downOptions);
+      lastPosition = pointFromEvent(downOptions);
 
-    const unsubscribe = canvas.on('mouse:move', onMouseMove);
+      const unsubscribe = canvas.on('mouse:move', onMouseMove);
 
-    canvas.once('mouse:up', () => {
-      unsubscribe();
-      lastPosition = new Point();
-      setCursor(downOptions, 'default');
+      canvas.once('mouse:up', () => {
+        unsubscribe();
+        lastPosition = new Point();
+        cursor.change('default', affectedObject);
+      });
     });
   });
-});
+}

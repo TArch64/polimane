@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { markRaw, onMounted, type Ref, ref } from 'vue';
+import { markRaw, onMounted, onUnmounted, type Ref, ref } from 'vue';
 import { Canvas, Rect } from 'fabric';
 import { provideCanvas, useCanvasNavigation, useCanvasZoom } from '../composables';
 
@@ -34,6 +34,8 @@ onMounted(() => {
   canvas.value.add(rect);
   canvas.value.centerObject(rect);
 });
+
+onUnmounted(() => canvas.value.destroy());
 
 useCanvasZoom();
 useCanvasNavigation();
