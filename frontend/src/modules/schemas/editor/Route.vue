@@ -1,12 +1,15 @@
 <template>
   <EditorTopBar />
-  <EditorCanvas class="editor__canvas" />
+  <div class="editor__row">
+    <EditorSidebar class="editor__sidebar" />
+    <EditorCanvas class="editor__canvas" />
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { definePreload } from '@/router/define';
 import { useEditorStore } from '../stores';
-import { EditorCanvas, EditorTopBar } from './components';
+import { EditorCanvas, EditorSidebar, EditorTopBar } from './components';
 
 defineProps<{
   schemaId: string;
@@ -27,8 +30,20 @@ defineOptions({
     overflow: hidden;
   }
 
+  .editor__row {
+    flex-grow: 1;
+    flex-basis: 0;
+    display: flex;
+  }
+
+  .editor__sidebar {
+    width: 270px;
+    flex-shrink: 0;
+  }
+
   .editor__canvas {
     flex-grow: 1;
+    flex-basis: 0;
   }
 }
 </style>
