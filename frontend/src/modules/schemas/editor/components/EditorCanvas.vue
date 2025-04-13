@@ -35,7 +35,13 @@ onMounted(() => {
   canvas.value.centerObject(rect);
 });
 
-onUnmounted(() => canvas.value.destroy());
+onUnmounted(() => {
+  for (const object of canvas.value.getObjects()) {
+    object.off();
+  }
+
+  canvas.value.destroy();
+});
 
 useCanvasZoom();
 useCanvasNavigation();
