@@ -11,7 +11,7 @@
 
 <script lang="ts" setup>
 import { definePreload } from '@/router/define';
-import { useEditorStore, usePatternsStore } from '../stores';
+import { useEditorStore, usePatternsStore } from './stores';
 import { EditorCanvas, EditorEmpty, EditorSidebar, EditorTopBar } from './components';
 
 defineProps<{
@@ -23,6 +23,12 @@ defineOptions({
     const store = useEditorStore();
     await store.loadSchema(route.params.schemaId);
   }),
+
+  beforeRouteLeave: (_, __, next) => {
+    const store = useEditorStore();
+    store.destroy();
+    next();
+  },
 });
 
 const patternsStore = usePatternsStore();

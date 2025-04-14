@@ -2,13 +2,13 @@ import { type FunctionPlugin, inject, type InjectionKey } from 'vue';
 
 const Provider = Symbol('HttpClient') as InjectionKey<HttpClient>;
 
-type HttpBody = object;
-type HttpParams = Record<string, string | number>;
-type PathItem = string;
-type Path = PathItem[] | PathItem;
+export type HttpBody = object;
+export type HttpParams = Record<string, string | number>;
+export type PathItem = string;
+export type Path = PathItem[] | PathItem;
 
 interface IRequestConfig<P extends HttpParams, B extends HttpBody> {
-  method: 'get' | 'post' | 'patch' | 'delete';
+  method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
   path: Path;
   params?: P;
   body?: B;
@@ -30,7 +30,7 @@ export class HttpClient {
 
   get<R extends HttpBody, P extends HttpParams = HttpParams>(path: Path, params: P = {} as P): Promise<R> {
     return this.request({
-      method: 'get',
+      method: 'GET',
       path,
       params,
     });
@@ -38,7 +38,7 @@ export class HttpClient {
 
   delete<R extends HttpBody, P extends HttpParams = HttpParams>(path: Path, params: P = {} as P): Promise<R> {
     return this.request({
-      method: 'delete',
+      method: 'DELETE',
       path,
       params,
     });
@@ -46,7 +46,7 @@ export class HttpClient {
 
   post<R extends HttpBody, B extends HttpBody>(path: Path, body: B): Promise<R> {
     return this.request({
-      method: 'post',
+      method: 'POST',
       path,
       body,
     });
@@ -54,7 +54,7 @@ export class HttpClient {
 
   patch<R extends HttpBody, B extends HttpBody>(path: Path, body: B): Promise<R> {
     return this.request({
-      method: 'patch',
+      method: 'PATCH',
       path,
       body,
     });

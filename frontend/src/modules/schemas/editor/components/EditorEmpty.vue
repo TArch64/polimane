@@ -1,21 +1,21 @@
 <template>
   <main class="editor-empty">
     <p>
-      Додати першу схему
+      Додайте перший паттерн до вашої схеми
     </p>
 
-    <EditorAddSchemaModal v-slot="{ open }">
+    <EditorAddPatternModal v-slot="{ open }">
       <Button variant="primary" size="md" @click="open">
         Додати
       </Button>
-    </EditorAddSchemaModal>
+    </EditorAddPatternModal>
   </main>
 </template>
 
 <script setup lang="ts">
 
 import { Button } from '@/components/button';
-import EditorAddSchemaModal from './EditorAddSchemaModal.vue';
+import EditorAddPatternModal from './EditorAddPatternModal.vue';
 </script>
 
 <style scoped>

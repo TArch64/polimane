@@ -7,6 +7,8 @@ export interface ICreateSchemaInput {
   name: string;
 }
 
+type CreateSchemaRequest = Omit<ISchema, 'id'>;
+
 export const useSchemasStore = defineStore('schemas', () => {
   const httpClient = useHttpClient();
 
@@ -18,7 +20,14 @@ export const useSchemasStore = defineStore('schemas', () => {
   const hasSchemas = computed(() => !!schemas.data.length);
 
   async function createSchema(input: ICreateSchemaInput): Promise<void> {
-    const schema = await httpClient.post<ISchema, ICreateSchemaInput>('/schemas', input);
+    const schema = await httpClient.post<ISchema, CreateSchemaRequest>('/schemas', {
+      ...input,
+
+      content: {
+        patterns: [],
+      },
+    });
+
     schemas.data.push(schema);
   }
 
