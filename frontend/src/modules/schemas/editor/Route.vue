@@ -10,6 +10,7 @@
 </template>
 
 <script lang="ts" setup>
+import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
 import { useEditorStore, usePatternsStore } from './stores';
 import { EditorCanvas, EditorEmpty, EditorSidebar, EditorTopBar } from './components';
@@ -31,7 +32,17 @@ defineOptions({
   },
 });
 
+const editorStore = useEditorStore();
 const patternsStore = usePatternsStore();
+
+useEventListener(window, 'beforeunload', (event) => {
+  if (!editorStore.hasUnsavedChanges) {
+    return;
+  }
+
+  event.preventDefault();
+  editorStore.destroy();
+});
 </script>
 
 <style scoped>
