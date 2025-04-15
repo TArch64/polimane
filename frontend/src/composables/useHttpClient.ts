@@ -106,7 +106,7 @@ export interface IPluginHttpClientOptions {
   baseUrl: string;
 }
 
-export const pluginHttpClient: FunctionPlugin<IPluginHttpClientOptions> = (app, options) => {
+export const httpClientPlugin: FunctionPlugin<IPluginHttpClientOptions> = (app, options) => {
   app.provide(Provider, new HttpClient(options.baseUrl));
 };
 

@@ -4,18 +4,18 @@
       Додайте перший паттерн до вашої схеми
     </p>
 
-    <EditorAddPatternModal v-slot="{ open }">
-      <Button variant="primary" size="md" @click="open">
-        Додати
-      </Button>
-    </EditorAddPatternModal>
+    <Button variant="primary" size="md" @click="addPatternModal.open()">
+      Додати
+    </Button>
   </main>
 </template>
 
 <script setup lang="ts">
-
 import { Button } from '@/components/button';
+import { useModal } from '@/components/modal';
 import EditorAddPatternModal from './EditorAddPatternModal.vue';
+
+const addPatternModal = useModal(EditorAddPatternModal);
 </script>
 
 <style scoped>

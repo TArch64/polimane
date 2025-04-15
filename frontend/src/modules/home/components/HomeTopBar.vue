@@ -5,21 +5,26 @@
     </h1>
 
     <div class="home-top-bar__actions">
-      <HomeCreateSchemaModal v-slot="{ open }" v-if="schemasStore.hasSchemas">
-        <Button size="md" variant="primary" @click="open">
-          Створити Схему
-        </Button>
-      </HomeCreateSchemaModal>
+      <Button
+        size="md"
+        variant="primary"
+        @click="createSchemaModal.open()"
+        v-if="schemasStore.hasSchemas"
+      >
+        Створити Схему
+      </Button>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
 import { Button } from '@/components/button';
+import { useModal } from '@/components/modal';
 import { useSchemasStore } from '../stores';
 import { HomeCreateSchemaModal } from './schemas';
 
 const schemasStore = useSchemasStore();
+const createSchemaModal = useModal(HomeCreateSchemaModal);
 </script>
 
 <style scoped>

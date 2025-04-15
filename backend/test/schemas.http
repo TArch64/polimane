@@ -23,7 +23,7 @@ Content-Type: application/json
 ###
 
 # @name schemas-by-id
-GET http://polimane.localhost/api/schemas/01jr63jk682538fmgct37g14jr
+GET http://polimane.localhost/api/schemas/01jr5dpxfb1cxcs1vjnwrrg5rx
 Content-Type: application/json
 
 ###
@@ -41,7 +41,7 @@ Content-Type: application/json
 ###
 
 # @name schemas-update
-PATCH http://polimane.localhost/api/schemas/01jr63jk682538fmgct37g14jr
+PATCH http://polimane.localhost/api/schemas/01jr5dpxfb1cxcs1vjnwrrg5rx
 Content-Type: application/json
 
 {

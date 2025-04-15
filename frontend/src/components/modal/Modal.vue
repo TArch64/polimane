@@ -1,25 +1,37 @@
 <template>
-  <slot name="activator" :open />
+  <dialog ref="dialogRef" class="modal" @close="close">
+    <header class="modal__header">
+      <h1 class="modal__title">
+        {{ title }}
+      </h1>
 
-  <Teleport to="body" v-if="isOpened">
-    <ModalOpened
-      :title
-      :width
-      :saveButton
-      @closed="close"
-      @save="$emit('save')"
-      v-slot="ctx"
-    >
-      <slot v-bind="ctx" />
-    </ModalOpened>
-  </Teleport>
+      <Button icon variant="secondary" size="md" @click="close">
+        <CloseIcon size="24" />
+      </Button>
+    </header>
+
+    <Form @submit="$emit('save')">
+      <main class="modal__body">
+        <slot :close />
+      </main>
+
+      <footer class="modal__footer">
+        <Button variant="primary" size="md" type="submit">
+          {{ saveButton }}
+        </Button>
+      </footer>
+    </Form>
+  </dialog>
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref } from 'vue';
+import { onMounted, ref, type Slot } from 'vue';
+import { CloseIcon } from '@/components/icon';
+import { Form } from '@/components/form';
+import { Button } from '@/components/button';
 import { ModalWidth } from './ModalWidth';
-import ModalOpened from './ModalOpened.vue';
-import type { ModalActivatorSlot, ModalContentSlot } from './slots';
+import { useActiveModal } from './useActiveModal';
+import { onBackdropClick } from './onBackdropClick';
 
 withDefaults(defineProps<{
   title: string;
@@ -35,24 +47,62 @@ defineEmits<{
 }>();
 
 defineSlots<{
-  activator: ModalActivatorSlot;
-  default: ModalContentSlot;
+  default: Slot;
 }>();
 
-const isOpened = ref(false);
+const modal = useActiveModal();
+const close = () => modal.close();
 
-function toggle(toOpen: boolean): void {
-  document.startViewTransition(() => {
-    isOpened.value = toOpen;
-    return nextTick();
-  });
-}
+const dialogRef = ref<HTMLDialogElement>(null!);
 
-const open = () => toggle(true);
-const close = () => toggle(false);
-
-defineExpose({
-  close,
-  open,
-});
+onMounted(() => dialogRef.value.showModal());
+onBackdropClick(dialogRef, close);
 </script>
+
+<style scoped>
+@layer components {
+  :global(body:has(.modal)) {
+    overflow: hidden;
+  }
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    padding: 0;
+    width: 100%;
+    overflow-y: auto;
+    max-width: v-bind("width + 'px'");
+    max-height: 100%;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-divider);
+    border-radius: var(--rounded-md);
+    view-transition-name: modal;
+
+    &::backdrop {
+      background-color: color-mix(in srgb, var(--color-black), transparent 30%);
+    }
+  }
+
+  .modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 8px 4px 16px;
+  }
+
+  .modal__title {
+    font-size: 18px;
+    font-weight: 550;
+  }
+
+  .modal__body {
+    padding: 8px 16px;
+  }
+
+  .modal__footer {
+    padding: 8px 16px 12px;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+</style>
