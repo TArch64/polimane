@@ -10,35 +10,58 @@ export interface IEditorSaveDispatcher {
   flush: () => Promise<void>;
 }
 
-export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: () => Promise<void>): IEditorSaveDispatcher {
+type EditorSaveCallback = (patch: Partial<ISchema>) => Promise<void>;
+type WatchableAttribute = keyof Omit<ISchema, 'id'>;
+
+export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSaveCallback): IEditorSaveDispatcher {
+  let saveTimeout: TimeoutId | null = null;
   let stopWatch: WatchStopHandle | null = null;
-  const saveTimeout = ref<TimeoutId | null>(null);
-  const hasUnsavedChanges = computed(() => !!saveTimeout.value);
+  const unsavedChanges = ref<Partial<ISchema> | null>(null);
+  const hasUnsavedChanges = computed(() => !!unsavedChanges.value);
 
   async function dispatchSave(): Promise<void> {
-    saveTimeout.value = null;
-    await onSave();
+    saveTimeout = null;
+    if (unsavedChanges.value) {
+      await onSave(unsavedChanges.value);
+      unsavedChanges.value = null;
+    }
   }
 
-  function onChange() {
-    if (saveTimeout.value) {
-      clearTimeout(saveTimeout.value);
-    }
+  function watchSavableAttribute(attr: WatchableAttribute): WatchStopHandle {
+    return watch(() => schema.value[attr], (value) => {
+      if (saveTimeout) {
+        clearTimeout(saveTimeout);
+      }
 
-    saveTimeout.value = setTimeout(dispatchSave, SAVE_TIMEOUT);
+      unsavedChanges.value ??= {};
+      // @ts-expect-error no easy way to match types
+      unsavedChanges.value[attr] = value;
+      saveTimeout = setTimeout(dispatchSave, SAVE_TIMEOUT);
+    }, { deep: true });
   }
 
   function enable(): void {
-    stopWatch = watch(schema, onChange, { deep: true });
+    const attrStopWatchers: WatchStopHandle[] = [];
+
+    for (const attr of Object.keys(schema.value)) {
+      if (attr === 'id') {
+        continue;
+      }
+
+      attrStopWatchers.push(watchSavableAttribute(attr as WatchableAttribute));
+    }
+
+    stopWatch = () => attrStopWatchers.forEach((stop) => stop());
   }
 
-  function disable(): void {
-    stopWatch?.();
-  }
+  const disable = () => stopWatch?.();
 
   async function flush(): Promise<void> {
-    if (saveTimeout.value) {
-      clearTimeout(saveTimeout.value);
+    if (saveTimeout) {
+      clearTimeout(saveTimeout);
+    }
+
+    if (unsavedChanges.value) {
       await dispatchSave();
     }
   }

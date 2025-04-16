@@ -10,8 +10,8 @@ export const useEditorStore = defineStore('schemas/editor', () => {
   const httpClient = useHttpClient();
   const schema = ref<ISchema>(null!);
 
-  const saveDispatcher = useEditorSaveDispatcher(schema, async () => {
-    await httpClient.patch<HttpBody, UpdateSchemaRequest>(['/schemas', schema.value.id], schema.value);
+  const saveDispatcher = useEditorSaveDispatcher(schema, async (patch) => {
+    await httpClient.patch<HttpBody, UpdateSchemaRequest>(['/schemas', schema.value.id], patch);
   });
 
   async function loadSchema(id: string): Promise<void> {
