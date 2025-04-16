@@ -47,7 +47,7 @@ const classes = computed(() => [
   .card {
     padding: 8px 12px;
     background-color: var(--card-background);
-    border: 1px solid var(--color-divider);
+    border: var(--divider);
     border-radius: var(--rounded-md);
   }
 
@@ -65,7 +65,7 @@ const classes = computed(() => [
     &:hover,
     &:focus,
     &:focus-within {
-      border-color: color-mix(in srgb, var(--color-primary), transparent 80%);
+      border-color: var(--color-hover-divider);
     }
   }
 }

@@ -36,7 +36,7 @@ const createSchemaModal = useModal(HomeCreateSchemaModal);
     align-items: center;
     padding: 12px 16px;
     background-color: var(--color-white);
-    border-bottom: 1px solid var(--color-divider);
+    border-bottom: var(--divider);
   }
 
   .home-top-bar__title {

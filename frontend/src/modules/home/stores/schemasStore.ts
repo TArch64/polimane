@@ -9,7 +9,7 @@ export interface ICreateSchemaInput {
 
 type CreateSchemaRequest = Omit<ISchema, 'id'>;
 
-export const useSchemasStore = defineStore('schemas', () => {
+export const useSchemasStore = defineStore('schemas/list', () => {
   const httpClient = useHttpClient();
 
   const schemas = useAsyncData({

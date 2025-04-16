@@ -41,7 +41,7 @@ const editorStore = useEditorStore();
   .editor-top-bar__saving-state {
     margin-left: 8px;
     font-size: var(--font-sm);
-    color: color-mix(in srgb, var(--color-black), transparent 40%);
+    color: var(--color-text-2);
   }
 }
 </style>
