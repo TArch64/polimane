@@ -1,11 +1,15 @@
-import { type FunctionPlugin, inject, type InjectionKey } from 'vue';
-
-const Provider = Symbol('HttpClient') as InjectionKey<HttpClient>;
+import { HttpError } from './HttpError';
+import type { HttpMiddlewareExecutor, IHttpMiddleware } from './HttpMiddlewareExecutor';
 
 export type HttpBody = object;
 export type HttpParams = Record<string, string | number>;
 export type PathItem = string;
 export type Path = PathItem[] | PathItem;
+
+export interface IHttpClientOptions {
+  baseUrl: string;
+  middlewareExecutor: HttpMiddlewareExecutor;
+}
 
 interface IRequestConfig<P extends HttpParams, B extends HttpBody> {
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
@@ -14,18 +18,13 @@ interface IRequestConfig<P extends HttpParams, B extends HttpBody> {
   body?: B;
 }
 
-export class HttpError extends Error {
-  constructor(
-    readonly response: unknown,
-  ) {
-    super('HTTP error');
-  }
-}
-
 export class HttpClient {
-  constructor(
-    private readonly baseUrl: string,
-  ) {
+  private readonly baseUrl;
+  private readonly middlewareExecutor;
+
+  constructor(options: IHttpClientOptions) {
+    this.baseUrl = options.baseUrl;
+    this.middlewareExecutor = options.middlewareExecutor;
   }
 
   get<R extends HttpBody, P extends HttpParams = HttpParams>(path: Path, params: P = {} as P): Promise<R> {
@@ -95,19 +94,12 @@ export class HttpClient {
   }
 
   private async handleError(response: Response): Promise<never> {
-    const headers = response.headers ?? new Headers();
-    const isJson = headers.get('content-type')?.includes('application/json');
-    const body = isJson ? await response.json() : await response.text();
-    throw new HttpError(body);
+    const error = await HttpError.fromResponse(response);
+    await this.middlewareExecutor.callResponseErrorInterceptor(error);
+    throw error;
+  }
+
+  middleware(middleware: IHttpMiddleware): void {
+    this.middlewareExecutor.add(middleware);
   }
 }
-
-export interface IPluginHttpClientOptions {
-  baseUrl: string;
-}
-
-export const httpClientPlugin: FunctionPlugin<IPluginHttpClientOptions> = (app, options) => {
-  app.provide(Provider, new HttpClient(options.baseUrl));
-};
-
-export const useHttpClient = () => inject(Provider)!;

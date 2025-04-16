@@ -1,3 +1,3 @@
 export * from './useAsyncData';
 export * from './useAsyncAction';
-export * from './useHttpClient';
+export * from './http';

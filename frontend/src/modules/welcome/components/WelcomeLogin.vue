@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { type RouteLocationRaw, useRouter } from 'vue-router';
 import { Button } from '@/components/button';
 import { Form, TextField } from '@/components/form';
 import { Card } from '@/components/card';
@@ -44,9 +44,13 @@ const form = reactive<ILoginInput>({
   password: '',
 });
 
+function getSuccessRedirect(): RouteLocationRaw {
+  return router.currentRoute.value.query['return-to'] as string ?? { name: 'home' };
+}
+
 const login = useAsyncAction(async () => {
   await sessionStore.login(form);
-  document.startViewTransition(() => router.push({ name: 'home' }));
+  document.startViewTransition(() => router.push(getSuccessRedirect()));
 });
 </script>
 
