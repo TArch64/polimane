@@ -65,7 +65,7 @@ const classes = computed(() => [
     &:hover,
     &:focus,
     &:focus-within {
-      border-color: var(--color-primary);
+      border-color: color-mix(in srgb, var(--color-primary), transparent 80%);
     }
   }
 }
