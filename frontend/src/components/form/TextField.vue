@@ -76,7 +76,7 @@ const containerClasses = computed(() => `text-field__container--variant-${props.
     }
 
     &:has(:invalid) {
-      border-color: red;
+      border-color: var(--color-danger);
     }
   }
 

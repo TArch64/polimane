@@ -14,7 +14,7 @@ import type { RouteLocationRaw } from 'vue-router';
 import ButtonRoot from './ButtonRoot.vue';
 
 type ButtonSize = 'md' | 'lg';
-type ButtonVariant = 'primary' | 'secondary';
+type ButtonVariant = 'primary' | 'secondary' | 'danger';
 
 const props = withDefaults(defineProps<{
   to?: RouteLocationRaw;
@@ -48,6 +48,11 @@ const classes = computed(() => [
     --button-secondary-hover-background: color-mix(in srgb, var(--color-primary), transparent 90%);
     --button-secondary-disabled-background: color-mix(in srgb, var(--color-primary), transparent 70%);
     --button-secondary-foreground: var(--color-primary);
+
+    --button-danger-background: tranparent;
+    --button-danger-hover-background: color-mix(in srgb, var(--color-danger), transparent 90%);
+    --button-danger-disabled-background: color-mix(in srgb, var(--color-danger), transparent 70%);
+    --button-danger-foreground: var(--color-danger);
   }
 
   .button {
@@ -77,7 +82,8 @@ const classes = computed(() => [
   }
 
   .button--primary,
-  .button--secondary {
+  .button--secondary,
+  .button--danger {
     background-color: var(--button-background);
     color: var(--button-foreground);
     border-radius: var(--rounded-md);
@@ -105,6 +111,13 @@ const classes = computed(() => [
     --button-hover-background: var(--button-secondary-hover-background);
     --button-disabled-background: var(--button-secondary-disabled-background);
     --button-foreground: var(--button-secondary-foreground);
+  }
+
+  .button--danger {
+    --button-background: var(--button-danger-background);
+    --button-hover-background: var(--button-danger-hover-background);
+    --button-disabled-background: var(--button-danger-disabled-background);
+    --button-foreground: var(--button-danger-foreground);
   }
 }
 </style>

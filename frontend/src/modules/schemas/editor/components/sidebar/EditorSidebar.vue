@@ -1,11 +1,12 @@
 <template>
   <aside class="editor-sidebar">
     <SidebarGeneralSection />
+    <SidebarDangerSection />
   </aside>
 </template>
 
 <script setup lang="ts">
-import { SidebarGeneralSection } from './sections';
+import { SidebarDangerSection, SidebarGeneralSection } from './sections';
 </script>
 
 <style scoped>
