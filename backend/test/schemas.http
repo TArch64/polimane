@@ -35,13 +35,13 @@ Content-Type: application/json
 ###
 
 # @name schemas-delete
-DELETE http://polimane.localhost/api/schemas/01jr57efx2d10g7bwtpnt4saqf
+DELETE http://polimane.localhost/api/schemas/01js1wwy45bge133sv2g8mebmx
 Content-Type: application/json
 
 ###
 
 # @name schemas-update
-PATCH http://polimane.localhost/api/schemas/01jr5dpxfb1cxcs1vjnwrrg5rx
+PATCH http://polimane.localhost/api/schemas/01js1wwy45bge133sv2g8mebmx
 Content-Type: application/json
 
 {
