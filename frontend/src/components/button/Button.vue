@@ -12,17 +12,18 @@
 import { computed, type Slot } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
 import ButtonRoot from './ButtonRoot.vue';
-
-type ButtonSize = 'md' | 'lg';
-type ButtonVariant = 'primary' | 'secondary' | 'danger';
+import type { ButtonSize } from './ButtonSize';
+import type { ButtonVariant } from './ButtonVariant';
 
 const props = withDefaults(defineProps<{
   to?: RouteLocationRaw;
   icon?: boolean;
   size?: ButtonSize;
   variant?: ButtonVariant;
+  danger?: boolean;
 }>(), {
   icon: false,
+  danger: false,
 });
 
 defineSlots<{
@@ -33,26 +34,14 @@ const classes = computed(() => [
   props.icon && 'button--icon',
   props.size && `button--${props.size}`,
   props.variant && `button--${props.variant}`,
+  props.danger && 'button--danger',
 ]);
 </script>
 
 <style scoped>
 @layer components {
   :global(:root) {
-    --button-primary-background: var(--color-primary);
-    --button-primary-hover-background: color-mix(in srgb, var(--color-primary), transparent 20%);
-    --button-primary-disabled-background: color-mix(in srgb, var(--color-primary), transparent 70%);
-    --button-primary-foreground: var(--color-white);
-
-    --button-secondary-background: tranparent;
-    --button-secondary-hover-background: color-mix(in srgb, var(--color-primary), transparent 90%);
-    --button-secondary-disabled-background: color-mix(in srgb, var(--color-primary), transparent 70%);
-    --button-secondary-foreground: var(--color-primary);
-
-    --button-danger-background: tranparent;
-    --button-danger-hover-background: color-mix(in srgb, var(--color-danger), transparent 90%);
-    --button-danger-disabled-background: color-mix(in srgb, var(--color-danger), transparent 70%);
-    --button-danger-foreground: var(--color-danger);
+    --button-base-color: var(--color-primary);
   }
 
   .button {
@@ -81,9 +70,12 @@ const classes = computed(() => [
     }
   }
 
-  .button--primary,
-  .button--secondary,
   .button--danger {
+    --button-base-color: var(--color-danger);
+  }
+
+  .button--primary,
+  .button--secondary {
     background-color: var(--button-background);
     color: var(--button-foreground);
     border-radius: var(--rounded-md);
@@ -100,24 +92,17 @@ const classes = computed(() => [
   }
 
   .button--primary {
-    --button-background: var(--button-primary-background);
-    --button-hover-background: var(--button-primary-hover-background);
-    --button-disabled-background: var(--button-primary-disabled-background);
-    --button-foreground: var(--button-primary-foreground);
+    --button-background: var(--button-base-color);
+    --button-hover-background: color-mix(in srgb, var(--button-base-color), transparent 20%);
+    --button-disabled-background: color-mix(in srgb, var(--button-base-color), transparent 70%);
+    --button-foreground: var(--color-white);
   }
 
   .button--secondary {
-    --button-background: var(--button-secondary-background);
-    --button-hover-background: var(--button-secondary-hover-background);
-    --button-disabled-background: var(--button-secondary-disabled-background);
-    --button-foreground: var(--button-secondary-foreground);
-  }
-
-  .button--danger {
-    --button-background: var(--button-danger-background);
-    --button-hover-background: var(--button-danger-hover-background);
-    --button-disabled-background: var(--button-danger-disabled-background);
-    --button-foreground: var(--button-danger-foreground);
+    --button-background: tranparent;
+    --button-hover-background: color-mix(in srgb, var(--button-base-color), transparent 90%);
+    --button-disabled-background: color-mix(in srgb, var(--button-base-color), transparent 70%);
+    --button-foreground: var(--button-base-color);
   }
 }
 </style>

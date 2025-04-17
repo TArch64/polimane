@@ -2,8 +2,9 @@ import './style/main.css';
 
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
-import { httpClientPlugin } from './composables';
+import { ConfirmPlugin } from './components/confirm';
 import { ModalPlugin } from './components/modal';
+import { httpClientPlugin } from './composables';
 import App from './App.vue';
 import { router } from './router';
 
@@ -17,6 +18,7 @@ app.use(httpClientPlugin, {
 });
 
 app.use(ModalPlugin);
+app.use(ConfirmPlugin);
 
 document.startViewTransition(async () => {
   app.mount('#app');

@@ -6,7 +6,7 @@ import {
   markRaw,
   reactive,
 } from 'vue';
-import { ulid } from 'ulid';
+import { newId } from '@/helpers';
 import { Modal } from './Modal';
 
 const PROVIDER = Symbol('ModalPlugin') as InjectionKey<ModalPlugin>;
@@ -33,7 +33,7 @@ export class ModalPlugin {
   }
 
   create(component: Component): Modal {
-    const modal = new Modal(ulid(), markRaw(component));
+    const modal = new Modal(newId(), markRaw(component));
     this.state.modals.push(modal);
     return modal;
   }

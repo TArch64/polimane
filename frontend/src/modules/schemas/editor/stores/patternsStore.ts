@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed } from 'vue';
-import { ulid } from 'ulid';
 import { PatternType } from '@/models';
+import { newId } from '@/helpers';
 import { useEditorStore } from './editorStore';
 
 export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
@@ -11,7 +11,7 @@ export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
 
   function addPattern(type: PatternType): void {
     editorStore.schema.content.patterns.push({
-      id: ulid().toLowerCase(),
+      id: newId(),
       type,
     });
   }

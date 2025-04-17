@@ -20,7 +20,6 @@ export default defineConfigWithVueTs(
     indent: 2,
     quotes: 'single',
     semi: true,
-    jsx: true,
     commaDangle: 'always-multiline',
     braceStyle: '1tbs',
     arrowParens: true,

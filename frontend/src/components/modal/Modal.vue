@@ -26,12 +26,12 @@
 
 <script setup lang="ts">
 import { onMounted, ref, type Slot } from 'vue';
-import { CloseIcon } from '@/components/icon';
-import { Form } from '@/components/form';
-import { Button } from '@/components/button';
+import { onBackdropClick } from '@/composables';
+import { CloseIcon } from '../icon';
+import { Form } from '../form';
+import { Button } from '../button';
 import { ModalWidth } from './ModalWidth';
 import { useActiveModal } from './useActiveModal';
-import { onBackdropClick } from './onBackdropClick';
 
 withDefaults(defineProps<{
   title: string;

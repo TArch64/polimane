@@ -1,12 +1,14 @@
 <template>
   <RouterView />
   <ModalRoot />
+  <ConfirmRoot />
 </template>
 
 <script setup lang="ts">
 import { watch } from 'vue';
 import { RouterView, useRoute } from 'vue-router';
 import { ModalRoot } from '@/components/modal';
+import { ConfirmRoot } from '@/components/confirm';
 
 const route = useRoute();
 
