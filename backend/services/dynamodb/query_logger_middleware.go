@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/aws/smithy-go/middleware"
+	"github.com/fatih/color"
 )
 
 type queryLoggerMiddleware struct{}
@@ -39,7 +40,8 @@ func (m *queryLoggerMiddleware) formatMessage(in middleware.InitializeInput) str
 
 	switch typed := in.Parameters.(type) {
 	case *dynamodb.QueryInput:
-		building = fmt.Sprintf("[DynamoDB/Query]: ")
+		building = color.BlueString("[DynamoDB/Query]")
+		building += fmt.Sprintf(": ")
 		if typed.KeyConditionExpression != nil {
 			building += fmt.Sprintf("Where %s", *typed.KeyConditionExpression)
 		} else if len(typed.KeyConditions) > 0 {
@@ -54,28 +56,32 @@ func (m *queryLoggerMiddleware) formatMessage(in middleware.InitializeInput) str
 		return building
 
 	case *dynamodb.GetItemInput:
-		building = fmt.Sprintf("[DynamoDB/GetItem]: Where %s", m.formatAttrMap(typed.Key))
+		building = color.BlueString("[DynamoDB/GetItem]")
+		building += fmt.Sprintf(": Where %s", m.formatAttrMap(typed.Key))
 		if typed.ProjectionExpression != nil {
 			building += " Select " + m.formatProjectionExpression(*typed.ProjectionExpression, typed.ExpressionAttributeNames)
 		}
 		return building
 
 	case *dynamodb.PutItemInput:
-		building = fmt.Sprintf("[DynamoDB/PutItem]: Attrs %s", m.formatAttrMap(typed.Item))
+		building = color.YellowString("[DynamoDB/PutItem]")
+		building += fmt.Sprintf(": Attrs %s", m.formatAttrMap(typed.Item))
 		if typed.ConditionExpression != nil {
 			building += " If " + m.formatConditionExpression(*typed.ConditionExpression)
 		}
 		return building
 
 	case *dynamodb.DeleteItemInput:
-		building = fmt.Sprintf("[DynamoDB/DeleteItem]: Where %s", m.formatAttrMap(typed.Key))
+		building = color.RedString("[DynamoDB/DeleteItem]")
+		building += fmt.Sprintf(": Where %s", m.formatAttrMap(typed.Key))
 		if typed.ConditionExpression != nil {
 			building += " If " + m.formatConditionExpression(*typed.ConditionExpression)
 		}
 		return building
 
 	case *dynamodb.UpdateItemInput:
-		building = fmt.Sprintf("[DynamoDB/UpdateItem]: Where %s %s",
+		building = color.YellowString("[DynamoDB/UpdateItem]")
+		building += fmt.Sprintf(": Where %s %s",
 			m.formatAttrMap(typed.Key),
 			m.formatUpdateExpression(*typed.UpdateExpression, typed.ExpressionAttributeValues),
 		)
