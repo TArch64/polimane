@@ -26,10 +26,10 @@ func apiLogin(ctx *fiber.Ctx) error {
 	}
 
 	user, err := repositoryusers.ByName(ctx.Context(), body.Username)
+	if errors.Is(err, dynamo.ErrNotFound) {
+		return invalidCredentialsErr
+	}
 	if err != nil {
-		if errors.Is(err, dynamo.ErrNotFound) {
-			return invalidCredentialsErr
-		}
 		return err
 	}
 

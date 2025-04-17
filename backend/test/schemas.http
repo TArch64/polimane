@@ -1,10 +1,10 @@
-# @name schemas-list
+# @name list
 GET http://polimane.localhost/api/schemas
 Content-Type: application/json
 
 ###
 
-# @name schemas-create
+# @name create
 POST http://polimane.localhost/api/schemas
 Content-Type: application/json
 
@@ -22,25 +22,19 @@ Content-Type: application/json
 
 ###
 
-# @name schemas-by-id
-GET http://polimane.localhost/api/schemas/01jr5dpxfb1cxcs1vjnwrrg5rx
+# @name by-id
+GET http://polimane.localhost/api/schemas/01jr5dpxfb1cxcs1vjnwrrg5r
 Content-Type: application/json
 
 ###
 
-# @name schemas-by-id-not-found
-GET http://polimane.localhost/api/schemas/unknown-id
-Content-Type: application/json
-
-###
-
-# @name schemas-delete
+# @name delete
 DELETE http://polimane.localhost/api/schemas/01js1wwy45bge133sv2g8mebmx
 Content-Type: application/json
 
 ###
 
-# @name schemas-update
+# @name update
 PATCH http://polimane.localhost/api/schemas/01js1wwy45bge133sv2g8mebmx
 Content-Type: application/json
 

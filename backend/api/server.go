@@ -47,7 +47,7 @@ func New(configFns ...Config) *fiber.App {
 	group := app.Group("/api")
 	auth.Group(group)
 
-	group.Use(auth.Middleware)
+	group.Use(auth.NewMiddleware())
 	users.Group(group)
 	schemas.Group(group)
 

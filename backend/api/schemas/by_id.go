@@ -20,10 +20,10 @@ func apiById(ctx *fiber.Ctx) error {
 	user := auth.GetSessionUser(ctx)
 
 	schema, err := repositoryschemas.ById(ctx.Context(), user, schemaId)
+	if errors.Is(err, dynamo.ErrNotFound) {
+		return base.NotFoundErr
+	}
 	if err != nil {
-		if errors.Is(err, dynamo.ErrNotFound) {
-			return base.NotFoundErr
-		}
 		return err
 	}
 

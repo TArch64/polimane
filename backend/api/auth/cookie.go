@@ -32,13 +32,3 @@ func newCookieToken(user *model.User, expiresAt time.Time) (string, error) {
 
 	return token.SignedString([]byte(env.Env().SecretKey))
 }
-
-func parseCookieToken(token string) (*tokenClaims, error) {
-	claims := &tokenClaims{}
-
-	_, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(env.Env().SecretKey), nil
-	})
-
-	return claims, err
-}

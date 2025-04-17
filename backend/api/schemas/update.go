@@ -52,10 +52,10 @@ func apiUpdate(ctx *fiber.Ctx) error {
 	user := auth.GetSessionUser(ctx)
 
 	err = repositoryschemas.Update(ctx.Context(), user, schemaId, updates)
+	if errors.Is(err, dynamo.ErrNotFound) {
+		return base.NotFoundErr
+	}
 	if err != nil {
-		if errors.Is(err, dynamo.ErrNotFound) {
-			return base.NotFoundErr
-		}
 		return err
 	}
 

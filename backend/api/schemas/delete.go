@@ -20,10 +20,10 @@ func apiDelete(ctx *fiber.Ctx) error {
 	user := auth.GetSessionUser(ctx)
 
 	err = repositoryschemas.Delete(ctx.Context(), user, schemaId)
+	if errors.Is(err, dynamo.ErrNotFound) {
+		return base.NotFoundErr
+	}
 	if err != nil {
-		if errors.Is(err, dynamo.ErrNotFound) {
-			return base.NotFoundErr
-		}
 		return err
 	}
 

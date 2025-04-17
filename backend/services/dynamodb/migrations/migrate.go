@@ -5,10 +5,11 @@ import (
 	"errors"
 	"log"
 
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+
 	"polimane/backend/model"
 
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/guregu/dynamo/v2"
 )
 
@@ -27,11 +28,11 @@ func getTableVersion(ctx *migrationCtx) (*model.Version, error) {
 		Range("SK", dynamo.Equal, model.SKVersion).
 		One(ctx, &version)
 
+	var notFoundErr *types.ResourceNotFoundException
+	if errors.As(err, &notFoundErr) {
+		return model.NewVersion(), nil
+	}
 	if err != nil {
-		var notFoundErr *types.ResourceNotFoundException
-		if errors.As(err, &notFoundErr) {
-			return model.NewVersion(), nil
-		}
 		return nil, err
 	}
 
