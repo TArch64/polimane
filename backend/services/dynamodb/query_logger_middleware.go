@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"maps"
 	"reflect"
 	"strings"
 
@@ -88,6 +89,7 @@ func (m *queryLoggerMiddleware) formatMessage(in middleware.InitializeInput) str
 }
 
 func (m *queryLoggerMiddleware) formatAttrMap(attrMap map[string]types.AttributeValue) string {
+	attrMap = reorderQueryAttrMap(attrMap)
 	var result string
 
 	for name, attr := range attrMap {
@@ -102,6 +104,7 @@ func (m *queryLoggerMiddleware) formatAttrMap(attrMap map[string]types.Attribute
 }
 
 func (m *queryLoggerMiddleware) formatConditionMap(conditionMap map[string]types.Condition) string {
+	conditionMap = reorderQueryAttrMap(conditionMap)
 	var result string
 
 	for name, condition := range conditionMap {
@@ -203,4 +206,21 @@ func (m *queryLoggerMiddleware) formatAttrValue(value types.AttributeValue) stri
 		log.Println("[QueryLoggerMiddleware]: Unknown attribute type:", reflect.TypeOf(value))
 		return ""
 	}
+}
+
+var priorityQueryAttrOrder = []string{"PK", "SK"}
+
+func reorderQueryAttrMap[V any](input map[string]V) (dest map[string]V) {
+	temp := maps.Clone(input)
+	dest = make(map[string]V)
+
+	for _, name := range priorityQueryAttrOrder {
+		if value, ok := temp[name]; ok {
+			dest[name] = value
+			delete(temp, name)
+		}
+	}
+
+	maps.Copy(dest, temp)
+	return dest
 }
