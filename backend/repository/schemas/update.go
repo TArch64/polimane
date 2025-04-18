@@ -15,7 +15,7 @@ func Update(ctx context.Context, user *model.User, id string, patch awsdynamodb.
 	query := awsdynamodb.Table().
 		Update("PK", user.ID).
 		Range("SK", model.NewID(model.SKSchema, id)).
-		If("attribute_exists(PK)")
+		If(model.IfKeyExists)
 
 	for key, value := range patch {
 		query = query.Set(key, value)

@@ -15,7 +15,7 @@ func Delete(ctx context.Context, user *model.User, id string) error {
 	err := awsdynamodb.Table().
 		Delete("PK", user.ID).
 		Range("SK", model.NewID(model.SKSchema, id)).
-		If("attribute_exists(PK)").
+		If(model.IfKeyExists).
 		Run(ctx)
 
 	var checkFailedErr *types.ConditionalCheckFailedException
