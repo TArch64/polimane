@@ -71,11 +71,11 @@ const containerClasses = computed(() => `text-field__container--variant-${props.
     display: block;
     max-width: 100%;
 
-    &:has(:focus:not(:invalid)) {
+    &:has(:focus:not(:user-invalid)) {
       border-color: var(--color-hover-divider);
     }
 
-    &:has(:invalid) {
+    &:has(:user-invalid) {
       border-color: var(--color-danger);
     }
   }
