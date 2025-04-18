@@ -33,5 +33,6 @@ func apiCreate(ctx *fiber.Ctx) error {
 		return err
 	}
 
+	schema.Content = nil
 	return ctx.JSON(schema)
 }

@@ -15,8 +15,14 @@ const openedModal = ref<Modal | null>(null);
 
 watch(() => plugin.openedModal?.id, () => {
   document.startViewTransition(() => {
+    const promises = [];
+
+    if (openedModal.value?.onClose) {
+      promises.push(openedModal.value.onClose());
+    }
+
     openedModal.value = plugin.openedModal ?? null;
-    return nextTick();
+    return Promise.all([nextTick(), ...promises]);
   });
 });
 

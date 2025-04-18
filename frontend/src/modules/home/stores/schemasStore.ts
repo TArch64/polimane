@@ -3,6 +3,8 @@ import { computed } from 'vue';
 import { useAsyncData, useHttpClient } from '@/composables';
 import type { ISchema } from '@/models';
 
+export type SchemaListItem = Omit<ISchema, 'content'>;
+
 export interface ICreateSchemaInput {
   name: string;
 }
@@ -13,22 +15,20 @@ export const useSchemasStore = defineStore('schemas/list', () => {
   const httpClient = useHttpClient();
 
   const schemas = useAsyncData({
-    loader: () => httpClient.get<ISchema[]>('/schemas'),
+    loader: () => httpClient.get<SchemaListItem[]>('/schemas'),
     default: [],
   });
 
   const hasSchemas = computed(() => !!schemas.data.length);
 
-  async function createSchema(input: ICreateSchemaInput): Promise<void> {
-    const schema = await httpClient.post<ISchema, CreateSchemaRequest>('/schemas', {
+  async function createSchema(input: ICreateSchemaInput): Promise<SchemaListItem> {
+    return httpClient.post<SchemaListItem, CreateSchemaRequest>('/schemas', {
       ...input,
 
       content: {
         patterns: [],
       },
     });
-
-    schemas.data.push(schema);
   }
 
   return { schemas, hasSchemas, createSchema };

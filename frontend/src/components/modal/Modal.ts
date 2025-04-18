@@ -6,11 +6,15 @@ interface IModalState<P> {
   props: P | null;
 }
 
+export type ModalCloseCallback = () => Promise<void>;
+
 export class Modal<C extends Component = Component, P = ComponentProps<C>> {
   private state: IModalState<P> = reactive({
     isOpened: false,
     props: null,
   });
+
+  onClose?: ModalCloseCallback;
 
   constructor(
     readonly id: string,
@@ -31,7 +35,8 @@ export class Modal<C extends Component = Component, P = ComponentProps<C>> {
     this.state.isOpened = true;
   }
 
-  close() {
+  close(onClose?: ModalCloseCallback) {
+    this.onClose = onClose;
     this.state.isOpened = false;
     this.state.props = null;
   }

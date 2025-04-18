@@ -15,11 +15,13 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
 import { Modal, useActiveModal } from '@/components/modal';
 import { TextField } from '@/components/form';
 import { useAsyncAction } from '@/composables';
 import { type ICreateSchemaInput, useSchemasStore } from '../../stores';
 
+const router = useRouter();
 const schemasStore = useSchemasStore();
 const modal = useActiveModal();
 
@@ -28,7 +30,15 @@ const schema: ICreateSchemaInput = reactive({
 });
 
 const create = useAsyncAction(async () => {
-  await schemasStore.createSchema(schema);
-  modal.close();
+  const created = await schemasStore.createSchema(schema);
+
+  modal.close(async () => {
+    await router.push({
+      name: 'schema-editor',
+      params: {
+        schemaId: created.id,
+      },
+    });
+  });
 });
 </script>
