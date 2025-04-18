@@ -24,6 +24,8 @@ const props = withDefaults(defineProps<{
 }>(), {
   icon: false,
   danger: false,
+  variant: 'secondary',
+  size: 'md',
 });
 
 defineSlots<{

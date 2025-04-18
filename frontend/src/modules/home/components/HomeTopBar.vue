@@ -6,7 +6,6 @@
 
     <div class="home-top-bar__actions">
       <Button
-        size="md"
         variant="primary"
         @click="createSchemaModal.open()"
         v-if="schemasStore.hasSchemas"

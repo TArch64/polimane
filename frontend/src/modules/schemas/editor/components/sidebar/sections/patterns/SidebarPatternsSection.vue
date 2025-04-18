@@ -2,6 +2,10 @@
   <SidebarSection class="sidebar-patterns" :padding="false">
     <SidebarSectionHeading class="sidebar-patterns__heading">
       Патерни
+
+      <Button icon @click="addPatternModal.open()">
+        <PlusIcon />
+      </Button>
     </SidebarSectionHeading>
 
     <ul class="sidebar-patterns__list">
@@ -16,10 +20,15 @@
 
 <script setup lang="ts">
 import { usePatternsStore } from '@/modules/schemas/editor/stores';
+import { Button } from '@/components/button';
+import { PlusIcon } from '@/components/icon';
+import { useModal } from '@/components/modal';
+import EditorAddPatternModal from '../../../EditorAddPatternModal.vue';
 import { SidebarSection, SidebarSectionHeading } from '../base';
 import SidebarPattern from './SidebarPattern.vue';
 
 const patternsStore = usePatternsStore();
+const addPatternModal = useModal(EditorAddPatternModal);
 </script>
 
 <style scoped>
@@ -29,7 +38,10 @@ const patternsStore = usePatternsStore();
   }
 
   .sidebar-patterns__heading {
-    padding: 12px 12px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px 6px 12px;
   }
 
   .sidebar-patterns__list {

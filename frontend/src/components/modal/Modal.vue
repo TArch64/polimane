@@ -5,7 +5,7 @@
         {{ title }}
       </h1>
 
-      <Button icon size="md" variant="secondary" class="modal__close" @click="close">
+      <Button icon class="modal__close" @click="close">
         <CloseIcon size="24" />
       </Button>
     </header>
@@ -16,7 +16,7 @@
       </main>
 
       <footer class="modal__footer">
-        <Button variant="primary" size="md" type="submit">
+        <Button variant="primary" type="submit">
           {{ saveButton }}
         </Button>
       </footer>

@@ -16,7 +16,6 @@
 
       <Button
         type="submit"
-        size="md"
         variant="primary"
         class="welcome-login__submit"
         :disabled="login.isActive"

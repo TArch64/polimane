@@ -1,11 +1,6 @@
 <template>
   <main class="editor-empty">
-    <Button
-      class="editor-empty__back"
-      variant="secondary"
-      size="md"
-      :to="{ name: 'home' }"
-    >
+    <Button class="editor-empty__back" :to="{ name: 'home' }">
       <ArrowBackIcon />
       Редактор
     </Button>
@@ -14,7 +9,7 @@
       Додайте перший паттерн до вашої схеми
     </p>
 
-    <Button variant="primary" size="md" @click="addPatternModal.open()">
+    <Button variant="primary" @click="addPatternModal.open()">
       Додати
     </Button>
   </main>

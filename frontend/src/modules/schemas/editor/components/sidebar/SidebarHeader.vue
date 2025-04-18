@@ -1,23 +1,11 @@
 <template>
   <header class="editor-sidebar__header">
-    <Button
-      class="editor-sidebar__header-back"
-      variant="secondary"
-      size="md"
-      :to="{ name: 'home' }"
-    >
+    <Button class="editor-sidebar__header-back" :to="{ name: 'home' }">
       <ArrowBackIcon />
       Редактор
     </Button>
 
-    <Button
-      icon
-      danger
-      size="md"
-      variant="secondary"
-      :ref="deleteConfirm.anchorRef"
-      @click="deleteSchema"
-    >
+    <Button icon danger :ref="deleteConfirm.anchorRef" @click="deleteSchema">
       <TrashIcon />
     </Button>
   </header>
