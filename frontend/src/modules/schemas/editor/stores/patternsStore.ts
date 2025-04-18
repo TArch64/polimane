@@ -6,6 +6,7 @@ import { useEditorStore } from './editorStore';
 
 export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
   const editorStore = useEditorStore();
+
   const patterns = computed(() => editorStore.schema.content.patterns);
   const hasPatterns = computed(() => !!patterns.value.length);
 
@@ -16,5 +17,5 @@ export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
     });
   }
 
-  return { hasPatterns, addPattern };
+  return { patterns, hasPatterns, addPattern };
 });

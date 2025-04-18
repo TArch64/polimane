@@ -68,6 +68,7 @@ const containerClasses = computed(() => `text-field__container--variant-${props.
     border-radius: var(--rounded-md);
     padding: 4px 8px;
     transition: border-color 0.15s ease-out;
+    will-change: border-color;
     display: block;
     max-width: 100%;
 

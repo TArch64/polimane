@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import { ref, toRef } from 'vue';
-import type { ISchema } from '@/models';
+import { computed, ref, toRef } from 'vue';
+import type { ISchema, ISchemaPattern } from '@/models';
 import { type HttpBody, useHttpClient } from '@/composables';
 import { useEditorSaveDispatcher } from '../composables';
 
@@ -14,8 +14,21 @@ export const useEditorStore = defineStore('schemas/editor', () => {
     await httpClient.patch<HttpBody, UpdateSchemaRequest>(['/schemas', schema.value.id], patch);
   });
 
+  const activePatternId = ref<string | null>(null);
+
+  const activePattern = computed(() => {
+    return activePatternId.value
+      ? schema.value.content.patterns.find((pattern) => pattern.id === activePatternId.value)
+      : null;
+  });
+
+  function activatePattern(pattern: ISchemaPattern): void {
+    activePatternId.value = pattern.id;
+  }
+
   async function loadSchema(id: string): Promise<void> {
     schema.value = await httpClient.get(['/schemas', id]);
+    activePatternId.value = schema.value.content.patterns[0]?.id ?? null;
     saveDispatcher.enable();
   }
 
@@ -35,6 +48,8 @@ export const useEditorStore = defineStore('schemas/editor', () => {
     destroy,
     loadSchema,
     deleteSchema,
+    activePattern,
+    activatePattern,
     hasUnsavedChanges: toRef(saveDispatcher, 'hasUnsavedChanges'),
   };
 });

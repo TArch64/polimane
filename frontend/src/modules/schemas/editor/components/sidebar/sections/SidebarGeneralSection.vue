@@ -13,8 +13,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { TextField } from '@/components/form';
-import { useEditorStore } from '../../../stores';
-import SidebarSection from './SidebarSection.vue';
+import { useEditorStore } from '@/modules/schemas/editor/stores';
+import { SidebarSection } from './base';
 
 const editorStore = useEditorStore();
 

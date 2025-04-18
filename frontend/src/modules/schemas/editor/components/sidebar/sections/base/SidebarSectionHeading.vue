@@ -1,7 +1,7 @@
 <template>
-  <section class="sidebar__section">
+  <h1 class="sidebar-section__heading">
     <slot />
-  </section>
+  </h1>
 </template>
 
 <script setup lang="ts">
@@ -14,12 +14,9 @@ defineSlots<{
 
 <style scoped>
 @layer page {
-  .sidebar__section {
-    padding: 16px 12px;
-
-    &:not(:last-of-type) {
-      border-bottom: var(--divider);
-    }
+  .sidebar-section__heading {
+    font-size: var(--font-md);
+    font-weight: 550;
   }
 }
 </style>

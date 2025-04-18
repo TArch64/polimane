@@ -2,11 +2,12 @@
   <aside class="editor-sidebar">
     <SidebarHeader />
     <SidebarGeneralSection />
+    <SidebarPatternsSection />
   </aside>
 </template>
 
 <script setup lang="ts">
-import { SidebarGeneralSection } from './sections';
+import { SidebarGeneralSection, SidebarPatternsSection } from './sections';
 import SidebarHeader from './SidebarHeader.vue';
 </script>
 

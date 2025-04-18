@@ -9,6 +9,7 @@
 
   --color-background-1: var(--color-white);
   --color-background-2: color-mix(in srgb, var(--color-black), var(--color-white) 97%);
+  --color-background-3: color-mix(in srgb, var(--color-black), var(--color-white) 93%);
 
   --color-text-1: var(--color-black);
   --color-text-2: color-mix(in srgb, var(--color-black), transparent 40%);

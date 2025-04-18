@@ -61,6 +61,7 @@ const classes = computed(() => [
 
   .card--interactable {
     transition: border-color 0.15s ease-out;
+    will-change: border-color;
 
     &:hover,
     &:focus,
