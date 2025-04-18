@@ -1,6 +1,4 @@
 <template>
-  <EditorTopBar />
-
   <div class="editor__fill editor__row" v-if="patternsStore.hasPatterns">
     <EditorSidebar class="editor__sidebar" />
     <EditorCanvas class="editor__fill" />
@@ -13,7 +11,7 @@
 import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
 import { useEditorStore, usePatternsStore } from './stores';
-import { EditorCanvas, EditorEmpty, EditorSidebar, EditorTopBar } from './components';
+import { EditorCanvas, EditorEmpty, EditorSidebar } from './components';
 
 defineProps<{
   schemaId: string;
@@ -25,9 +23,9 @@ defineOptions({
     await store.loadSchema(route.params.schemaId);
   }),
 
-  beforeRouteLeave: (_, __, next) => {
+  beforeRouteLeave: async (_, __, next) => {
     const store = useEditorStore();
-    store.destroy();
+    await store.destroy();
     next();
   },
 });

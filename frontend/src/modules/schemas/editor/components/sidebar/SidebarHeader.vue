@@ -1,7 +1,7 @@
 <template>
-  <header class="editor-top-bar">
+  <header class="editor-sidebar__header">
     <Button
-      class="editor-top-bar__back"
+      class="editor-sidebar__header-back"
       variant="secondary"
       size="md"
       :to="{ name: 'home' }"
@@ -9,24 +9,17 @@
       <ArrowBackIcon />
       Редактор
     </Button>
-
-    <p class="editor-top-bar__saving-state" v-if="editorStore.hasUnsavedChanges">
-      Є незбережені зміни
-    </p>
   </header>
 </template>
 
 <script setup lang="ts">
 import { Button } from '@/components/button';
 import { ArrowBackIcon } from '@/components/icon';
-import { useEditorStore } from '../stores';
-
-const editorStore = useEditorStore();
 </script>
 
 <style scoped>
 @layer page {
-  .editor-top-bar {
+  .editor-sidebar__header {
     display: flex;
     align-items: center;
     padding: 4px 8px;
@@ -34,14 +27,8 @@ const editorStore = useEditorStore();
     border-bottom: 1px solid var(--color-divider);
   }
 
-  .editor-top-bar__back {
+  .editor-sidebar__header-back {
     gap: 8px;
-  }
-
-  .editor-top-bar__saving-state {
-    margin-left: 8px;
-    font-size: var(--font-sm);
-    color: var(--color-text-2);
   }
 }
 </style>

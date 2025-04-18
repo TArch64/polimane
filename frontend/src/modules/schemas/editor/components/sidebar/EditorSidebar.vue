@@ -1,5 +1,6 @@
 <template>
   <aside class="editor-sidebar">
+    <SidebarHeader />
     <SidebarGeneralSection />
     <SidebarDangerSection />
   </aside>
@@ -7,6 +8,7 @@
 
 <script setup lang="ts">
 import { SidebarDangerSection, SidebarGeneralSection } from './sections';
+import SidebarHeader from './SidebarHeader.vue';
 </script>
 
 <style scoped>

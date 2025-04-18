@@ -19,9 +19,9 @@ export const useEditorStore = defineStore('schemas/editor', () => {
     saveDispatcher.enable();
   }
 
-  function destroy() {
+  async function destroy() {
     saveDispatcher.disable();
-    saveDispatcher.flush();
+    await saveDispatcher.flush();
   }
 
   return {

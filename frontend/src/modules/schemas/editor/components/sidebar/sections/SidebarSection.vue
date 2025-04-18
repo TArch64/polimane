@@ -16,7 +16,10 @@ defineSlots<{
 @layer page {
   .sidebar__section {
     padding: 16px 12px;
-    border-bottom: var(--divider);
+
+    &:not(:last-of-type) {
+      border-bottom: var(--divider);
+    }
   }
 }
 </style>
