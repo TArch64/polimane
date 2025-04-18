@@ -7,6 +7,7 @@ import (
 	"maps"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
@@ -31,66 +32,81 @@ func (m *queryLoggerMiddleware) HandleInitialize(
 	metadata middleware.Metadata,
 	err error,
 ) {
-	log.Println(m.formatMessage(in))
-	return next.HandleInitialize(ctx, in)
+	label, content := m.formatMessage(in)
+	if label == "" || content == "" {
+		return next.HandleInitialize(ctx, in)
+	}
+
+	log.Println()
+	log.Println(label + content)
+
+	start := time.Now()
+	out, metadata, err = next.HandleInitialize(ctx, in)
+	if err != nil {
+		return out, metadata, err
+	}
+
+	log.Printf("%s: Executed in %s", label, color.YellowString(time.Since(start).String()))
+	return out, metadata, err
 }
 
-func (m *queryLoggerMiddleware) formatMessage(in middleware.InitializeInput) string {
-	var building string
+func (m *queryLoggerMiddleware) formatMessage(in middleware.InitializeInput) (string, string) {
+	var label string
+	var content string
 
 	switch typed := in.Parameters.(type) {
 	case *dynamodb.QueryInput:
-		building = color.BlueString("[DynamoDB/Query]")
-		building += fmt.Sprintf(": ")
+		label = color.BlueString("[DynamoDB/Query]")
+		content = fmt.Sprintf(": ")
 		if typed.KeyConditionExpression != nil {
-			building += fmt.Sprintf("Where %s", *typed.KeyConditionExpression)
+			content += fmt.Sprintf("Where %s", *typed.KeyConditionExpression)
 		} else if len(typed.KeyConditions) > 0 {
-			building += fmt.Sprintf("Where %s", m.formatConditionMap(typed.KeyConditions))
+			content += fmt.Sprintf("Where %s", m.formatConditionMap(typed.KeyConditions))
 		}
 		if typed.IndexName != nil {
-			building += " By Index " + *typed.IndexName
+			content += " By Index " + *typed.IndexName
 		}
 		if typed.ProjectionExpression != nil {
-			building += " Select " + m.formatProjectionExpression(*typed.ProjectionExpression, typed.ExpressionAttributeNames)
+			content += " Select " + m.formatProjectionExpression(*typed.ProjectionExpression, typed.ExpressionAttributeNames)
 		}
-		return building
+		return label, content
 
 	case *dynamodb.GetItemInput:
-		building = color.BlueString("[DynamoDB/GetItem]")
-		building += fmt.Sprintf(": Where %s", m.formatAttrMap(typed.Key))
+		label = color.BlueString("[DynamoDB/GetItem]")
+		content = fmt.Sprintf(": Where %s", m.formatAttrMap(typed.Key))
 		if typed.ProjectionExpression != nil {
-			building += " Select " + m.formatProjectionExpression(*typed.ProjectionExpression, typed.ExpressionAttributeNames)
+			content += " Select " + m.formatProjectionExpression(*typed.ProjectionExpression, typed.ExpressionAttributeNames)
 		}
-		return building
+		return label, content
 
 	case *dynamodb.PutItemInput:
-		building = color.YellowString("[DynamoDB/PutItem]")
-		building += fmt.Sprintf(": Attrs %s", m.formatAttrMap(typed.Item))
+		label = color.YellowString("[DynamoDB/PutItem]")
+		content = fmt.Sprintf(": Attrs %s", m.formatAttrMap(typed.Item))
 		if typed.ConditionExpression != nil {
-			building += " If " + m.formatConditionExpression(*typed.ConditionExpression)
+			content += " If " + m.formatConditionExpression(*typed.ConditionExpression)
 		}
-		return building
+		return label, content
 
 	case *dynamodb.DeleteItemInput:
-		building = color.RedString("[DynamoDB/DeleteItem]")
-		building += fmt.Sprintf(": Where %s", m.formatAttrMap(typed.Key))
+		label = color.RedString("[DynamoDB/DeleteItem]")
+		content = fmt.Sprintf(": Where %s", m.formatAttrMap(typed.Key))
 		if typed.ConditionExpression != nil {
-			building += " If " + m.formatConditionExpression(*typed.ConditionExpression)
+			content += " If " + m.formatConditionExpression(*typed.ConditionExpression)
 		}
-		return building
+		return label, content
 
 	case *dynamodb.UpdateItemInput:
-		building = color.YellowString("[DynamoDB/UpdateItem]")
-		building += fmt.Sprintf(": Where %s %s",
+		label = color.YellowString("[DynamoDB/UpdateItem]")
+		content = fmt.Sprintf(": Where %s %s",
 			m.formatAttrMap(typed.Key),
 			m.formatUpdateExpression(*typed.UpdateExpression, typed.ExpressionAttributeValues),
 		)
 		if typed.ConditionExpression != nil {
-			building += " If " + m.formatConditionExpression(*typed.ConditionExpression)
+			content += " If " + m.formatConditionExpression(*typed.ConditionExpression)
 		}
-		return building
+		return label, content
 	default:
-		return ""
+		return "", ""
 	}
 }
 
