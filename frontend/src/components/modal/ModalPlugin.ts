@@ -37,4 +37,9 @@ export class ModalPlugin {
     this.state.modals.push(modal);
     return modal;
   }
+
+  remove(modal: Modal): void {
+    const index = this.state.modals.findIndex((m) => m.id === modal.id);
+    this.state.modals.splice(index, 1);
+  }
 }

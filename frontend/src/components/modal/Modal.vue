@@ -5,7 +5,7 @@
         {{ title }}
       </h1>
 
-      <Button icon variant="secondary" size="md" @click="close">
+      <Button icon size="md" variant="secondary" class="modal__close" @click="close">
         <CloseIcon size="24" />
       </Button>
     </header>
@@ -88,6 +88,10 @@ onBackdropClick(dialogRef, close);
     justify-content: space-between;
     align-items: center;
     padding: 8px 8px 4px 16px;
+  }
+
+  .modal__close.modal__close {
+    padding: 4px;
   }
 
   .modal__title {

@@ -57,7 +57,7 @@ const classes = computed(() => [
     padding: 6px 12px;
 
     &.button--icon {
-      padding: 4px;
+      padding: 6px;
     }
   }
 

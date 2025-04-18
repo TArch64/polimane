@@ -36,4 +36,9 @@ export class ConfirmPlugin {
     this.state.confirms.push(confirm);
     return confirm;
   }
+
+  remove(confirm: Confirm): void {
+    const index = this.state.confirms.findIndex((c) => c.id === confirm.id);
+    this.state.confirms.splice(index, 1);
+  }
 }

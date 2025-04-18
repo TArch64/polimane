@@ -1,4 +1,4 @@
-import type { Component } from 'vue';
+import { type Component, onUnmounted } from 'vue';
 import type { ComponentProps } from '@/types';
 import { ModalPlugin } from './ModalPlugin';
 
@@ -13,6 +13,8 @@ export function useModal<C extends Component>(component: C): IModal<C> {
   function open(props?: ComponentProps<C>): void {
     modal.open(props ?? null);
   }
+
+  onUnmounted(() => plugin.remove(modal));
 
   return { open };
 }
