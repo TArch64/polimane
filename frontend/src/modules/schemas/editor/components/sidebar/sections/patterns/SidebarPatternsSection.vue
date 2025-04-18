@@ -6,9 +6,8 @@
 
     <ul class="sidebar-patterns__list">
       <SidebarPattern
-        v-for="(pattern, index) of patternsStore.patterns"
+        v-for="pattern of patternsStore.patterns"
         :key="pattern.id"
-        :index
         :pattern
       />
     </ul>
@@ -26,11 +25,11 @@ const patternsStore = usePatternsStore();
 <style scoped>
 @layer page {
   .sidebar-patterns {
-    padding: 8px 0;
+    padding-bottom: 8px;
   }
 
   .sidebar-patterns__heading {
-    padding: 4px 12px 8px;
+    padding: 12px 12px 8px;
   }
 
   .sidebar-patterns__list {

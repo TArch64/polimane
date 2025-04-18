@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { computed } from 'vue';
-import { PatternType } from '@/models';
+import { getPatternTitle, PatternType } from '@/enums';
 import { newId } from '@/helpers';
 import { useEditorStore } from './editorStore';
 
@@ -11,8 +11,11 @@ export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
   const hasPatterns = computed(() => !!patterns.value.length);
 
   function addPattern(type: PatternType): void {
-    editorStore.schema.content.patterns.push({
+    const { patterns } = editorStore.schema.content;
+
+    patterns.push({
       id: newId(),
+      name: `${getPatternTitle(type)} [${patterns.length + 1}]`,
       type,
     });
   }

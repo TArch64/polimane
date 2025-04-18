@@ -1,6 +1,6 @@
 <template>
   <li class="sidebar-pattern" :class="classes">
-    {{ title }}
+    {{ pattern.name }}
   </li>
 </template>
 
@@ -10,7 +10,6 @@ import type { ISchemaPattern } from '@/models';
 import { useEditorStore } from '@/modules/schemas/editor/stores';
 
 const props = defineProps<{
-  index: number;
   pattern: ISchemaPattern;
 }>();
 
@@ -19,11 +18,6 @@ const editorStore = useEditorStore();
 const classes = computed(() => ({
   'sidebar-pattern--active': editorStore.activePattern?.id === props.pattern.id,
 }));
-
-const title = computed(() => {
-  const typeTitle = props.pattern.type === 'square' ? 'Квадратна Сітка' : 'Ромбова Сітка';
-  return `${typeTitle} ${props.index + 1}`;
-});
 </script>
 
 <style scoped>

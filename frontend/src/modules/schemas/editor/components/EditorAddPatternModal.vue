@@ -21,7 +21,7 @@
 import { ref } from 'vue';
 import { Modal, useActiveModal } from '@/components/modal';
 import { type ISelectOption, RadioSelect } from '@/components/form';
-import { PatternType } from '@/models';
+import { getPatternTitle, PatternType, PatternTypeValues } from '@/enums';
 import { usePatternsStore } from '../stores';
 
 const patternsStore = usePatternsStore();
@@ -29,16 +29,10 @@ const modal = useActiveModal();
 
 const selectedType = ref(PatternType.SQUARE);
 
-const options: ISelectOption<PatternType>[] = [
-  {
-    value: PatternType.SQUARE,
-    label: 'Квадратна Сітка',
-  },
-  {
-    value: PatternType.DIAMOND,
-    label: 'Ромбова Сітка',
-  },
-];
+const options = PatternTypeValues.map((type): ISelectOption<PatternType> => ({
+  value: type,
+  label: getPatternTitle(type),
+}));
 
 function addPattern(): void {
   patternsStore.addPattern(selectedType.value);

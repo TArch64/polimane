@@ -35,7 +35,7 @@ Content-Type: application/json
 ###
 
 # @name update
-PATCH http://polimane.localhost/api/schemas/01js1wwy45bge133sv2g8mebmx
+PATCH http://polimane.localhost/api/schemas/01js43hxkr9e2rf6x7nazb3ndq
 Content-Type: application/json
 
 {
