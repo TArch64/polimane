@@ -4,7 +4,7 @@
       Поки що не створено жодної схеми для бісеру
     </p>
 
-    <Button variant="primary" size="lg" @click="createSchemaModal.open()">
+    <Button variant="primary" size="md" @click="createSchemaModal.open()">
       Створити Схему
     </Button>
   </div>
