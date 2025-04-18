@@ -1,6 +1,6 @@
 <template>
   <Card variant="control" class="welcome-login">
-    <Form class="welcome-login__form" @submit="login.call">
+    <Form class="welcome-login__form" @submit="login">
       <TextField
         required
         placeholder="Користувач"

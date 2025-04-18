@@ -29,7 +29,7 @@ Content-Type: application/json
 ###
 
 # @name delete
-DELETE http://polimane.localhost/api/schemas/01js1wwy45bge133sv2g8mebmx
+DELETE http://polimane.localhost/api/schemas/01js40jpkhn1k39fpvb0wr6x34
 Content-Type: application/json
 
 ###

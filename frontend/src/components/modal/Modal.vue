@@ -73,7 +73,7 @@ onBackdropClick(dialogRef, close);
     overflow-y: auto;
     max-width: v-bind("width + 'px'");
     max-height: 100%;
-    background-color: var(--color-white);
+    background-color: var(--color-background-1);
     border: var(--divider);
     border-radius: var(--rounded-md);
     view-transition-name: modal;

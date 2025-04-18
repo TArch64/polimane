@@ -23,7 +23,7 @@ import { ArrowBackIcon } from '@/components/icon';
     display: flex;
     align-items: center;
     padding: 4px 8px;
-    background-color: var(--color-white);
+    background-color: var(--color-background-1);
     border-bottom: 1px solid var(--color-divider);
   }
 

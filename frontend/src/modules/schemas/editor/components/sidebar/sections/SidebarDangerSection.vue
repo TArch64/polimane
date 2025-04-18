@@ -10,19 +10,19 @@
     >
       Видалити Схему
     </Button>
-
-    <!--    <div id="mypopover" popover anchor="mypopover" class="popover">-->
-    <!--      Popover content-->
-    <!--    </div>-->
   </SidebarSection>
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import { Button } from '@/components/button';
 import { useConfirm } from '@/components/confirm';
-import { useDomRef } from '@/composables';
+import { useAsyncAction, useDomRef } from '@/composables';
+import { useEditorStore } from '../../../stores';
 import SidebarSection from './SidebarSection.vue';
 
+const router = useRouter();
+const editorStore = useEditorStore();
 const deleteButtonRef = useDomRef<HTMLElement>();
 
 const deleteConfirm = useConfirm({
@@ -35,13 +35,12 @@ const deleteConfirm = useConfirm({
   },
 });
 
-async function deleteSchema(): Promise<void> {
-  if (!await deleteConfirm.ask()) {
-    return;
+const deleteSchema = useAsyncAction(async () => {
+  if (await deleteConfirm.ask()) {
+    await editorStore.deleteSchema();
+    await router.push({ name: 'home' });
   }
-
-  console.log('Schema deleted');
-}
+});
 </script>
 
 <style scoped>

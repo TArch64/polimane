@@ -2,7 +2,7 @@
   <Modal
     title="Створення Схеми"
     save-button="Створити"
-    @save="create.call"
+    @save="create"
   >
     <TextField
       required

@@ -4,11 +4,11 @@
   --color-danger: #e7000b;
   --color-primary: var(--color-black);
 
-  --color-divider: color-mix(in srgb, var(--color-black), transparent 90%);
-  --color-hover-divider: color-mix(in srgb, var(--color-black), transparent 75%);
+  --color-divider: color-mix(in srgb, var(--color-black), var(--color-white) 90%);
+  --color-hover-divider: color-mix(in srgb, var(--color-black), var(--color-white) 75%);
 
   --color-background-1: var(--color-white);
-  --color-background-2: color-mix(in srgb, var(--color-black), transparent 97%);
+  --color-background-2: color-mix(in srgb, var(--color-black), var(--color-white) 97%);
 
   --color-text-1: var(--color-black);
   --color-text-2: color-mix(in srgb, var(--color-black), transparent 40%);

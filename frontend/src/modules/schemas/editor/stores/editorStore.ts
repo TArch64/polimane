@@ -24,10 +24,17 @@ export const useEditorStore = defineStore('schemas/editor', () => {
     await saveDispatcher.flush();
   }
 
+  async function deleteSchema(): Promise<void> {
+    saveDispatcher.disable();
+    saveDispatcher.abandon();
+    await httpClient.delete(['/schemas', schema.value.id]);
+  }
+
   return {
     schema,
-    loadSchema,
     destroy,
+    loadSchema,
+    deleteSchema,
     hasUnsavedChanges: toRef(saveDispatcher, 'hasUnsavedChanges'),
   };
 });

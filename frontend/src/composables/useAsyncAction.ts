@@ -1,14 +1,13 @@
-import { reactive, ref } from 'vue';
+import { ref, unref } from 'vue';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AsyncFn = (...args: any[]) => Promise<void>;
 
-export interface IAsyncAction<F extends AsyncFn> {
-  call: F;
+export type AsyncAction<F extends AsyncFn> = F & {
   isActive: boolean;
-}
+};
 
-export function useAsyncAction<F extends AsyncFn>(fn: F): IAsyncAction<F> {
+export function useAsyncAction<F extends AsyncFn>(fn: F): AsyncAction<F> {
   const isActive = ref(false);
 
   const call = ((...args) => {
@@ -16,8 +15,16 @@ export function useAsyncAction<F extends AsyncFn>(fn: F): IAsyncAction<F> {
     return fn(...args).finally(() => isActive.value = false);
   }) as F;
 
-  return reactive({
-    call,
+  const extension = {
     isActive,
-  }) as IAsyncAction<F>;
+  };
+
+  return new Proxy(call, {
+    get: (target: F, property: string): unknown => {
+      if (property in extension) {
+        return unref(extension[property as keyof typeof extension]);
+      }
+      return Reflect.get(target, property);
+    },
+  }) as AsyncAction<F>;
 }

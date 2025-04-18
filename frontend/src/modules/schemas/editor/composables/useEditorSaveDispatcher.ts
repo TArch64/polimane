@@ -8,6 +8,7 @@ export interface IEditorSaveDispatcher {
   enable: () => void;
   disable: () => void;
   flush: () => Promise<void>;
+  abandon: () => void;
 }
 
 type EditorSaveCallback = (patch: Partial<ISchema>) => Promise<void>;
@@ -66,10 +67,19 @@ export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSave
     }
   }
 
+  function abandon(): void {
+    if (saveTimeout) {
+      clearTimeout(saveTimeout);
+    }
+
+    unsavedChanges.value = null;
+  }
+
   return reactive({
     hasUnsavedChanges,
     enable,
     disable,
     flush,
+    abandon,
   });
 }

@@ -10,7 +10,8 @@ import (
 )
 
 type createBody struct {
-	Name string `json:"name" validate:"required"`
+	Name    string              `json:"name" validate:"required"`
+	Content model.SchemaContent `json:"content" validate:"required"`
 }
 
 func apiCreate(ctx *fiber.Ctx) error {
@@ -25,7 +26,7 @@ func apiCreate(ctx *fiber.Ctx) error {
 	schema, err := repositoryschemas.Create(ctx.Context(), &repositoryschemas.CreateOptions{
 		User:    user,
 		Name:    body.Name,
-		Content: model.SchemaContent{},
+		Content: body.Content,
 	})
 
 	if err != nil {

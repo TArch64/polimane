@@ -65,7 +65,7 @@ onBackdropClick(dialogRef, decline);
     width: 300px;
     padding: 12px;
     overflow-y: auto;
-    background-color: var(--color-white);
+    background-color: var(--color-background-2);
     border: var(--divider);
     border-radius: var(--rounded-md);
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
