@@ -10,7 +10,7 @@
 
     <ul class="sidebar-patterns__list">
       <SidebarPattern
-        v-for="pattern of patternsStore.patterns"
+        v-for="pattern of patternsStore.patterns.values"
         :key="pattern.id"
         :pattern
       />

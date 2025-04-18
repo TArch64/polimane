@@ -2,14 +2,14 @@
   <dialog
     ref="dialogRef"
     popover="manual"
-    class="popover"
+    class="confirm"
     @keydown.esc="decline"
   >
-    <p class="popover__message">
+    <p class="confirm__message">
       {{ model.message }}
     </p>
 
-    <footer class="popover__footer">
+    <footer class="confirm__footer">
       <ConfirmButton variant="secondary" :button="model.declineButton" @click="decline" />
       <ConfirmButton variant="primary" :button="model.acceptButton" @click="accept" />
     </footer>
@@ -57,7 +57,7 @@ onBackdropClick(dialogRef, decline);
 
 <style scoped>
 @layer components {
-  .popover {
+  .confirm {
     view-transition-name: confirm;
     position-anchor: v-bind("model.anchorVar");
     position-area: bottom center;
@@ -68,14 +68,14 @@ onBackdropClick(dialogRef, decline);
     background-color: var(--color-background-2);
     border: var(--divider);
     border-radius: var(--rounded-md);
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: var(--box-shadow);
   }
 
-  .popover__message {
+  .confirm__message {
     margin-bottom: 4px;
   }
 
-  .popover__footer {
+  .confirm__footer {
     display: flex;
     justify-content: flex-end;
     gap: 8px;

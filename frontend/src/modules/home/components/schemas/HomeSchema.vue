@@ -21,7 +21,3 @@ const cardBinding = makeBinding(RouterLink, () => ({
   },
 }));
 </script>
-
-<style scoped>
-
-</style>

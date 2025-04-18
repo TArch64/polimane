@@ -18,3 +18,5 @@ export const CloseIcon = makeIcon(() => import(`~icons/eva/close-outline`));
 export const ArrowBackIcon = makeIcon(() => import(`~icons/eva/arrow-back-outline`));
 export const TrashIcon = makeIcon(() => import(`~icons/eva/trash-outline`));
 export const PlusIcon = makeIcon(() => import(`~icons/eva/plus-outline`));
+export const EditIcon = makeIcon(() => import(`~icons/eva/edit-outline`));
+export const MoreHorizontalIcon = makeIcon(() => import(`~icons/eva/more-horizontal-outline`));
