@@ -11,7 +11,7 @@ export class PatternPositionIterator extends Iterator<IPatternPosition, undefine
   static readonly CANVAS_PADDING = 10;
   static readonly PATTERN_GAP = 50;
 
-  private readonly freeSpaceLeft: number;
+  private readonly availableHorizontalSpace: number;
   private readonly totalHeight: number;
   private index = 0;
   private nextOffsetTop: number;
@@ -22,7 +22,7 @@ export class PatternPositionIterator extends Iterator<IPatternPosition, undefine
     private readonly objects: PatternObject[],
   ) {
     super();
-    this.freeSpaceLeft = canvas.width - PatternPositionIterator.CANVAS_PADDING * 2;
+    this.availableHorizontalSpace = canvas.width - PatternPositionIterator.CANVAS_PADDING * 2;
     this.totalHeight = this.calcTotalHeight();
     this.nextOffsetTop = this.calcInitialNextOffsetTop();
   }
@@ -60,6 +60,7 @@ export class PatternPositionIterator extends Iterator<IPatternPosition, undefine
   }
 
   private get offsetLeft(): number {
-    return Math.max((this.freeSpaceLeft - this.object!.width) / 2, PatternPositionIterator.CANVAS_PADDING);
+    const freeSpaceLeft = this.availableHorizontalSpace - this.object!.width;
+    return Math.max(freeSpaceLeft, PatternPositionIterator.CANVAS_PADDING);
   }
 }

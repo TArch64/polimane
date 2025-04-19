@@ -1,5 +1,6 @@
 import { computed, reactive, type Ref, ref, watch, type WatchStopHandle } from 'vue';
 import type { ISchema } from '@/models';
+import { combineStopHandles } from '@/helpers';
 
 const SAVE_TIMEOUT = 2000;
 
@@ -52,7 +53,7 @@ export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSave
       attrStopWatchers.push(watchSavableAttribute(attr as WatchableAttribute));
     }
 
-    stopWatch = () => attrStopWatchers.forEach((stop) => stop());
+    stopWatch = combineStopHandles(...attrStopWatchers);
   }
 
   const disable = () => stopWatch?.();

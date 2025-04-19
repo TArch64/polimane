@@ -1,4 +1,4 @@
-import { computed, type Ref, watch } from 'vue';
+import { computed, type Ref, watch, type WatchStopHandle } from 'vue';
 import { EditorObjectType } from '../../enums';
 import { injectCanvas } from '../useCanvas';
 import { useObjectRegistry } from './useObjectRegistry';
@@ -12,12 +12,14 @@ export interface IObjectRendererOptions<T extends EditorObjectType, I extends IR
   type: T;
   items: Ref<I[]>;
   createObject: (item: I) => EditorObjectTypeMap[T];
+  updateObject: (item: I, object: EditorObjectTypeMap[T]) => void;
   updatePositions: (objects: EditorObjectTypeMap[T][]) => void;
 }
 
 export function useObjectRenderer<T extends EditorObjectType, I extends IRenderingItem>(options: IObjectRendererOptions<T, I>): void {
   const canvas = injectCanvas();
-  const objectRegistry = useObjectRegistry();
+  const objectRegistry = useObjectRegistry(options.type);
+  const stopHandles: Record<string, WatchStopHandle> = {};
 
   const itemMapping = computed(() => Object.fromEntries(
     options.items.value.map((item) => [item.id, item]),
@@ -30,17 +32,24 @@ export function useObjectRenderer<T extends EditorObjectType, I extends IRenderi
       const item = itemMapping.value[id];
 
       if (!previousIds.includes(id)) {
-        objectRegistry.pattern.add(id, options.createObject(item));
+        const object = options.createObject(item);
+        objectRegistry.add(id, object);
+
+        stopHandles[id] = watch(() => itemMapping.value[id], (changed) => {
+          options.updateObject(changed, object);
+          canvas.requestRenderAll();
+        }, { deep: true });
       }
     }
 
     for (const previousId of previousIds) {
       if (!ids.includes(previousId)) {
-        objectRegistry.pattern.remove(previousId);
+        objectRegistry.remove(previousId);
+        stopHandles[previousId]?.();
       }
     }
 
-    options.updatePositions(ids.map((id) => objectRegistry.pattern.get(id)));
+    options.updatePositions(ids.map((id) => objectRegistry.get(id)));
     canvas.requestRenderAll();
   }, { immediate: true });
 }

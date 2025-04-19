@@ -18,6 +18,10 @@ export function usePatternRenderer(patterns: Ref<ISchemaPattern[]>) {
       return new PatternObject(pattern);
     },
 
+    updateObject(item, object) {
+      object.update(item);
+    },
+
     updatePositions(objects: PatternObject[]): void {
       for (const { object, top, left } of new PatternPositionIterator(canvas, objects)) {
         if (object.top !== top) {

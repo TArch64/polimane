@@ -27,4 +27,8 @@ export class PatternObject extends Group {
 
     this.add(this.border, this.title);
   }
+
+  update(pattern: ISchemaPattern) {
+    this.title.update(pattern);
+  }
 }

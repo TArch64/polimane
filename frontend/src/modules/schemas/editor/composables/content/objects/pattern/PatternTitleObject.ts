@@ -19,14 +19,25 @@ export class PatternTitleObject extends Group {
     });
 
     this.border = new Rect({
+      ...this.borderSize,
       rx: 4,
       ry: 4,
-      height: this.text.height + PatternTitleObject.PADDING_VERTICAL * 2,
-      width: this.text.width + PatternTitleObject.PADDING_HORIZONTAL * 2,
       stroke: 'rgba(0, 0, 0, 0.2)',
       fill: 'white',
     });
 
     this.add(this.border, this.text);
+  }
+
+  update(pattern: ISchemaPattern) {
+    this.text.set({ text: pattern.name });
+    this.border.set(this.borderSize);
+  }
+
+  private get borderSize() {
+    return {
+      height: this.text.height + PatternTitleObject.PADDING_VERTICAL * 2,
+      width: this.text.width + PatternTitleObject.PADDING_HORIZONTAL * 2,
+    };
   }
 }

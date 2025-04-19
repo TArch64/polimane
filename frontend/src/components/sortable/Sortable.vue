@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts" generic="I extends ISortableEntity">
-import { inject, ref, type Slot, watch } from 'vue';
+import { inject, ref, type Slot } from 'vue';
 import { reorder } from '@atlaskit/pragmatic-drag-and-drop/reorder';
 import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
 import type { Edge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/types';
@@ -63,10 +63,6 @@ const scrollerEl = inject(TOKEN_SCROLLER)!;
 const isDragging = ref(false);
 
 const sortableAnchorVar = `--sortable-${newId()}`;
-
-watch(isDragging, (value) => {
-  document.body.classList.toggle('m-cursor--grabbing', value);
-});
 
 function getEdgedIndexes(from: number, to: number, edge: Edge): number {
   if (getBeforeDirection(props.direction) && to < from) return to;
