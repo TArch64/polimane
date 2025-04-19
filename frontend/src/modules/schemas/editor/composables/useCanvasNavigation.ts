@@ -24,7 +24,9 @@ export function useCanvasNavigation() {
     }
 
     canvas.on('mouse:down', (downOptions) => {
-      if (!(downOptions.e as MouseEvent).altKey) {
+      const event = downOptions.e as MouseEvent;
+
+      if (event.buttons !== 2) {
         return;
       }
 

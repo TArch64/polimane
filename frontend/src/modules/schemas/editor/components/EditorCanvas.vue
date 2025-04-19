@@ -25,6 +25,7 @@ onMounted(() => {
     selection: false,
     // TODO update navigation to work correctly with enabled skipOffscreen
     skipOffscreen: false,
+    fireRightClick: true,
     width: wrapperRef.value.offsetWidth,
     height: wrapperRef.value.offsetHeight,
   }));

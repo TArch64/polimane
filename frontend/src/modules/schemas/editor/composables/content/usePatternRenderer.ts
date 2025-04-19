@@ -27,7 +27,7 @@ export function usePatternRenderer(patterns: Ref<ISchemaPattern[]>) {
         return acc + object.height + (index < objects.length ? PATTERN_GAP : 0);
       }, 0);
 
-      let nextOffsetY = (canvas.height - totalHeight - CANVAS_PADDING * 2) / 2;
+      let nextOffsetY = Math.max((canvas.height - totalHeight - CANVAS_PADDING * 2) / 2, CANVAS_PADDING);
 
       for (const object of objects) {
         if (object.top !== nextOffsetY) {
@@ -42,7 +42,7 @@ export function usePatternRenderer(patterns: Ref<ISchemaPattern[]>) {
           }
         }
 
-        const offsetLeft = (freeSpaceX - object.width) / 2;
+        const offsetLeft = Math.max((freeSpaceX - object.width) / 2, CANVAS_PADDING);
 
         if (object.left !== offsetLeft) {
           object.setX(offsetLeft);
