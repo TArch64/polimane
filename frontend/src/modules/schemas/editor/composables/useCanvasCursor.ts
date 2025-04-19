@@ -10,14 +10,14 @@ export function useCanvasCursor(): ICanvasCursor {
   const canvas = injectCanvas();
 
   function change(cursor: BrowserCursor, affectedObject?: FabricObject): void {
-    canvas.value.defaultCursor = cursor;
-    canvas.value.setCursor(cursor);
+    canvas.defaultCursor = cursor;
+    canvas.setCursor(cursor);
 
     if (affectedObject) {
       affectedObject.hoverCursor = cursor;
     }
 
-    canvas.value.requestRenderAll();
+    canvas.requestRenderAll();
   }
 
   return { change };

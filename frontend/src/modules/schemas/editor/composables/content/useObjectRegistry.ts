@@ -1,8 +1,9 @@
 import type { InjectionKey } from 'vue';
 import type { FabricObject } from 'fabric';
 import { injectLocal, provideLocal } from '@vueuse/core';
-import { EditorObjectType, EditorObjectTypeList, type EditorObjectTypeMap } from '../../enums';
+import { EditorObjectType, EditorObjectTypeList } from '../../enums';
 import { injectCanvas } from '../useCanvas';
+import type { EditorObjectTypeMap } from './objects';
 
 const TOKEN = Symbol('ObjectRegistry') as InjectionKey<Map<string, FabricObject>>;
 
@@ -30,13 +31,13 @@ export function useObjectRegistry(): ObjectRegistry {
 
   function add<T extends EditorObjectType>(type: T, id: string, object: EditorObjectTypeMap[T]): void {
     registry.set(`${type}:${id}`, object);
-    canvas.value.add(object);
+    canvas.add(object);
   }
 
   function remove(type: EditorObjectType, id: string): void {
     const object = get(type, id);
     registry.delete(`${type}:${id}`);
-    canvas.value.remove(object);
+    canvas.remove(object);
   }
 
   const typed = Object.fromEntries(EditorObjectTypeList.map((type): [EditorObjectType, IObjectTypeRegistry<EditorObjectType>] => [

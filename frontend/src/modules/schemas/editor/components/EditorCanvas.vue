@@ -16,8 +16,8 @@ import {
 
 const canvasRef = ref<HTMLCanvasElement>(null!);
 const wrapperRef = ref<HTMLElement>(null!);
+const canvas: Ref<Canvas | null> = ref(null);
 
-const canvas: Ref<Canvas> = ref(null!);
 provideCanvas(canvas);
 
 onMounted(() => {
@@ -31,11 +31,11 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  for (const object of canvas.value.getObjects()) {
+  for (const object of canvas.value!.getObjects()) {
     object.off();
   }
 
-  canvas.value.destroy();
+  canvas.value!.destroy();
 });
 
 useCanvasZoom();

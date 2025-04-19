@@ -1,9 +1,9 @@
 import type { Canvas } from 'fabric';
 import { nextTick, onMounted } from 'vue';
-import { injectCanvas } from './useCanvas';
+import { injectCanvasRef } from './useCanvas';
 
 export function onCanvasReady(onReady: (canvas: Canvas) => void) {
-  const canvas = injectCanvas();
+  const canvas = injectCanvasRef();
 
   onMounted(async () => {
     while (!canvas.value) {
