@@ -1,15 +1,15 @@
 <template>
-  <SidebarSection class="sidebar-patterns" :padding="false">
-    <SidebarSectionHeading class="sidebar-patterns__heading">
-      Патерни
+  <SidebarSection class="sidebar-structure" :padding="false">
+    <SidebarSectionHeading class="sidebar-structure__heading">
+      Структура
 
       <Button icon @click="addPatternModal.open()">
         <PlusIcon />
       </Button>
     </SidebarSectionHeading>
 
-    <ul class="sidebar-patterns__list">
-      <SidebarPattern
+    <ul class="sidebar-structure__list">
+      <SidebarStructurePattern
         v-for="pattern of patternsStore.patterns.values"
         :key="pattern.id"
         :pattern
@@ -25,7 +25,7 @@ import { PlusIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';
 import EditorAddPatternModal from '../../../EditorAddPatternModal.vue';
 import { SidebarSection, SidebarSectionHeading } from '../base';
-import SidebarPattern from './SidebarPattern.vue';
+import SidebarStructurePattern from './SidebarStructurePattern.vue';
 
 const patternsStore = usePatternsStore();
 const addPatternModal = useModal(EditorAddPatternModal);
@@ -33,18 +33,18 @@ const addPatternModal = useModal(EditorAddPatternModal);
 
 <style scoped>
 @layer page {
-  .sidebar-patterns {
+  .sidebar-structure {
     padding-bottom: 8px;
   }
 
-  .sidebar-patterns__heading {
+  .sidebar-structure__heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 6px 8px 6px 12px;
   }
 
-  .sidebar-patterns__list {
+  .sidebar-structure__list {
     list-style-type: none;
     padding: 0;
     margin: 0;
