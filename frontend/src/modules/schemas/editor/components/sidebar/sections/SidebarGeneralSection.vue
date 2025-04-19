@@ -1,9 +1,9 @@
 <template>
   <SidebarSection>
     <TextField
+      label
       required
       variant="control"
-      label="Назва Схеми"
       placeholder="Назва Схеми"
       v-model="schemaName"
     />

@@ -1,7 +1,7 @@
 <template>
   <label class="text-field">
     <span class="text-field__label" v-if="label">
-      {{ label }}
+      {{ placeholder }}
     </span>
 
     <span class="text-field__container" :class="containerClasses">
@@ -22,12 +22,12 @@ import { computed, ref } from 'vue';
 
 const props = withDefaults(defineProps<{
   placeholder: string;
-  label?: string;
+  label?: boolean;
   required?: boolean;
   type?: 'text' | 'password';
   variant?: 'main' | 'control';
 }>(), {
-  label: '',
+  label: false,
   type: 'text',
   variant: 'main',
 });
@@ -94,7 +94,7 @@ const containerClasses = computed(() => `text-field__container--variant-${props.
     border: none;
     width: 100%;
     outline: none;
-    font-size: var(--font-md);
+    font-size: calc(var(--font-md) - 1px);
     line-height: 20px;
   }
 }

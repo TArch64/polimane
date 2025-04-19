@@ -25,7 +25,7 @@ import { PlusIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';
 import EditorAddPatternModal from '../../../EditorAddPatternModal.vue';
 import { SidebarSection, SidebarSectionHeading } from '../base';
-import SidebarStructurePattern from './SidebarStructurePattern.vue';
+import { SidebarStructurePattern } from './pattern';
 
 const patternsStore = usePatternsStore();
 const addPatternModal = useModal(EditorAddPatternModal);
