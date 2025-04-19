@@ -10,8 +10,18 @@
     </p>
 
     <footer class="confirm__footer">
-      <ConfirmButton variant="secondary" :button="model.declineButton" @click="decline" />
-      <ConfirmButton variant="primary" :button="model.acceptButton" @click="accept" />
+      <ConfirmButton
+        variant="secondary"
+        :button="model.declineButton"
+        @click="decline"
+      />
+
+      <ConfirmButton
+        variant="primary"
+        :button="model.acceptButton"
+        :danger="model.danger"
+        @click="accept"
+      />
     </footer>
   </dialog>
 </template>
@@ -20,7 +30,7 @@
 import { type FunctionalComponent, h, onMounted, ref } from 'vue';
 import { onBackdropClick } from '@/composables';
 import { Button, type ButtonVariant } from '../button';
-import type { Confirm, IConfirmButton } from './Confirm';
+import type { Confirm } from './Confirm';
 
 const props = defineProps<{
   model: Confirm;
@@ -28,15 +38,16 @@ const props = defineProps<{
 
 interface IConfirmButtonProps {
   variant: ButtonVariant;
-  button: IConfirmButton;
+  button: string;
+  danger?: boolean;
 }
 
 const ConfirmButton: FunctionalComponent<IConfirmButtonProps> = (props) => {
   return h(Button, {
     size: 'md',
     variant: props.variant,
-    danger: props.button.danger,
-  }, () => props.button.text);
+    danger: props.danger,
+  }, () => props.button);
 };
 
 const dialogRef = ref<HTMLDialogElement>(null!);

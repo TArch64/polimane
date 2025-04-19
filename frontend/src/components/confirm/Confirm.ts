@@ -1,15 +1,11 @@
 import { reactive } from 'vue';
 
-export interface IConfirmButton {
-  text: string;
-  danger?: boolean;
-}
-
 export interface IConfirmOptions {
   id: string;
   message: string;
-  declineButton?: string | IConfirmButton;
-  acceptButton?: string | IConfirmButton;
+  danger?: boolean;
+  declineButton?: string;
+  acceptButton?: string;
 }
 
 interface IConfirmState {
@@ -19,8 +15,9 @@ interface IConfirmState {
 export class Confirm {
   readonly id;
   readonly message;
-  readonly declineButton: IConfirmButton;
-  readonly acceptButton: IConfirmButton;
+  readonly danger;
+  readonly declineButton;
+  readonly acceptButton;
 
   private readonly state: IConfirmState;
 
@@ -30,8 +27,9 @@ export class Confirm {
   constructor(options: IConfirmOptions) {
     this.id = options.id;
     this.message = options.message;
-    this.declineButton = this.normalizeButton(options.declineButton ?? { text: 'Відмінити' });
-    this.acceptButton = this.normalizeButton(options.acceptButton ?? { text: 'Підтвердити' });
+    this.danger = options.danger ?? false;
+    this.declineButton = options.declineButton ?? 'Відмінити';
+    this.acceptButton = options.acceptButton ?? 'Підтвердити';
 
     this.state = reactive({
       isOpened: false,
@@ -48,10 +46,6 @@ export class Confirm {
 
   get isOpened(): boolean {
     return this.state.isOpened;
-  }
-
-  private normalizeButton(button: string | IConfirmButton): IConfirmButton {
-    return typeof button === 'object' ? button : { text: button };
   }
 
   ask(): Promise<boolean> {

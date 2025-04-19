@@ -40,12 +40,9 @@ const router = useRouter();
 const editorStore = useEditorStore();
 
 const deleteConfirm = useConfirm({
+  danger: true,
   message: 'Ви впевнені, що хочете видалити цю схему?',
-
-  acceptButton: {
-    text: 'Видалити',
-    danger: true,
-  },
+  acceptButton: 'Видалити',
 });
 
 const deleteSchema = useAsyncAction(async () => {

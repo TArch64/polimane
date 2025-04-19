@@ -45,12 +45,9 @@ const routeTransition = useRouteTransition();
 const isActive = computed(() => editorStore.activePattern?.id === props.pattern.id);
 
 const deleteConfirm = useConfirm({
+  danger: true,
   message: 'Ви впевнені, що хочете видалити цей паттерн?',
-
-  acceptButton: {
-    text: 'Видалити',
-    danger: true,
-  },
+  acceptButton: 'Видалити',
 });
 
 async function deletePattern(): Promise<void> {
