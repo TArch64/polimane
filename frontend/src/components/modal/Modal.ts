@@ -36,8 +36,11 @@ export class Modal<C extends Component = Component, P = ComponentProps<C>> {
   }
 
   close(onClose?: ModalCloseCallback) {
-    this.onClose = onClose;
+    this.onClose = async () => {
+      await onClose?.();
+      this.state.props = null;
+    };
+
     this.state.isOpened = false;
-    this.state.props = null;
   }
 }
