@@ -43,6 +43,10 @@ const menuStyles = computed(() => ({
 }));
 
 function open() {
+  if (isOpened.value) {
+    return;
+  }
+
   routeTransition.start(async () => {
     isOpened.value = true;
     await nextTick();
