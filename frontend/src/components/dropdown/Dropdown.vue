@@ -79,7 +79,7 @@ function close(): void {
     flex-direction: column;
     gap: 4px;
     width: max-content;
-    view-transition-name: dropdown;
+    view-transition-name: modal;
   }
 }
 </style>
