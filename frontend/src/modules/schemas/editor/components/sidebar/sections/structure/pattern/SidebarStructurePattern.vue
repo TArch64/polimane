@@ -53,20 +53,12 @@ const deleteConfirm = useConfirm({
   },
 });
 
-function tryEmptyTransition(callback: () => void): void {
-  if (patternsStore.patterns.size === 1) {
-    routeTransition.start(async () => {
-      callback();
-      await nextTick();
-    });
-  } else {
-    callback();
-  }
-}
-
 async function deletePattern(): Promise<void> {
   if (await deleteConfirm.ask()) {
-    tryEmptyTransition(() => patternsStore.deletePattern(props.pattern));
+    routeTransition.start(async () => {
+      patternsStore.deletePattern(props.pattern);
+      await nextTick();
+    });
   }
 }
 
