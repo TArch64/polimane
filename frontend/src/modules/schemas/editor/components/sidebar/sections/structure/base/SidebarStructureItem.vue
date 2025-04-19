@@ -3,11 +3,11 @@
     {{ title }}
 
     <Dropdown>
-      <template #activator="{ activatorRef, open }">
+      <template #activator="{ activatorStyle, open }">
         <Button
           icon
           class="sidebar-structure-item__more-actions"
-          :ref="activatorRef"
+          :style="mergeAnchorName(activatorStyle, moreActionsButtonStyle)"
           @click="open"
         >
           <MoreHorizontalIcon />
@@ -24,11 +24,15 @@ import { computed, type Slot } from 'vue';
 import { MoreHorizontalIcon } from '@/components/icon';
 import { Dropdown } from '@/components/dropdown';
 import { Button } from '@/components/button';
+import { mergeAnchorName } from '@/helpers';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   title: string;
   active: boolean;
-}>();
+  moreActionsButtonStyle?: Record<string, string> | Record<string, string>[];
+}>(), {
+  moreActionsButtonStyle: () => ({}),
+});
 
 defineSlots<{
   actions: Slot;

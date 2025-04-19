@@ -2,14 +2,13 @@
   <slot
     name="activator"
     :open
-    :activatorRef="activatorRef.templateRef"
+    :activatorStyle="{ anchorName: anchorVar }"
   />
 
   <Teleport to="body">
     <Transition
       name="dropdown-"
       :duration="150"
-      @after-leave="onAfterMenuClosed"
     >
       <div
         ref="menuRef"
@@ -26,21 +25,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, type Slot, type VNodeRef } from 'vue';
-import { useDomRef } from '@/composables';
+import { computed, nextTick, ref, type Slot } from 'vue';
 import { newId, wait } from '@/helpers';
 
 defineSlots<{
   activator: Slot<{
     open: () => void;
-    activatorRef: VNodeRef;
+    activatorStyle: { anchorName: string };
   }>;
 
   default: Slot;
 }>();
 
 const menuRef = ref<HTMLElement | null>(null);
-const activatorRef = useDomRef<HTMLElement>();
 
 const anchorVar = `--dropdown-${newId()}`;
 const isOpened = ref(false);
@@ -53,7 +50,6 @@ async function open(): Promise<void> {
   isOpened.value = true;
 
   await nextTick();
-  activatorRef.ref.value.style.setProperty('anchor-name', anchorVar);
   menuRef.value!.showPopover();
 
   await wait(50);
@@ -62,10 +58,6 @@ async function open(): Promise<void> {
 
 function close(): void {
   isOpened.value = false;
-}
-
-function onAfterMenuClosed(): void {
-  activatorRef.ref.value.style.removeProperty('anchor-name');
 }
 </script>
 

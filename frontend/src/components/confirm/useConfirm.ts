@@ -1,26 +1,17 @@
-import { onUnmounted, type VNodeRef } from 'vue';
-import { useDomRef } from '@/composables';
+import { onUnmounted } from 'vue';
 import { type ConfirmCreateOptions, ConfirmPlugin } from './ConfirmPlugin';
-
-export type ConfirmOptions = Omit<ConfirmCreateOptions, 'anchorEl'>;
 
 export interface IConfirm {
   ask: () => Promise<boolean>;
-  anchorRef: VNodeRef;
+  anchorStyle: { anchorName: string };
 }
 
-export function useConfirm(options: ConfirmOptions): IConfirm {
+export function useConfirm(options: ConfirmCreateOptions): IConfirm {
   const plugin = ConfirmPlugin.inject();
-  const anchorEl = useDomRef<HTMLElement>();
-
-  const confirm = plugin.create({
-    ...options,
-    anchorEl: anchorEl.ref,
-  });
-
+  const confirm = plugin.create(options);
   const ask = () => confirm.ask();
 
   onUnmounted(() => plugin.remove(confirm));
 
-  return { ask, anchorRef: anchorEl.templateRef };
+  return { ask, anchorStyle: { anchorName: confirm.anchorVar } };
 }

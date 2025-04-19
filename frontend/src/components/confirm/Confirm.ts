@@ -1,4 +1,4 @@
-import { reactive, type Ref } from 'vue';
+import { reactive } from 'vue';
 
 export interface IConfirmButton {
   text: string;
@@ -8,13 +8,11 @@ export interface IConfirmButton {
 export interface IConfirmOptions {
   id: string;
   message: string;
-  anchorEl: Ref<HTMLElement | null>;
   declineButton?: string | IConfirmButton;
   acceptButton?: string | IConfirmButton;
 }
 
 interface IConfirmState {
-  anchorEl: HTMLElement | null;
   isOpened: boolean;
 }
 
@@ -36,7 +34,6 @@ export class Confirm {
     this.acceptButton = this.normalizeButton(options.acceptButton ?? { text: 'Підтвердити' });
 
     this.state = reactive({
-      anchorEl: options.anchorEl,
       isOpened: false,
     });
   }
@@ -47,10 +44,6 @@ export class Confirm {
 
   get anchorVar(): string {
     return `--${this.htmlId}`;
-  }
-
-  get anchorEl(): HTMLElement | null {
-    return this.state.anchorEl;
   }
 
   get isOpened(): boolean {

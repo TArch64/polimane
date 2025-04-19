@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { type FunctionalComponent, h, onMounted, onUnmounted, ref } from 'vue';
+import { type FunctionalComponent, h, onMounted, ref } from 'vue';
 import { onBackdropClick } from '@/composables';
 import { Button, type ButtonVariant } from '../button';
 import type { Confirm, IConfirmButton } from './Confirm';
@@ -43,25 +43,16 @@ const dialogRef = ref<HTMLDialogElement>(null!);
 const decline = () => props.model.complete(false);
 const accept = () => props.model.complete(true);
 
-onMounted(() => {
-  props.model.anchorEl?.style.setProperty('anchor-name', props.model.anchorVar);
-  dialogRef.value.showPopover();
-});
-
-onUnmounted(() => {
-  props.model.anchorEl?.style.removeProperty('anchor-name');
-});
-
+onMounted(() => dialogRef.value.showPopover());
 onBackdropClick(dialogRef, decline);
 </script>
 
 <style scoped>
 @layer components {
   .confirm {
-    view-transition-name: confirm;
     position-anchor: v-bind("model.anchorVar");
     position-area: bottom center;
-    margin-top: 12px;
+    margin-top: 4px;
     width: 300px;
     padding: 12px;
     overflow-y: auto;
@@ -69,6 +60,7 @@ onBackdropClick(dialogRef, decline);
     border: var(--divider);
     border-radius: var(--rounded-md);
     box-shadow: var(--box-shadow);
+    view-transition-name: confirm;
   }
 
   .confirm__message {

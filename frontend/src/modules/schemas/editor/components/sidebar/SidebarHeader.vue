@@ -5,19 +5,36 @@
       Редактор
     </Button>
 
-    <Button icon danger :ref="deleteConfirm.anchorRef" @click="deleteSchema">
-      <TrashIcon />
-    </Button>
+    <Dropdown>
+      <template #activator="{ open, activatorStyle }">
+        <Button
+          icon
+          :style="mergeAnchorName(activatorStyle, deleteConfirm.anchorStyle)"
+          @click="open"
+        >
+          <MoreHorizontalIcon />
+        </Button>
+      </template>
+
+      <DropdownAction
+        danger
+        title="Видалити Схему"
+        :icon="TrashIcon"
+        @click="deleteSchema"
+      />
+    </Dropdown>
   </header>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { Button } from '@/components/button';
-import { ArrowBackIcon, TrashIcon } from '@/components/icon';
+import { ArrowBackIcon, MoreHorizontalIcon, TrashIcon } from '@/components/icon';
 import { useEditorStore } from '@/modules/schemas/editor/stores';
 import { useAsyncAction } from '@/composables';
 import { useConfirm } from '@/components/confirm';
+import { Dropdown, DropdownAction } from '@/components/dropdown';
+import { mergeAnchorName } from '@/helpers';
 
 const router = useRouter();
 const editorStore = useEditorStore();

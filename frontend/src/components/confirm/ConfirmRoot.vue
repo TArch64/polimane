@@ -14,9 +14,9 @@ const plugin = ConfirmPlugin.inject();
 const openedConfirm = ref<ConfirmModel | null>(null);
 
 watch(() => plugin.openedConfirm?.id, () => {
-  document.startViewTransition(() => {
+  document.startViewTransition(async () => {
     openedConfirm.value = plugin.openedConfirm ?? null;
-    return nextTick();
+    await nextTick();
   });
 });
 </script>

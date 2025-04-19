@@ -1,5 +1,9 @@
 <template>
-  <SidebarStructureItem :title="pattern.name" :active="isActive">
+  <SidebarStructureItem
+    :title="pattern.name"
+    :active="isActive"
+    :more-actions-button-style="deleteConfirm.anchorStyle"
+  >
     <template #actions>
       <DropdownAction
         title="Переназвати Паттерн"
@@ -24,6 +28,7 @@ import { useEditorStore, usePatternsStore } from '@/modules/schemas/editor/store
 import { DropdownAction } from '@/components/dropdown';
 import { EditIcon, TrashIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';
+import { useConfirm } from '@/components/confirm';
 import { SidebarStructureItem } from '../base';
 import PatternRenameModal from './PatternRenameModal.vue';
 
@@ -37,8 +42,19 @@ const renameModal = useModal(PatternRenameModal);
 
 const isActive = computed(() => editorStore.activePattern?.id === props.pattern.id);
 
-function deletePattern(): void {
-  patternsStore.deletePattern(props.pattern);
+const deleteConfirm = useConfirm({
+  message: 'Ви впевнені, що хочете видалити цей паттерн?',
+
+  acceptButton: {
+    text: 'Видалити',
+    danger: true,
+  },
+});
+
+async function deletePattern(): Promise<void> {
+  if (await deleteConfirm.ask()) {
+    patternsStore.deletePattern(props.pattern);
+  }
 }
 
 function renamePattern(): void {
