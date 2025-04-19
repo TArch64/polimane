@@ -1,5 +1,5 @@
 <template>
-  <li class="sidebar-structure-item" :class="classes">
+  <div class="sidebar-structure-item" :class="classes">
     {{ title }}
 
     <Dropdown>
@@ -16,7 +16,7 @@
 
       <slot name="actions" />
     </Dropdown>
-  </li>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -51,6 +51,7 @@ const classes = computed(() => ({
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: var(--color-background-1);
     transition: background-color 0.15s ease-out;
     will-change: background-color;
 

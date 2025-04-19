@@ -27,6 +27,10 @@ export class Collection<I extends ICollectionItem> {
     return this.getSource();
   }
 
+  set values(values: I[]) {
+    this.setSource(values);
+  }
+
   get first(): I | null {
     return this.values[0] ?? null;
   }
@@ -37,7 +41,6 @@ export class Collection<I extends ICollectionItem> {
 
   append(item: I): void {
     this.values.push(item);
-    return item;
   }
 
   delete(item: I): void {

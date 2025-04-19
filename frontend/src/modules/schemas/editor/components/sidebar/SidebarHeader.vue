@@ -62,6 +62,8 @@ const deleteSchema = useAsyncAction(async () => {
     padding: 6px 8px;
     background-color: var(--color-background-1);
     border-bottom: 1px solid var(--color-divider);
+    position: sticky;
+    top: 0;
   }
 
   .editor-sidebar__header-back {

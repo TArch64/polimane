@@ -1,7 +1,7 @@
 import { ref, unref } from 'vue';
+import type { SafeAny } from '@/types';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AsyncFn = (...args: any[]) => Promise<void>;
+export type AsyncFn = (...args: SafeAny[]) => Promise<void>;
 
 export type AsyncAction<F extends AsyncFn> = F & {
   isActive: boolean;

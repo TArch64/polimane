@@ -62,6 +62,7 @@ useEventListener(window, 'beforeunload', (event) => {
   .editor__fill {
     flex-grow: 1;
     flex-basis: 0;
+    min-height: 0;
   }
 }
 </style>

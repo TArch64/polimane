@@ -8,26 +8,18 @@
       </Button>
     </SidebarSectionHeading>
 
-    <ul class="sidebar-structure__list">
-      <SidebarStructurePattern
-        v-for="pattern of patternsStore.patterns.values"
-        :key="pattern.id"
-        :pattern
-      />
-    </ul>
+    <SidebarPatternList />
   </SidebarSection>
 </template>
 
 <script setup lang="ts">
-import { usePatternsStore } from '@/modules/schemas/editor/stores';
 import { Button } from '@/components/button';
 import { PlusIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';
 import EditorAddPatternModal from '../../../EditorAddPatternModal.vue';
 import { SidebarSection, SidebarSectionHeading } from '../base';
-import { SidebarStructurePattern } from './pattern';
+import SidebarPatternList from './SidebarPatternList.vue';
 
-const patternsStore = usePatternsStore();
 const addPatternModal = useModal(EditorAddPatternModal);
 </script>
 
@@ -42,12 +34,6 @@ const addPatternModal = useModal(EditorAddPatternModal);
     align-items: center;
     justify-content: space-between;
     padding: 6px 8px 6px 12px;
-  }
-
-  .sidebar-structure__list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
   }
 }
 </style>

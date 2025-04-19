@@ -15,6 +15,9 @@
     "update-deps": "npm-check-updates -u"
   },
   "dependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": "^1.5.2",
+    "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "^2.1.0",
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
     "@iconify-json/eva": "^1.2.1",
     "@types/bun": "^1.2.6",
     "@vitejs/plugin-vue": "^5.2.3",
