@@ -6,15 +6,17 @@
 
 <script setup lang="ts">
 import { defineComponent, h, nextTick, type PropType, ref, watch } from 'vue';
+import { useRouteTransition } from '@/composables';
 import { ModalPlugin } from './ModalPlugin';
 import type { Modal } from './Modal';
 import { provideActiveModal } from './useActiveModal';
 
 const plugin = ModalPlugin.inject();
+const routeTransition = useRouteTransition();
 const openedModal = ref<Modal | null>(null);
 
 watch(() => plugin.openedModal?.id, () => {
-  document.startViewTransition(() => {
+  routeTransition.start(() => {
     const promises = [];
 
     if (openedModal.value?.onClose) {

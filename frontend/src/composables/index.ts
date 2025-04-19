@@ -3,3 +3,4 @@ export * from './useAsyncAction';
 export * from './http';
 export * from './useDomRef';
 export * from './onBackdropClick';
+export * from './useRouteTransition';

@@ -60,7 +60,7 @@ onBackdropClick(dialogRef, decline);
     border: var(--divider);
     border-radius: var(--rounded-md);
     box-shadow: var(--box-shadow);
-    view-transition-name: confirm;
+    view-transition-name: dropdown;
   }
 
   .confirm__message {

@@ -22,13 +22,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, nextTick } from 'vue';
 import type { ISchemaPattern } from '@/models';
 import { useEditorStore, usePatternsStore } from '@/modules/schemas/editor/stores';
 import { DropdownAction } from '@/components/dropdown';
 import { EditIcon, TrashIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';
 import { useConfirm } from '@/components/confirm';
+import { useRouteTransition } from '@/composables';
 import { SidebarStructureItem } from '../base';
 import PatternRenameModal from './PatternRenameModal.vue';
 
@@ -39,6 +40,7 @@ const props = defineProps<{
 const editorStore = useEditorStore();
 const patternsStore = usePatternsStore();
 const renameModal = useModal(PatternRenameModal);
+const routeTransition = useRouteTransition();
 
 const isActive = computed(() => editorStore.activePattern?.id === props.pattern.id);
 
@@ -51,9 +53,20 @@ const deleteConfirm = useConfirm({
   },
 });
 
+function tryEmptyTransition(callback: () => void): void {
+  if (patternsStore.patterns.size === 1) {
+    routeTransition.start(async () => {
+      callback();
+      await nextTick();
+    });
+  } else {
+    callback();
+  }
+}
+
 async function deletePattern(): Promise<void> {
   if (await deleteConfirm.ask()) {
-    patternsStore.deletePattern(props.pattern);
+    tryEmptyTransition(() => patternsStore.deletePattern(props.pattern));
   }
 }
 

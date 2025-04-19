@@ -47,7 +47,8 @@ button {
   padding: 0;
 }
 
-::view-transition-old(root),
-::view-transition-new(root) {
+::view-transition-old(*),
+::view-transition-new(*) {
   animation-duration: 0.15s;
+  animation-timing-function: ease-out;
 }

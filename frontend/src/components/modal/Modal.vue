@@ -1,26 +1,28 @@
 <template>
   <dialog ref="dialogRef" class="modal" @close="close">
-    <header class="modal__header">
-      <h1 class="modal__title">
-        {{ title }}
-      </h1>
+    <div class="modal__inner">
+      <header class="modal__header">
+        <h1 class="modal__title">
+          {{ title }}
+        </h1>
 
-      <Button icon class="modal__close" @click="close">
-        <CloseIcon size="24" />
-      </Button>
-    </header>
-
-    <Form @submit="$emit('save')">
-      <main class="modal__body">
-        <slot :close />
-      </main>
-
-      <footer class="modal__footer">
-        <Button variant="primary" type="submit">
-          {{ saveButton }}
+        <Button icon class="modal__close" @click="close">
+          <CloseIcon size="24" />
         </Button>
-      </footer>
-    </Form>
+      </header>
+
+      <Form @submit="$emit('save')">
+        <main class="modal__body">
+          <slot :close />
+        </main>
+
+        <footer class="modal__footer">
+          <Button variant="primary" type="submit">
+            {{ saveButton }}
+          </Button>
+        </footer>
+      </Form>
+    </div>
   </dialog>
 </template>
 

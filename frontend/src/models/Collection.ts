@@ -27,12 +27,17 @@ export class Collection<I extends ICollectionItem> {
     return this.getSource();
   }
 
+  get first(): I | null {
+    return this.values[0] ?? null;
+  }
+
   get size(): number {
     return this.values.length;
   }
 
   append(item: I): void {
     this.values.push(item);
+    return item;
   }
 
   delete(item: I): void {

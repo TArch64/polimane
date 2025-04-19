@@ -2,7 +2,7 @@
   <header class="editor-sidebar__header">
     <Button class="editor-sidebar__header-back" :to="{ name: 'home' }">
       <ArrowBackIcon />
-      Редактор
+      Едітор
     </Button>
 
     <Dropdown>

@@ -11,11 +11,17 @@ export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
   const patterns = Collection.fromProperty(editorStore.schema.content, 'patterns');
   const hasPatterns = computed(() => !!patterns.size);
 
-  const addPattern = (type: PatternType) => patterns.append({
-    id: newId(),
-    name: `${getPatternTitle(type)} [${patterns.size + 1}]`,
-    type,
-  });
+  function addPattern(type: PatternType): void {
+    patterns.append({
+      id: newId(),
+      name: `${getPatternTitle(type)} [${patterns.size + 1}]`,
+      type,
+    });
+
+    if (!editorStore.activePattern) {
+      editorStore.activatePattern(patterns.first!);
+    }
+  }
 
   function deletePattern(pattern: ISchemaPattern) {
     patterns.delete(pattern);
