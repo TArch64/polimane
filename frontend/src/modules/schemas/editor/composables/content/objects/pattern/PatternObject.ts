@@ -17,6 +17,7 @@ export class PatternObject extends Group {
       width: 1000,
       height: 100,
       stroke: 'rgba(0, 0, 0, 0.2)',
+      strokeDashArray: [10, 5],
       fill: 'transparent',
     });
 

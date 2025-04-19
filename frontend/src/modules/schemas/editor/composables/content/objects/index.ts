@@ -1,2 +1,2 @@
 export * from './pattern';
-export type * from './objectTypeMap';
+export type * from './EditorObjectTypeMap';
