@@ -99,7 +99,7 @@ func (m *queryLoggerMiddleware) formatMessage(in middleware.InitializeInput) (st
 		label = color.YellowString("[DynamoDB/UpdateItem]")
 		content = fmt.Sprintf(": Where %s %s",
 			m.formatAttrMap(typed.Key),
-			m.formatUpdateExpression(*typed.UpdateExpression, typed.ExpressionAttributeValues),
+			m.formatUpdateExpression(*typed.UpdateExpression, typed.ExpressionAttributeNames, typed.ExpressionAttributeValues),
 		)
 		if typed.ConditionExpression != nil {
 			content += " If " + m.formatConditionExpression(*typed.ConditionExpression)
@@ -209,8 +209,11 @@ func (m *queryLoggerMiddleware) formatConditionExpression(expression string) str
 	return strings.TrimSuffix(strings.TrimPrefix(expression, "("), ")")
 }
 
-func (m *queryLoggerMiddleware) formatUpdateExpression(expression string, attrValues map[string]types.AttributeValue) string {
-	for name, value := range attrValues {
+func (m *queryLoggerMiddleware) formatUpdateExpression(expression string, names map[string]string, values map[string]types.AttributeValue) string {
+	for key, name := range names {
+		expression = strings.ReplaceAll(expression, key, name)
+	}
+	for name, value := range values {
 		expression = strings.ReplaceAll(expression, name, m.formatAttrValue(value))
 	}
 	return strings.Replace(expression, "SET", "Set", 1)
