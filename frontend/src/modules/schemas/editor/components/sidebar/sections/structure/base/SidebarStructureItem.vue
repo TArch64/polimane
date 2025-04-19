@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar-structure-item" :class="classes">
+  <div class="sidebar-structure-item">
     {{ title }}
 
     <Dropdown>
@@ -20,15 +20,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type Slot } from 'vue';
+import { type Slot } from 'vue';
 import { MoreHorizontalIcon } from '@/components/icon';
 import { Dropdown } from '@/components/dropdown';
 import { Button } from '@/components/button';
 import { mergeAnchorName } from '@/helpers';
 
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
   title: string;
-  active: boolean;
   moreActionsButtonStyle?: Record<string, string> | Record<string, string>[];
 }>(), {
   moreActionsButtonStyle: () => ({}),
@@ -37,10 +36,6 @@ const props = withDefaults(defineProps<{
 defineSlots<{
   actions: Slot;
 }>();
-
-const classes = computed(() => ({
-  'sidebar-structure-item--active': props.active,
-}));
 </script>
 
 <style scoped>
@@ -55,21 +50,13 @@ const classes = computed(() => ({
     transition: background-color 0.15s ease-out;
     will-change: background-color;
 
-    &:hover:not(.sidebar-structure-item--active) {
+    &:hover {
       background-color: var(--color-background-2);
-    }
-
-    &:hover,
-    &.sidebar-structure-item--active {
 
       .sidebar-structure-item__more-actions {
         opacity: 1;
       }
     }
-  }
-
-  .sidebar-structure-item--active {
-    background-color: var(--color-background-3);
   }
 
   .sidebar-structure-item__more-actions {

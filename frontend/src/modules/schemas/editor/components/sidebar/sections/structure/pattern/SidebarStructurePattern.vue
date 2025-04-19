@@ -1,7 +1,6 @@
 <template>
   <SidebarStructureItem
     :title="pattern.name"
-    :active="isActive"
     :more-actions-button-style="deleteConfirm.anchorStyle"
   >
     <template #actions>
@@ -22,9 +21,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick } from 'vue';
+import { nextTick } from 'vue';
 import type { ISchemaPattern } from '@/models';
-import { useEditorStore, usePatternsStore } from '@/modules/schemas/editor/stores';
+import { usePatternsStore } from '@/modules/schemas/editor/stores';
 import { DropdownAction } from '@/components/dropdown';
 import { EditIcon, TrashIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';
@@ -37,12 +36,9 @@ const props = defineProps<{
   pattern: ISchemaPattern;
 }>();
 
-const editorStore = useEditorStore();
 const patternsStore = usePatternsStore();
 const renameModal = useModal(PatternRenameModal);
 const routeTransition = useRouteTransition();
-
-const isActive = computed(() => editorStore.activePattern?.id === props.pattern.id);
 
 const deleteConfirm = useConfirm({
   danger: true,

@@ -17,10 +17,6 @@ export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
       name: `${getPatternTitle(type)} [${patterns.size + 1}]`,
       type,
     });
-
-    if (!editorStore.activePattern) {
-      editorStore.activatePattern(patterns.first!);
-    }
   }
 
   function deletePattern(pattern: ISchemaPattern) {

@@ -7,7 +7,12 @@
 <script setup lang="ts">
 import { markRaw, onMounted, onUnmounted, type Ref, ref } from 'vue';
 import { Canvas } from 'fabric';
-import { provideCanvas, useCanvasNavigation, useCanvasZoom } from '../composables';
+import {
+  provideCanvas,
+  useCanvasContent,
+  useCanvasNavigation,
+  useCanvasZoom,
+} from '../composables';
 
 const canvasRef = ref<HTMLCanvasElement>(null!);
 const wrapperRef = ref<HTMLElement>(null!);
@@ -18,21 +23,11 @@ provideCanvas(canvas);
 onMounted(() => {
   canvas.value = markRaw(new Canvas(canvasRef.value, {
     selection: false,
+    // TODO update navigation to work correctly with enabled skipOffscreen
+    skipOffscreen: false,
     width: wrapperRef.value.offsetWidth,
     height: wrapperRef.value.offsetHeight,
   }));
-
-  // const rect = new Rect({
-  //   selectable: false,
-  //   hasControls: false,
-  //   hasBorders: false,
-  //   width: 10,
-  //   height: 10,
-  //   hoverCursor: 'default',
-  // });
-  //
-  // canvas.value.add(rect);
-  // canvas.value.centerObject(rect);
 });
 
 onUnmounted(() => {
@@ -45,4 +40,5 @@ onUnmounted(() => {
 
 useCanvasZoom();
 useCanvasNavigation();
+useCanvasContent();
 </script>
