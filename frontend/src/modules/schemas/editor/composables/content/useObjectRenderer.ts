@@ -2,7 +2,7 @@ import { computed, type Ref, watch, type WatchStopHandle } from 'vue';
 import { EditorObjectType } from '../../enums';
 import { injectCanvas } from '../useCanvas';
 import { useObjectRegistry } from './useObjectRegistry';
-import type { EditorObjectTypeMap } from './objects';
+import { type EditorObjectTypeMap, isUpdatableObject } from './objects';
 
 export interface IRenderingItem {
   id: string;
@@ -12,7 +12,6 @@ export interface IObjectRendererOptions<T extends EditorObjectType, I extends IR
   type: T;
   items: Ref<I[]>;
   createObject: (item: I) => EditorObjectTypeMap[T];
-  updateObject: (item: I, object: EditorObjectTypeMap[T]) => void;
   updatePositions: (objects: EditorObjectTypeMap[T][]) => void;
 }
 
@@ -35,10 +34,13 @@ export function useObjectRenderer<T extends EditorObjectType, I extends IRenderi
         const object = options.createObject(item);
         objectRegistry.add(id, object);
 
-        stopHandles[id] = watch(() => itemMapping.value[id], (changed) => {
-          options.updateObject(changed, object);
-          canvas.requestRenderAll();
-        }, { deep: true });
+        if (isUpdatableObject(object)) {
+          stopHandles[id] = watch(() => itemMapping.value[id], (changed) => {
+            // @ts-expect-error unable to safe type this
+            object.update(changed);
+            canvas.requestRenderAll();
+          }, { deep: true });
+        }
       }
     }
 

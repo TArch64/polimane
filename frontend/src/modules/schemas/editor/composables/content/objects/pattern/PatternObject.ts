@@ -1,8 +1,9 @@
 import { Group, Rect } from 'fabric';
 import type { ISchemaPattern } from '@/models';
+import type { IUpdatableObject } from '../IUpdatableObject';
 import { PatternTitleObject } from './PatternTitleObject';
 
-export class PatternObject extends Group {
+export class PatternObject extends Group implements IUpdatableObject<ISchemaPattern> {
   private readonly border: Rect;
   private readonly title: PatternTitleObject;
 
