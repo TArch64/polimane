@@ -24,10 +24,7 @@ export const useSchemasStore = defineStore('schemas/list', () => {
   async function createSchema(input: ICreateSchemaInput): Promise<SchemaListItem> {
     return httpClient.post<SchemaListItem, CreateSchemaRequest>('/schemas', {
       ...input,
-
-      content: {
-        patterns: [],
-      },
+      content: [],
     });
   }
 

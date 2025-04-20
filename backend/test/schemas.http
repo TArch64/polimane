@@ -10,14 +10,7 @@ Content-Type: application/json
 
 {
   "name": "test {{ $random.uuid }}",
-  "content": {
-    "patterns": [
-      {
-        "type": "linear",
-        "rows": []
-      }
-    ]
-  }
+  "content": []
 }
 
 ###
@@ -35,11 +28,9 @@ Content-Type: application/json
 ###
 
 # @name update
-PATCH http://polimane.localhost/api/schemas/01js43hxkr9e2rf6x7nazb3ndq
+PATCH http://polimane.localhost/api/schemas/01js4znrk3hwfeyb6kvg69q1zy
 Content-Type: application/json
 
 {
-  "content": {
-    "patterns": []
-  }
+  "content": []
 }

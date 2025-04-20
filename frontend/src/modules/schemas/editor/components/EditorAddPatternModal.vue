@@ -21,15 +21,15 @@
 import { ref } from 'vue';
 import { Modal, useActiveModal } from '@/components/modal';
 import { type ISelectOption, RadioSelect } from '@/components/form';
-import { getPatternTitle, PatternType, PatternTypeValues } from '@/enums';
+import { getPatternTitle, PatternKind, PatternKindValues } from '@/enums';
 import { usePatternsStore } from '../stores';
 
 const patternsStore = usePatternsStore();
 const modal = useActiveModal();
 
-const selectedType = ref(PatternType.SQUARE);
+const selectedType = ref(PatternKind.SQUARE);
 
-const options = PatternTypeValues.map((type): ISelectOption<PatternType> => ({
+const options = PatternKindValues.map((type): ISelectOption<PatternKind> => ({
   value: type,
   label: getPatternTitle(type),
 }));

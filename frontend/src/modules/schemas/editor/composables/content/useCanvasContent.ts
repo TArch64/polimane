@@ -9,6 +9,6 @@ export function useCanvasContent() {
   initObjectRegistry();
 
   onCanvasReady(() => {
-    usePatternRenderer(toRef(editorStore.schema.content, 'patterns'));
+    usePatternRenderer(toRef(editorStore.schema, 'content'));
   });
 }

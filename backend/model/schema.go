@@ -5,7 +5,7 @@ import "encoding/json"
 const SKSchema = "SCHEMA"
 const IndexSchemaID = "SchemaIdIndex"
 
-type SchemaContent map[string]interface{}
+type SchemaContent []interface{}
 
 type Schema struct {
 	*Base
