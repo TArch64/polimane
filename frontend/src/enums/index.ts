@@ -1,2 +1,1 @@
-export * from './PatternKind';
-export * from './SchemaObjectType';
+export * from './PatternType';

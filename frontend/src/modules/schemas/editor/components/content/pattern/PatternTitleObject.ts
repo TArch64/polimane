@@ -1,8 +1,7 @@
 import { FabricText, Group, Rect } from 'fabric';
 import type { ISchemaPattern } from '@/models';
-import type { IUpdatableObject } from '../IUpdatableObject';
 
-export class PatternTitleObject extends Group implements IUpdatableObject<ISchemaPattern> {
+export class PatternTitleObject extends Group {
   static PADDING_VERTICAL = 4;
   static PADDING_HORIZONTAL = 6;
 

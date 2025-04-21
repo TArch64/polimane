@@ -1,27 +1,17 @@
 import type { Canvas } from 'fabric';
-import { PatternObject } from '../objects';
+import { type IObjectPosition, PositionIterator } from '../PositionIterator';
+import { PatternObject } from './PatternObject';
 
-interface IPatternPosition {
-  object: PatternObject;
-  top: number;
-  left: number;
-}
-
-export class PatternPositionIterator extends Iterator<IPatternPosition, undefined> {
+export class PatternPositionIterator extends PositionIterator<PatternObject> {
   static readonly CANVAS_PADDING = 10;
   static readonly PATTERN_GAP = 50;
 
   private readonly availableHorizontalSpace: number;
   private readonly totalHeight: number;
-  private index = 0;
   private nextOffsetTop: number;
-  readonly [Symbol.iterator] = () => this;
 
-  constructor(
-    private readonly canvas: Canvas,
-    private readonly objects: PatternObject[],
-  ) {
-    super();
+  constructor(canvas: Canvas, objects: PatternObject[]) {
+    super(canvas, objects);
     this.availableHorizontalSpace = canvas.width - PatternPositionIterator.CANVAS_PADDING * 2;
     this.totalHeight = this.calcTotalHeight();
     this.nextOffsetTop = this.calcInitialNextOffsetTop();
@@ -39,24 +29,15 @@ export class PatternPositionIterator extends Iterator<IPatternPosition, undefine
     return Math.max(freeSpace / 2, PatternPositionIterator.CANVAS_PADDING);
   }
 
-  next(): IteratorResult<IPatternPosition> {
-    if (!this.object) {
-      return { done: true, value: undefined };
-    }
-
-    const value: IPatternPosition = {
-      object: this.object,
+  protected iteration(): IObjectPosition<PatternObject> {
+    const value: IObjectPosition<PatternObject> = {
+      object: this.object!,
       top: this.nextOffsetTop,
       left: this.offsetLeft,
     };
 
-    this.nextOffsetTop += this.object.height + PatternPositionIterator.PATTERN_GAP;
-    this.index++;
-    return { done: false, value };
-  }
-
-  private get object(): PatternObject | undefined {
-    return this.objects[this.index];
+    this.nextOffsetTop += this.object!.height + PatternPositionIterator.PATTERN_GAP;
+    return value;
   }
 
   private get offsetLeft(): number {

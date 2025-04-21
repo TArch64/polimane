@@ -1,18 +1,15 @@
 <template>
   <div ref="wrapperRef" @contextmenu.prevent>
     <canvas ref="canvasRef" />
+    <CanvasSchema v-if="canvas" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { markRaw, onMounted, onUnmounted, type Ref, ref } from 'vue';
 import { Canvas } from 'fabric';
-import {
-  provideCanvas,
-  useCanvasContent,
-  useCanvasNavigation,
-  useCanvasZoom,
-} from '../composables';
+import { markRaw, onMounted, onUnmounted, type Ref, ref } from 'vue';
+import { provideCanvas, useCanvasNavigation, useCanvasZoom } from '../composables';
+import { CanvasSchema } from './content';
 
 const canvasRef = ref<HTMLCanvasElement>(null!);
 const wrapperRef = ref<HTMLElement>(null!);
@@ -26,6 +23,7 @@ onMounted(() => {
     fireRightClick: true,
     width: wrapperRef.value.offsetWidth,
     height: wrapperRef.value.offsetHeight,
+    hoverCursor: 'default',
   }));
 });
 
@@ -39,5 +37,4 @@ onUnmounted(() => {
 
 useCanvasZoom();
 useCanvasNavigation();
-useCanvasContent();
 </script>
