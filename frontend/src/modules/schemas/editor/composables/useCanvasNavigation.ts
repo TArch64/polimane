@@ -1,47 +1,25 @@
-import { Point, type TPointerEventInfo } from 'fabric';
+import { onUnmounted } from 'vue';
 import { useCanvasCursor } from './useCanvasCursor';
 import { onCanvasReady } from './onCanvasReady';
 
-function pointFromEvent(options: TPointerEventInfo): Point {
-  const event = options.e as MouseEvent;
-  return new Point(event.clientX, event.clientY);
-}
-
 export function useCanvasNavigation() {
   const cursor = useCanvasCursor();
+  const abortController = new AbortController();
 
   onCanvasReady((canvas) => {
-    let lastPosition = new Point();
+    canvas.upperCanvasEl.addEventListener('wheel', (event) => {
+      event.preventDefault();
 
-    function onMouseMove(options: TPointerEventInfo): void {
-      const newPosition = pointFromEvent(options);
-
-      canvas.viewportTransform[4] += newPosition.x - lastPosition.x;
-      canvas.viewportTransform[5] += newPosition.y - lastPosition.y;
-
-      lastPosition = newPosition;
-      canvas.requestRenderAll();
-    }
-
-    canvas.on('mouse:down', (downOptions) => {
-      const event = downOptions.e as MouseEvent;
-
-      if (event.buttons !== 2) {
-        return;
-      }
-
-      const affectedObject = canvas.findTarget(downOptions.e);
-      cursor.change('move', affectedObject);
-
-      lastPosition = pointFromEvent(downOptions);
-
-      const unsubscribe = canvas.on('mouse:move', onMouseMove);
-
-      canvas.once('mouse:up', () => {
-        unsubscribe();
-        lastPosition = new Point();
-        cursor.change('default', affectedObject);
-      });
+      canvas.viewportTransform[4] -= event.deltaX;
+      canvas.viewportTransform[5] -= event.deltaY;
+      cursor.changeTemporarily('move', 100);
+    }, {
+      passive: false,
+      signal: abortController.signal,
     });
+  });
+
+  onUnmounted(() => {
+    abortController.abort();
   });
 }
