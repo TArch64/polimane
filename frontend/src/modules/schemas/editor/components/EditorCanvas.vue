@@ -23,8 +23,6 @@ provideCanvas(canvas);
 onMounted(() => {
   canvas.value = markRaw(new Canvas(canvasRef.value, {
     selection: false,
-    // TODO update navigation to work correctly with enabled skipOffscreen
-    skipOffscreen: false,
     fireRightClick: true,
     width: wrapperRef.value.offsetWidth,
     height: wrapperRef.value.offsetHeight,

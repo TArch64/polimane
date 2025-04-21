@@ -9,9 +9,9 @@ export function useCanvasNavigation() {
   onCanvasReady((canvas) => {
     canvas.upperCanvasEl.addEventListener('wheel', (event) => {
       event.preventDefault();
-
       canvas.viewportTransform[4] -= event.deltaX;
       canvas.viewportTransform[5] -= event.deltaY;
+      canvas.forEachObject((object) => object.setCoords());
       cursor.changeTemporarily('move', 100);
     }, {
       passive: false,
