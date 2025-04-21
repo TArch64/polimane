@@ -1,4 +1,4 @@
-import type { Canvas } from 'fabric';
+import type { ObjectParent } from '@/modules/schemas/editor/composables';
 import { type IObjectPosition, PositionIterator } from '../PositionIterator';
 import { PatternObject } from './PatternObject';
 
@@ -10,9 +10,9 @@ export class PatternPositionIterator extends PositionIterator<PatternObject> {
   private readonly totalHeight: number;
   private nextOffsetTop: number;
 
-  constructor(canvas: Canvas, objects: PatternObject[]) {
-    super(canvas, objects);
-    this.availableHorizontalSpace = canvas.width - PatternPositionIterator.CANVAS_PADDING * 2;
+  constructor(parent: ObjectParent, objects: PatternObject[]) {
+    super(parent, objects);
+    this.availableHorizontalSpace = parent.width - PatternPositionIterator.CANVAS_PADDING * 2;
     this.totalHeight = this.calcTotalHeight();
     this.nextOffsetTop = this.calcInitialNextOffsetTop();
   }
@@ -25,7 +25,7 @@ export class PatternPositionIterator extends PositionIterator<PatternObject> {
   }
 
   private calcInitialNextOffsetTop(): number {
-    const freeSpace = this.canvas.height - this.totalHeight - PatternPositionIterator.CANVAS_PADDING * 2;
+    const freeSpace = this.parent.height - this.totalHeight - PatternPositionIterator.CANVAS_PADDING * 2;
     return Math.max(freeSpace / 2, PatternPositionIterator.CANVAS_PADDING);
   }
 

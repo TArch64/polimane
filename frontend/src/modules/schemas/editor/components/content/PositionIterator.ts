@@ -1,4 +1,5 @@
-import type { Canvas, FabricObject } from 'fabric';
+import type { FabricObject } from 'fabric';
+import type { ObjectParent } from '@/modules/schemas/editor/composables';
 
 export interface IObjectPosition<O extends FabricObject> {
   object: O;
@@ -12,7 +13,7 @@ export abstract class PositionIterator<O extends FabricObject> extends Iterator<
   protected index = 0;
 
   protected constructor(
-    protected readonly canvas: Canvas,
+    protected readonly parent: ObjectParent,
     protected readonly objects: O[],
   ) {
     super();

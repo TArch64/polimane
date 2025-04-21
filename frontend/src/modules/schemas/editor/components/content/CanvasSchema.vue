@@ -9,10 +9,12 @@
 </template>
 
 <script setup lang="ts">
-import { useEditorStore } from '@/modules/schemas/editor/stores';
 import type { ISchemaPattern } from '@/models';
+import { useEditorStore } from '@/modules/schemas/editor/stores';
+import { injectCanvas, provideObjectParent } from '@/modules/schemas/editor/composables';
 import { CanvasPattern, PatternPositionIterator } from './pattern';
 import CanvasList from './CanvasList.vue';
 
 const editorStore = useEditorStore();
+provideObjectParent(injectCanvas());
 </script>

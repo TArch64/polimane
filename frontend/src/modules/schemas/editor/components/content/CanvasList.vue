@@ -8,7 +8,11 @@
 import { computed, nextTick, onMounted, type Slot, watch } from 'vue';
 import { type FabricObject, util } from 'fabric';
 import type { ISchemaObject } from '@/models';
-import { getCanvasObject, injectCanvas } from '@/modules/schemas/editor/composables';
+import {
+  getCanvasObject,
+  injectCanvas,
+  useObjectParent,
+} from '@/modules/schemas/editor/composables';
 import type { PositionIterator } from './PositionIterator';
 
 const props = defineProps<{
@@ -21,12 +25,13 @@ defineSlots<{
 }>();
 
 const canvas = injectCanvas();
+const parent = useObjectParent();
 const itemIds = computed(() => props.items.map((item) => item.id));
 
 function createPositionIterator(): PositionIterator<FabricObject> {
   const objects = props.items.map((item) => getCanvasObject(item.id));
   // @ts-expect-error: The PositionIterator class is generic, but we are passing a specific type
-  return new props.positionIteratorClass(canvas, objects);
+  return new props.positionIteratorClass(parent, objects);
 }
 
 function tryAnimated(object: FabricObject, key: 'top' | 'left', value: number) {
@@ -63,5 +68,4 @@ watch(itemIds, async () => {
   await nextTick();
   updatePositions();
 });
-
 </script>
