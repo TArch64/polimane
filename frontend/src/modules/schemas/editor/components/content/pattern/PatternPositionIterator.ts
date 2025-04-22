@@ -36,7 +36,7 @@ export class PatternPositionIterator extends PositionIterator<PatternObject> {
   }
 
   private get offsetLeft(): number {
-    const freeSpaceLeft = this.availableHorizontalSpace - this.object!.width;
+    const freeSpaceLeft = (this.availableHorizontalSpace - this.object!.width) / 2;
     return Math.max(freeSpaceLeft, PatternPositionIterator.CANVAS_PADDING);
   }
 }
