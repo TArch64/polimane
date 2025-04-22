@@ -2,6 +2,7 @@ import { Group, Rect } from 'fabric';
 import type { ISchemaPattern } from '@/models';
 import type { IUpdatableFabricObject } from '@/modules/schemas/editor/composables';
 import { ObjectHover } from '../ObjectHover';
+import { OBJECT_DEFAULTS } from '../objectDefaults';
 import { PatternTitleObject } from './PatternTitleObject';
 
 export class PatternObject extends Group implements IUpdatableFabricObject<ISchemaPattern> {
@@ -10,9 +11,7 @@ export class PatternObject extends Group implements IUpdatableFabricObject<ISche
   private readonly title: PatternTitleObject;
 
   constructor(pattern: ISchemaPattern) {
-    super([], {
-      selectable: false,
-    });
+    super([], OBJECT_DEFAULTS);
 
     this.border = new Rect({
       rx: 8,

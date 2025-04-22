@@ -1,5 +1,6 @@
 import { FabricText, Group, Rect } from 'fabric';
 import type { ISchemaPattern } from '@/models';
+import { TEXT_OBJECT_DEFAULTS } from '../objectDefaults';
 
 export class PatternTitleObject extends Group {
   static PADDING_VERTICAL = 4;
@@ -12,10 +13,10 @@ export class PatternTitleObject extends Group {
     super();
 
     this.text = new FabricText(pattern.name, {
+      ...TEXT_OBJECT_DEFAULTS,
       top: PatternTitleObject.PADDING_VERTICAL - 1,
       left: PatternTitleObject.PADDING_HORIZONTAL,
       fontSize: 14,
-      fontFamily: 'Arial',
     });
 
     this.border = new Rect({
