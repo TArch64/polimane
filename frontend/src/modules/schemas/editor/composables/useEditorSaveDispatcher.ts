@@ -17,7 +17,7 @@ type WatchableAttribute = keyof Omit<ISchema, 'id'>;
 
 export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSaveCallback): IEditorSaveDispatcher {
   let saveTimeout: TimeoutId | null = null;
-  let stopWatch: WatchStopHandle | null = null;
+  let stopWatch: VoidFunction | null = null;
   const unsavedChanges = ref<Partial<ISchema> | null>(null);
   const hasUnsavedChanges = computed(() => !!unsavedChanges.value);
 

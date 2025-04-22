@@ -1,10 +1,12 @@
 import { Group, Rect } from 'fabric';
 import type { ISchemaPattern } from '@/models';
 import type { IUpdatableFabricObject } from '@/modules/schemas/editor/composables';
+import { ObjectHover } from '../ObjectHover';
 import { PatternTitleObject } from './PatternTitleObject';
 
 export class PatternObject extends Group implements IUpdatableFabricObject<ISchemaPattern> {
   private readonly border: Rect;
+  private readonly hover: ObjectHover;
   private readonly title: PatternTitleObject;
 
   constructor(pattern: ISchemaPattern) {
@@ -17,9 +19,13 @@ export class PatternObject extends Group implements IUpdatableFabricObject<ISche
       ry: 8,
       width: 1000,
       height: 100,
-      stroke: 'rgba(0, 0, 0, 0.2)',
       strokeDashArray: [10, 5],
       fill: 'transparent',
+    });
+
+    this.hover = new ObjectHover(this).apply(this.border, {
+      default: { stroke: 'rgba(0, 0, 0, 0.2)' },
+      hover: { stroke: '#000' },
     });
 
     this.title = new PatternTitleObject(pattern);
@@ -31,5 +37,10 @@ export class PatternObject extends Group implements IUpdatableFabricObject<ISche
 
   update(pattern: ISchemaPattern) {
     this.title.update(pattern);
+  }
+
+  dispose() {
+    super.dispose();
+    this.hover.dispose();
   }
 }

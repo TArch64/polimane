@@ -7,26 +7,21 @@ export class PatternPositionIterator extends PositionIterator<PatternObject> {
   static readonly PATTERN_GAP = 50;
 
   private readonly availableHorizontalSpace: number;
-  private readonly totalHeight: number;
   private nextOffsetTop: number;
 
   constructor(parent: ObjectParent, objects: PatternObject[]) {
     super(parent, objects);
     this.availableHorizontalSpace = parent.width - PatternPositionIterator.CANVAS_PADDING * 2;
-    this.totalHeight = this.calcTotalHeight();
     this.nextOffsetTop = this.calcInitialNextOffsetTop();
-  }
-
-  private calcTotalHeight(): number {
-    return this.objects.reduce((acc, object, index) => {
-      const gap = index < this.objects.length ? PatternPositionIterator.PATTERN_GAP : 0;
-      return acc + object.height + gap;
-    }, 0);
   }
 
   private calcInitialNextOffsetTop(): number {
     const freeSpace = this.parent.height - this.totalHeight - PatternPositionIterator.CANVAS_PADDING * 2;
     return Math.max(freeSpace / 2, PatternPositionIterator.CANVAS_PADDING);
+  }
+
+  private get totalHeight(): number {
+    return this.calcListSize('height', PatternPositionIterator.PATTERN_GAP);
   }
 
   protected iteration(): IObjectPosition<PatternObject> {

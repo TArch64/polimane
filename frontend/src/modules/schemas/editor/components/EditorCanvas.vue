@@ -27,13 +27,7 @@ onMounted(() => {
   }));
 });
 
-onUnmounted(() => {
-  for (const object of canvas.value!.getObjects()) {
-    object.off();
-  }
-
-  canvas.value!.destroy();
-});
+onUnmounted(() => canvas.value!.dispose());
 
 useCanvasZoom();
 useCanvasNavigation();

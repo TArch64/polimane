@@ -25,6 +25,13 @@ export abstract class PositionIterator<O extends FabricObject> extends Iterator<
     return this.objects[this.index];
   }
 
+  protected calcListSize(side: 'width' | 'height', gap: number): number {
+    return this.objects.reduce((acc, object, index) => {
+      const offset = index < this.objects.length ? gap : 0;
+      return acc + object[side] + offset;
+    }, 0);
+  }
+
   next(): IteratorResult<IObjectPosition<O>> {
     if (!this.objects[this.index]) {
       return { done: true, value: undefined };

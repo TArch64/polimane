@@ -1,5 +1,3 @@
-import type { WatchStopHandle } from 'vue';
-
-export function combineStopHandles(...handlers: WatchStopHandle[]): WatchStopHandle {
+export function combineStopHandles(...handlers: VoidFunction[]): VoidFunction {
   return () => handlers.forEach((handle) => handle());
 }

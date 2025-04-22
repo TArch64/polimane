@@ -43,6 +43,7 @@ function tryAnimated(object: FabricObject, key: 'top' | 'left', value: number) {
     });
   } else {
     object.set(key, value);
+    object.setCoords();
   }
 }
 
