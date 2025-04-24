@@ -1,6 +1,6 @@
 import type { Component } from 'vue';
 import type { RouteParamValueRaw, RouteRecordInfo } from 'vue-router';
-import type { ComponentProps } from '@/types';
+import type { InferComponentProps } from '@/types';
 
 export interface IAppRoute {
   path: string;
@@ -33,7 +33,7 @@ type InferRouteNormalizedProps<P> = {
 
 export type InferViewRouteInfo<
   R extends IAppViewRoute,
-  P = ComponentProps<Awaited<ReturnType<R['component']>>['default']>,
+  P = InferComponentProps<Awaited<ReturnType<R['component']>>['default']>,
 > = Record<R['name'], RouteRecordInfo<
   R['name'],
   R['path'],

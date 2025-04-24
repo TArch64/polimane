@@ -1,7 +1,7 @@
-import { FabricObject, type FabricObjectProps } from 'fabric';
+import { FabricObject } from 'fabric';
 import { combineStopHandles } from '@/helpers';
+import type { InferObjectProps } from '@/types';
 
-type InferObjectProps<O> = O extends FabricObject<infer P extends FabricObjectProps> ? P : never;
 type ObjectHoverState = 'default' | 'hover';
 type ObjectHoverStates<O extends FabricObject> = Record<ObjectHoverState, Partial<InferObjectProps<O>>>;
 

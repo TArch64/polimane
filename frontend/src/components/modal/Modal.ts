@@ -1,5 +1,5 @@
 import { type Component, reactive } from 'vue';
-import type { ComponentProps } from '@/types';
+import type { InferComponentProps } from '@/types';
 
 interface IModalState<P> {
   isOpened: boolean;
@@ -8,7 +8,7 @@ interface IModalState<P> {
 
 export type ModalCloseCallback = () => Promise<void>;
 
-export class Modal<C extends Component = Component, P = ComponentProps<C>> {
+export class Modal<C extends Component = Component, P = InferComponentProps<C>> {
   private state: IModalState<P> = reactive({
     isOpened: false,
     props: null,
