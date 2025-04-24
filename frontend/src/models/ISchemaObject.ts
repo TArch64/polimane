@@ -7,5 +7,9 @@ export interface ISchemaObject {
 export interface ISchemaPattern extends ISchemaObject {
   name: string;
   type: PatternType;
+  content: ISchemaRow[];
+}
+
+export interface ISchemaRow extends ISchemaObject {
   content: ISchemaObject[];
 }

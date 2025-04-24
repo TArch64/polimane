@@ -13,3 +13,9 @@ export function onObjectEvent<
 
   onUnmounted(() => off());
 }
+
+export function onObjectClick(object: FabricObject, callback: () => void): void {
+  onObjectEvent(object, 'mousedown', () => {
+    object.once('mouseup', () => callback());
+  });
+}

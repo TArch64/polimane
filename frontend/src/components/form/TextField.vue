@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<{
   placeholder: string;
   label?: boolean;
   required?: boolean;
-  type?: 'text' | 'password';
+  type?: 'text' | 'password' | 'number';
   variant?: 'main' | 'control';
 }>(), {
   label: false,

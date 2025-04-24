@@ -1,5 +1,5 @@
 <template>
-  <CanvasPatternEmpty :pattern @add-row="addRow" />
+  <CanvasPatternEmpty :pattern />
 </template>
 
 <script setup lang="ts">
@@ -14,8 +14,4 @@ const props = defineProps<{
 
 const object = useCanvasEntityObject(props.pattern, () => new PatternObject(props.pattern));
 provideObjectParent(object);
-
-function addRow() {
-
-}
 </script>
