@@ -3,28 +3,39 @@ import type { FabricObject } from 'fabric';
 import type { ISchemaObject } from '@/models';
 import { watchObject } from './watchObject';
 import { useObjectParent } from './useObjectParent';
+import { isObjectImplementsOnUpdate } from './IObjectOnUpdate';
+import { isObjectImplementsOnAdded } from './IObjectOnAdded';
 
 const objects = new Map<string, FabricObject>();
 
-export interface IUpdatableFabricObject<D> {
-  update(data: D): void;
-}
-
-export function useCanvasObject<
-  D extends ISchemaObject,
-  O extends FabricObject & IUpdatableFabricObject<D>,
->(data: D, create: () => O): O {
+export function useCanvasObject<O extends FabricObject>(id: string, create: () => O): O {
   const parent = useObjectParent();
   const object = markRaw(create());
 
-  objects.set(data.id, object);
+  objects.set(id, object);
   parent.add(object);
 
-  watchObject(() => data, (patch) => object.update(patch as D));
+  if (isObjectImplementsOnAdded(object)) {
+    object.onAdded(parent);
+  }
 
   onUnmounted(() => {
-    objects.delete(data.id);
+    objects.delete(id);
     parent.remove(object);
+    object.dispose();
+  });
+
+  return object;
+}
+
+export function useCanvasEntityObject<
+  D extends ISchemaObject,
+  O extends FabricObject,
+>(data: D, create: () => O): O {
+  const object = useCanvasObject(data.id, create);
+
+  watchObject(() => data, (patch) => {
+    if (isObjectImplementsOnUpdate(object)) object.onUpdate(patch as D);
   });
 
   return object;
