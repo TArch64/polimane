@@ -11,9 +11,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Modal, useActiveModal } from '@/components/modal';
-import { useRowsStore } from '@/modules/schemas/editor/stores';
 import { NumberField } from '@/components/form';
 import type { ISchemaPattern } from '@/models';
+import { useRowsStore } from '../../stores';
 
 const props = defineProps<{
   pattern: ISchemaPattern;
@@ -32,9 +32,3 @@ function save() {
   modal.close();
 }
 </script>
-
-<style scoped>
-@layer page {
-
-}
-</style>

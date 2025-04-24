@@ -19,7 +19,7 @@
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
 import { ArrowBackIcon } from '@/components/icon';
-import EditorAddPatternModal from './EditorAddPatternModal.vue';
+import { EditorAddPatternModal } from './modals';
 
 const addPatternModal = useModal(EditorAddPatternModal);
 </script>

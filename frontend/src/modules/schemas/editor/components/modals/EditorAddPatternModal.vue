@@ -1,9 +1,5 @@
 <template>
-  <Modal
-    title="Додати Паттерн"
-    save-button="Додати"
-    @save="addPattern"
-  >
+  <Modal title="Додати Паттерн" save-button="Додати" @save="addPattern">
     <p class="add-pattern-modal__description">
       Виберіть паттерн, який ви хочете додати до вашої схеми
     </p>
@@ -22,7 +18,7 @@ import { ref } from 'vue';
 import { Modal, useActiveModal } from '@/components/modal';
 import { type ISelectOption, RadioSelect } from '@/components/form';
 import { getPatternTitle, PatternKindValues, PatternType } from '@/enums';
-import { usePatternsStore } from '../stores';
+import { usePatternsStore } from '../../stores';
 
 const patternsStore = usePatternsStore();
 const modal = useActiveModal();

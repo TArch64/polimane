@@ -16,7 +16,7 @@
 import { Button } from '@/components/button';
 import { PlusIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';
-import EditorAddPatternModal from '../../../EditorAddPatternModal.vue';
+import { EditorAddPatternModal } from '../../../modals';
 import { SidebarSection, SidebarSectionHeading } from '../base';
 import SidebarPatternList from './SidebarPatternList.vue';
 
