@@ -1,10 +1,9 @@
 import { FabricText, Group, Rect } from 'fabric';
-import type { IObjectOnAdded, ObjectParent } from '@/modules/schemas/editor/composables';
 import { OBJECT_DEFAULTS, TEXT_OBJECT_DEFAULTS } from '../objectDefaults';
 import { IconObject } from '../IconObject';
 import plusIcon from '~icons/eva/plus-outline?raw';
 
-export class PatternEmptyObject extends Group implements IObjectOnAdded {
+export class PatternEmptyObject extends Group {
   private static PADDING_HORIZONTAL = 16;
   private static PADDING_VERTICAL = 6;
 
@@ -58,10 +57,5 @@ export class PatternEmptyObject extends Group implements IObjectOnAdded {
       fill: 'transparent', // 'rgba(255, 255, 255, 0.8)',
       stroke: 'rgba(0, 0, 0, 0.2)',
     });
-  }
-
-  onAdded(parent: ObjectParent) {
-    this.setX((parent.width - this.width) / 2);
-    this.setY(((parent.height - this.height) / 2) - 5);
   }
 }

@@ -13,5 +13,6 @@ const props = defineProps<{
 }>();
 
 const object = useCanvasEntityObject(props.pattern, () => new PatternObject(props.pattern));
-provideObjectParent(object);
+
+provideObjectParent(object.container);
 </script>
