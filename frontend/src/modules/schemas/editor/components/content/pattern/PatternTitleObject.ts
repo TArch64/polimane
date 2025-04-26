@@ -3,8 +3,10 @@ import type { ISchemaPattern } from '@/models';
 import { TEXT_OBJECT_DEFAULTS } from '../objectDefaults';
 
 export class PatternTitleObject extends Group {
-  private static PADDING_VERTICAL = 4;
-  private static PADDING_HORIZONTAL = 6;
+  private static PADDING_VERTICAL = 5;
+  private static PADDING_HORIZONTAL = 8;
+
+  private static MIN_TEXT_WIDTH = 50;
 
   private readonly border: Rect;
   private readonly text: FabricText;
@@ -19,12 +21,20 @@ export class PatternTitleObject extends Group {
   }
 
   private createText(pattern: ISchemaPattern): FabricText {
-    return new FabricText(pattern.name, {
+    const text = new FabricText(pattern.name, {
       ...TEXT_OBJECT_DEFAULTS,
-      top: PatternTitleObject.PADDING_VERTICAL - 1,
+      top: PatternTitleObject.PADDING_VERTICAL,
       left: PatternTitleObject.PADDING_HORIZONTAL,
       fontSize: 14,
+      textAlign: 'center',
+      lineHeight: 1.7,
     });
+
+    if (text.width < PatternTitleObject.MIN_TEXT_WIDTH) {
+      text.set({ width: PatternTitleObject.MIN_TEXT_WIDTH });
+    }
+
+    return text;
   }
 
   private createBorder(): Rect {
@@ -44,8 +54,8 @@ export class PatternTitleObject extends Group {
 
   private get borderSize() {
     return {
-      height: this.text.height + PatternTitleObject.PADDING_VERTICAL * 2,
       width: this.text.width + PatternTitleObject.PADDING_HORIZONTAL * 2,
+      height: this.text.height + PatternTitleObject.PADDING_VERTICAL * 2,
     };
   }
 }
