@@ -36,6 +36,7 @@ export default defineConfig({
   plugins: [
     vue(),
     vueDevTools(),
+
     icons({
       compiler: 'vue3',
     }),

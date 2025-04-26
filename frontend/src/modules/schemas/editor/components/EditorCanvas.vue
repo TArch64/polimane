@@ -31,4 +31,10 @@ onUnmounted(() => canvas.value!.dispose());
 
 useCanvasZoom();
 useCanvasNavigation();
+
+if (import.meta.hot) {
+  import.meta.hot.on('vite:beforeUpdate', () => {
+    window.location.reload();
+  });
+}
 </script>
