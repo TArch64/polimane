@@ -2,7 +2,7 @@ import { FabricText, Group, Rect } from 'fabric';
 import type { IObjectOnAdded, ObjectParent } from '@/modules/schemas/editor/composables';
 import { OBJECT_DEFAULTS, TEXT_OBJECT_DEFAULTS } from '../objectDefaults';
 import { IconObject } from '../IconObject';
-import plusIcon from '~icons/eva/plus-outline?raw&width=24&height=24';
+import plusIcon from '~icons/eva/plus-outline?raw';
 
 export class PatternEmptyObject extends Group implements IObjectOnAdded {
   private static PADDING_HORIZONTAL = 16;

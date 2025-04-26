@@ -18,14 +18,17 @@ export class IconObject extends FabricImage {
     return `data:image/svg+xml;base64,${btoa(svg)}`;
   }
 
-  private svg!: string;
-  private source;
-
   constructor({ source, color, ...props }: IIconObjectProps) {
     const imageEl = document.createElement('img');
     imageEl.src = IconObject.buildSvgUrl(source, color);
 
-    super(imageEl, props);
-    this.source = source;
+    super(imageEl, {
+      ...props,
+      width: imageEl.width,
+      height: imageEl.height,
+    });
+
+    if (props.width) this.scaleToWidth(props.width);
+    if (props.height) this.scaleToHeight(props.height);
   }
 }
