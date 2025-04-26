@@ -6,9 +6,9 @@ import { OBJECT_DEFAULTS } from '../objectDefaults';
 import { PatternTitleObject } from './PatternTitleObject';
 
 export class PatternObject extends Group implements IObjectOnUpdate<ISchemaPattern> {
-  private readonly border: Rect;
-  private readonly hover: ObjectHover;
-  private readonly title: PatternTitleObject;
+  private readonly border;
+  private readonly hover;
+  private readonly title;
 
   constructor(pattern: ISchemaPattern) {
     super([], OBJECT_DEFAULTS);
@@ -46,6 +46,7 @@ export class PatternObject extends Group implements IObjectOnUpdate<ISchemaPatte
   }
 
   onUpdate(pattern: ISchemaPattern) {
+    console.log(pattern);
     this.title.update(pattern);
   }
 

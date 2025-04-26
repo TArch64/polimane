@@ -5,7 +5,7 @@ export interface IRouteTransition {
 }
 
 export function useRouteTransition(): IRouteTransition {
-  const pending: ViewTransitionUpdateCallback[] = [];
+  let pending: ViewTransitionUpdateCallback[] = [];
   let isScheduled = false;
 
   function doTransition(): void {
@@ -13,6 +13,7 @@ export function useRouteTransition(): IRouteTransition {
       for (const callback of pending) {
         await callback();
       }
+      pending = [];
       isScheduled = false;
     });
   }

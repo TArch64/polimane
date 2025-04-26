@@ -34,9 +34,12 @@ export function useCanvasEntityObject<
 >(data: D, create: () => O): O {
   const object = useCanvasObject(data.id, create);
 
-  watchObject(() => data, (patch) => {
-    if (isObjectImplementsOnUpdate(object)) object.onUpdate(patch as D);
-  });
+  if (isObjectImplementsOnUpdate(object)) {
+    watchObject(() => data, () => {
+      object.onUpdate(data);
+      object.canvas?.requestRenderAll();
+    });
+  }
 
   return object;
 }

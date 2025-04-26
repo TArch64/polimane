@@ -28,8 +28,8 @@ export class ModalPlugin {
     modals: [],
   });
 
-  get openedModal(): Modal | undefined {
-    return this.state.modals.slice().reverse().find((modal) => modal.isOpened);
+  get openedModal(): Modal | null {
+    return this.state.modals.find((modal) => modal.isOpened) ?? null;
   }
 
   create(component: Component): Modal {

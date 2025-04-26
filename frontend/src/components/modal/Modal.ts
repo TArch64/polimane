@@ -36,11 +36,12 @@ export class Modal<C extends Component = Component, P = InferComponentProps<C>> 
   }
 
   close(onClose?: ModalCloseCallback) {
-    this.onClose = async () => {
-      await onClose?.();
-      this.state.props = null;
-    };
-
+    this.onClose = onClose;
     this.state.isOpened = false;
+  }
+
+  async completeClose(): Promise<void> {
+    this.onClose?.();
+    this.state.props = null;
   }
 }
