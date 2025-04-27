@@ -26,7 +26,7 @@ const props = defineProps<{
 }>();
 
 const addModal = useModal(getPatternAddRowModal(props.pattern));
-const openAddRowModal = () => addModal.open({ pattern: props.pattern });
+const openAddRowModal = () => !props.pattern.content.length && addModal.open({ pattern: props.pattern });
 
 const borderRef = ref<InstanceType<KonvaRect> | null>(null);
 const borderNode: ComputedRef<Konva.Rect | null> = computed(() => borderRef.value?.getNode());
@@ -46,7 +46,7 @@ const borderConfig: Partial<Konva.RectConfig> = {
   dash: [10, 5],
 };
 
-const borderHover = useNodeHover({ cursor: 'pointer' });
+const borderHover = useNodeHover();
 
 useNodeTween(borderNode, () => borderHover.isHovered, (isHovered) => ({
   duration: 0.15,
