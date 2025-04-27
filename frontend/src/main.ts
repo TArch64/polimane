@@ -2,6 +2,7 @@ import './style/main.css';
 
 import { createApp, h, ref } from 'vue';
 import { createPinia } from 'pinia';
+import VueKonva from 'vue-konva';
 import { TOKEN_SCROLLER, TOKEN_TOP_EL } from './InjectionToken';
 import { ConfirmPlugin } from './components/confirm';
 import { ModalPlugin } from './components/modal';
@@ -27,6 +28,8 @@ app.use(httpClientPlugin, {
 
 app.use(ModalPlugin);
 app.use(ConfirmPlugin);
+
+app.use(VueKonva, { prefix: 'Konva' });
 
 document.startViewTransition(async () => {
   app.mount('#app');

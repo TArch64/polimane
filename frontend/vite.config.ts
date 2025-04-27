@@ -1,13 +1,8 @@
-import { defineConfig, ModuleNode } from 'vite';
+import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueDevTools from 'vite-plugin-vue-devtools';
 import postcssNesting from 'postcss-nesting';
 import icons from 'unplugin-icons/vite';
-
-const RELOAD_ON_PATHS = [
-  'src/modules/schemas/editor/components/content',
-  'src/modules/schemas/editor/composables/content',
-];
 
 export default defineConfig({
   clearScreen: false,
@@ -45,26 +40,5 @@ export default defineConfig({
     icons({
       compiler: 'vue3',
     }),
-
-    {
-      name: 'full-reload',
-
-      handleHotUpdate({ file, server, modules, timestamp }) {
-        const isReloadable = RELOAD_ON_PATHS.some((path) => {
-          return file.startsWith(`${import.meta.dirname}/${path}`);
-        });
-
-        if (isReloadable) {
-          const invalidatedModules = new Set<ModuleNode>();
-
-          for (const mod of modules) {
-            server.moduleGraph.invalidateModule(mod, invalidatedModules, timestamp, true);
-          }
-
-          server.ws.send({ type: 'full-reload' });
-          return [];
-        }
-      },
-    },
   ],
 });

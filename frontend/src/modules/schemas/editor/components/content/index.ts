@@ -1,1 +1,1 @@
-export { default as CanvasSchema } from './CanvasSchema.vue';
+export { default as CanvasContent } from './CanvasContent.vue';

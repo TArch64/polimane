@@ -1,34 +1,76 @@
 <template>
   <div ref="wrapperRef" @contextmenu.prevent>
-    <canvas ref="canvasRef" />
-    <CanvasSchema v-if="canvas" />
+    <KonvaStage
+      :config
+      @wheel="onWheel"
+      v-if="isReady"
+    >
+      <CanvasContent />
+    </KonvaStage>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Canvas } from 'fabric';
-import { markRaw, onMounted, onUnmounted, type Ref, ref } from 'vue';
-import { provideCanvas, useCanvasNavigation, useCanvasZoom } from '../composables';
-import { CanvasSchema } from './content';
+import { computed, ref } from 'vue';
+import { useElementSize } from '@vueuse/core';
+import Konva from 'konva';
+import type { KonvaEventObject } from 'konva/lib/Node';
+import { CanvasContent } from './content';
 
-const canvasRef = ref<HTMLCanvasElement>(null!);
-const wrapperRef = ref<HTMLElement>(null!);
-const canvas: Ref<Canvas | null> = ref(null);
+const wrapperRef = ref<HTMLElement | null>(null);
+const wrapperSize = useElementSize(wrapperRef);
 
-provideCanvas(canvas);
+const isReady = computed(() => !!wrapperSize.width.value && !!wrapperSize.height.value);
 
-onMounted(() => {
-  canvas.value = markRaw(new Canvas(canvasRef.value, {
-    selection: false,
-    fireRightClick: true,
-    width: wrapperRef.value.offsetWidth,
-    height: wrapperRef.value.offsetHeight,
-    hoverCursor: 'default',
-  }));
-});
+const config = computed((): Konva.StageConfig => ({
+  width: wrapperSize.width.value,
+  height: wrapperSize.height.value,
+}));
 
-onUnmounted(() => canvas.value!.dispose());
+const MIN_ZOOM = 0.5;
+const MAX_ZOOM = 10;
 
-useCanvasZoom();
-useCanvasNavigation();
+function pinchZoom(stage: Konva.Stage, event: WheelEvent): void {
+  const oldScale = stage.scaleX();
+  const pointer = stage.getPointerPosition()!;
+
+  const mousePointTo = {
+    x: (pointer.x - stage.x()) / oldScale,
+    y: (pointer.y - stage.y()) / oldScale,
+  };
+
+  const scaleFactor = 1 - event.deltaY * 0.01;
+  const newScale = Math.min(Math.max(oldScale * scaleFactor, MIN_ZOOM), MAX_ZOOM);
+
+  stage.scale({
+    x: newScale,
+    y: newScale,
+  });
+
+  const newPos = {
+    x: pointer.x - mousePointTo.x * newScale,
+    y: pointer.y - mousePointTo.y * newScale,
+  };
+
+  stage.position(newPos);
+}
+
+function navigate(stage: Konva.Stage, event: WheelEvent) {
+  const dx = event.deltaX;
+  const dy = event.deltaY;
+
+  const currentPos = stage.position();
+
+  stage.position({
+    x: currentPos.x - dx,
+    y: currentPos.y - dy,
+  });
+}
+
+function onWheel(kEvent: KonvaEventObject<WheelEvent, Konva.Stage>): void {
+  const { evt: event, currentTarget: stage } = kEvent;
+  event.preventDefault();
+  event.ctrlKey ? pinchZoom(stage, event) : navigate(stage, event);
+  stage.batchDraw();
+}
 </script>
