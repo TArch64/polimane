@@ -12,9 +12,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type ComputedRef, ref, type Slot } from 'vue';
+import type { Slot } from 'vue';
 import Konva from 'konva';
-import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useNodeRef } from '@/modules/schemas/editor/composables';
 import type { INodeRect } from '../INodeRect';
 import CanvasStack from './CanvasStack.vue';
 import type { StackAlignment } from './StackAlignment';
@@ -33,11 +33,7 @@ defineSlots<{
   default: Slot;
 }>();
 
-const stackRef = ref<ComponentExposed<typeof CanvasStack> | null>(null);
-
-const groupNode: ComputedRef<Konva.Group | null> = computed(() => {
-  return stackRef.value?.groupNode as Konva.Group ?? null;
-});
+const stackRef = useNodeRef<Konva.Group>();
 
 function getAlignValue(parent: Konva.Group, childRect: INodeRect): number {
   if (props.align === 'start') {
@@ -57,7 +53,7 @@ const update: StackUpdateFn = (payload) => {
   const childRect = payload.child.getClientRect();
 
   payload.child.y(getAlignValue(payload.parent, childRect));
-  let tween: Konva.Tween;
+  let tween: Konva.Tween | undefined;
 
   if (payload.isInitial) {
     payload.child.x(payload.next);
@@ -72,5 +68,5 @@ const update: StackUpdateFn = (payload) => {
   return { next: childRect.width + props.gap, tween };
 };
 
-defineExpose({ groupNode });
+defineExpose({ getNode: () => stackRef.value! });
 </script>

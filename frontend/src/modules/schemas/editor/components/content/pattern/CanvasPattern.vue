@@ -16,10 +16,9 @@
 
 <script setup lang="ts">
 import Konva from 'konva';
-import { computed, type ComputedRef, onMounted, reactive, ref } from 'vue';
-import type { KonvaGroup, KonvaRect } from 'vue-konva';
+import { onMounted, reactive } from 'vue';
 import type { ISchemaPattern } from '@/models';
-import { useNodeHover, useNodeTween } from '@/modules/schemas/editor/composables';
+import { useNodeHover, useNodeRef, useNodeTween } from '@/modules/schemas/editor/composables';
 import { useModal } from '@/components/modal';
 import { getPatternAddRowModal } from '../../modals';
 import CanvasPatternLabel from './CanvasPatternLabel.vue';
@@ -33,11 +32,8 @@ const props = defineProps<{
 const addModal = useModal(getPatternAddRowModal(props.pattern));
 const openAddRowModal = () => addModal.open({ pattern: props.pattern });
 
-const borderRef = ref<InstanceType<KonvaRect> | null>(null);
-const borderNode: ComputedRef<Konva.Rect | null> = computed(() => borderRef.value?.getNode());
-
-const contentGroupRef = ref<InstanceType<KonvaGroup>>(null!);
-const contentGroupNode: ComputedRef<Konva.Group> = computed(() => contentGroupRef.value.getNode());
+const borderRef = useNodeRef<Konva.Rect | null>();
+const contentGroupRef = useNodeRef<Konva.Group>();
 
 const config: Partial<Konva.GroupConfig> = {
   id: props.pattern.id,
@@ -54,14 +50,14 @@ const borderConfig: Partial<Konva.RectConfig> = reactive({
 
 const borderHover = useNodeHover();
 
-useNodeTween(borderNode, () => borderHover.isHovered, (isHovered) => ({
+useNodeTween(borderRef, () => borderHover.isHovered, (isHovered) => ({
   duration: 0.15,
   stroke: isHovered ? 'rgba(0, 0, 0, 0.5)' : borderConfig.stroke!,
   easing: Konva.Easings.EaseOut,
 }));
 
 onMounted(() => {
-  const contentRect = contentGroupNode.value.getClientRect();
+  const contentRect = contentGroupRef.value.getClientRect();
   borderConfig.width = Math.max((contentRect.width + 24), 1000);
   borderConfig.height = Math.max((contentRect.height + 16), 100);
 });

@@ -16,21 +16,18 @@
 
 <script setup lang="ts">
 import Konva from 'konva';
-import { computed, type ComputedRef, onMounted, ref } from 'vue';
-import type { KonvaLabel } from 'vue-konva';
 import { PlusIcon } from '@/components/icon';
-import { useNodeCentering } from '@/modules/schemas/editor/composables';
+import { useNodeCentering, useNodeRef } from '@/modules/schemas/editor/composables';
 import { CanvasIcon, CanvasStackH } from '../base';
 
-const labelRef = ref<InstanceType<KonvaLabel> | null>(null);
-const labelNode: ComputedRef<Konva.Label> = computed(() => labelRef.value?.getNode() ?? null);
+const labelRef = useNodeRef<Konva.Label>();
 
 const groupConfig: Partial<Konva.GroupConfig> = {
   width: 1000,
   height: 100,
 };
 
-useNodeCentering(labelNode);
+useNodeCentering(labelRef.value);
 
 const labelTagConfig: Partial<Konva.TagConfig> = {
   stroke: 'rgba(0, 0, 0, 0.2)',
@@ -51,8 +48,4 @@ const labelTextConfig: Partial<Konva.TextConfig> = {
   offsetY: -1,
   verticalAlign: 'middle',
 };
-
-onMounted(() => {
-
-});
 </script>

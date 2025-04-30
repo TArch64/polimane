@@ -40,7 +40,7 @@ declare module 'vue-konva' {
     wheel: (event: KonvaEvent<C, WheelEvent>) => void;
   };
 
-  type KonvaComponent<C> = DefineComponent<
+  export type KonvaComponent<C> = DefineComponent<
     KonvaComponentProps<C>,
     object,
     object,

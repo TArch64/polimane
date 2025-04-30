@@ -7,9 +7,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type ComputedRef, ref, type Slot } from 'vue';
+import { computed, type ComputedRef, type Slot } from 'vue';
 import Konva from 'konva';
-import type { KonvaGroup } from 'vue-konva';
+import { useNodeRef } from '@/modules/schemas/editor/composables';
 import type { StackUpdateFn } from './StackUpdateFn';
 import { createCanvasStackRenderer } from './CanvasStackRenderer';
 
@@ -24,9 +24,8 @@ defineSlots<{
   default: Slot;
 }>();
 
-const groupRef = ref<InstanceType<KonvaGroup> | null>(null);
-const groupNode: ComputedRef<Konva.Group | null> = computed(() => groupRef.value?.getNode() ?? null);
-const children: ComputedRef<Konva.Node[]> = computed(() => groupNode.value?.children ?? []);
+const groupRef = useNodeRef<Konva.Group | null>();
+const children: ComputedRef<Konva.Node[]> = computed(() => groupRef.value?.children ?? []);
 
 let updateTweens: Konva.Tween[] = [];
 
@@ -41,7 +40,7 @@ const ChildrenRenderer = createCanvasStackRenderer((isInitial, keys: unknown[]):
 
   for (const child of list) {
     const update = props.update({
-      parent: groupNode.value!,
+      parent: groupRef.value!,
       next,
       child,
       isInitial,
@@ -56,5 +55,7 @@ const ChildrenRenderer = createCanvasStackRenderer((isInitial, keys: unknown[]):
   }
 });
 
-defineExpose({ groupNode });
+defineExpose({
+  getNode: () => groupRef.value!,
+});
 </script>

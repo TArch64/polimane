@@ -6,17 +6,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import type { KonvaText } from 'vue-konva';
+import { computed } from 'vue';
 import Konva from 'konva';
 import type { ISchemaPattern } from '@/models';
+import { useNodeRef } from '@/modules/schemas/editor/composables';
 
 const props = defineProps<{
   pattern: ISchemaPattern;
 }>();
 
-const textRef = ref<InstanceType<KonvaText> | null>(null);
-const textNode = computed(() => textRef.value?.getNode());
+const textRef = useNodeRef<Konva.Text | null>();
 
 const config: Partial<Konva.LabelConfig> = {
   offsetX: -12,
@@ -31,7 +30,7 @@ const tagConfig: Partial<Konva.TagConfig> = {
 };
 
 const labelTextWidth = computed(() => {
-  return textNode.value?.measureSize(props.pattern.name).width;
+  return textRef.value?.measureSize(props.pattern.name).width;
 });
 
 const textConfig = computed((): Partial<Konva.TextConfig> => ({

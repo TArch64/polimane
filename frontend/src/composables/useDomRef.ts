@@ -1,17 +1,11 @@
-import { type ShallowRef, shallowRef, type VNodeRef } from 'vue';
-import { type MaybeElement, unrefElement } from '@vueuse/core';
+import { computed, type Ref, shallowRef } from 'vue';
+import { type MaybeComputedElementRef, unrefElement } from '@vueuse/core';
 
-export interface IDomRef<E extends HTMLElement> {
-  ref: ShallowRef<E>;
-  templateRef: VNodeRef;
-}
-
-export function useDomRef<E extends HTMLElement>(): IDomRef<E> {
+export function useDomRef<E extends HTMLElement | null>(): Ref<E, MaybeComputedElementRef | null> {
   const domRef = shallowRef<E>(null!);
 
-  const templateRef: VNodeRef = (ref) => {
-    domRef.value = unrefElement(ref as MaybeElement);
-  };
-
-  return { ref: domRef as ShallowRef<E>, templateRef };
+  return computed<E, MaybeComputedElementRef | null>({
+    get: () => domRef.value,
+    set: (value) => domRef.value = unrefElement(value),
+  });
 }
