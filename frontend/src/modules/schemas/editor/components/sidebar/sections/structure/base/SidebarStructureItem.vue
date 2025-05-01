@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar-structure-item">
+  <div class="sidebar-structure-item" :class="classes" @click.stop="onMouseOver">
     {{ title }}
 
     <Dropdown>
@@ -20,13 +20,16 @@
 </template>
 
 <script setup lang="ts">
-import { type Slot } from 'vue';
+import { computed, type Slot } from 'vue';
 import { MoreHorizontalIcon } from '@/components/icon';
 import { Dropdown } from '@/components/dropdown';
 import { Button } from '@/components/button';
 import { mergeAnchorName } from '@/helpers';
+import type { ISchemaObject } from '@/models';
+import { useActiveObjectStore } from '@/modules/schemas/editor/stores';
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
+  object: ISchemaObject;
   title: string;
   moreActionsButtonStyle?: Record<string, string> | Record<string, string>[];
 }>(), {
@@ -36,6 +39,14 @@ withDefaults(defineProps<{
 defineSlots<{
   actions: Slot;
 }>();
+
+const activeObjectStore = useActiveObjectStore();
+const isActive = computed(() => activeObjectStore.isActiveObject(props.object));
+const onMouseOver = () => activeObjectStore.activateObject(props.object);
+
+const classes = computed(() => ({
+  'sidebar-structure-item--active': isActive.value,
+}));
 </script>
 
 <style scoped>
@@ -50,12 +61,20 @@ defineSlots<{
     transition: background-color 0.15s ease-out;
     will-change: background-color;
 
-    &:hover {
+    &:hover:not(.sidebar-structure-item--active) {
       background-color: var(--color-background-2);
 
       .sidebar-structure-item__more-actions {
         opacity: 1;
       }
+    }
+  }
+
+  .sidebar-structure-item--active {
+    background-color: var(--color-background-3);
+
+    .sidebar-structure-item__more-actions {
+      opacity: 1;
     }
   }
 

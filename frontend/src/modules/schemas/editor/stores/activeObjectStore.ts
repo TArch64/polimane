@@ -46,6 +46,7 @@ export const useActiveObjectStore = defineStore('schemas/editor/activeObject', (
 
   const activatePath = (path: string[]) => activePath.value = path;
   const activateObject = (object: ISchemaObject) => activatePath(getObjectPath(object));
+  const deactivatePath = () => activatePath([]);
   const isActiveObject = (object: ISchemaObject) => activePath.value.some((id) => id === object.id);
 
   return {
@@ -53,5 +54,6 @@ export const useActiveObjectStore = defineStore('schemas/editor/activeObject', (
     activePath,
     activateObject,
     isActiveObject,
+    deactivatePath,
   };
 });

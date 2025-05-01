@@ -6,11 +6,6 @@ export interface IStackUpdatePayload {
   next: number;
 }
 
-export interface IStackUpdateSet<K extends keyof Konva.NodeConfig> {
-  key: K & string;
-  value: Konva.NodeConfig[K];
-}
-
 export interface IStackUpdate<K extends keyof Konva.NodeConfig> {
   next: Konva.NodeConfig[K];
   property: K & string;

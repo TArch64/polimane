@@ -10,12 +10,10 @@ export function useNodeTween<S extends WatchSource>(
   buildTweenConfig: NodeTweenFactory<S>,
 ): void {
   watch(source, (value) => {
-    const node = toValue(nodeRef);
-    if (!node) return;
-
     const tweenConfig = buildTweenConfig(value);
-    if (!tweenConfig) return;
 
-    node.to(tweenConfig);
+    if (tweenConfig) {
+      toValue(nodeRef)?.to(tweenConfig);
+    }
   });
 }

@@ -16,10 +16,10 @@ import { useDebounceFn } from '@vueuse/core';
 import type { InferComponentProps } from '@/types';
 import { newId } from '@/helpers';
 import { useNodeRef } from '@/modules/schemas/editor/composables';
-import type { INodeRect } from '@/modules/schemas/editor/components/content/base/INodeRect';
+import { NodeRect } from './NodeRect';
 
 export interface IGroupLayoutEvent {
-  clientRect: INodeRect;
+  clientRect: NodeRect;
   nodes: Konva.Node[];
 }
 
@@ -30,12 +30,6 @@ const PROXY_PROPS = [
   'onMouseover',
   'onClick',
 ];
-
-declare module 'konva/lib/Node' {
-  interface NodeEventMap {
-    layout: IGroupLayoutEvent;
-  }
-}
 
 export const GroupRenderer = defineComponent({
   name: 'GroupRenderer',
@@ -90,9 +84,9 @@ export const GroupRenderer = defineComponent({
       });
     }
 
-    function getChildrenClientRect(): INodeRect {
+    function getChildrenClientRect(): NodeRect {
       if (!nodes.length) {
-        return { x: 0, y: 0, width: 0, height: 0 };
+        return NodeRect.BLANK;
       }
 
       let minX = Infinity;
@@ -109,12 +103,12 @@ export const GroupRenderer = defineComponent({
         maxY = Math.max(maxY, y + height);
       }
 
-      return {
+      return new NodeRect({
         x: minX,
         y: minY,
         width: maxX - minX,
         height: maxY - minY,
-      };
+      });
     }
 
     const updateSize = useDebounceFn(() => {
@@ -122,9 +116,10 @@ export const GroupRenderer = defineComponent({
         return;
       }
 
-      const clientRect = getChildrenClientRect();
-      if (config.value.width) clientRect.width = config.value.width;
-      if (config.value.height) clientRect.height = config.value.height;
+      const clientRect = getChildrenClientRect().with({
+        width: config.value.width,
+        height: config.value.height,
+      });
 
       groupRef.value.width(clientRect.width);
       groupRef.value.height(clientRect.height);

@@ -1,5 +1,6 @@
 <template>
   <SidebarStructureItem
+    :object="pattern"
     :title="pattern.name"
     :more-actions-button-style="deleteConfirm.anchorStyle"
   >
