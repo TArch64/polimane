@@ -4,6 +4,7 @@
     :label
     :required
     :variant
+    :input-attrs="{ min, max }"
     type="number"
     v-model="modelString"
   />
@@ -18,6 +19,8 @@ withDefaults(defineProps<{
   label?: boolean;
   required?: boolean;
   variant?: 'main' | 'control';
+  min?: number;
+  max?: number;
 }>(), {
   label: false,
   variant: 'main',

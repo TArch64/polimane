@@ -2,6 +2,7 @@
   <Modal title="Додати Рядок" save-button="Додати" @save="save">
     <NumberField
       required
+      :min="1"
       placeholder="Кількість Елементів"
       v-model="size"
     />

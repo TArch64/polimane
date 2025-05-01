@@ -11,6 +11,7 @@
         :required
         ref="inputRef"
         class="text-field__input"
+        v-bind="inputAttrs"
         v-model="model"
       >
     </span>
@@ -18,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, type InputHTMLAttributes, ref } from 'vue';
 
 const props = withDefaults(defineProps<{
   placeholder: string;
@@ -26,10 +27,12 @@ const props = withDefaults(defineProps<{
   required?: boolean;
   type?: 'text' | 'password' | 'number';
   variant?: 'main' | 'control';
+  inputAttrs?: InputHTMLAttributes;
 }>(), {
   label: false,
   type: 'text',
   variant: 'main',
+  inputAttrs: () => ({}),
 });
 
 const model = defineModel<string>({
