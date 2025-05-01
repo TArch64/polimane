@@ -1,5 +1,5 @@
 <template>
-  <KonvaImage :config />
+  <KonvaImage ref="imageRef" :config />
 
   <Teleport :to="iconSource.hostEl">
     <slot />
@@ -9,6 +9,7 @@
 <script setup lang="ts">
 import { computed, type Slot, toRef, toRefs } from 'vue';
 import Konva from 'konva';
+import { useNodeRef } from '@/modules/schemas/editor/composables';
 import { useIconSource } from './useIconSource';
 import { useIconImage } from './useIconImage';
 
@@ -24,6 +25,8 @@ defineSlots<{
   default: Slot;
 }>();
 
+const imageRef = useNodeRef<Konva.Image>();
+
 const iconSource = useIconSource(toRefs(props));
 
 const iconImageEl = useIconImage({
@@ -35,4 +38,8 @@ const config = computed((): Partial<Konva.ImageConfig> => ({
   height: Number(props.size),
   image: iconImageEl,
 }));
+
+defineExpose({
+  getNode: () => imageRef.value,
+});
 </script>

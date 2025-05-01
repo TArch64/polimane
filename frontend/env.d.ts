@@ -26,19 +26,22 @@ declare module 'vue-konva' {
     };
   };
 
-  type KonvaComponentMethods<C> = {
-    getNode(): InstanceType<C>;
-    getStage(): Konva.Stage;
-  };
+  export interface IKonvaNodeHolder<N extends Konva.Node = Konva.Node> {
+    getNode: () => N;
+  }
+
+  interface KonvaComponentMethods<C> extends IKonvaNodeHolder<InstanceType<C>> {
+    getStage: () => Konva.Stage;
+  }
 
   type KonvaEvent<C, E> = KonvaEventObject<E, InstanceType<C>>;
 
-  type KonvaComponentEmits<C> = {
+  interface KonvaComponentEmits<C> {
     mouseover: (event: KonvaEvent<C, MouseEvent>) => void;
     mouseout: (event: KonvaEvent<C, MouseEvent>) => void;
     click: (event: KonvaEvent<C, MouseEvent>) => void;
     wheel: (event: KonvaEvent<C, WheelEvent>) => void;
-  };
+  }
 
   export type KonvaComponent<C> = DefineComponent<
     KonvaComponentProps<C>,

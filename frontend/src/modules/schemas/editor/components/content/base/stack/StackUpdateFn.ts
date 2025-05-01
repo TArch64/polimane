@@ -4,12 +4,17 @@ export interface IStackUpdatePayload {
   parent: Konva.Group;
   child: Konva.Node;
   next: number;
-  isInitial: boolean;
 }
 
-export interface IStackUpdate {
-  next: number;
-  tween?: Konva.Tween;
+export interface IStackUpdateSet<K extends keyof Konva.NodeConfig> {
+  key: K & string;
+  value: Konva.NodeConfig[K];
 }
 
-export type StackUpdateFn = (payload: IStackUpdatePayload) => IStackUpdate;
+export interface IStackUpdate<K extends keyof Konva.NodeConfig> {
+  next: Konva.NodeConfig[K];
+  property: K & string;
+  extra?: Partial<Konva.NodeConfig>;
+}
+
+export type StackUpdateFn<K extends keyof Konva.NodeConfig> = (payload: IStackUpdatePayload) => IStackUpdate<K>;

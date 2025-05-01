@@ -1,23 +1,26 @@
 <template>
-  <KonvaGroup :config ref="groupRef">
-    <ChildrenRenderer>
-      <slot />
-    </ChildrenRenderer>
-  </KonvaGroup>
+  <GroupRenderer :config ref="groupRef" @layout="onLayout">
+    <slot />
+  </GroupRenderer>
 </template>
 
 <script setup lang="ts">
-import { computed, type ComputedRef, type Slot } from 'vue';
+import { nextTick, type Slot } from 'vue';
 import Konva from 'konva';
 import { useNodeRef } from '@/modules/schemas/editor/composables';
+import { createWaiter } from '@/helpers';
+import { GroupRenderer, type IGroupLayoutEvent } from '../GroupRenderer';
 import type { StackUpdateFn } from './StackUpdateFn';
-import { createCanvasStackRenderer } from './CanvasStackRenderer';
 
 const props = defineProps<{
   initial: number;
-  update: StackUpdateFn;
+  update: StackUpdateFn<keyof Konva.NodeConfig>;
   gap: number;
   config?: Partial<Konva.GroupConfig>;
+}>();
+
+const emit = defineEmits<{
+  layout: [event: IGroupLayoutEvent];
 }>();
 
 defineSlots<{
@@ -25,35 +28,52 @@ defineSlots<{
 }>();
 
 const groupRef = useNodeRef<Konva.Group | null>();
-const children: ComputedRef<Konva.Node[]> = computed(() => groupRef.value?.children ?? []);
+const rendered: Record<number, boolean> = {};
 
-let updateTweens: Konva.Tween[] = [];
-
-const ChildrenRenderer = createCanvasStackRenderer((isInitial, keys: unknown[]): void => {
-  for (const tween of updateTweens) tween.destroy();
-  updateTweens = [];
-
-  const ordered = keys.map((key) => children.value.find((child) => child.id() === key)!).filter(Boolean);
-  const list = ordered.length === children.value.length ? ordered : children.value;
-
+async function onLayout(event: IGroupLayoutEvent): Promise<void> {
+  const waiter = createWaiter();
   let next = props.initial;
 
-  for (const child of list) {
+  for (const child of event.nodes) {
     const update = props.update({
       parent: groupRef.value!,
       next,
       child,
-      isInitial,
     });
 
-    if (update.tween) {
-      update.tween.play();
-      updateTweens.push(update.tween);
+    if (update.extra) {
+      child.setAttrs(update.extra);
+    }
+
+    if (!rendered[child._id]) {
+      rendered[child._id] = true;
+      child.setAttr(update.property, next);
+    } else {
+      if (groupRef.value!.listening()) {
+        groupRef.value!.listening(false);
+      }
+
+      const release = waiter.add();
+
+      child.to({
+        duration: 0.15,
+        easing: Konva.Easings.EaseOut,
+        [update.property]: next,
+        onFinish: () => release(),
+      });
     }
 
     next += update.next;
   }
-});
+
+  if (!groupRef.value!.listening()) {
+    await waiter.wait();
+    await nextTick();
+    groupRef.value!.listening(true);
+  }
+
+  emit('layout', event);
+}
 
 defineExpose({
   getNode: () => groupRef.value!,

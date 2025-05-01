@@ -15,8 +15,6 @@ const props = defineProps<{
   pattern: ISchemaPattern;
 }>();
 
-const textRef = useNodeRef<Konva.Text | null>();
-
 const config: Partial<Konva.LabelConfig> = {
   offsetX: -12,
   offsetY: 10,
@@ -28,6 +26,8 @@ const tagConfig: Partial<Konva.TagConfig> = {
   strokeWidth: 1,
   cornerRadius: 4,
 };
+
+const textRef = useNodeRef<Konva.Text | null>();
 
 const labelTextWidth = computed(() => {
   return textRef.value?.measureSize(props.pattern.name).width;

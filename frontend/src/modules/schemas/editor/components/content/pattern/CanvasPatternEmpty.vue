@@ -1,38 +1,28 @@
 <template>
-  <KonvaGroup :config="groupConfig">
-    <KonvaLabel ref="labelRef">
-      <KonvaTag :config="labelTagConfig" />
+  <GroupRenderer>
+    <KonvaRect :config="backgroundConfig" />
 
-      <CanvasStackH align="center" :gap="8" :config="stackConfig">
-        <CanvasIcon size="22" color="rgba(0, 0, 0, 0.8)">
-          <PlusIcon />
-        </CanvasIcon>
+    <CanvasStackH align="center" :gap="8" :config="stackConfig">
+      <CanvasIcon size="22" color="rgba(0, 0, 0, 0.8)">
+        <PlusIcon />
+      </CanvasIcon>
 
-        <KonvaText :config="labelTextConfig" />
-      </CanvasStackH>
-    </KonvaLabel>
-  </KonvaGroup>
+      <KonvaText :config="labelTextConfig" />
+    </CanvasStackH>
+  </GroupRenderer>
 </template>
 
 <script setup lang="ts">
 import Konva from 'konva';
 import { PlusIcon } from '@/components/icon';
-import { useNodeCentering, useNodeRef } from '@/modules/schemas/editor/composables';
-import { CanvasIcon, CanvasStackH } from '../base';
+import { CanvasIcon, CanvasStackH, GroupRenderer } from '../base';
 
-const labelRef = useNodeRef<Konva.Label>();
-
-const groupConfig: Partial<Konva.GroupConfig> = {
-  width: 1000,
-  height: 100,
-};
-
-useNodeCentering(labelRef.value);
-
-const labelTagConfig: Partial<Konva.TagConfig> = {
+const backgroundConfig: Partial<Konva.GroupConfig> = {
   stroke: 'rgba(0, 0, 0, 0.2)',
   strokeWidth: 1,
   cornerRadius: 8,
+  width: 156,
+  height: 32,
 };
 
 const stackConfig: Partial<Konva.GroupConfig> = {
@@ -40,7 +30,6 @@ const stackConfig: Partial<Konva.GroupConfig> = {
 };
 
 const labelTextConfig: Partial<Konva.TextConfig> = {
-  width: 156,
   text: 'Додати Рядок',
   fill: 'rgba(0, 0, 0, 0.8)',
   fontSize: 15,

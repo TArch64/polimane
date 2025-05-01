@@ -1,4 +1,4 @@
-import { type MaybeRefOrGetter, onWatcherCleanup, toValue, watch, type WatchSource } from 'vue';
+import { type MaybeRefOrGetter, toValue, watch, type WatchSource } from 'vue';
 import Konva from 'konva';
 
 type InferWatchValue<S> = S extends WatchSource<infer T> ? T : never;
@@ -9,40 +9,13 @@ export function useNodeTween<S extends WatchSource>(
   source: S,
   buildTweenConfig: NodeTweenFactory<S>,
 ): void {
-  let tween: Konva.Tween | null = null;
-
   watch(source, (value) => {
-    if (tween) {
-      tween.destroy();
-    }
-
     const node = toValue(nodeRef);
-
-    if (!node) {
-      return;
-    }
+    if (!node) return;
 
     const tweenConfig = buildTweenConfig(value);
+    if (!tweenConfig) return;
 
-    if (!tweenConfig) {
-      return;
-    }
-
-    tween = new Konva.Tween({
-      node,
-      ...tweenConfig,
-
-      onFinish() {
-        tween = null;
-        tweenConfig.onFinish?.();
-      },
-    });
-
-    tween.play();
-
-    onWatcherCleanup(() => {
-      tween?.destroy();
-      tween = null;
-    });
+    node.to(tweenConfig);
   });
 }

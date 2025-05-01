@@ -1,6 +1,6 @@
 <template>
   <KonvaLayer>
-    <CanvasStackV ref="stackRef" :gap="16">
+    <CanvasStackV ref="stackRef" :config="stackConfig" :gap="16">
       <CanvasPattern
         v-for="pattern of editorStore.schema.content"
         :key="pattern.id"
@@ -20,13 +20,10 @@ import { CanvasPattern } from './pattern';
 const editorStore = useEditorStore();
 const stackRef = useNodeRef<Konva.Group>();
 
-useNodeCentering(stackRef, {
+const stackConfig = useNodeCentering(stackRef, {
   padding: {
     horizontal: 20,
     vertical: 16,
   },
-
-  trigger: () => editorStore.schema.content,
 });
-
 </script>
