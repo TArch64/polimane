@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
-import type { ISchemaPattern } from '@/models';
+import { Collection, type ISchemaPattern } from '@/models';
 import { newId } from '@/helpers';
+import { setObjectParent } from './activeObjectStore';
 
 export interface INewSquareRowOptions {
   size: number;
@@ -8,7 +9,11 @@ export interface INewSquareRowOptions {
 
 export const useRowsStore = defineStore('schemas/editor/rows', () => {
   function addSquareRow(pattern: ISchemaPattern, options: INewSquareRowOptions): void {
-    pattern.content.push({
+    const collection = Collection.fromParent(pattern, {
+      onAdded: (parent, object) => setObjectParent(parent, object),
+    });
+
+    collection.append({
       id: newId(),
 
       content: new Array(options.size).fill(0).map(() => ({

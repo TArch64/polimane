@@ -4,11 +4,15 @@ import { getPatternTitle, PatternType } from '@/enums';
 import { newId } from '@/helpers';
 import { Collection, type ISchemaPattern } from '@/models';
 import { useEditorStore } from './editorStore';
+import { setObjectParent } from './activeObjectStore';
 
 export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
   const editorStore = useEditorStore();
 
-  const patterns = Collection.fromProperty(editorStore.schema, 'content');
+  const patterns = Collection.fromParent(editorStore.schema, {
+    onAdded: (parent, object) => setObjectParent(parent, object),
+  });
+
   const hasPatterns = computed(() => !!patterns.size);
 
   const addPattern = (kind: PatternType) => patterns.append({

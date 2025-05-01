@@ -1,37 +1,44 @@
-import { type Ref, toRef } from 'vue';
+import { toRaw } from 'vue';
+import type { ISchemaObject } from './ISchemaObject';
+import type { InferSchemaContent, ISchemaWithContent } from './ISchemaWithContent';
 
-export interface ICollectionItem {
-  id: string;
+export interface ICollectionOptions<P extends ISchemaWithContent, O extends ISchemaObject> {
+  onAdded?: (parent: P, object: O) => void;
 }
 
-type CollectionKeys<T extends object> = keyof {
-  [K in keyof T as T[K] extends ICollectionItem[] ? K : never]: T[K];
-};
+export class Collection<P extends ISchemaWithContent, O extends ISchemaObject = InferSchemaContent<P>> {
+  private static cache = new WeakMap<ISchemaWithContent, Collection<ISchemaWithContent>>();
 
-export class Collection<I extends ICollectionItem> {
-  static fromProperty<T extends object, K extends CollectionKeys<T>>(object: T, key: K): Collection<Extract<T[K], ICollectionItem[]>[number]> {
-    return Collection.fromRef(toRef(object, key) as Ref<Extract<T[K], ICollectionItem[]>>);
+  static fromParent<
+    P extends ISchemaWithContent,
+    O extends ISchemaObject = InferSchemaContent<P>,
+  >(parent: P, options?: ICollectionOptions<P, O>): Collection<P, O> {
+    const cached = Collection.cache.get(toRaw(parent));
+
+    if (cached) {
+      return cached as unknown as Collection<P, O>;
+    }
+
+    const collection = new Collection<P, O>(parent, options);
+    Collection.cache.set(toRaw(parent), collection as unknown as Collection<ISchemaWithContent>);
+    return collection;
   }
 
-  static fromRef<I extends ICollectionItem>(ref: Ref<I[]>): Collection<I> {
-    return new Collection(() => ref.value, (items) => ref.value = items);
-  }
-
-  constructor(
-    private readonly getSource: () => I[],
-    private readonly setSource: (items: I[]) => void,
+  private constructor(
+    private readonly parent: P,
+    private readonly options: ICollectionOptions<P, O> = {},
   ) {
   }
 
-  get values(): I[] {
-    return this.getSource();
+  get values(): O[] {
+    return this.parent.content as O[];
   }
 
-  set values(values: I[]) {
-    this.setSource(values);
+  set values(values: O[]) {
+    this.parent.content = values;
   }
 
-  get first(): I | null {
+  get first(): O | null {
     return this.values[0] ?? null;
   }
 
@@ -39,11 +46,12 @@ export class Collection<I extends ICollectionItem> {
     return this.values.length;
   }
 
-  append(item: I): void {
+  append(item: O): void {
     this.values.push(item);
+    this.options.onAdded?.(this.parent, item);
   }
 
-  delete(item: I): void {
+  delete(item: O): void {
     const index = this.values.findIndex((i) => i.id === item.id);
     this.values.splice(index, 1);
   }

@@ -1,4 +1,4 @@
-import type { ISchemaPattern } from './ISchemaObject';
+import type { ISchemaPattern } from './ISchemaPattern';
 
 export interface ISchema {
   id: string;
