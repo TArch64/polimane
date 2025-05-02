@@ -1,4 +1,5 @@
 import {
+  Comment,
   computed,
   defineComponent,
   getCurrentInstance,
@@ -74,6 +75,9 @@ export const GroupRenderer = defineComponent({
 
     function getContentNodes(nodes: VNode[]): Konva.Node[] {
       return nodes.flatMap((child): Konva.Node[] => {
+        if (child.type === Comment) {
+          return [];
+        }
         if (isKonvaComponent(child)) {
           return child.component.exposed.getNode();
         }

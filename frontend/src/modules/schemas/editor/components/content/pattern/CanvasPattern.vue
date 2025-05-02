@@ -60,7 +60,7 @@ const contentGroupConfig = useNodeCentering(contentGroupRef, {
 const contentLayoutRect = ref<NodeRect>(NodeRect.BLANK);
 
 function onContentLayout(event: IGroupLayoutEvent) {
-  if (!contentLayoutRect.value || !contentLayoutRect.value.isEqual(event.clientRect)) {
+  if (!contentLayoutRect.value.isEqual(event.clientRect)) {
     contentLayoutRect.value = event.clientRect;
   }
 }

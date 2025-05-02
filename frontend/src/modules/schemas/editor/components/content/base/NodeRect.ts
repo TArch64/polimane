@@ -20,6 +20,10 @@ export class NodeRect implements INodeRect {
     this.height = rect.height;
   }
 
+  get isBlank(): boolean {
+    return this.isEqual(NodeRect.BLANK);
+  }
+
   with(patch: Partial<INodeRect>): NodeRect {
     return new NodeRect({
       ...patch,
