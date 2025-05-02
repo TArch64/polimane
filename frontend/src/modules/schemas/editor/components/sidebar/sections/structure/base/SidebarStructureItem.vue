@@ -1,5 +1,10 @@
 <template>
-  <div class="sidebar-structure-item" :class="classes" @click.stop="onMouseOver">
+  <div
+    class="sidebar-structure-item"
+    :class="classes"
+    @click.stop="focusObjectStore.activateObject(object)"
+    @mouseover.stop="hoverObjectStore.activateObject(object)"
+  >
     {{ title }}
 
     <Dropdown>
@@ -26,7 +31,7 @@ import { Dropdown } from '@/components/dropdown';
 import { Button } from '@/components/button';
 import { mergeAnchorName } from '@/helpers';
 import type { ISchemaObject } from '@/models';
-import { useActiveObjectStore } from '@/modules/schemas/editor/stores';
+import { useFocusObjectStore, useHoverObjectStore } from '@/modules/schemas/editor/stores';
 
 const props = withDefaults(defineProps<{
   object: ISchemaObject;
@@ -40,12 +45,15 @@ defineSlots<{
   actions: Slot;
 }>();
 
-const activeObjectStore = useActiveObjectStore();
-const isActive = activeObjectStore.useActiveObject(() => props.object);
-const onMouseOver = () => activeObjectStore.activateObject(props.object);
+const focusObjectStore = useFocusObjectStore();
+const isFocus = focusObjectStore.useActiveObject(() => props.object);
+
+const hoverObjectStore = useHoverObjectStore();
+const isHover = hoverObjectStore.useActiveObject(() => props.object);
 
 const classes = computed(() => ({
-  'sidebar-structure-item--active': isActive.value,
+  'sidebar-structure-item--hover': isHover.value && !isFocus.value,
+  'sidebar-structure-item--focus': isFocus.value,
 }));
 </script>
 
@@ -60,19 +68,18 @@ const classes = computed(() => ({
     background-color: var(--color-background-1);
     transition: background-color 0.15s ease-out;
     will-change: background-color;
-
-    &:hover:not(.sidebar-structure-item--active) {
-      background-color: var(--color-background-2);
-
-      .sidebar-structure-item__more-actions {
-        opacity: 1;
-      }
-    }
   }
 
-  .sidebar-structure-item--active {
-    background-color: var(--color-background-3);
+  .sidebar-structure-item--hover {
+    background-color: var(--color-background-2);
+  }
 
+  .sidebar-structure-item--focus {
+    background-color: var(--color-background-3);
+  }
+
+  .sidebar-structure-item--hover,
+  .sidebar-structure-item--focus {
     .sidebar-structure-item__more-actions {
       opacity: 1;
     }

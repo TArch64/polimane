@@ -3,13 +3,11 @@ import { ref, toRef } from 'vue';
 import type { ISchema } from '@/models';
 import { type HttpBody, useHttpClient } from '@/composables';
 import { useEditorSaveDispatcher } from '../composables';
-import { useActiveObjectStore } from './activeObjectStore';
+import { setObjectParent } from './activeObjectStore';
 
 type UpdateSchemaRequest = Partial<Omit<ISchema, 'id'>>;
 
 export const useEditorStore = defineStore('schemas/editor', () => {
-  const activeObjectStore = useActiveObjectStore();
-
   const httpClient = useHttpClient();
   const schema = ref<ISchema>(null!);
 
@@ -20,7 +18,11 @@ export const useEditorStore = defineStore('schemas/editor', () => {
   async function loadSchema(id: string): Promise<void> {
     schema.value = await httpClient.get(['/schemas', id]);
     schema.value.content ??= [];
-    activeObjectStore.init(schema.value);
+
+    for (const object of schema.value.content) {
+      setObjectParent(schema.value, object);
+    }
+
     saveDispatcher.enable();
   }
 

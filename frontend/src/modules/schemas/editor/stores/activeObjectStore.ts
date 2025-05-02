@@ -1,6 +1,6 @@
 import { computed, type MaybeRefOrGetter, ref, toValue } from 'vue';
 import { defineStore } from 'pinia';
-import { type ISchema, type ISchemaObject, isSchemaWithContent } from '@/models';
+import { type ISchemaObject, isSchemaWithContent } from '@/models';
 
 const OBJECT_PARENT = Symbol('[[OBJECT_PARENT]]');
 
@@ -35,15 +35,8 @@ export function getObjectPath(object: ISchemaObject): string[] {
   return path;
 }
 
-export const useActiveObjectStore = defineStore('schemas/editor/activeObject', () => {
+function activeObjectStore() {
   const activePath = ref<string[]>([]);
-
-  function init(schema: ISchema) {
-    for (const object of schema.content) {
-      setObjectParent(schema, object);
-    }
-  }
-
   const activatePath = (path: string[]) => activePath.value = path;
   const activateObject = (object: ISchemaObject) => activatePath(getObjectPath(object));
   const deactivatePath = () => activatePath([]);
@@ -51,11 +44,13 @@ export const useActiveObjectStore = defineStore('schemas/editor/activeObject', (
   const useActiveObject = (object: MaybeRefOrGetter<ISchemaObject>) => computed(() => isActiveObject(toValue(object)));
 
   return {
-    init,
     activePath,
     activateObject,
     isActiveObject,
     useActiveObject,
     deactivatePath,
   };
-});
+}
+
+export const useFocusObjectStore = defineStore('schemas/editor/focusObject', activeObjectStore);
+export const useHoverObjectStore = defineStore('schemas/editor/hoverObject', activeObjectStore);

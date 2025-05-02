@@ -1,9 +1,18 @@
 <template>
-  <GroupRenderer :config @click="onClick" v-on="borderHover.listeners">
+  <GroupRenderer
+    :config
+    @click="onClick"
+    @mouseover="hoverObjectStore.activateObject(pattern)"
+    @mouseout="hoverObjectStore.deactivatePath"
+  >
     <KonvaRect ref="borderRef" :config="borderConfig" />
     <CanvasPatternLabel :pattern />
 
-    <GroupRenderer ref="contentGroupRef" :config="contentGroupConfig" @layout="onContentLayout">
+    <GroupRenderer
+      ref="contentGroupRef"
+      :config="contentGroupConfig"
+      @layout="onContentLayout"
+    >
       <CanvasPatternContent :pattern v-if="pattern.content.length" />
       <CanvasPatternEmpty v-else />
     </GroupRenderer>
@@ -17,12 +26,11 @@ import type { ISchemaPattern } from '@/models';
 import {
   useNodeCentering,
   useNodeConfigs,
-  useNodeHover,
   useNodeRef,
   useNodeTween,
 } from '@/modules/schemas/editor/composables';
 import { useModal } from '@/components/modal';
-import { useActiveObjectStore } from '@/modules/schemas/editor/stores';
+import { useFocusObjectStore, useHoverObjectStore } from '@/modules/schemas/editor/stores';
 import { getPatternAddRowModal } from '../../modals';
 import { GroupRenderer, type IGroupLayoutEvent, NodeRect } from '../base';
 import CanvasPatternLabel from './CanvasPatternLabel.vue';
@@ -33,14 +41,17 @@ const props = defineProps<{
   pattern: ISchemaPattern;
 }>();
 
-const activeObjectStore = useActiveObjectStore();
-const isActive = activeObjectStore.useActiveObject(() => props.pattern);
+const focusObjectStore = useFocusObjectStore();
+const isFocus = focusObjectStore.useActiveObject(() => props.pattern);
+
+const hoverObjectStore = useHoverObjectStore();
+const isHover = hoverObjectStore.useActiveObject(() => props.pattern);
 
 const addModal = useModal(getPatternAddRowModal(props.pattern));
 
 function onClick() {
   props.pattern.content.length
-    ? activeObjectStore.activateObject(props.pattern)
+    ? focusObjectStore.activateObject(props.pattern)
     : addModal.open({ pattern: props.pattern });
 }
 
@@ -82,15 +93,10 @@ const borderConfig = useNodeConfigs<Konva.RectConfig>([
 ]);
 
 const borderRef = useNodeRef<Konva.Rect | null>();
-const borderHover = useNodeHover({ isDisabled: isActive });
 
 const borderAnimatedConfig = computed((): Partial<Konva.RectConfig> => {
-  if (isActive.value) {
-    return { stroke: 'rgba(0, 0, 0, 0.7)' };
-  }
-  if (borderHover.isHovered) {
-    return { stroke: 'rgba(0, 0, 0, 0.5)' };
-  }
+  if (isFocus.value) return { stroke: 'rgba(0, 0, 0, 0.7)' };
+  if (isHover.value) return { stroke: 'rgba(0, 0, 0, 0.5)' };
   return { stroke: borderConfig.value.stroke! };
 });
 

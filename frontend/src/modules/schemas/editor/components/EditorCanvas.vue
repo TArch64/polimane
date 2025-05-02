@@ -3,7 +3,7 @@
     ref="wrapperRef"
     class="editor-canvas"
     @contextmenu.prevent
-    @keydown.esc="activeObjectStore.deactivatePath"
+    @keydown.esc="focusObjectStore.deactivatePath"
   >
     <KonvaStage
       :config
@@ -23,10 +23,10 @@ import Konva from 'konva';
 import type { KonvaStage } from 'vue-konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { useCanvasNavigation, useCanvasZoom } from '../composables';
-import { useActiveObjectStore } from '../stores';
+import { useFocusObjectStore } from '../stores';
 import { CanvasContent } from './content';
 
-const activeObjectStore = useActiveObjectStore();
+const focusObjectStore = useFocusObjectStore();
 
 const wrapperRef = ref<HTMLElement | null>(null);
 const wrapperSize = useElementSize(wrapperRef);

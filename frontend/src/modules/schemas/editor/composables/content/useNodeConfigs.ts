@@ -18,6 +18,6 @@ export function flattenNodeConfigs<C extends Konva.NodeConfig>(configs: MaybeNod
 export function useNodeConfigs<C extends Konva.NodeConfig>(configRefs: MaybeRefOrGetter<MaybeNodeConfig<C>>[]): Ref<Partial<C>> {
   const refs = configRefs.map((configRef) => computed(() => toValue(configRef)));
   const flatten: Ref<Partial<C>> = ref({});
-  watch(refs, (values) => flatten.value = flattenNodeConfigs(values));
+  watch(refs, (values) => flatten.value = flattenNodeConfigs(values), { immediate: true });
   return flatten;
 }

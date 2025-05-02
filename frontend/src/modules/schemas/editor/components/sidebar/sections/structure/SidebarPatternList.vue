@@ -1,5 +1,5 @@
 <template>
-  <ul class="sidebar-pattern-list">
+  <ul class="sidebar-pattern-list" @mouseout="hoverObjectStore.deactivatePath">
     <Sortable
       item-as="li"
       group="sidebar-pattern-list"
@@ -15,11 +15,12 @@
 </template>
 
 <script setup lang="ts">
-import { usePatternsStore } from '@/modules/schemas/editor/stores';
+import { useHoverObjectStore, usePatternsStore } from '@/modules/schemas/editor/stores';
 import { type IMoveEvent, Sortable } from '@/components/sortable';
 import type { ISchemaPattern } from '@/models';
 import { SidebarStructurePattern } from './pattern';
 
+const hoverObjectStore = useHoverObjectStore();
 const patternsStore = usePatternsStore();
 
 function onMove(event: IMoveEvent<ISchemaPattern>): void {
