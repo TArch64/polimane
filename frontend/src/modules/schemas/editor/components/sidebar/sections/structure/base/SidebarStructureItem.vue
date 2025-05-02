@@ -41,7 +41,7 @@ defineSlots<{
 }>();
 
 const activeObjectStore = useActiveObjectStore();
-const isActive = computed(() => activeObjectStore.isActiveObject(props.object));
+const isActive = activeObjectStore.useActiveObject(() => props.object);
 const onMouseOver = () => activeObjectStore.activateObject(props.object);
 
 const classes = computed(() => ({

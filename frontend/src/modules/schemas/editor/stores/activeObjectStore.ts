@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { computed, type MaybeRefOrGetter, ref, toValue } from 'vue';
 import { defineStore } from 'pinia';
 import { type ISchema, type ISchemaObject, isSchemaWithContent } from '@/models';
 
@@ -48,12 +48,14 @@ export const useActiveObjectStore = defineStore('schemas/editor/activeObject', (
   const activateObject = (object: ISchemaObject) => activatePath(getObjectPath(object));
   const deactivatePath = () => activatePath([]);
   const isActiveObject = (object: ISchemaObject) => activePath.value.some((id) => id === object.id);
+  const useActiveObject = (object: MaybeRefOrGetter<ISchemaObject>) => computed(() => isActiveObject(toValue(object)));
 
   return {
     init,
     activePath,
     activateObject,
     isActiveObject,
+    useActiveObject,
     deactivatePath,
   };
 });

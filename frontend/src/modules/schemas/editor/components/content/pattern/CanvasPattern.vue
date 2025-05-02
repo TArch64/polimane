@@ -34,7 +34,7 @@ const props = defineProps<{
 }>();
 
 const activeObjectStore = useActiveObjectStore();
-const isActive = computed(() => activeObjectStore.isActiveObject(props.pattern));
+const isActive = activeObjectStore.useActiveObject(() => props.pattern);
 
 const addModal = useModal(getPatternAddRowModal(props.pattern));
 
@@ -84,7 +84,7 @@ const borderConfig = useNodeConfigs<Konva.RectConfig>([
 const borderRef = useNodeRef<Konva.Rect | null>();
 const borderHover = useNodeHover({ isDisabled: isActive });
 
-const borderHoverConfig = computed((): Partial<Konva.RectConfig> => {
+const borderAnimatedConfig = computed((): Partial<Konva.RectConfig> => {
   if (isActive.value) {
     return { stroke: 'rgba(0, 0, 0, 0.7)' };
   }
@@ -94,7 +94,7 @@ const borderHoverConfig = computed((): Partial<Konva.RectConfig> => {
   return { stroke: borderConfig.value.stroke! };
 });
 
-useNodeTween(borderRef, borderHoverConfig, (config) => ({
+useNodeTween(borderRef, borderAnimatedConfig, (config) => ({
   ...config,
   duration: 0.15,
   easing: Konva.Easings.EaseOut,

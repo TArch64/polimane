@@ -1,5 +1,6 @@
-import { computed, type MaybeRefOrGetter, reactive, ref, toValue, watch } from 'vue';
+import { computed, type MaybeRefOrGetter, reactive, ref, toValue } from 'vue';
 import type { KonvaEventObject } from 'vue-konva';
+import { whenever } from '@vueuse/core';
 
 export interface INodeHoverOptions {
   isDisabled?: MaybeRefOrGetter<boolean>;
@@ -23,9 +24,7 @@ export function useNodeHover(options: INodeHoverOptions = {}): INodeHover {
     };
   }
 
-  watch(isDisabled, (isDisabled) => {
-    if (isDisabled) isHovered.value = false;
-  });
+  whenever(isDisabled, () => isHovered.value = false);
 
   return reactive({
     isHovered,
