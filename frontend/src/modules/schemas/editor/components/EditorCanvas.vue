@@ -1,7 +1,13 @@
 <template>
-  <div ref="wrapperRef" @contextmenu.prevent>
+  <div
+    ref="wrapperRef"
+    class="editor-canvas"
+    @contextmenu.prevent
+    @keydown.esc="activeObjectStore.deactivatePath"
+  >
     <KonvaStage
       :config
+      :ref="onStageMounted"
       @wheel="onWheel"
       v-if="isReady"
     >
@@ -11,11 +17,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref, type VNodeRef } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import Konva from 'konva';
+import type { KonvaStage } from 'vue-konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
+import { useCanvasNavigation, useCanvasZoom } from '../composables';
+import { useActiveObjectStore } from '../stores';
 import { CanvasContent } from './content';
+
+const activeObjectStore = useActiveObjectStore();
 
 const wrapperRef = ref<HTMLElement | null>(null);
 const wrapperSize = useElementSize(wrapperRef);
@@ -27,50 +38,25 @@ const config = computed((): Konva.StageConfig => ({
   height: wrapperSize.height.value,
 }));
 
-const MIN_ZOOM = 0.5;
-const MAX_ZOOM = 10;
+const onStageMounted: VNodeRef = async (ref): Promise<void> => {
+  await nextTick();
+  const stage = (ref as InstanceType<KonvaStage>)?.getStage();
+  const canvas: HTMLCanvasElement = stage?.content.querySelector('canvas');
+  if (canvas) canvas.tabIndex = 0;
+};
 
-function pinchZoom(stage: Konva.Stage, event: WheelEvent): void {
-  const oldScale = stage.scaleX();
-  const pointer = stage.getPointerPosition()!;
+const canvasZoom = useCanvasZoom();
+const canvasNavigation = useCanvasNavigation();
 
-  const mousePointTo = {
-    x: (pointer.x - stage.x()) / oldScale,
-    y: (pointer.y - stage.y()) / oldScale,
-  };
-
-  const scaleFactor = 1 - event.deltaY * 0.01;
-  const newScale = Math.min(Math.max(oldScale * scaleFactor, MIN_ZOOM), MAX_ZOOM);
-
-  stage.scale({
-    x: newScale,
-    y: newScale,
-  });
-
-  const newPos = {
-    x: pointer.x - mousePointTo.x * newScale,
-    y: pointer.y - mousePointTo.y * newScale,
-  };
-
-  stage.position(newPos);
-}
-
-function navigate(stage: Konva.Stage, event: WheelEvent) {
-  const dx = event.deltaX;
-  const dy = event.deltaY;
-
-  const currentPos = stage.position();
-
-  stage.position({
-    x: currentPos.x - dx,
-    y: currentPos.y - dy,
-  });
-}
-
-function onWheel(kEvent: KonvaEventObject<WheelEvent, Konva.Stage>): void {
-  const { evt: event, currentTarget: stage } = kEvent;
-  event.preventDefault();
-  event.ctrlKey ? pinchZoom(stage, event) : navigate(stage, event);
-  stage.batchDraw();
+function onWheel(event: KonvaEventObject<WheelEvent, Konva.Stage>): void {
+  event.evt.preventDefault();
+  event.evt.ctrlKey ? canvasZoom.zoom(event) : canvasNavigation.navigate(event);
+  event.currentTarget.batchDraw();
 }
 </script>
+
+<style scoped>
+.editor-canvas:deep(canvas) {
+  outline: none;
+}
+</style>

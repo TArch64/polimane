@@ -17,12 +17,11 @@ export function useNodeHover(options: INodeHoverOptions = {}): INodeHover {
   const isDisabled = computed(() => toValue(options.isDisabled) ?? false);
   const isHovered = ref(false);
 
-  const onMouseOver: NodeHoverListener = () => isHovered.value = true;
-  const onMouseOut: NodeHoverListener = () => isHovered.value = false;
-
-  const listeners = computed((): NodeHoverListeners => {
-    return isDisabled.value ? {} : { mouseover: onMouseOver, mouseout: onMouseOut };
-  });
+  function createListener(toHovered: boolean): NodeHoverListener {
+    return () => {
+      if (!isDisabled.value) isHovered.value = toHovered;
+    };
+  }
 
   watch(isDisabled, (isDisabled) => {
     if (isDisabled) isHovered.value = false;
@@ -30,6 +29,10 @@ export function useNodeHover(options: INodeHoverOptions = {}): INodeHover {
 
   return reactive({
     isHovered,
-    listeners,
+
+    listeners: {
+      mouseover: createListener(true),
+      mouseout: createListener(false),
+    },
   });
 }

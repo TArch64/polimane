@@ -57,7 +57,7 @@ const contentGroupConfig = useNodeCentering(contentGroupRef, {
   },
 });
 
-const contentLayoutRect = ref<NodeRect | null>(null);
+const contentLayoutRect = ref<NodeRect>(NodeRect.BLANK);
 
 function onContentLayout(event: IGroupLayoutEvent) {
   if (!contentLayoutRect.value || !contentLayoutRect.value.isEqual(event.clientRect)) {
@@ -74,9 +74,10 @@ const borderConfig = useNodeConfigs<Konva.RectConfig>([
     cornerRadius: 8,
     dash: [10, 5],
   },
+
   computed(() => ({
-    width: Math.max(contentLayoutRect.value?.width ?? 0, 1000) + 24,
-    height: Math.max(contentLayoutRect.value?.height ?? 0, 100) + 40,
+    width: Math.max(contentLayoutRect.value.width, 1000) + 24,
+    height: Math.max(contentLayoutRect.value.height, 100) + 40,
   })),
 ]);
 
