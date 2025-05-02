@@ -34,6 +34,7 @@ import {
 } from '@/modules/schemas/editor/composables';
 import { useModal } from '@/components/modal';
 import { ActiveObjectTrigger } from '@/modules/schemas/editor/stores';
+import { scrollNodeIntoView } from '@/modules/schemas/editor/helpers';
 import { getPatternAddRowModal } from '../../modals';
 import { GroupRenderer, type IGroupLayoutEvent, NodeRect } from '../base';
 import CanvasPatternLabel from './CanvasPatternLabel.vue';
@@ -107,6 +108,6 @@ useNodeTween(borderRef, borderAnimatedConfig, (config) => ({
 }));
 
 whenever(() => activeObject.focus.fromSidebar, () => {
-  console.log(rootRef.value);
+  scrollNodeIntoView(rootRef.value);
 });
 </script>
