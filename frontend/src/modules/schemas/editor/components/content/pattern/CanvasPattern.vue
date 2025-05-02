@@ -1,9 +1,10 @@
 <template>
   <GroupRenderer
     :config
+    ref="rootRef"
     @click="onClick"
-    @mouseover="hoverObjectStore.activateObject(pattern)"
-    @mouseout="hoverObjectStore.deactivatePath"
+    @mouseover="activeObject.hover.activate(ActiveObjectTrigger.CANVAS)"
+    @mouseout="activeObject.hover.deactivate"
   >
     <KonvaRect ref="borderRef" :config="borderConfig" />
     <CanvasPatternLabel :pattern />
@@ -22,15 +23,17 @@
 <script setup lang="ts">
 import Konva from 'konva';
 import { computed, ref } from 'vue';
+import { whenever } from '@vueuse/core';
 import type { ISchemaPattern } from '@/models';
 import {
+  useActiveObject,
   useNodeCentering,
   useNodeConfigs,
   useNodeRef,
   useNodeTween,
 } from '@/modules/schemas/editor/composables';
 import { useModal } from '@/components/modal';
-import { useFocusObjectStore, useHoverObjectStore } from '@/modules/schemas/editor/stores';
+import { ActiveObjectTrigger } from '@/modules/schemas/editor/stores';
 import { getPatternAddRowModal } from '../../modals';
 import { GroupRenderer, type IGroupLayoutEvent, NodeRect } from '../base';
 import CanvasPatternLabel from './CanvasPatternLabel.vue';
@@ -41,19 +44,16 @@ const props = defineProps<{
   pattern: ISchemaPattern;
 }>();
 
-const focusObjectStore = useFocusObjectStore();
-const isFocus = focusObjectStore.useActiveObject(() => props.pattern);
-
-const hoverObjectStore = useHoverObjectStore();
-const isHover = hoverObjectStore.useActiveObject(() => props.pattern);
-
+const activeObject = useActiveObject(() => props.pattern);
 const addModal = useModal(getPatternAddRowModal(props.pattern));
 
 function onClick() {
   props.pattern.content.length
-    ? focusObjectStore.activateObject(props.pattern)
+    ? activeObject.focus.activate(ActiveObjectTrigger.CANVAS)
     : addModal.open({ pattern: props.pattern });
 }
+
+const rootRef = useNodeRef<Konva.Group>();
 
 const config: Partial<Konva.GroupConfig> = {
   id: props.pattern.id,
@@ -95,8 +95,8 @@ const borderConfig = useNodeConfigs<Konva.RectConfig>([
 const borderRef = useNodeRef<Konva.Rect | null>();
 
 const borderAnimatedConfig = computed((): Partial<Konva.RectConfig> => {
-  if (isFocus.value) return { stroke: 'rgba(0, 0, 0, 0.7)' };
-  if (isHover.value) return { stroke: 'rgba(0, 0, 0, 0.5)' };
+  if (activeObject.focus.isActive) return { stroke: 'rgba(0, 0, 0, 0.7)' };
+  if (activeObject.hover.isActive) return { stroke: 'rgba(0, 0, 0, 0.5)' };
   return { stroke: borderConfig.value.stroke! };
 });
 
@@ -105,4 +105,8 @@ useNodeTween(borderRef, borderAnimatedConfig, (config) => ({
   duration: 0.15,
   easing: Konva.Easings.EaseOut,
 }));
+
+whenever(() => activeObject.focus.fromSidebar, () => {
+  console.log(rootRef.value);
+});
 </script>

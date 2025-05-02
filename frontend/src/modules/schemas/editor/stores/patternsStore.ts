@@ -3,8 +3,8 @@ import { computed } from 'vue';
 import { getPatternTitle, PatternType } from '@/enums';
 import { newId } from '@/helpers';
 import { Collection, type ISchemaPattern } from '@/models';
+import { setObjectParent } from '../models';
 import { useEditorStore } from './editorStore';
-import { setObjectParent } from './activeObjectStore';
 
 export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
   const editorStore = useEditorStore();

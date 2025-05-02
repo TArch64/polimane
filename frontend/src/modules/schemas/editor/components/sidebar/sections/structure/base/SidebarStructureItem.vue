@@ -2,8 +2,8 @@
   <div
     class="sidebar-structure-item"
     :class="classes"
-    @click.stop="focusObjectStore.activateObject(object)"
-    @mouseover.stop="hoverObjectStore.activateObject(object)"
+    @click.stop="activeObject.focus.activate(ActiveObjectTrigger.SIDEBAR)"
+    @mouseover.stop="activeObject.hover.activate(ActiveObjectTrigger.SIDEBAR)"
   >
     {{ title }}
 
@@ -31,7 +31,8 @@ import { Dropdown } from '@/components/dropdown';
 import { Button } from '@/components/button';
 import { mergeAnchorName } from '@/helpers';
 import type { ISchemaObject } from '@/models';
-import { useFocusObjectStore, useHoverObjectStore } from '@/modules/schemas/editor/stores';
+import { ActiveObjectTrigger } from '@/modules/schemas/editor/stores';
+import { useActiveObject } from '@/modules/schemas/editor/composables';
 
 const props = withDefaults(defineProps<{
   object: ISchemaObject;
@@ -45,15 +46,11 @@ defineSlots<{
   actions: Slot;
 }>();
 
-const focusObjectStore = useFocusObjectStore();
-const isFocus = focusObjectStore.useActiveObject(() => props.object);
-
-const hoverObjectStore = useHoverObjectStore();
-const isHover = hoverObjectStore.useActiveObject(() => props.object);
+const activeObject = useActiveObject(() => props.object);
 
 const classes = computed(() => ({
-  'sidebar-structure-item--hover': isHover.value && !isFocus.value,
-  'sidebar-structure-item--focus': isFocus.value,
+  'sidebar-structure-item--hover': activeObject.hover.isActive && !activeObject.focus.isActive,
+  'sidebar-structure-item--focus': activeObject.focus.isActive,
 }));
 </script>
 

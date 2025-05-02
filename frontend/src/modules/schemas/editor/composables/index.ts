@@ -1,2 +1,3 @@
-export * from './useEditorSaveDispatcher';
 export * from './content';
+export * from './useEditorSaveDispatcher';
+export * from './useActiveObject';

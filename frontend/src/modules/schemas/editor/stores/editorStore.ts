@@ -3,7 +3,7 @@ import { ref, toRef } from 'vue';
 import type { ISchema } from '@/models';
 import { type HttpBody, useHttpClient } from '@/composables';
 import { useEditorSaveDispatcher } from '../composables';
-import { setObjectParent } from './activeObjectStore';
+import { setObjectParent } from '../models';
 
 type UpdateSchemaRequest = Partial<Omit<ISchema, 'id'>>;
 

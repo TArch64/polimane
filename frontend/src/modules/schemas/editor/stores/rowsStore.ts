@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { Collection, type ISchemaPattern } from '@/models';
 import { newId } from '@/helpers';
-import { setObjectParent } from './activeObjectStore';
+import { setObjectParent } from '../models';
 
 export interface INewSquareRowOptions {
   size: number;
