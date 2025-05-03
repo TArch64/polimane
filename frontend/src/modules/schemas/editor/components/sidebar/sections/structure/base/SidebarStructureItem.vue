@@ -7,7 +7,7 @@
   >
     {{ title }}
 
-    <Dropdown>
+    <Dropdown v-if="slots.actions">
       <template #activator="{ activatorStyle, open }">
         <Button
           icon
@@ -49,8 +49,8 @@ const props = withDefaults(defineProps<{
   moreActionsButtonStyle: () => ({}),
 });
 
-defineSlots<{
-  actions: Slot;
+const slots = defineSlots<{
+  actions?: Slot;
   content?: Slot;
 }>();
 
@@ -71,6 +71,7 @@ const leftPadding = computed(() => `${12 + props.depth * 8}px`);
     font-size: var(--font-sm);
     padding: 4px 8px 4px v-bind('leftPadding');
     display: flex;
+    min-height: 40px;
     justify-content: space-between;
     align-items: center;
     background-color: var(--color-background-1);
@@ -105,6 +106,7 @@ const leftPadding = computed(() => `${12 + props.depth * 8}px`);
       content: "";
       position: absolute;
       pointer-events: none;
+      z-index: 1;
       left: v-bind('leftPadding');
       border-left: var(--divider);
       width: 0;

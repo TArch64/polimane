@@ -11,7 +11,7 @@ export interface INewSquareRowOptions {
 export function useRowsStore(patternRef: MaybeRefOrGetter<ISchemaPattern>) {
   const pattern = toValue(patternRef);
 
-  return defineStore(`schemas/editor/rows/${pattern.id}`, () => {
+  return defineStore(`schemas/editor/patterns/${pattern.id}/rows`, () => {
     const rows = Collection.fromParent(pattern, {
       onAdded: (parent, object) => setObjectParent(parent, object),
     });

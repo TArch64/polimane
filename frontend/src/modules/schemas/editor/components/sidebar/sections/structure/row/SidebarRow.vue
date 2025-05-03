@@ -13,6 +13,10 @@
         @click="deleteRow"
       />
     </template>
+
+    <template #content>
+      <SidebarBeadList :row :depth="depth + 1" />
+    </template>
   </SidebarStructureItem>
 </template>
 
@@ -25,6 +29,7 @@ import { TrashIcon } from '@/components/icon';
 import { useConfirm } from '@/components/confirm';
 import { useRouteTransition } from '@/composables';
 import { SidebarStructureItem } from '../base';
+import { SidebarBeadList } from '../bead';
 
 const props = defineProps<{
   depth: number;

@@ -63,6 +63,7 @@ const deleteSchema = useAsyncAction(async () => {
     background-color: var(--color-background-1);
     border-bottom: 1px solid var(--color-divider);
     position: sticky;
+    z-index: 10;
     top: 0;
   }
 

@@ -1,7 +1,7 @@
 <template>
   <SidebarStructureList
     :depth
-    :list="pattern.content"
+    :list="rowsStore.rows.values"
     sortable-group="sidebar-pattern-list"
     @move="onMove"
     @mouseout="hoverObjectStore.deactivatePath"

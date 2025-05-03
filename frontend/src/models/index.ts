@@ -5,3 +5,4 @@ export * from './ISchemaWithContent';
 export type * from './ISchemaPattern';
 export type * from './ISchemaRow';
 export * from './Collection';
+export type * from './ISchemaBead';
