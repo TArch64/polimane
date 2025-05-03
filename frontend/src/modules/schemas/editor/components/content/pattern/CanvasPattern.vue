@@ -108,7 +108,7 @@ useNodeTween(borderRef, borderAnimatedConfig, (config) => ({
 
 activeObject.focus.onExactActive((trigger) => {
   if (trigger !== ActiveObjectTrigger.CANVAS) {
-    scrollNodeIntoView(rootRef.value);
+    scrollNodeIntoView(rootRef.value, { scale: true });
   }
 });
 </script>
