@@ -3,7 +3,7 @@
     ref="rootRef"
     class="sidebar-structure-item"
     :class="classes"
-    @click.stop="activeObject.focus.activate(ActiveObjectTrigger.SIDEBAR)"
+    @click.stop="activeObject.focus.toggle(ActiveObjectTrigger.SIDEBAR)"
     @mouseover.stop="activeObject.hover.activate(ActiveObjectTrigger.SIDEBAR)"
   >
     {{ title }}
@@ -14,7 +14,7 @@
           icon
           class="sidebar-structure-item__more-actions"
           :style="mergeAnchorName(activatorStyle, moreActionsButtonStyle)"
-          @click="open"
+          @click.stop="open"
         >
           <MoreHorizontalIcon />
         </Button>

@@ -28,6 +28,7 @@ function activeObjectStore() {
   }
 
   const deactivatePath = () => activatePath([], null);
+  const popPath = () => activePath.value.pop();
 
   const isActiveObject = (object: ISchemaObject) => activePath.value.some((id) => id === object.id);
   const isExactActiveObject = (object: ISchemaObject) => activePath.value.at(-1) === object.id;
@@ -37,6 +38,7 @@ function activeObjectStore() {
     activePathTrigger,
     activateObject,
     deactivatePath,
+    popPath,
     isActiveObject,
     isExactActiveObject,
   };

@@ -13,6 +13,7 @@ export interface IActiveObjectState {
   isExactActive: boolean;
   onExactActive: EventHookOn<ActiveObjectTrigger>;
   activate: (trigger: ActiveObjectTrigger) => void;
+  toggle: (trigger: ActiveObjectTrigger) => void;
   deactivate: () => void;
 }
 
@@ -24,8 +25,13 @@ export interface IActiveObject {
 function useActiveObjectState(store: ActiveObjectStore, object: Ref<ISchemaObject>): IActiveObjectState {
   const isActive = computed(() => store.isActiveObject(object.value));
   const isExactActive = computed(() => store.isExactActiveObject(object.value));
+
   const activate = (trigger: ActiveObjectTrigger) => store.activateObject(object.value, trigger);
   const deactivate = () => store.deactivatePath();
+
+  function toggle(trigger: ActiveObjectTrigger) {
+    isExactActive.value ? store.popPath() : activate(trigger);
+  }
 
   const exactActiveHook = createEventHook<ActiveObjectTrigger>();
   whenever(isExactActive, () => exactActiveHook.trigger(store.activePathTrigger!));
@@ -36,6 +42,7 @@ function useActiveObjectState(store: ActiveObjectStore, object: Ref<ISchemaObjec
     onExactActive: exactActiveHook.on,
     activate,
     deactivate,
+    toggle,
   });
 }
 
