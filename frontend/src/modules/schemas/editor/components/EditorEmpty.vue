@@ -19,9 +19,9 @@
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
 import { ArrowBackIcon } from '@/components/icon';
-import { EditorAddPatternModal } from './modals';
+import { PatternAddModal } from './modals';
 
-const addPatternModal = useModal(EditorAddPatternModal);
+const addPatternModal = useModal(PatternAddModal);
 </script>
 
 <style scoped>

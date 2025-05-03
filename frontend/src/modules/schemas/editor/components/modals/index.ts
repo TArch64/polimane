@@ -1,14 +1,14 @@
 import type { ISchemaPattern } from '@/models';
 import { getMappedValue } from '@/helpers';
 import { PatternType } from '@/enums';
-import EditorAddSquareRowModal from './EditorAddSquareRowModal.vue';
+import PatternAddSquareRowModal from './PatternAddSquareRowModal.vue';
 
 export function getPatternAddRowModal(pattern: ISchemaPattern) {
   return getMappedValue(pattern.type, {
-    [PatternType.SQUARE]: EditorAddSquareRowModal,
-    [PatternType.DIAMOND]: EditorAddSquareRowModal,
+    [PatternType.SQUARE]: PatternAddSquareRowModal,
+    [PatternType.DIAMOND]: PatternAddSquareRowModal,
   });
 }
 
-export { default as EditorAddPatternModal } from './EditorAddPatternModal.vue';
+export { default as PatternAddModal } from './PatternAddModal.vue';
 export { default as PatternRenameModal } from './PatternRenameModal.vue';
