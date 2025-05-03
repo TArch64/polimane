@@ -62,6 +62,7 @@ declare module 'vue-konva' {
   export type KonvaLabel = KonvaComponent<typeof Konva.Label>;
   export type KonvaTag = KonvaComponent<typeof Konva.Tag>;
   export type KonvaImage = KonvaComponent<typeof Konva.Image>;
+  export type KonvaLine = KonvaComponent<typeof Konva.Line>;
   export { KonvaEventObject };
 }
 
@@ -77,6 +78,7 @@ declare module 'vue' {
     KonvaLabel: K.KonvaLabel;
     KonvaTag: K.KonvaTag;
     KonvaImage: K.KonvaImage;
+    KonvaLine: K.KonvaLine;
   }
 }
 
