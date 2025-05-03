@@ -23,7 +23,11 @@
     </Dropdown>
   </div>
 
-  <slot name="content" v-if="activeObject.focus.isActive" />
+  <Transition name="sidebar-structure-item__content-" :duration="150">
+    <div class="sidebar-structure-item__content" v-if="activeObject.focus.isActive">
+      <slot name="content" />
+    </div>
+  </Transition>
 </template>
 
 <script setup lang="ts">
@@ -39,6 +43,7 @@ import { useActiveObject } from '@/modules/schemas/editor/composables';
 const props = withDefaults(defineProps<{
   object: ISchemaObject;
   title: string;
+  depth: number;
   moreActionsButtonStyle?: Record<string, string> | Record<string, string>[];
 }>(), {
   moreActionsButtonStyle: () => ({}),
@@ -46,22 +51,25 @@ const props = withDefaults(defineProps<{
 
 defineSlots<{
   actions: Slot;
-  content: Slot;
+  content?: Slot;
 }>();
 
 const activeObject = useActiveObject(() => props.object);
 
 const classes = computed(() => ({
-  'sidebar-structure-item--hover': activeObject.hover.isActive && !activeObject.focus.isActive,
-  'sidebar-structure-item--focus': activeObject.focus.isActive,
+  'sidebar-structure-item--hover': activeObject.hover.isExactActive && !activeObject.focus.isExactActive,
+  'sidebar-structure-item--focus': activeObject.focus.isExactActive,
+  'sidebar-structure-item--root': props.depth === 0,
 }));
+
+const leftPadding = computed(() => `${12 + props.depth * 8}px`);
 </script>
 
 <style scoped>
 @layer page {
   .sidebar-structure-item {
     font-size: var(--font-sm);
-    padding: 4px 8px 4px 12px;
+    padding: 4px 8px 4px v-bind('leftPadding');
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -88,6 +96,31 @@ const classes = computed(() => ({
   .sidebar-structure-item__more-actions {
     opacity: 0;
     transition: opacity 0.15s ease-out;
+  }
+
+  .sidebar-structure-item__content {
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      left: v-bind('leftPadding');
+      border-left: var(--divider);
+      width: 0;
+      height: 100%;
+    }
+  }
+
+  .sidebar-structure-item__content--enter-active,
+  .sidebar-structure-item__content--leave-active {
+    overflow: hidden;
+    transition: height ease-out 0.15s;
+  }
+
+  .sidebar-structure-item__content--enter-from,
+  .sidebar-structure-item__content--leave-to {
+    height: 0;
   }
 }
 </style>

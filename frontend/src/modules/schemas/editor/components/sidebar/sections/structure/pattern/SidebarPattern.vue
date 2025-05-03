@@ -1,5 +1,6 @@
 <template>
   <SidebarStructureItem
+    :depth="DEPTH"
     :object="pattern"
     :title="pattern.name"
     :more-actions-button-style="deleteConfirm.anchorStyle"
@@ -20,7 +21,7 @@
     </template>
 
     <template #content>
-      rows list
+      <SidebarRowList :pattern :depth="DEPTH + 1" />
     </template>
   </SidebarStructureItem>
 </template>
@@ -35,11 +36,14 @@ import { useModal } from '@/components/modal';
 import { useConfirm } from '@/components/confirm';
 import { useRouteTransition } from '@/composables';
 import { SidebarStructureItem } from '../base';
+import { SidebarRowList } from '../row';
 import PatternRenameModal from './PatternRenameModal.vue';
 
 const props = defineProps<{
   pattern: ISchemaPattern;
 }>();
+
+const DEPTH = 0;
 
 const patternsStore = usePatternsStore();
 const renameModal = useModal(PatternRenameModal);

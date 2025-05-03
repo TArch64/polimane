@@ -22,7 +22,9 @@ export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
     content: [],
   });
 
-  const deletePattern = (pattern: ISchemaPattern) => patterns.delete(pattern);
+  function deletePattern(pattern: ISchemaPattern) {
+    patterns.delete(pattern);
+  }
 
   return { patterns, hasPatterns, addPattern, deletePattern };
 });

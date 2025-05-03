@@ -21,12 +21,12 @@ const props = defineProps<{
 }>();
 
 const modal = useActiveModal();
-const rowsStore = useRowsStore();
+const rowsStore = useRowsStore(() => props.pattern);
 
 const size = ref(0);
 
 function save() {
-  rowsStore.addSquareRow(props.pattern, {
+  rowsStore.addSquareRow({
     size: Number(size.value),
   });
 

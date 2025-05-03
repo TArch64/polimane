@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import { Collection, type ISchemaPattern } from '@/models';
+import { type MaybeRefOrGetter, toValue } from 'vue';
+import { Collection, type ISchemaPattern, type ISchemaRow } from '@/models';
 import { newId } from '@/helpers';
 import { setObjectParent } from '../models';
 
@@ -7,20 +8,26 @@ export interface INewSquareRowOptions {
   size: number;
 }
 
-export const useRowsStore = defineStore('schemas/editor/rows', () => {
-  function addSquareRow(pattern: ISchemaPattern, options: INewSquareRowOptions): void {
-    const collection = Collection.fromParent(pattern, {
+export function useRowsStore(patternRef: MaybeRefOrGetter<ISchemaPattern>) {
+  const pattern = toValue(patternRef);
+
+  return defineStore(`schemas/editor/rows/${pattern.id}`, () => {
+    const rows = Collection.fromParent(pattern, {
       onAdded: (parent, object) => setObjectParent(parent, object),
     });
 
-    collection.append({
+    const addSquareRow = (options: INewSquareRowOptions) => rows.append({
       id: newId(),
 
       content: new Array(options.size).fill(0).map(() => ({
         id: newId(),
       })),
     });
-  }
 
-  return { addSquareRow };
-});
+    function deleteRow(row: ISchemaRow): void {
+      rows.delete(row);
+    }
+
+    return { rows, addSquareRow, deleteRow };
+  })();
+}

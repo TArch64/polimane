@@ -1,1 +1,1 @@
-export { default as SidebarStructurePattern } from './SidebarStructurePattern.vue';
+export { default as SidebarPatternList } from './SidebarPatternList.vue';
