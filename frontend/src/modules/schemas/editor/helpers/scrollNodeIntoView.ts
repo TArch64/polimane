@@ -2,6 +2,7 @@ import Konva from 'konva';
 
 export interface IScrollNodeIntoViewOptions {
   scale?: boolean;
+  minWidth?: number;
 }
 
 export function scrollNodeIntoView(
@@ -10,6 +11,13 @@ export function scrollNodeIntoView(
 ): Promise<void> {
   const stage = node.getStage()!;
   const clientRect = node.getClientRect({ relativeTo: stage });
+
+  if (options.minWidth && clientRect.width < options.minWidth) {
+    const originalWidth = clientRect.width;
+    clientRect.width = options.minWidth;
+    clientRect.x -= (options.minWidth - originalWidth) / 2;
+  }
+
   const padding = 20;
 
   // Determine whether to scale or not (defaults to true if not specified)

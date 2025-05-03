@@ -27,7 +27,10 @@ const rootRef = useNodeRef<Konva.Group>();
 
 activeObject.focus.onExactActive((trigger) => {
   if (trigger !== ActiveObjectTrigger.CANVAS) {
-    scrollNodeIntoView(rootRef.value, { scale: true });
+    scrollNodeIntoView(rootRef.value, {
+      scale: true,
+      minWidth: 700,
+    });
   }
 });
 </script>
