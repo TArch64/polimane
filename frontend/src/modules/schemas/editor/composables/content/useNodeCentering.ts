@@ -7,6 +7,7 @@ import {
   reactive,
   toValue,
 } from 'vue';
+import { useDebounceFn } from '@vueuse/core';
 
 export type NodeCenteringPadding = Record<'vertical' | 'horizontal', number>;
 
@@ -19,7 +20,9 @@ export function useNodeCentering(nodeRef: MaybeRefOrGetter<Konva.Node | null>, o
   const padding = computed(() => options.padding ?? { vertical: 0, horizontal: 0 });
   const config = reactive<Partial<Konva.NodeConfig>>({});
 
-  function update() {
+  async function update(event?: unknown) {
+    console.log(event);
+
     const parent = node.value?.parent;
 
     if (!node.value || !parent) {
@@ -34,9 +37,11 @@ export function useNodeCentering(nodeRef: MaybeRefOrGetter<Konva.Node | null>, o
     config.y = Math.max(freeSpaceY / 2, 0) + padding.value.vertical;
   }
 
+  const scheduleUpdate = useDebounceFn(update, 10);
+
   onMounted(() => {
     update();
-    node.value?.on('layout', update);
+    node.value?.on('layout', scheduleUpdate);
   });
 
   onBeforeUnmount(() => {
