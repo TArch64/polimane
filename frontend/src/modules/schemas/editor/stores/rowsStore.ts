@@ -5,6 +5,7 @@ import { StoreFactory } from '@/stores';
 import { setObjectParent } from '../models';
 
 export interface INewSquareRowOptions {
+  rows: number;
   size: number;
 }
 
@@ -21,13 +22,18 @@ const rowsStoreFactory = new StoreFactory({
       onAdded: (parent, object) => setObjectParent(parent, object),
     });
 
-    const addSquareRow = (options: INewSquareRowOptions) => rows.append({
+    const createBead = () => ({
       id: newId(),
-
-      content: new Array(options.size).fill(0).map(() => ({
-        id: newId(),
-      })),
     });
+
+    const createRow = (size: number): ISchemaRow => ({
+      id: newId(),
+      content: new Array(size).fill(0).map(createBead),
+    });
+
+    function addSquareRow(options: INewSquareRowOptions) {
+      rows.append(new Array(options.rows).fill(0).map(() => createRow(options.size)));
+    }
 
     function deleteRow(row: ISchemaRow): void {
       rows.delete(row);

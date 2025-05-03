@@ -1,16 +1,26 @@
 <template>
   <Modal title="Додати Рядок" save-button="Додати" @save="save">
     <NumberField
+      label
       required
       :min="1"
-      placeholder="Кількість Елементів"
-      v-model="size"
+      placeholder="Кількість Рядків"
+      class="add-row__row-count"
+      v-model="form.rows"
+    />
+
+    <NumberField
+      label
+      required
+      :min="1"
+      placeholder="Кількість Бісеринок"
+      v-model="form.size"
     />
   </Modal>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { reactive } from 'vue';
 import { Modal, useActiveModal } from '@/components/modal';
 import { NumberField } from '@/components/form';
 import type { ISchemaPattern } from '@/models';
@@ -23,13 +33,21 @@ const props = defineProps<{
 const modal = useActiveModal();
 const rowsStore = useRowsStore(() => props.pattern);
 
-const size = ref(0);
+const form = reactive({
+  rows: 1,
+  size: 1,
+});
 
 function save() {
-  rowsStore.addSquareRow({
-    size: Number(size.value),
-  });
-
+  rowsStore.addSquareRow(form);
   modal.close();
 }
 </script>
+
+<style scoped>
+@layer page {
+  .add-row__row-count {
+    margin-bottom: 16px;
+  }
+}
+</style>

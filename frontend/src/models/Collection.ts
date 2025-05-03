@@ -46,9 +46,15 @@ export class Collection<P extends ISchemaWithContent, O extends ISchemaObject = 
     return this.values.length;
   }
 
-  append(item: O): void {
-    this.values.push(item);
-    this.options.onAdded?.(this.parent, item);
+  append(singleOrList: O | O[]): void {
+    const list = Array.isArray(singleOrList) ? singleOrList : [singleOrList];
+    this.values.push(...list);
+
+    if (this.options.onAdded) {
+      for (const item of list) {
+        this.options.onAdded(this.parent, item);
+      }
+    }
   }
 
   delete(item: O): void {
