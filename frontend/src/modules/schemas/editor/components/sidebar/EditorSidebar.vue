@@ -1,8 +1,11 @@
 <template>
   <aside class="editor-sidebar" ref="asideRef">
-    <SidebarHeader />
-    <SidebarGeneralSection />
-    <SidebarStructureSection />
+    <SidebarHeader class="editor-sidebar__header" />
+
+    <div class="editor-sidebar__content">
+      <SidebarGeneralSection />
+      <SidebarStructureSection />
+    </div>
   </aside>
 </template>
 
@@ -22,7 +25,19 @@ provide(TOKEN_SCROLLER, asideRef);
     background-color: var(--color-background-1);
     border-right: var(--divider);
     height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .editor-sidebar__header {
+    flex-shrink: 0;
+  }
+
+  .editor-sidebar__content {
     overflow-y: auto;
+    flex-basis: 0;
+    flex-grow: 1;
+    min-height: 0;
   }
 }
 </style>

@@ -3,7 +3,7 @@
     ref="rootRef"
     class="sidebar-structure-item"
     :class="classes"
-    @click.stop="activeObject.focus.toggle(ActiveObjectTrigger.SIDEBAR)"
+    @click.stop="toggleFocus"
     @mouseover.stop="activeObject.hover.activate(ActiveObjectTrigger.SIDEBAR)"
   >
     {{ title }}
@@ -25,7 +25,7 @@
   </div>
 
   <Transition name="sidebar-structure-item__content-" :duration="150">
-    <div class="sidebar-structure-item__content" v-if="activeObject.focus.isActive">
+    <div class="sidebar-structure-item__content" v-if="isContentOpened">
       <slot name="content" />
     </div>
   </Transition>
@@ -33,6 +33,7 @@
 
 <script setup lang="ts">
 import { computed, ref, type Slot } from 'vue';
+import { whenever } from '@vueuse/core';
 import { MoreHorizontalIcon } from '@/components/icon';
 import { Dropdown } from '@/components/dropdown';
 import { Button } from '@/components/button';
@@ -64,13 +65,27 @@ const classes = computed(() => ({
   'sidebar-structure-item--root': props.depth === 0,
 }));
 
+const isContentOpened = ref(false);
+
+whenever(() => activeObject.focus.isActive, () => {
+  isContentOpened.value = true;
+});
+
+function toggleFocus() {
+  if (activeObject.focus.isExactActive) {
+    isContentOpened.value = false;
+    activeObject.focus.deactivate();
+    return;
+  }
+
+  activeObject.focus.activate(ActiveObjectTrigger.SIDEBAR);
+}
+
 const leftPadding = computed(() => `${12 + props.depth * 8}px`);
 
 activeObject.focus.onExactActive((trigger) => {
   if (trigger !== ActiveObjectTrigger.SIDEBAR) {
-    rootRef.value.scrollIntoView({
-      behavior: 'smooth',
-    });
+    rootRef.value.scrollIntoView({ behavior: 'smooth' });
   }
 });
 </script>
