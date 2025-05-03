@@ -1,12 +1,6 @@
 import { ref } from 'vue';
-import {
-  type _ExtractActionsFromSetupStore,
-  type _ExtractGettersFromSetupStore,
-  type _ExtractStateFromSetupStore,
-  defineStore,
-  type Store,
-} from 'pinia';
 import type { ISchemaObject } from '@/models';
+import { StoreFactory } from '@/stores';
 import { getObjectPath } from '../models';
 
 export const enum ActiveObjectTrigger {
@@ -14,48 +8,47 @@ export const enum ActiveObjectTrigger {
   CANVAS = 'canvas',
 }
 
-function activeObjectStore() {
-  const activePath = ref<string[]>([]);
-  const activePathTrigger = ref<ActiveObjectTrigger | null>(null);
+const activeObjectStoreFactory = new StoreFactory({
+  buildPath(type: 'hover' | 'focus') {
+    return `schemas/editor/object/${type}` as const;
+  },
 
-  function activatePath(path: string[], trigger: ActiveObjectTrigger | null) {
-    activePath.value = path;
-    activePathTrigger.value = trigger;
-  }
+  setup() {
+    const activePath = ref<string[]>([]);
+    const activePathTrigger = ref<ActiveObjectTrigger | null>(null);
 
-  function activateObject(object: ISchemaObject, trigger: ActiveObjectTrigger) {
-    activatePath(getObjectPath(object), trigger);
-  }
+    function activatePath(path: string[], trigger: ActiveObjectTrigger | null) {
+      activePath.value = path;
+      activePathTrigger.value = trigger;
+    }
 
-  const deactivatePath = () => activatePath([], null);
+    function activateObject(object: ISchemaObject, trigger: ActiveObjectTrigger) {
+      activatePath(getObjectPath(object), trigger);
+    }
 
-  function deactivateObject(object: ISchemaObject) {
-    const index = activePath.value.findIndex((id) => id === object.id);
-    if (index !== -1) activePath.value = activePath.value.slice(0, index);
-  }
+    const deactivatePath = () => activatePath([], null);
 
-  const isActiveObject = (object: ISchemaObject) => activePath.value.some((id) => id === object.id);
-  const isExactActiveObject = (object: ISchemaObject) => activePath.value.at(-1) === object.id;
+    function deactivateObject(object: ISchemaObject) {
+      const index = activePath.value.findIndex((id) => id === object.id);
+      if (index !== -1) activePath.value = activePath.value.slice(0, index);
+    }
 
-  return {
-    activePath,
-    activePathTrigger,
-    activateObject,
-    deactivatePath,
-    deactivateObject,
-    isActiveObject,
-    isExactActiveObject,
-  };
-}
+    const isActiveObject = (object: ISchemaObject) => activePath.value.some((id) => id === object.id);
+    const isExactActiveObject = (object: ISchemaObject) => activePath.value.at(-1) === object.id;
 
-type StoreReturn = ReturnType<typeof activeObjectStore>;
+    return {
+      activePath,
+      activePathTrigger,
+      activateObject,
+      deactivatePath,
+      deactivateObject,
+      isActiveObject,
+      isExactActiveObject,
+    };
+  },
+});
 
-export type ActiveObjectStore = Store<
-  string,
-  _ExtractStateFromSetupStore<StoreReturn>,
-  _ExtractGettersFromSetupStore<StoreReturn>,
-  _ExtractActionsFromSetupStore<StoreReturn>
->;
-
-export const useFocusObjectStore = defineStore('schemas/editor/focusObject', activeObjectStore);
-export const useHoverObjectStore = defineStore('schemas/editor/hoverObject', activeObjectStore);
+const { useStore } = activeObjectStoreFactory.build();
+export type ActiveObjectStore = typeof activeObjectStoreFactory['$storeType'];
+export const useFocusObjectStore = () => useStore('focus');
+export const useHoverObjectStore = () => useStore('hover');

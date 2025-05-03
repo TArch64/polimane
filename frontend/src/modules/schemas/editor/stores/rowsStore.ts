@@ -1,17 +1,22 @@
-import { defineStore } from 'pinia';
 import { type MaybeRefOrGetter, toValue } from 'vue';
 import { Collection, type ISchemaPattern, type ISchemaRow } from '@/models';
 import { newId } from '@/helpers';
+import { StoreFactory } from '@/stores';
 import { setObjectParent } from '../models';
 
 export interface INewSquareRowOptions {
   size: number;
 }
 
-export function useRowsStore(patternRef: MaybeRefOrGetter<ISchemaPattern>) {
-  const pattern = toValue(patternRef);
+const rowsStoreFactory = new StoreFactory({
+  buildPath(patternRef: MaybeRefOrGetter<ISchemaPattern>) {
+    const { id } = toValue(patternRef);
+    return `schemas/editor/patterns/${id}/rows` as const;
+  },
 
-  return defineStore(`schemas/editor/patterns/${pattern.id}/rows`, () => {
+  setup(patternRef: MaybeRefOrGetter<ISchemaPattern>) {
+    const pattern = toValue(patternRef);
+
     const rows = Collection.fromParent(pattern, {
       onAdded: (parent, object) => setObjectParent(parent, object),
     });
@@ -29,5 +34,10 @@ export function useRowsStore(patternRef: MaybeRefOrGetter<ISchemaPattern>) {
     }
 
     return { rows, addSquareRow, deleteRow };
-  })();
-}
+  },
+});
+
+export const {
+  useStore: useRowsStore,
+  disposeStores: disposeRowsStores,
+} = rowsStoreFactory.build();

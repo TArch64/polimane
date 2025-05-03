@@ -10,7 +10,8 @@
 <script lang="ts" setup>
 import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
-import { useEditorStore, usePatternsStore } from './stores';
+import { destroyStore } from '@/helpers';
+import { disposeBeadsStores, disposeRowsStores, useEditorStore, usePatternsStore } from './stores';
 import { EditorCanvas, EditorEmpty, EditorSidebar } from './components';
 
 defineProps<{
@@ -24,8 +25,9 @@ defineOptions({
   }),
 
   beforeRouteLeave: async (_, __, next) => {
-    const store = useEditorStore();
-    await store.destroy();
+    destroyStore(useEditorStore());
+    disposeBeadsStores();
+    disposeRowsStores();
     next();
   },
 });
@@ -34,12 +36,10 @@ const editorStore = useEditorStore();
 const patternsStore = usePatternsStore();
 
 useEventListener(window, 'beforeunload', (event) => {
-  if (!editorStore.hasUnsavedChanges) {
-    return;
+  if (editorStore.hasUnsavedChanges) {
+    event.preventDefault();
+    destroyStore(editorStore);
   }
-
-  event.preventDefault();
-  editorStore.destroy();
 });
 </script>
 

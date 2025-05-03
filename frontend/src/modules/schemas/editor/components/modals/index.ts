@@ -1,10 +1,10 @@
 import type { ISchemaPattern } from '@/models';
-import { getMapValue } from '@/helpers';
+import { getMappedValue } from '@/helpers';
 import { PatternType } from '@/enums';
 import EditorAddSquareRowModal from './EditorAddSquareRowModal.vue';
 
 export function getPatternAddRowModal(pattern: ISchemaPattern) {
-  return getMapValue(pattern.type, {
+  return getMappedValue(pattern.type, {
     [PatternType.SQUARE]: EditorAddSquareRowModal,
     [PatternType.DIAMOND]: EditorAddSquareRowModal,
   });

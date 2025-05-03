@@ -1,4 +1,4 @@
-import { getMapValue } from '@/helpers';
+import { getMappedValue } from '@/helpers';
 
 export const enum PatternType {
   SQUARE = 'square',
@@ -11,7 +11,7 @@ export const PatternKindValues = [
 ] as const;
 
 export function getPatternTitle(value: PatternType): string {
-  return getMapValue(value, {
+  return getMappedValue(value, {
     [PatternType.SQUARE]: 'Квадратна Сітка',
     [PatternType.DIAMOND]: 'Ромбова Сітка',
   });
