@@ -227,6 +227,8 @@ func (m *queryLoggerMiddleware) formatAttrValue(value types.AttributeValue) stri
 		return typed.Value
 	case *types.AttributeValueMemberM:
 		return "{TRUNCATED MAP}"
+	case *types.AttributeValueMemberL:
+		return "{TRUNCATED LIST}"
 	default:
 		log.Println("[QueryLoggerMiddleware]: Unknown attribute type:", reflect.TypeOf(value))
 		return ""
