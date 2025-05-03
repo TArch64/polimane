@@ -30,13 +30,15 @@ function activeObjectStore() {
   const deactivatePath = () => activatePath([], null);
 
   const isActiveObject = (object: ISchemaObject) => activePath.value.some((id) => id === object.id);
+  const isExactActiveObject = (object: ISchemaObject) => activePath.value.at(-1) === object.id;
 
   return {
     activePath,
     activePathTrigger,
     activateObject,
-    isActiveObject,
     deactivatePath,
+    isActiveObject,
+    isExactActiveObject,
   };
 }
 

@@ -23,7 +23,6 @@
 <script setup lang="ts">
 import Konva from 'konva';
 import { computed, ref } from 'vue';
-import { whenever } from '@vueuse/core';
 import type { ISchemaPattern } from '@/models';
 import {
   useActiveObject,
@@ -107,7 +106,9 @@ useNodeTween(borderRef, borderAnimatedConfig, (config) => ({
   easing: Konva.Easings.EaseOut,
 }));
 
-whenever(() => activeObject.focus.fromSidebar, () => {
-  scrollNodeIntoView(rootRef.value);
+activeObject.focus.onExactActive((trigger) => {
+  if (trigger !== ActiveObjectTrigger.CANVAS) {
+    scrollNodeIntoView(rootRef.value);
+  }
 });
 </script>

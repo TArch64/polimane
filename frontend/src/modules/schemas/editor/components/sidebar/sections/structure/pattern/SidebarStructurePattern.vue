@@ -18,6 +18,10 @@
         @click="deletePattern"
       />
     </template>
+
+    <template #content>
+      rows list
+    </template>
   </SidebarStructureItem>
 </template>
 

@@ -22,6 +22,8 @@
       <slot name="actions" />
     </Dropdown>
   </div>
+
+  <slot name="content" v-if="activeObject.focus.isActive" />
 </template>
 
 <script setup lang="ts">
@@ -44,6 +46,7 @@ const props = withDefaults(defineProps<{
 
 defineSlots<{
   actions: Slot;
+  content: Slot;
 }>();
 
 const activeObject = useActiveObject(() => props.object);
