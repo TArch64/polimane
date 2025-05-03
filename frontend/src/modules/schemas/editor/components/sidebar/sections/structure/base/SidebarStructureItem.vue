@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="rootRef"
     class="sidebar-structure-item"
     :class="classes"
     @click.stop="activeObject.focus.activate(ActiveObjectTrigger.SIDEBAR)"
@@ -31,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type Slot } from 'vue';
+import { computed, ref, type Slot } from 'vue';
 import { MoreHorizontalIcon } from '@/components/icon';
 import { Dropdown } from '@/components/dropdown';
 import { Button } from '@/components/button';
@@ -54,6 +55,7 @@ const slots = defineSlots<{
   content?: Slot;
 }>();
 
+const rootRef = ref<HTMLElement>(null!);
 const activeObject = useActiveObject(() => props.object);
 
 const classes = computed(() => ({
@@ -63,6 +65,14 @@ const classes = computed(() => ({
 }));
 
 const leftPadding = computed(() => `${12 + props.depth * 8}px`);
+
+activeObject.focus.onExactActive((trigger) => {
+  if (trigger !== ActiveObjectTrigger.SIDEBAR) {
+    rootRef.value.scrollIntoView({
+      behavior: 'smooth',
+    });
+  }
+});
 </script>
 
 <style scoped>
@@ -117,12 +127,13 @@ const leftPadding = computed(() => `${12 + props.depth * 8}px`);
   .sidebar-structure-item__content--enter-active,
   .sidebar-structure-item__content--leave-active {
     overflow: hidden;
-    transition: height ease-out 0.15s;
+    transition: height ease-out 0.15s, opacity ease-out 0.15s;
   }
 
   .sidebar-structure-item__content--enter-from,
   .sidebar-structure-item__content--leave-to {
     height: 0;
+    opacity: 0;
   }
 }
 </style>
