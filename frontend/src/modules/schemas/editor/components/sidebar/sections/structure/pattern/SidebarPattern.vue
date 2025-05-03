@@ -21,7 +21,17 @@
     </template>
 
     <template #content>
-      <SidebarRowList :pattern :depth="DEPTH + 1" />
+      <SidebarRowList
+        :pattern
+        :depth="DEPTH + 1"
+        v-if="pattern.content.length"
+      />
+
+      <SidebarStructureEmpty
+        button-text="Додати Рядок"
+        @click="addRow"
+        v-else
+      />
     </template>
   </SidebarStructureItem>
 </template>
@@ -35,9 +45,12 @@ import { EditIcon, TrashIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';
 import { useConfirm } from '@/components/confirm';
 import { useRouteTransition } from '@/composables';
-import { SidebarStructureItem } from '../base';
+import {
+  getPatternAddRowModal,
+  PatternRenameModal,
+} from '@/modules/schemas/editor/components/modals';
+import { SidebarStructureEmpty, SidebarStructureItem } from '../base';
 import { SidebarRowList } from '../row';
-import PatternRenameModal from './PatternRenameModal.vue';
 
 const props = defineProps<{
   pattern: ISchemaPattern;
@@ -47,6 +60,7 @@ const DEPTH = 0;
 
 const patternsStore = usePatternsStore();
 const renameModal = useModal(PatternRenameModal);
+const addRowModal = useModal(getPatternAddRowModal(props.pattern));
 const routeTransition = useRouteTransition();
 
 const deleteConfirm = useConfirm({
@@ -66,5 +80,9 @@ async function deletePattern(): Promise<void> {
 
 function renamePattern(): void {
   renameModal.open({ pattern: props.pattern });
+}
+
+function addRow(): void {
+  addRowModal.open({ pattern: props.pattern });
 }
 </script>
