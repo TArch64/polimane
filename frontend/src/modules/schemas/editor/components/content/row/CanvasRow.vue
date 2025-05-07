@@ -1,5 +1,5 @@
 <template>
-  <CanvasStackH ref="rootRef">
+  <CanvasStackH ref="rootRef" :gap="4">
     <CanvasBead
       v-for="bead of row.content"
       :key="bead.id"

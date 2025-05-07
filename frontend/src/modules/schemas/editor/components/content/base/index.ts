@@ -1,4 +1,4 @@
 export * from './stack';
 export * from './icon';
 export * from './GroupRenderer';
-export * from './NodeRect';
+export { default as CanvasDebugRect } from './CanvasDebugRect.vue';

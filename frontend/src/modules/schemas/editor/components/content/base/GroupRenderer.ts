@@ -17,7 +17,7 @@ import { useDebounceFn } from '@vueuse/core';
 import type { InferComponentProps } from '@/types';
 import { newId } from '@/helpers';
 import { useNodeRef } from '@/modules/schemas/editor/composables';
-import { NodeRect } from './NodeRect';
+import { NodeRect } from '@/modules/schemas/editor/models';
 
 export interface IGroupLayoutEvent {
   clientRect: NodeRect;
@@ -69,20 +69,23 @@ export const GroupRenderer = defineComponent({
     function isKonvaComponent(node: VNode): node is VNode & {
       component: { exposed: IKonvaNodeHolder };
     } {
-      if (!node.component || !node.component.exposed) return false;
-      return 'getNode' in node.component.exposed && typeof node.component.exposed.getNode === 'function';
+      return typeof node.component?.exposed?.getNode === 'function';
+    }
+
+    function isDebugNode(node: VNode): boolean {
+      return !!node.component?.exposed?.debugNode;
     }
 
     function getContentNodes(nodes: VNode[]): Konva.Node[] {
       return nodes.flatMap((child): Konva.Node[] => {
-        if (child.type === Comment) {
+        if (child.type === Comment || isDebugNode(child)) {
           return [];
         }
         if (isKonvaComponent(child)) {
           return child.component.exposed.getNode();
         }
         if (child.component && isKonvaComponent(child.component.subTree)) {
-          return child.component.subTree.component.exposed.getNode();
+          return getContentNodes([child.component.subTree]);
         }
         return child.children?.length ? getContentNodes(child.children as VNode[]) : [];
       });

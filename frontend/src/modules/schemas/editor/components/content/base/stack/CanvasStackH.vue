@@ -16,7 +16,7 @@
 import type { Slot } from 'vue';
 import Konva from 'konva';
 import { useNodeRef } from '@/modules/schemas/editor/composables';
-import type { INodeRect } from '../NodeRect';
+import type { INodeRect } from '@/modules/schemas/editor/models';
 import type { IGroupLayoutEvent } from '../GroupRenderer';
 import CanvasStack from './CanvasStack.vue';
 import type { StackAlignment } from './StackAlignment';

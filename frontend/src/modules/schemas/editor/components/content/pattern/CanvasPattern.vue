@@ -34,8 +34,9 @@ import {
 import { useModal } from '@/components/modal';
 import { ActiveObjectTrigger } from '@/modules/schemas/editor/stores';
 import { scrollNodeIntoView } from '@/modules/schemas/editor/helpers';
+import { NodeRect } from '@/modules/schemas/editor/models';
 import { getPatternAddRowModal } from '../../modals';
-import { GroupRenderer, type IGroupLayoutEvent, NodeRect } from '../base';
+import { GroupRenderer, type IGroupLayoutEvent } from '../base';
 import CanvasPatternLabel from './CanvasPatternLabel.vue';
 import CanvasPatternContent from './CanvasPatternContent.vue';
 import CanvasPatternEmpty from './CanvasPatternEmpty.vue';

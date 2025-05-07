@@ -1,5 +1,5 @@
 <template>
-  <CanvasStackV align="center">
+  <CanvasStackV align="center" :gap="4">
     <CanvasRow
       v-for="row of pattern.content"
       :key="row.id"

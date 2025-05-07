@@ -16,8 +16,8 @@ const props = defineProps<{
 }>();
 
 const config: Partial<Konva.LabelConfig> = {
-  offsetX: -12,
-  offsetY: 10,
+  x: 12,
+  y: -10,
 };
 
 const tagConfig: Partial<Konva.TagConfig> = {

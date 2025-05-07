@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, type Slot } from 'vue';
-import { newId, wait } from '@/helpers';
+import { newId, waitClickComplete } from '@/helpers';
 import { useRouteTransition } from '@/composables';
 
 defineSlots<{
@@ -53,8 +53,8 @@ function open() {
     menuRef.value!.showPopover();
   });
 
-  wait(50).then(() => {
-    window.addEventListener('click', () => close(), { once: true });
+  waitClickComplete().then(() => {
+    window.addEventListener('click', close, { once: true, capture: true });
   });
 }
 
