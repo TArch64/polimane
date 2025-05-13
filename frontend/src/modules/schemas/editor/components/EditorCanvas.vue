@@ -22,10 +22,11 @@ import { useElementSize } from '@vueuse/core';
 import Konva from 'konva';
 import type { KonvaStage } from 'vue-konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
-import { useCanvasNavigation, useCanvasZoom } from '../composables';
+import { useCanvasNavigation, useCanvasZoom, useMaybeCanvasStage } from '../composables';
 import { useFocusObjectStore } from '../stores';
 import { CanvasContent } from './content';
 
+const canvasStage = useMaybeCanvasStage();
 const focusObjectStore = useFocusObjectStore();
 
 const wrapperRef = ref<HTMLElement | null>(null);
@@ -42,7 +43,11 @@ const onStageMounted: VNodeRef = async (ref): Promise<void> => {
   await nextTick();
   const stage = (ref as InstanceType<KonvaStage>)?.getStage();
   const canvas: HTMLCanvasElement = stage?.content.querySelector('canvas');
-  if (canvas) canvas.tabIndex = 0;
+
+  if (canvas) {
+    canvas.tabIndex = 0;
+    canvasStage.value = stage;
+  }
 };
 
 const canvasZoom = useCanvasZoom();

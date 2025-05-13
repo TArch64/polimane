@@ -4,8 +4,9 @@ export interface IRouteTransition {
   start: (callback: ViewTransitionUpdateCallback) => void;
 }
 
+let pending: ViewTransitionUpdateCallback[] = [];
+
 export function useRouteTransition(): IRouteTransition {
-  let pending: ViewTransitionUpdateCallback[] = [];
   let isScheduled = false;
 
   function doTransition(): void {

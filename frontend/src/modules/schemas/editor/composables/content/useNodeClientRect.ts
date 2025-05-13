@@ -16,6 +16,11 @@ export function useNodeClientRect(node: MaybeRefOrGetter<Konva.Node | null>): Sh
   const clientRect = shallowRef(NodeRect.BLANK);
 
   const update = useDebounceFn(() => {
+    if (!nodeRef.value) {
+      clientRect.value = NodeRect.BLANK;
+      return;
+    }
+
     const newRect = nodeRef.value!.getClientRect();
 
     if (!clientRect.value.isEqual(newRect)) {
@@ -28,8 +33,9 @@ export function useNodeClientRect(node: MaybeRefOrGetter<Konva.Node | null>): Sh
 
     if (node) {
       node.on('layout', update);
-      update();
     }
+
+    update();
   }, { immediate: true });
 
   onBeforeUnmount(() => nodeRef.value?.off('layout', update));
