@@ -6,4 +6,3 @@ export * from './useNodeClientRect';
 export * from './useNodeParent';
 export * from './useCanvasZoom';
 export * from './useCanvasNavigation';
-export * from './useCanvasStage';

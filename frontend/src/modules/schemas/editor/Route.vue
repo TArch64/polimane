@@ -11,7 +11,6 @@
 import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
 import { destroyStore } from '@/helpers';
-import { provideCanvasStage } from './composables';
 import { disposeBeadsStores, disposeRowsStores, useEditorStore, usePatternsStore } from './stores';
 import { EditorCanvas, EditorEmpty, EditorSidebar } from './components';
 
@@ -32,8 +31,6 @@ defineOptions({
     next();
   },
 });
-
-provideCanvasStage();
 
 const editorStore = useEditorStore();
 const patternsStore = usePatternsStore();

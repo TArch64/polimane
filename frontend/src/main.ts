@@ -1,6 +1,6 @@
 import './style/main.css';
 
-import { createApp, h, ref } from 'vue';
+import { createApp, h, ref, shallowRef } from 'vue';
 import { createPinia } from 'pinia';
 import VueKonva from 'vue-konva';
 import { TOKEN_SCROLLER, TOKEN_TOP_EL } from './InjectionToken';
@@ -9,6 +9,8 @@ import { ModalPlugin } from './components/modal';
 import { httpClientPlugin } from './composables';
 import App from './App.vue';
 import { router } from './router';
+
+window.__KONVA_STAGE_REF__ = shallowRef(null);
 
 const app = createApp({
   render: () => h(App),
@@ -30,6 +32,11 @@ app.use(ModalPlugin);
 app.use(ConfirmPlugin);
 
 app.use(VueKonva, { prefix: 'Konva' });
+
+if (import.meta.env.DEV) {
+  const m = await import('./modules/konvaInspector');
+  app.use(m.konvaInspectorPlugin);
+}
 
 document.startViewTransition(async () => {
   app.mount('#app');
