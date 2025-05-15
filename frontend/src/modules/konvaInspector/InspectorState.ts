@@ -38,11 +38,12 @@ export class InspectorState {
 
   private formatProperty(node: Konva.Node, key: string): CustomInspectorStateSection {
     const value = node.getAttr(key);
+    const isEditable = typeof value === 'string' || typeof value === 'number' || Array.isArray(value);
 
     return {
       key,
       objectType: 'other',
-      editable: typeof value === 'string' || typeof value === 'number' || Array.isArray(value),
+      editable: isEditable,
       raw: value,
       value: value,
     };
