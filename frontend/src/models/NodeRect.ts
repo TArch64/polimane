@@ -24,6 +24,22 @@ export class NodeRect implements INodeRect {
     return this.isEqual(NodeRect.BLANK);
   }
 
+  get left(): number {
+    return this.x;
+  }
+
+  get right(): number {
+    return this.x + this.width;
+  }
+
+  get top(): number {
+    return this.y;
+  }
+
+  get bottom(): number {
+    return this.y + this.height;
+  }
+
   with(patch: Partial<INodeRect>): NodeRect {
     return new NodeRect({
       ...patch,

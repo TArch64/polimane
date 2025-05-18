@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import type { DevtoolsPluginApi } from './types';
-import { InspectorHighlight } from './InspectorHighlight';
+import { InspectorHighlight } from './hightlight';
 import { InspectorTree } from './InspectorTree';
 import { InspectorState } from './InspectorState';
 
@@ -9,7 +9,7 @@ const ID = 'konva-nodes';
 export class Inspector {
   private stage: Konva.Stage | null = null;
   private readonly highlight = new InspectorHighlight();
-  private readonly tree = new InspectorTree(this.highlight.layer.id());
+  private readonly tree = new InspectorTree(this.highlight.layerId);
   private readonly state = new InspectorState(this.highlight);
 
   constructor(private readonly api: DevtoolsPluginApi) {

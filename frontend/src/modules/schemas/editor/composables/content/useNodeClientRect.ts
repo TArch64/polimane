@@ -9,7 +9,7 @@ import {
 } from 'vue';
 import Konva from 'konva';
 import { useDebounceFn } from '@vueuse/core';
-import { NodeRect } from '@/modules/schemas/editor/models';
+import { NodeRect } from '@/models';
 
 export function useNodeClientRect(node: MaybeRefOrGetter<Konva.Node | null>): ShallowRef<NodeRect> {
   const nodeRef = computed(() => toValue(node));

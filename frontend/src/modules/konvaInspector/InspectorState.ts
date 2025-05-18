@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import type { CustomInspectorState } from '@vue/devtools-kit';
-import type { InspectorHighlight } from './InspectorHighlight';
+import type { InspectorHighlight } from './hightlight';
 import type { CustomInspectorStateSection, EditInspectorStatePayload } from './types';
 
 export class InspectorState {

@@ -6,3 +6,4 @@ export type * from './WrapMaybeRef';
 export type * from './SafeAny';
 export type * from './InferObjectEvents';
 export type * from './InferObjectProps';
+export type * from './MaybeArray';

@@ -14,10 +14,10 @@ import {
 import Konva from 'konva';
 import type { IKonvaNodeHolder, KonvaGroup } from 'vue-konva';
 import { useDebounceFn } from '@vueuse/core';
-import type { InferComponentProps } from '@/types';
+import type { InferComponentProps, MaybeArray } from '@/types';
 import { newId } from '@/helpers';
 import { useNodeRef } from '@/modules/schemas/editor/composables';
-import { NodeRect } from '@/modules/schemas/editor/models';
+import { NodeRect } from '@/models';
 
 export interface IGroupLayoutEvent {
   clientRect: NodeRect;
@@ -77,7 +77,7 @@ export const GroupRenderer = defineComponent({
     }
 
     function getContentNodes(nodes: VNode[]): Konva.Node[] {
-      return nodes.flatMap((child): Konva.Node[] => {
+      return nodes.flatMap((child): MaybeArray<Konva.Node> => {
         if (child.type === Comment || isDebugNode(child)) {
           return [];
         }

@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import Konva from 'konva';
 import { computed, ref } from 'vue';
-import type { ISchemaPattern } from '@/models';
+import { type ISchemaPattern, NodeRect } from '@/models';
 import {
   useActiveObject,
   useNodeCentering,
@@ -34,7 +34,6 @@ import {
 import { useModal } from '@/components/modal';
 import { ActiveObjectTrigger } from '@/modules/schemas/editor/stores';
 import { scrollNodeIntoView } from '@/modules/schemas/editor/helpers';
-import { NodeRect } from '@/modules/schemas/editor/models';
 import { getPatternAddRowModal } from '../../modals';
 import { GroupRenderer, type IGroupLayoutEvent } from '../base';
 import CanvasPatternLabel from './CanvasPatternLabel.vue';
