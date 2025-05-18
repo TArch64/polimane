@@ -54,7 +54,7 @@ function open() {
   });
 
   waitClickComplete().then(() => {
-    window.addEventListener('click', close, { once: true, capture: true });
+    window.addEventListener('click', close, { once: true });
   });
 }
 

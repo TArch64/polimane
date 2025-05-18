@@ -6,6 +6,10 @@ export interface ICollectionOptions<P extends ISchemaWithContent, O extends ISch
   onAdded?: (parent: P, object: O) => void;
 }
 
+export interface ICollectionInsertOptions {
+  toIndex?: number;
+}
+
 export class Collection<P extends ISchemaWithContent, O extends ISchemaObject = InferSchemaContent<P>> {
   private static cache = new WeakMap<ISchemaWithContent, Collection<ISchemaWithContent>>();
 
@@ -46,9 +50,10 @@ export class Collection<P extends ISchemaWithContent, O extends ISchemaObject = 
     return this.values.length;
   }
 
-  append(singleOrList: O | O[]): void {
+  insert(singleOrList: O | O[], options: ICollectionInsertOptions = {}): void {
     const list = Array.isArray(singleOrList) ? singleOrList : [singleOrList];
-    this.values.push(...list);
+    const toIndex = options.toIndex ?? -1;
+    toIndex === -1 ? this.values.push(...list) : this.values.splice(toIndex, 0, ...list);
 
     if (this.options.onAdded) {
       for (const item of list) {

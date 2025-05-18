@@ -6,6 +6,11 @@ import { Collection, type ISchemaPattern } from '@/models';
 import { setObjectParent } from '../models';
 import { useEditorStore } from './editorStore';
 
+export interface IPatternAddOptions {
+  kind: PatternType;
+  toIndex: number;
+}
+
 export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
   const editorStore = useEditorStore();
 
@@ -15,11 +20,13 @@ export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
 
   const hasPatterns = computed(() => !!patterns.size);
 
-  const addPattern = (kind: PatternType) => patterns.append({
+  const addPattern = (options: IPatternAddOptions) => patterns.insert({
     id: newId(),
-    name: `${getPatternTitle(kind)} [${patterns.size + 1}]`,
-    type: kind,
+    name: `${getPatternTitle(options.kind)} [${patterns.size + 1}]`,
+    type: options.kind,
     content: [],
+  }, {
+    toIndex: options.toIndex,
   });
 
   function deletePattern(pattern: ISchemaPattern) {

@@ -20,6 +20,12 @@ import { type ISelectOption, RadioSelect } from '@/components/form';
 import { getPatternTitle, PatternKindValues, PatternType } from '@/enums';
 import { usePatternsStore } from '../../stores';
 
+const props = withDefaults(defineProps<{
+  toIndex?: number;
+}>(), {
+  toIndex: -1,
+});
+
 const patternsStore = usePatternsStore();
 const modal = useActiveModal();
 
@@ -31,7 +37,11 @@ const options = PatternKindValues.map((type): ISelectOption<PatternType> => ({
 }));
 
 function addPattern(): void {
-  patternsStore.addPattern(selectedType.value);
+  patternsStore.addPattern({
+    kind: selectedType.value,
+    toIndex: props.toIndex,
+  });
+
   modal.close();
 }
 </script>

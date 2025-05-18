@@ -32,7 +32,7 @@ const rowsStoreFactory = new StoreFactory({
     });
 
     function addSquareRow(options: INewSquareRowOptions) {
-      rows.append(new Array(options.rows).fill(0).map(() => createRow(options.size)));
+      rows.insert(new Array(options.rows).fill(0).map(() => createRow(options.size)));
     }
 
     function deleteRow(row: ISchemaRow): void {

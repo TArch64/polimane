@@ -6,7 +6,9 @@
     @click.stop="toggleFocus"
     @mouseover.stop="activeObject.hover.activate(ActiveObjectTrigger.SIDEBAR)"
   >
-    {{ title }}
+    <p>
+      {{ title }}
+    </p>
 
     <Dropdown v-if="slots.actions">
       <template #activator="{ activatorStyle, open }">
@@ -62,7 +64,6 @@ const activeObject = useActiveObject(() => props.object);
 const classes = computed(() => ({
   'sidebar-structure-item--hover': activeObject.hover.isExactActive && !activeObject.focus.isExactActive,
   'sidebar-structure-item--focus': activeObject.focus.isExactActive,
-  'sidebar-structure-item--root': props.depth === 0,
 }));
 
 const isContentOpened = ref(false);
@@ -99,6 +100,7 @@ activeObject.focus.onExactActive((trigger) => {
     min-height: 40px;
     justify-content: space-between;
     align-items: center;
+    position: relative;
     background-color: var(--color-background-1);
     transition: background-color 0.15s ease-out;
     will-change: background-color;
