@@ -10,7 +10,7 @@ export class Inspector {
   private stage: Konva.Stage | null = null;
   private readonly highlight = new InspectorHighlight();
   private readonly tree = new InspectorTree(this.highlight.layerId);
-  private readonly state = new InspectorState(this.highlight);
+  private readonly state = new InspectorState(this.highlight, () => this.refreshInspectorState());
 
   constructor(private readonly api: DevtoolsPluginApi) {
     api.addInspector({
@@ -48,14 +48,22 @@ export class Inspector {
 
     if (stage) {
       this.highlight.useStage(stage);
-      stage.on('layout', this.refreshInspectorTree);
+
+      stage.on('layout', () => {
+        this.refreshInspectorTree();
+        this.refreshInspectorState();
+      });
     }
 
-    this.api.sendInspectorState(ID);
-    this.api.sendInspectorTree(ID);
+    this.refreshInspectorState();
+    this.refreshInspectorTree();
   }
 
   private refreshInspectorTree(): void {
     this.api.sendInspectorTree(ID);
+  }
+
+  private refreshInspectorState(): void {
+    this.api.sendInspectorState(ID);
   }
 }

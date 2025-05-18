@@ -6,15 +6,23 @@ import type { CustomInspectorStateSection, EditInspectorStatePayload } from './t
 export class InspectorState {
   private SELECTOR_ATTRS = ['id', 'name'];
   private DIMENSIONS_ATTRS = ['x', 'y', 'width', 'height'];
+  private unsubscribes: VoidFunction[] = [];
 
-  constructor(private readonly highlight: InspectorHighlight) {
+  constructor(
+    private readonly highlight: InspectorHighlight,
+    private readonly onReload: VoidFunction,
+  ) {
   }
 
   getInspectorState(stage: Konva.Stage, nodeId: number): CustomInspectorState {
+    for (const unsubscribe of this.unsubscribes) unsubscribe();
+    this.unsubscribes = [];
+
     const node = this.findNodeById(stage, nodeId);
 
     if (node) {
       this.highlight.show(node);
+      this.listenAttrsChange(node);
       return this.formatNodeState(node);
     } else {
       this.highlight.hide();
@@ -26,6 +34,13 @@ export class InspectorState {
     if (stage._id === id) return stage;
 
     return stage.findOne((node: Konva.Node) => node._id === id) ?? null;
+  }
+
+  private listenAttrsChange(node: Konva.Node) {
+    for (const key of Object.keys(node.getAttrs())) {
+      node.on(`${key}Change`, this.onReload);
+      this.unsubscribes.push(() => node.off(`${key}Change`, this.onReload));
+    }
   }
 
   private formatNodeState(node: Konva.Node): CustomInspectorState {
