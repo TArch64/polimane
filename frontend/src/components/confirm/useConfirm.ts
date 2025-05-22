@@ -1,15 +1,16 @@
 import { onUnmounted } from 'vue';
 import { type ConfirmCreateOptions, ConfirmPlugin } from './ConfirmPlugin';
+import type { IConfirmAskOptions } from './Confirm';
 
 export interface IConfirm {
-  ask: () => Promise<boolean>;
+  ask: (options?: IConfirmAskOptions) => Promise<boolean>;
   anchorStyle: { anchorName: string };
 }
 
 export function useConfirm(options: ConfirmCreateOptions): IConfirm {
   const plugin = ConfirmPlugin.inject();
   const confirm = plugin.create(options);
-  const ask = () => confirm.ask();
+  const ask = (options: IConfirmAskOptions = {}) => confirm.ask(options);
 
   onUnmounted(() => plugin.remove(confirm));
 

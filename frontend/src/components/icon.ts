@@ -4,7 +4,9 @@ export interface IIconProps {
   size?: number | string;
 }
 
-const makeIcon = (loader: AsyncComponentLoader): FunctionalComponent<IIconProps> => {
+export type IconComponent = FunctionalComponent<IIconProps>;
+
+const makeIcon = (loader: AsyncComponentLoader): IconComponent => {
   const asyncComponent = defineAsyncComponent(loader);
 
   return (props) => h(asyncComponent, {

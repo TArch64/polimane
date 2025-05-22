@@ -1,29 +1,20 @@
 <template>
   <SidebarStructureItem
+    :actions
     :title
     :depth
     :object="row"
-    :more-actions-button-style="deleteConfirm.anchorStyle"
-  >
-    <template #actions>
-      <DropdownAction
-        danger
-        title="Видалити Рядок"
-        :icon="TrashIcon"
-        @click="deleteRow"
-      />
-    </template>
-  </SidebarStructureItem>
+  />
 </template>
 
 <script setup lang="ts">
 import { computed, nextTick } from 'vue';
 import type { ISchemaPattern, ISchemaRow } from '@/models';
 import { useRowsStore } from '@/modules/schemas/editor/stores';
-import { DropdownAction } from '@/components/dropdown';
 import { TrashIcon } from '@/components/icon';
 import { useConfirm } from '@/components/confirm';
 import { useRouteTransition } from '@/composables';
+import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { SidebarStructureItem } from '../base';
 
 const props = defineProps<{
@@ -44,12 +35,19 @@ const deleteConfirm = useConfirm({
   acceptButton: 'Видалити',
 });
 
-async function deleteRow(): Promise<void> {
-  if (await deleteConfirm.ask()) {
-    routeTransition.start(async () => {
-      rowsStore.deleteRow(props.row);
-      await nextTick();
-    });
-  }
-}
+const actions: MaybeContextMenuAction[] = [
+  {
+    title: 'Видалити Рядок',
+    icon: TrashIcon,
+    danger: true,
+    onAction: async () => {
+      if (await deleteConfirm.ask()) {
+        routeTransition.start(async () => {
+          rowsStore.deleteRow(props.row);
+          await nextTick();
+        });
+      }
+    },
+  },
+];
 </script>

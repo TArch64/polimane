@@ -9,21 +9,6 @@
     <p>
       {{ title }}
     </p>
-
-    <Dropdown v-if="slots.actions">
-      <template #activator="{ activatorStyle, open }">
-        <Button
-          icon
-          class="sidebar-structure-item__more-actions"
-          :style="mergeAnchorName(activatorStyle, moreActionsButtonStyle)"
-          @click.stop="open"
-        >
-          <MoreHorizontalIcon />
-        </Button>
-      </template>
-
-      <slot name="actions" />
-    </Dropdown>
   </div>
 
   <Transition name="sidebar-structure-item__content-" :duration="150">
@@ -36,25 +21,21 @@
 <script setup lang="ts">
 import { computed, ref, type Slot } from 'vue';
 import { whenever } from '@vueuse/core';
-import { MoreHorizontalIcon } from '@/components/icon';
-import { Dropdown } from '@/components/dropdown';
-import { Button } from '@/components/button';
-import { mergeAnchorName } from '@/helpers';
 import type { ISchemaObject } from '@/models';
 import { ActiveObjectTrigger } from '@/modules/schemas/editor/stores';
 import { useActiveObject } from '@/modules/schemas/editor/composables';
+import { type MaybeContextMenuAction, useContextMenu } from '@/components/contextMenu';
 
 const props = withDefaults(defineProps<{
   object: ISchemaObject;
   title: string;
   depth: number;
-  moreActionsButtonStyle?: Record<string, string> | Record<string, string>[];
+  actions?: MaybeContextMenuAction[];
 }>(), {
-  moreActionsButtonStyle: () => ({}),
+  actions: () => [],
 });
 
-const slots = defineSlots<{
-  actions?: Slot;
+defineSlots<{
   content?: Slot;
 }>();
 
@@ -89,6 +70,10 @@ activeObject.focus.onExactActive((trigger) => {
     rootRef.value.scrollIntoView({ behavior: 'smooth' });
   }
 });
+
+if (props.actions.length) {
+  useContextMenu(rootRef, () => props.actions);
+}
 </script>
 
 <style scoped>

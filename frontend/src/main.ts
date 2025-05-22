@@ -4,6 +4,7 @@ import { createApp, h, ref, shallowRef } from 'vue';
 import { createPinia } from 'pinia';
 import VueKonva from 'vue-konva';
 import { TOKEN_SCROLLER, TOKEN_TOP_EL } from './InjectionToken';
+import { ContextMenuPlugin } from './components/contextMenu';
 import { ConfirmPlugin } from './components/confirm';
 import { ModalPlugin } from './components/modal';
 import { httpClientPlugin } from './composables';
@@ -30,6 +31,7 @@ app.use(httpClientPlugin, {
 
 app.use(ModalPlugin);
 app.use(ConfirmPlugin);
+app.use(ContextMenuPlugin);
 
 app.use(VueKonva, { prefix: 'Konva' });
 

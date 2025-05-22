@@ -1,37 +1,10 @@
 <template>
   <SidebarStructureItem
+    :actions
     :depth="DEPTH"
     :object="pattern"
     :title="pattern.name"
-    :more-actions-button-style="deleteConfirm.anchorStyle"
   >
-    <template #actions>
-      <DropdownAction
-        title="Переназвати Паттерн"
-        :icon="EditIcon"
-        @click="renamePattern"
-      />
-
-      <DropdownAction
-        title="Додати Зверху"
-        :icon="ArrowUpwardIcon"
-        @click="addPattern(false)"
-      />
-
-      <DropdownAction
-        title="Додати Знизу"
-        :icon="ArrowDownwardIcon"
-        @click="addPattern(true)"
-      />
-
-      <DropdownAction
-        danger
-        title="Видалити Паттерн"
-        :icon="TrashIcon"
-        @click="deletePattern"
-      />
-    </template>
-
     <template #content>
       <SidebarRowList
         :pattern
@@ -52,7 +25,6 @@
 import { nextTick } from 'vue';
 import type { ISchemaPattern } from '@/models';
 import { usePatternsStore } from '@/modules/schemas/editor/stores';
-import { DropdownAction } from '@/components/dropdown';
 import { ArrowDownwardIcon, ArrowUpwardIcon, EditIcon, TrashIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';
 import { useConfirm } from '@/components/confirm';
@@ -62,6 +34,7 @@ import {
   PatternAddModal,
   PatternRenameModal,
 } from '@/modules/schemas/editor/components/modals';
+import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { SidebarStructureEmpty, SidebarStructureItem } from '../base';
 import { SidebarRowList } from '../row';
 
@@ -83,18 +56,40 @@ const deleteConfirm = useConfirm({
   acceptButton: 'Видалити',
 });
 
-async function deletePattern(): Promise<void> {
-  if (await deleteConfirm.ask()) {
-    routeTransition.start(async () => {
-      patternsStore.deletePattern(props.pattern);
-      await nextTick();
-    });
-  }
-}
+const actions: MaybeContextMenuAction[] = [
+  {
+    title: 'Переназвати Паттерн',
+    icon: EditIcon,
+    onAction: () => renameModal.open({ pattern: props.pattern }),
+  },
 
-function renamePattern(): void {
-  renameModal.open({ pattern: props.pattern });
-}
+  {
+    title: 'Додати Зверху',
+    icon: ArrowUpwardIcon,
+    onAction: () => addPattern(false),
+  },
+
+  {
+    title: 'Додати Знизу',
+    icon: ArrowDownwardIcon,
+    onAction: () => addPattern(true),
+  },
+
+  {
+    danger: true,
+    title: 'Видалити Паттерн',
+    icon: TrashIcon,
+
+    onAction: async (event) => {
+      if (await deleteConfirm.ask({ virtualTarget: event.menuRect })) {
+        routeTransition.start(async () => {
+          patternsStore.deletePattern(props.pattern);
+          await nextTick();
+        });
+      }
+    },
+  },
+];
 
 function addPattern(after: boolean): void {
   const index = patternsStore.patterns.indexOf(props.pattern);

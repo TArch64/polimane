@@ -6,22 +6,17 @@
   />
 
   <Teleport to="body" v-if="isOpened">
-    <div
-      ref="menuRef"
-      role="menu"
-      popover="manual"
-      class="dropdown"
-      :style="menuStyles"
-    >
+    <DropdownMenu class="dropdown" ref="menuRef" :style="menuStyles">
       <slot />
-    </div>
+    </DropdownMenu>
   </Teleport>
 </template>
 
 <script setup lang="ts">
 import { computed, nextTick, ref, type Slot } from 'vue';
 import { newId, waitClickComplete } from '@/helpers';
-import { useRouteTransition } from '@/composables';
+import { useDomRef, useRouteTransition } from '@/composables';
+import DropdownMenu from './DropdownMenu.vue';
 
 defineSlots<{
   activator: Slot<{
@@ -33,7 +28,7 @@ defineSlots<{
 }>();
 
 const routeTransition = useRouteTransition();
-const menuRef = ref<HTMLElement | null>(null);
+const menuRef = useDomRef<HTMLElement | null>();
 
 const anchorVar = `--dropdown-${newId()}`;
 const isOpened = ref(false);
@@ -71,15 +66,6 @@ function close(): void {
   .dropdown {
     position-area: bottom center;
     margin-top: 4px;
-    background-color: var(--color-background-2);
-    border: var(--divider);
-    border-radius: var(--rounded-md);
-    box-shadow: var(--box-shadow);
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    width: max-content;
-    view-transition-name: dropdown;
   }
 }
 </style>

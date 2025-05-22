@@ -1,4 +1,5 @@
 import { reactive } from 'vue';
+import { NodeRect } from '@/models';
 
 export interface IConfirmOptions {
   id: string;
@@ -8,8 +9,13 @@ export interface IConfirmOptions {
   acceptButton?: string;
 }
 
+export interface IConfirmAskOptions {
+  virtualTarget?: NodeRect;
+}
+
 interface IConfirmState {
   isOpened: boolean;
+  virtualTarget?: NodeRect;
 }
 
 export class Confirm {
@@ -48,11 +54,16 @@ export class Confirm {
     return this.state.isOpened;
   }
 
-  ask(): Promise<boolean> {
+  get virtualTarget(): NodeRect | undefined {
+    return this.state.virtualTarget;
+  }
+
+  ask(options: IConfirmAskOptions = {}): Promise<boolean> {
     this.promise = new Promise<boolean>((resolve) => {
       this.resolvePromise = resolve;
     });
 
+    this.state.virtualTarget = options.virtualTarget;
     this.state.isOpened = true;
     return this.promise;
   }

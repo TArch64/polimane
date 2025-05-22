@@ -1,8 +1,9 @@
 import Konva from 'konva';
+import { Point } from '@/models';
 
 export interface IKonvaPositionGuidePosition {
-  from: Konva.Vector2d;
-  to: Konva.Vector2d;
+  from: Point;
+  to: Point;
 }
 
 export interface IKonvaPositionGuideProps {
@@ -10,28 +11,28 @@ export interface IKonvaPositionGuideProps {
 }
 
 export class KonvaPositionGuide extends Konva.Label {
-  private readonly relativeFrom: Konva.Vector2d;
-  private readonly relativeTo: Konva.Vector2d;
+  private readonly relativeFrom: Point;
+  private readonly relativeTo: Point;
 
   constructor(props: IKonvaPositionGuideProps) {
     const [from, to] = props.position.from.x < props.position.to.x || props.position.from.y < props.position.to.y
       ? [props.position.from, props.position.to]
       : [props.position.to, props.position.from];
 
-    const relativeTo = {
+    const relativeTo = new Point({
       x: (to.x - from.x) / 2,
       y: (to.y - from.y) / 2,
-    };
+    });
 
     super({
       x: from.x + relativeTo.x,
       y: from.y + relativeTo.y,
     });
 
-    this.relativeFrom = {
+    this.relativeFrom = new Point({
       x: -relativeTo.x,
       y: -relativeTo.y,
-    };
+    });
 
     this.relativeTo = relativeTo;
 
@@ -48,10 +49,8 @@ export class KonvaPositionGuide extends Konva.Label {
   private createLine(): Konva.Line {
     return new Konva.Line({
       points: [
-        this.relativeFrom.x + this.offsetX(),
-        this.relativeFrom.y + this.offsetY(),
-        this.relativeTo.x + this.offsetX(),
-        this.relativeTo.y + this.offsetY(),
+        ...this.relativeFrom.plus(this.offset()).values,
+        ...this.relativeTo.plus(this.offset()).values,
       ],
       stroke: '#000',
       strokeWidth: 1,
@@ -60,8 +59,7 @@ export class KonvaPositionGuide extends Konva.Label {
 
   private createTag(): Konva.Tag {
     return new Konva.Tag({
-      x: this.relativeTo.x / 2,
-      y: this.relativeTo.y / 2,
+      ...this.relativeTo.div(2).toJSON(),
       fill: '#fff',
       stroke: '#000',
       strokeWidth: 1,
@@ -70,9 +68,8 @@ export class KonvaPositionGuide extends Konva.Label {
   }
 
   private createText(): Konva.Text {
-    const distance = Math.sqrt(Math.pow(this.relativeTo.x, 2) + Math.pow(this.relativeTo.y, 2)).toString();
     return new Konva.Text({
-      text: `${distance}px`,
+      text: `${this.relativeFrom.distanceTo(this.relativeTo)}px`,
       fontSize: 12,
       fill: '#000',
       padding: 5,

@@ -7,3 +7,4 @@ export type * from './ISchemaRow';
 export * from './Collection';
 export type * from './ISchemaBead';
 export * from './NodeRect';
+export * from './Point';

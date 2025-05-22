@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { NodeRect } from '@/models';
+import { NodeRect, Point } from '@/models';
 import { type IKonvaPositionGuidePosition, KonvaPositionGuide } from './KonvaPositionGuide';
 
 export interface IKonvaOverlayLayerProps {
@@ -51,8 +51,8 @@ export class KonvaOverlayLayer extends Konva.Layer {
     const y = targetRect.y + targetRect.height / 2;
 
     return this.createPositionGuide({
-      from: { x: parentRect.left, y },
-      to: { x: targetRect.left, y },
+      from: new Point({ x: parentRect.left, y }),
+      to: new Point({ x: targetRect.left, y }),
     });
   }
 
@@ -60,8 +60,8 @@ export class KonvaOverlayLayer extends Konva.Layer {
     const x = targetRect.x + targetRect.width / 2;
 
     return this.createPositionGuide({
-      from: { x, y: parentRect.top },
-      to: { x, y: targetRect.top },
+      from: new Point({ x, y: parentRect.top }),
+      to: new Point({ x, y: targetRect.top }),
     });
   }
 
@@ -69,8 +69,8 @@ export class KonvaOverlayLayer extends Konva.Layer {
     const y = targetRect.y + targetRect.height / 2;
 
     return this.createPositionGuide({
-      from: { x: parentRect.right, y },
-      to: { x: targetRect.right, y },
+      from: new Point({ x: parentRect.right, y }),
+      to: new Point({ x: targetRect.right, y }),
     });
   }
 
@@ -78,8 +78,8 @@ export class KonvaOverlayLayer extends Konva.Layer {
     const x = targetRect.x + targetRect.width / 2;
 
     return this.createPositionGuide({
-      from: { x, y: parentRect.bottom },
-      to: { x, y: targetRect.bottom },
+      from: new Point({ x, y: parentRect.bottom }),
+      to: new Point({ x, y: targetRect.bottom }),
     });
   }
 
