@@ -1,6 +1,6 @@
 <template>
-  <Teleport to="body" v-if="openedConfirm">
-    <Confirm :key="openedConfirm.id" :model="openedConfirm" />
+  <Teleport to="body" :key="openedConfirm.id" v-if="openedConfirm">
+    <Confirm :model="openedConfirm" />
     <VirtualTarget :model="openedConfirm" v-if="openedConfirm.virtualTarget" />
   </Teleport>
 </template>

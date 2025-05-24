@@ -1,7 +1,7 @@
 import { type MaybeRefOrGetter, toValue } from 'vue';
 import { useEventListener } from '@vueuse/core';
 import { Point } from '@/models';
-import type { IContextMenuAction, MaybeContextMenuAction } from './ContextMenu';
+import type { IContextMenuAction, MaybeContextMenuAction } from './ContextMenuModel';
 import { ContextMenuPlugin } from './ContextMenuPlugin';
 
 export function useContextMenu(el: MaybeRefOrGetter<HTMLElement>, actions: MaybeRefOrGetter<MaybeContextMenuAction[]>) {

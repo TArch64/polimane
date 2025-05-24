@@ -28,8 +28,10 @@ import {
   useActiveObject,
   useNodeCentering,
   useNodeConfigs,
+  useNodeContextMenu,
   useNodeRef,
   useNodeTween,
+  usePatternContextMenuActions,
 } from '@/modules/schemas/editor/composables';
 import { useModal } from '@/components/modal';
 import { ActiveObjectTrigger } from '@/modules/schemas/editor/stores';
@@ -54,6 +56,9 @@ function onClick() {
 }
 
 const rootRef = useNodeRef<Konva.Group>();
+
+const actions = usePatternContextMenuActions(() => props.pattern);
+useNodeContextMenu(rootRef, actions);
 
 const config: Partial<Konva.GroupConfig> = {
   id: props.pattern.id,

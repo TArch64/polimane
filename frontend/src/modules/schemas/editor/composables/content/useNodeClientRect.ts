@@ -11,24 +11,24 @@ import Konva from 'konva';
 import { useDebounceFn } from '@vueuse/core';
 import { NodeRect } from '@/models';
 
-export function useNodeClientRect(node: MaybeRefOrGetter<Konva.Node | null>): ShallowRef<NodeRect> {
-  const nodeRef = computed(() => toValue(node));
+export function useNodeClientRect(nodeRef: MaybeRefOrGetter<Konva.Node | null>): ShallowRef<NodeRect> {
+  const node = computed(() => toValue(nodeRef));
   const clientRect = shallowRef(NodeRect.BLANK);
 
   const update = useDebounceFn(() => {
-    if (!nodeRef.value) {
+    if (!node.value) {
       clientRect.value = NodeRect.BLANK;
       return;
     }
 
-    const newRect = nodeRef.value!.getClientRect();
+    const newRect = node.value!.getClientRect();
 
     if (!clientRect.value.isEqual(newRect)) {
       clientRect.value = new NodeRect(newRect);
     }
   }, 10);
 
-  watch(nodeRef, (node, oldNode) => {
+  watch(node, (node, oldNode) => {
     if (oldNode) oldNode.off('layout', update);
 
     if (node) {
@@ -38,7 +38,7 @@ export function useNodeClientRect(node: MaybeRefOrGetter<Konva.Node | null>): Sh
     update();
   }, { immediate: true });
 
-  onBeforeUnmount(() => nodeRef.value?.off('layout', update));
+  onBeforeUnmount(() => node.value?.off('layout', update));
 
   return clientRect;
 }

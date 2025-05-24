@@ -1,3 +1,4 @@
+import { shallowReactive } from 'vue';
 import type { IconComponent } from '@/components/icon';
 import { NodeRect, Point } from '@/models';
 
@@ -22,11 +23,16 @@ export interface IContextMenuOptions {
   actions: IContextMenuAction[];
 }
 
-export class ContextMenu {
+interface IState {
+  menuRect?: NodeRect;
+}
+
+export class ContextMenuModel {
   readonly id;
   readonly position;
   readonly actions;
-  private menuRect?: NodeRect;
+
+  private readonly state = shallowReactive<IState>({});
 
   constructor(options: IContextMenuOptions) {
     this.id = options.id;
@@ -34,8 +40,20 @@ export class ContextMenu {
     this.actions = options.actions;
   }
 
-  setMenuRect(rect: NodeRect): void {
-    this.menuRect = rect;
+  get menuRect(): NodeRect | undefined {
+    return this.state.menuRect;
+  }
+
+  set menuRect(rect: NodeRect | undefined) {
+    this.state.menuRect = rect;
+  }
+
+  get htmlId(): string {
+    return `context-menu-popover-${this.id}`;
+  }
+
+  get anchorVar(): string {
+    return `--${this.htmlId}`;
   }
 
   executeAction(action: IContextMenuAction): void {

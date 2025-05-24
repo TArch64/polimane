@@ -42,8 +42,17 @@ export class NodeRect implements INodeRect {
 
   with(patch: Partial<INodeRect>): NodeRect {
     return new NodeRect({
-      ...patch,
       ...this,
+      ...patch,
+    });
+  }
+
+  delta(patch: Partial<INodeRect>): NodeRect {
+    return new NodeRect({
+      x: this.x + (patch.x ?? 0),
+      y: this.y + (patch.y ?? 0),
+      width: this.width + (patch.width ?? 0),
+      height: this.height + (patch.height ?? 0),
     });
   }
 

@@ -1,6 +1,6 @@
 import { type FunctionPlugin, inject, type InjectionKey, shallowRef } from 'vue';
 import { newId } from '@/helpers';
-import { ContextMenu, type IContextMenuOptions } from './ContextMenu';
+import { ContextMenuModel, type IContextMenuOptions } from './ContextMenuModel';
 
 const PROVIDER = Symbol('ContextMenuPlugin') as InjectionKey<ContextMenuPlugin>;
 
@@ -13,10 +13,10 @@ export class ContextMenuPlugin {
     return inject(PROVIDER)!;
   }
 
-  activeMenu = shallowRef<ContextMenu | null>(null);
+  activeMenu = shallowRef<ContextMenuModel | null>(null);
 
   show(options: Omit<IContextMenuOptions, 'id'>) {
-    this.activeMenu.value = new ContextMenu({
+    this.activeMenu.value = new ContextMenuModel({
       ...options,
       id: newId(),
     });

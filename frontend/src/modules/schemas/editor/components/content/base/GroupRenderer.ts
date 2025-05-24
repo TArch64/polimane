@@ -123,10 +123,15 @@ export const GroupRenderer = defineComponent({
         return;
       }
 
-      const clientRect = getChildrenClientRect().with({
-        width: config.value.width,
-        height: config.value.height,
-      });
+      let clientRect = getChildrenClientRect();
+
+      if (config.value.width) {
+        clientRect = clientRect.with({ width: config.value.width });
+      }
+
+      if (config.value.height) {
+        clientRect = clientRect.with({ height: config.value.height });
+      }
 
       groupRef.value.width(clientRect.width);
       groupRef.value.height(clientRect.height);

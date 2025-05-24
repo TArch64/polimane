@@ -40,13 +40,13 @@ function useActiveObjectState(store: ActiveObjectStore, object: Ref<ISchemaObjec
   });
 }
 
-export function useActiveObject(object: MaybeRefOrGetter<ISchemaObject>): IActiveObject {
+export function useActiveObject(objectRef: MaybeRefOrGetter<ISchemaObject>): IActiveObject {
   const hoverStore = useHoverObjectStore();
   const focusStore = useFocusObjectStore();
-  const objectRef = computed(() => toValue(object));
+  const object = computed(() => toValue(objectRef));
 
   return {
-    hover: useActiveObjectState(hoverStore, objectRef),
-    focus: useActiveObjectState(focusStore, objectRef),
+    hover: useActiveObjectState(hoverStore, object),
+    focus: useActiveObjectState(focusStore, object),
   };
 }
