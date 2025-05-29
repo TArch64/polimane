@@ -1,4 +1,11 @@
-import { computed, type MaybeRefOrGetter, nextTick, onMounted, onUnmounted, toValue } from 'vue';
+import {
+  computed,
+  type MaybeRefOrGetter,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  toValue,
+} from 'vue';
 import Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import {
@@ -15,7 +22,7 @@ export function useNodeContextMenu(
   const plugin = ContextMenuPlugin.inject();
 
   const node = computed(() => toValue(nodeRef));
-  const stage = computed(() => node.value.getStage()!);
+  const stage = computed(() => node.value?.getStage());
 
   function isClosestCurrentNode(target: Konva.Stage | Konva.Node): boolean {
     if (target._id === node.value._id) {
@@ -46,10 +53,10 @@ export function useNodeContextMenu(
 
   onMounted(async () => {
     await nextTick();
-    stage.value.on('contextmenu', onContextMenu);
+    stage.value?.on('contextmenu', onContextMenu);
   });
 
-  onUnmounted(() => {
-    stage.value.off('contextmenu', onContextMenu);
+  onBeforeUnmount(() => {
+    stage.value?.off('contextmenu', onContextMenu);
   });
 }

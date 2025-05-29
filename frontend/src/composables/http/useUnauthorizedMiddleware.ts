@@ -10,7 +10,7 @@ export function useUnauthorizedMiddleware(): IHttpMiddleware {
       if (error.reason === HttpErrorReason.UNAUTHORIZED) {
         await router.push({
           name: 'welcome',
-          query: { 'return-to': router.currentRoute.value.path },
+          query: { 'return-to': router.currentRoute.value.fullPath },
         });
       }
     },

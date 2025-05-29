@@ -16,5 +16,8 @@ export const sessionMiddleware: NavigationGuard = async (to, _, next) => {
     return next();
   }
 
-  return next({ name: 'welcome' });
+  return next({
+    name: 'welcome',
+    query: { 'return-to': to.fullPath },
+  });
 };
