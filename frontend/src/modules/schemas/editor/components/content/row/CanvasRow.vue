@@ -11,7 +11,12 @@
 <script setup lang="ts">
 import Konva from 'konva';
 import type { ISchemaRow } from '@/models';
-import { useActiveObject, useNodeRef } from '@/modules/schemas/editor/composables';
+import {
+  useActiveObject,
+  useNodeContextMenu,
+  useNodeRef,
+  useRowContextMenuActions,
+} from '@/modules/schemas/editor/composables';
 import { ActiveObjectTrigger } from '@/modules/schemas/editor/stores';
 import { scrollNodeIntoView } from '@/modules/schemas/editor/helpers';
 import { CanvasBead } from '../bead';
@@ -24,6 +29,9 @@ const props = defineProps<{
 const activeObject = useActiveObject(() => props.row);
 
 const rootRef = useNodeRef<Konva.Group>();
+
+const actions = useRowContextMenuActions(() => props.row);
+useNodeContextMenu(rootRef, actions);
 
 activeObject.focus.onExactActive((trigger) => {
   if (trigger !== ActiveObjectTrigger.CANVAS) {
