@@ -3,13 +3,14 @@
     <HomeSchema
       v-for="schema of schemasStore.schemas.data"
       :key="schema.id"
-      :schema
+      :schema="schema as ISchema"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useSchemasStore } from '@/modules/home/stores';
+import type { ISchema } from '@/models';
 import HomeSchema from './HomeSchema.vue';
 
 const schemasStore = useSchemasStore();

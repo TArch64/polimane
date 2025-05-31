@@ -33,10 +33,10 @@ const iconImageEl = useIconImage({
   source: toRef(iconSource, 'source'),
 });
 
-const config = computed((): Partial<Konva.ImageConfig> => ({
+const config = computed((): Konva.ImageConfig => ({
+  image: iconImageEl,
   width: Number(props.size),
   height: Number(props.size),
-  image: iconImageEl,
 }));
 
 defineExpose({
