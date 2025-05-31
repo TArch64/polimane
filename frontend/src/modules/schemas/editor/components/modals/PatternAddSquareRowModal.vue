@@ -26,9 +26,12 @@ import { NumberField } from '@/components/form';
 import type { ISchemaPattern } from '@/models';
 import { useRowsStore } from '../../stores';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   pattern: ISchemaPattern;
-}>();
+  toIndex?: number;
+}>(), {
+  toIndex: -1,
+});
 
 const modal = useActiveModal();
 const rowsStore = useRowsStore(() => props.pattern);
@@ -39,7 +42,11 @@ const form = reactive({
 });
 
 function save() {
-  rowsStore.addSquareRow(form);
+  rowsStore.addSquareRow({
+    ...form,
+    toIndex: props.toIndex,
+  });
+
   modal.close();
 }
 </script>

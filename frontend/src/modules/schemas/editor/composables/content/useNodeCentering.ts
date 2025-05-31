@@ -1,6 +1,6 @@
 import Konva from 'konva';
-import { computed, type MaybeRefOrGetter, toValue } from 'vue';
-import { reactiveComputed } from '@vueuse/core';
+import { computed, type MaybeRefOrGetter, nextTick, ref, toValue, watch } from 'vue';
+import { toReactive } from '@vueuse/core';
 import { useNodeClientRect } from './useNodeClientRect';
 import { useNodeParent } from './useNodeParent';
 
@@ -18,17 +18,24 @@ export function useNodeCentering(nodeRef: MaybeRefOrGetter<Konva.Node | null>, o
 
   const parentNode = useNodeParent(node);
 
-  return reactiveComputed((): Partial<Konva.NodeConfig> => {
+  const config = ref<Partial<Konva.NodeConfig>>({});
+
+  watch(nodeRect, async () => {
+    await nextTick();
+
     if (nodeRect.value?.isBlank || !parentNode.value) {
-      return {};
+      config.value = {};
+      return;
     }
 
     const freeSpaceX = parentNode.value.width() - nodeRect.value.width - padding.value.horizontal * 2;
     const freeSpaceY = parentNode.value.height() - nodeRect.value.height - padding.value.vertical * 2;
 
-    return {
+    config.value = {
       x: Math.max(freeSpaceX / 2, 0) + padding.value.horizontal,
       y: Math.max(freeSpaceY / 2, 0) + padding.value.vertical,
     };
-  });
+  }, { immediate: true });
+
+  return toReactive(config);
 }

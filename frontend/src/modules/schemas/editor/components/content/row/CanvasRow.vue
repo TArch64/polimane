@@ -17,7 +17,6 @@ import Konva from 'konva';
 import type { ISchemaRow } from '@/models';
 import {
   useActiveObject,
-  useNodeConfigs,
   useNodeContextMenu,
   useNodeFiller,
   useNodeRef,
@@ -40,18 +39,7 @@ const contentRef = useNodeRef<Konva.Group>();
 const actions = useRowContextMenuActions(() => props.row);
 useNodeContextMenu(rootRef, actions);
 
-const backgroundConfig = useNodeConfigs<Konva.RectConfig>([
-  {
-    offsetY: 4,
-    offsetX: 4,
-  },
-  useNodeFiller(contentRef, {
-    padding: {
-      vertical: 8,
-      horizontal: 8,
-    },
-  }),
-]);
+const backgroundConfig = useNodeFiller(contentRef);
 
 activeObject.focus.onExactActive((trigger) => {
   if (trigger !== ActiveObjectTrigger.CANVAS) {

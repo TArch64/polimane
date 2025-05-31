@@ -7,6 +7,7 @@ import { setObjectParent } from '../models';
 export interface INewSquareRowOptions {
   rows: number;
   size: number;
+  toIndex: number;
 }
 
 const rowsStoreFactory = new StoreFactory({
@@ -32,7 +33,13 @@ const rowsStoreFactory = new StoreFactory({
     });
 
     function addSquareRow(options: INewSquareRowOptions) {
-      rows.insert(new Array(options.rows).fill(0).map(() => createRow(options.size)));
+      const newRows = new Array(options.rows)
+        .fill(0)
+        .map(() => createRow(options.size));
+
+      rows.insert(newRows, {
+        toIndex: options.toIndex,
+      });
     }
 
     function deleteRow(row: ISchemaRow): void {
