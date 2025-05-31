@@ -19,6 +19,7 @@ export type MaybeContextMenuAction = IContextMenuAction | null | undefined | fal
 
 export interface IContextMenuOptions {
   id: string;
+  title: string;
   position: Point;
   actions: IContextMenuAction[];
 }
@@ -29,6 +30,7 @@ interface IState {
 
 export class ContextMenuModel {
   readonly id;
+  readonly title;
   readonly position;
   readonly actions;
 
@@ -36,6 +38,7 @@ export class ContextMenuModel {
 
   constructor(options: IContextMenuOptions) {
     this.id = options.id;
+    this.title = options.title;
     this.position = options.position;
     this.actions = options.actions;
   }

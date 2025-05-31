@@ -72,7 +72,11 @@ activeObject.focus.onExactActive((trigger) => {
 });
 
 if (props.actions.length) {
-  useContextMenu(rootRef, () => props.actions);
+  useContextMenu({
+    el: rootRef,
+    title: () => props.title,
+    actions: () => props.actions,
+  });
 }
 </script>
 

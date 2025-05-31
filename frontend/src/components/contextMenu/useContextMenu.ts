@@ -4,10 +4,16 @@ import { Point } from '@/models';
 import type { IContextMenuAction, MaybeContextMenuAction } from './ContextMenuModel';
 import { ContextMenuPlugin } from './ContextMenuPlugin';
 
-export function useContextMenu(el: MaybeRefOrGetter<HTMLElement>, actions: MaybeRefOrGetter<MaybeContextMenuAction[]>) {
+export interface IContextMenuOptions {
+  el: MaybeRefOrGetter<HTMLElement>;
+  title: MaybeRefOrGetter<string>;
+  actions: MaybeRefOrGetter<MaybeContextMenuAction[]>;
+}
+
+export function useContextMenu(options: IContextMenuOptions) {
   const plugin = ContextMenuPlugin.inject();
 
-  useEventListener(el, 'contextmenu', (event) => {
+  useEventListener(options.el, 'contextmenu', (event) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -17,7 +23,9 @@ export function useContextMenu(el: MaybeRefOrGetter<HTMLElement>, actions: Maybe
         y: event.clientY,
       }),
 
-      actions: toValue(actions).filter((action): action is IContextMenuAction => !!action),
+      title: toValue(options.title),
+
+      actions: toValue(options.actions).filter((action): action is IContextMenuAction => !!action),
     });
 
     addEventListener('click', () => plugin.hide(), { once: true, capture: true });

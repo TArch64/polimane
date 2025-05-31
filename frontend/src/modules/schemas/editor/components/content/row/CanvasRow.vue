@@ -21,6 +21,7 @@ import {
   useNodeFiller,
   useNodeRef,
   useRowContextMenuActions,
+  useRowTitle,
 } from '@/modules/schemas/editor/composables';
 import { ActiveObjectTrigger } from '@/modules/schemas/editor/stores';
 import { scrollNodeIntoView } from '@/modules/schemas/editor/helpers';
@@ -36,8 +37,11 @@ const activeObject = useActiveObject(() => props.row);
 const rootRef = useNodeRef<Konva.Group>();
 const contentRef = useNodeRef<Konva.Group>();
 
-const actions = useRowContextMenuActions(() => props.row);
-useNodeContextMenu(rootRef, actions);
+useNodeContextMenu({
+  nodeRef: rootRef,
+  title: useRowTitle(() => props.row),
+  actions: useRowContextMenuActions(() => props.row),
+});
 
 const backgroundConfig = useNodeFiller(contentRef);
 

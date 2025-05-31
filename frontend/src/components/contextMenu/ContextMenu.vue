@@ -1,5 +1,9 @@
 <template>
   <DropdownMenu ref="menuRef" class="dropdown" :class="classes">
+    <h1 class="dropdown__title">
+      {{ menu.title }}
+    </h1>
+
     <DropdownAction
       v-for="(action, index) of menu.actions"
       :key="`${action.title} ${index}`"
@@ -60,6 +64,15 @@ onMounted(() => {
   .dropdown--initial {
     top: v-bind("menu.position.y + 'px'");
     left: v-bind("menu.position.x + 'px'");
+  }
+
+  .dropdown__title {
+    font-size: var(--font-sm);
+    font-weight: 570;
+    border-bottom: var(--divider);
+    padding-top: 8px;
+    padding-bottom: 10px;
+    padding-left: 12px;
   }
 }
 </style>

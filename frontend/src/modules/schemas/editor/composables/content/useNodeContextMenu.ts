@@ -15,13 +15,16 @@ import {
 } from '@/components/contextMenu';
 import { Point } from '@/models';
 
-export function useNodeContextMenu(
-  nodeRef: MaybeRefOrGetter<Konva.Node>,
-  actions: MaybeRefOrGetter<MaybeContextMenuAction[]>,
-): void {
+export interface INodeContextMenuOptions {
+  nodeRef: MaybeRefOrGetter<Konva.Node>;
+  title: MaybeRefOrGetter<string>;
+  actions: MaybeRefOrGetter<MaybeContextMenuAction[]>;
+}
+
+export function useNodeContextMenu(options: INodeContextMenuOptions): void {
   const plugin = ContextMenuPlugin.inject();
 
-  const node = computed(() => toValue(nodeRef));
+  const node = computed(() => toValue(options.nodeRef));
   const stage = computed(() => node.value?.getStage());
 
   function isClosestCurrentNode(target: Konva.Stage | Konva.Node): boolean {
@@ -49,7 +52,10 @@ export function useNodeContextMenu(
         y: event.evt.clientY,
       }),
 
-      actions: toValue(actions).filter((action): action is IContextMenuAction => !!action),
+      title: toValue(options.title),
+
+      actions: toValue(options.actions)
+        .filter((action): action is IContextMenuAction => !!action),
     });
 
     addEventListener('click', () => plugin.hide(), { once: true, capture: true });

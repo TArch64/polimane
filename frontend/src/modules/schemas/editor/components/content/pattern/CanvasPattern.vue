@@ -54,8 +54,11 @@ function onClick() {
 
 const rootRef = useNodeRef<Konva.Group>();
 
-const actions = usePatternContextMenuActions(() => props.pattern);
-useNodeContextMenu(rootRef, actions);
+useNodeContextMenu({
+  nodeRef: rootRef,
+  title: () => props.pattern.name,
+  actions: usePatternContextMenuActions(() => props.pattern),
+});
 
 const config: Partial<Konva.GroupConfig> = {
   id: props.pattern.id,
