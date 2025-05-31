@@ -7,3 +7,4 @@ export * from './useNodeParent';
 export * from './useCanvasZoom';
 export * from './useCanvasNavigation';
 export * from './useNodeContextMenu';
+export * from './useNodeFiller';

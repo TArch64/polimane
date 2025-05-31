@@ -33,6 +33,10 @@ export function useNodeContextMenu(
   }
 
   function onContextMenu(event: KonvaEventObject<MouseEvent>): void {
+    if (event.cancelBubble) {
+      return;
+    }
+
     if (!isClosestCurrentNode(event.target)) {
       return;
     }

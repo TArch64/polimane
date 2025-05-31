@@ -9,11 +9,7 @@
     <KonvaRect ref="borderRef" :config="borderConfig" />
     <CanvasPatternLabel :pattern />
 
-    <GroupRenderer
-      ref="contentGroupRef"
-      :config="contentGroupConfig"
-      @layout="onContentLayout"
-    >
+    <GroupRenderer ref="contentGroupRef" :config="contentGroupConfig">
       <CanvasPatternContent :pattern v-if="pattern.content.length" />
       <CanvasPatternEmpty v-else />
     </GroupRenderer>
@@ -22,13 +18,14 @@
 
 <script setup lang="ts">
 import Konva from 'konva';
-import { computed, ref } from 'vue';
-import { type ISchemaPattern, NodeRect } from '@/models';
+import { computed } from 'vue';
+import type { ISchemaPattern } from '@/models';
 import {
   useActiveObject,
   useNodeCentering,
   useNodeConfigs,
   useNodeContextMenu,
+  useNodeFiller,
   useNodeRef,
   useNodeTween,
   usePatternContextMenuActions,
@@ -37,7 +34,7 @@ import { useModal } from '@/components/modal';
 import { ActiveObjectTrigger } from '@/modules/schemas/editor/stores';
 import { scrollNodeIntoView } from '@/modules/schemas/editor/helpers';
 import { getPatternAddRowModal } from '../../modals';
-import { GroupRenderer, type IGroupLayoutEvent } from '../base';
+import { GroupRenderer } from '../base';
 import CanvasPatternLabel from './CanvasPatternLabel.vue';
 import CanvasPatternContent from './CanvasPatternContent.vue';
 import CanvasPatternEmpty from './CanvasPatternEmpty.vue';
@@ -73,14 +70,6 @@ const contentGroupConfig = useNodeCentering(contentGroupRef, {
   },
 });
 
-const contentLayoutRect = ref<NodeRect>(NodeRect.BLANK);
-
-function onContentLayout(event: IGroupLayoutEvent) {
-  if (!contentLayoutRect.value.isEqual(event.clientRect)) {
-    contentLayoutRect.value = event.clientRect;
-  }
-}
-
 const borderConfig = useNodeConfigs<Konva.RectConfig>([
   {
     x: 1,
@@ -91,10 +80,17 @@ const borderConfig = useNodeConfigs<Konva.RectConfig>([
     dash: [10, 5],
   },
 
-  computed(() => ({
-    width: Math.max(contentLayoutRect.value.width, 1000) + 24,
-    height: Math.max(contentLayoutRect.value.height, 100) + 40,
-  })),
+  useNodeFiller(contentGroupRef, {
+    minSize: {
+      width: 1000,
+      height: 100,
+    },
+
+    padding: {
+      horizontal: 24,
+      vertical: 40,
+    },
+  }),
 ]);
 
 const borderRef = useNodeRef<Konva.Rect | null>();
