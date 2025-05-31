@@ -20,6 +20,7 @@ func Create(ctx context.Context, options *CreateOptions) (*model.Schema, error) 
 			SK: model.RandomID(model.SKSchema).Key(),
 		},
 		Name:    options.Name,
+		Palette: make([]string, 10),
 		Content: options.Content,
 	}
 

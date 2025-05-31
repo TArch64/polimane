@@ -48,7 +48,8 @@ const activeObjectStoreFactory = new StoreFactory({
   },
 });
 
-const { useStore } = activeObjectStoreFactory.build();
+const { useStore, disposeStores } = activeObjectStoreFactory.build();
 export type ActiveObjectStore = typeof activeObjectStoreFactory['$storeType'];
 export const useFocusObjectStore = () => useStore('focus');
 export const useHoverObjectStore = () => useStore('hover');
+export { disposeStores as disposeActiveObjectStores };

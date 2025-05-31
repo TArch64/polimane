@@ -28,9 +28,9 @@ Content-Type: application/json
 ###
 
 # @name update
-PATCH http://polimane.localhost/api/schemas/01js4znrk3hwfeyb6kvg69q1zy
+PATCH http://polimane.localhost/api/schemas/01jwk99nawmqmaghrwpsyyn706
 Content-Type: application/json
 
 {
-  "content": []
+  "palette": ["", "", "", "", "", ""]
 }

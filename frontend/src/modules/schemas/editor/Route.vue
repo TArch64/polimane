@@ -1,7 +1,11 @@
 <template>
   <div class="editor__fill editor__row" v-if="patternsStore.hasPatterns">
     <EditorSidebar class="editor__sidebar" />
-    <EditorCanvas class="editor__fill" />
+
+    <div class="editor__fill">
+      <EditorPalette />
+      <EditorCanvas class="editor__fill" />
+    </div>
   </div>
 
   <EditorEmpty class="editor__fill" v-else />
@@ -10,9 +14,16 @@
 <script lang="ts" setup>
 import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
-import { destroyStore } from '@/helpers';
-import { disposeBeadsStores, disposeRowsStores, useEditorStore, usePatternsStore } from './stores';
-import { EditorCanvas, EditorEmpty, EditorSidebar } from './components';
+import { destroyStore, lazyDestroyStore } from '@/helpers';
+import {
+  disposeActiveObjectStores,
+  disposeBeadsStores,
+  disposeRowsStores,
+  useEditorStore,
+  usePaletteStore,
+  usePatternsStore,
+} from './stores';
+import { EditorCanvas, EditorEmpty, EditorPalette, EditorSidebar } from './components';
 
 defineProps<{
   schemaId: string;
@@ -25,9 +36,12 @@ defineOptions({
   }),
 
   beforeRouteLeave: async (_, __, next) => {
-    destroyStore(useEditorStore());
+    lazyDestroyStore(useEditorStore);
+    lazyDestroyStore(usePatternsStore);
     disposeBeadsStores();
     disposeRowsStores();
+    disposeActiveObjectStores();
+    lazyDestroyStore(usePaletteStore);
     next();
   },
 });

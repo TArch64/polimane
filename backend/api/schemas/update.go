@@ -15,6 +15,7 @@ import (
 
 type updateBody struct {
 	Name    string              `json:"name"`
+	Palette []string            `json:"palette"`
 	Content model.SchemaContent `json:"content"`
 }
 
@@ -27,6 +28,10 @@ func collectUpdates(body *updateBody) awsdynamodb.UpdateMap {
 
 	if body.Content != nil {
 		updates["Content"] = body.Content
+	}
+
+	if len(body.Palette) != 0 {
+		updates["Palette"] = body.Palette
 	}
 
 	return updates
