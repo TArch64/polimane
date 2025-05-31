@@ -1,6 +1,6 @@
 <template>
   <Card as="section" class="palette">
-    <ColorList :colors="store.palette" />
+    <ColorList v-model="store.palette" />
   </Card>
 </template>
 
@@ -18,6 +18,9 @@ const store = usePaletteStore();
     position: absolute;
     top: 8px;
     right: 8px;
+    padding: 8px;
+    display: flex;
+    gap: 16px;
   }
 }
 </style>

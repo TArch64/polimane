@@ -1,9 +1,10 @@
 <template>
   <div class="color-list">
     <ColorItem
-      v-for="(color, index) of colors"
+      v-for="(color, index) of model"
       :key="index"
-      :color
+      :model-value="color"
+      @update:model-value="model[index] = $event"
     />
   </div>
 </template>
@@ -12,11 +13,9 @@
 import { computed } from 'vue';
 import ColorItem from './ColorItem.vue';
 
-const props = defineProps<{
-  colors: string[];
-}>();
+const model = defineModel<string[]>({ required: true });
 
-const columnCount = computed(() => Math.ceil(props.colors.length / 2));
+const columnCount = computed(() => Math.ceil(model.value.length / 2));
 </script>
 
 <style scoped>
