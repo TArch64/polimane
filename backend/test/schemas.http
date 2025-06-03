@@ -32,5 +32,5 @@ PATCH http://polimane.localhost/api/schemas/01jwk99nawmqmaghrwpsyyn706
 Content-Type: application/json
 
 {
-  "palette": ["", "", "", "", "", ""]
+  "palette": ["", "", "", "", "", "", "", "", "", ""]
 }

@@ -44,6 +44,12 @@ function onDblClick(): void {
   .color-list__item {
     padding: 0;
     border: var(--divider);
+    transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
+    will-change: background-color, border-color;
+
+    &:hover {
+      border-color: var(--color-hover-divider);
+    }
   }
 
   .color-list__item--value {

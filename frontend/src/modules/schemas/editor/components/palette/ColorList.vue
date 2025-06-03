@@ -23,8 +23,8 @@ const columnCount = computed(() => Math.ceil(model.value.length / 2));
   .color-list {
     display: grid;
     gap: 4px;
-    grid-template-columns: repeat(v-bind("columnCount"), 20px);
-    grid-template-rows: repeat(2, 20px);
+    grid-template-columns: repeat(v-bind("columnCount"), var(--color-button-size));
+    grid-template-rows: repeat(2, var(--color-button-size));
   }
 }
 </style>

@@ -10,7 +10,8 @@
         @click="createSchemaModal.open()"
         v-if="schemasStore.hasSchemas"
       >
-        Створити Схему
+        <PlusIcon class="home-top-bar__create-icon" />
+        Нова Схема
       </Button>
     </div>
   </header>
@@ -19,6 +20,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
+import { PlusIcon } from '@/components/icon';
 import { useSchemasStore } from '../stores';
 import { HomeCreateSchemaModal } from './schemas';
 
@@ -49,6 +51,10 @@ const createSchemaModal = useModal(HomeCreateSchemaModal);
     display: flex;
     gap: 8px;
     align-items: center;
+  }
+
+  .home-top-bar__create-icon {
+    margin-right: 4px;
   }
 }
 </style>
