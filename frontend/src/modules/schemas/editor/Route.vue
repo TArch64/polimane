@@ -1,11 +1,8 @@
 <template>
   <div class="editor__fill editor__row" v-if="patternsStore.hasPatterns">
     <EditorSidebar class="editor__sidebar" />
-
-    <div class="editor__fill">
-      <EditorPalette />
-      <EditorCanvas class="editor__fill" />
-    </div>
+    <EditorCanvas class="editor__fill" />
+    <EditorPalette />
   </div>
 
   <EditorEmpty class="editor__fill" v-else />

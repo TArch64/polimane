@@ -1,5 +1,5 @@
 <template>
-  <div
+  <main
     ref="wrapperRef"
     class="editor-canvas"
     @contextmenu.prevent
@@ -13,7 +13,7 @@
     >
       <CanvasContent />
     </KonvaStage>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
