@@ -4,7 +4,9 @@
       v-for="(color, index) of model"
       :key="index"
       :model-value="color"
+      :active="activeIndex === index"
       @update:model-value="model[index] = $event"
+      @update:active="activeIndex = index"
     />
   </div>
 </template>
@@ -14,6 +16,7 @@ import { computed } from 'vue';
 import ColorItem from './ColorItem.vue';
 
 const model = defineModel<string[]>({ required: true });
+const activeIndex = defineModel<number>('active-index', { required: true });
 
 const columnCount = computed(() => Math.ceil(model.value.length / 2));
 </script>

@@ -18,13 +18,26 @@
 import { computed, ref } from 'vue';
 import { Button } from '@/components/button';
 
-const model = defineModel<string>({ required: true });
+const isActive = defineModel<boolean>('active', { required: true });
+
+const model = defineModel<string>({
+  required: true,
+
+  set: (value) => {
+    isActive.value = true;
+    return value;
+  },
+});
 
 const pickerRef = ref<HTMLInputElement>(null!);
 
 const classes = computed(() => {
   const modifier = model.value ? 'value' : 'empty';
-  return `color-list__item--${modifier}`;
+
+  return [
+    { 'color-list__item--active': isActive.value },
+    `color-list__item--${modifier}`,
+  ];
 });
 
 function onClick(): void {
@@ -32,6 +45,8 @@ function onClick(): void {
     pickerRef.value.click();
     return;
   }
+
+  isActive.value = true;
 }
 
 function onDblClick(): void {
@@ -47,9 +62,13 @@ function onDblClick(): void {
     transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
     will-change: background-color, border-color;
 
-    &:hover {
+    &:hover:not(.color-list__item--active) {
       border-color: var(--color-hover-divider);
     }
+  }
+
+  .color-list__item--active {
+    border-color: var(--color-primary);
   }
 
   .color-list__item--value {

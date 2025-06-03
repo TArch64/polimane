@@ -1,6 +1,11 @@
 <template>
-  <Button class="color-eraser">
+  <Button
+    class="color-eraser"
+    :class="classes"
+    @click="activate"
+  >
     <svg
+      class="color-eraser__icon"
       width="24"
       height="24"
       viewBox="0 0 24 24"
@@ -18,7 +23,16 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Button } from '@/components/button';
+import { usePaletteStore } from '@/modules/schemas/editor/stores';
+
+const store = usePaletteStore();
+const activate = () => store.activateTool('eraser');
+
+const classes = computed(() => ({
+  'color-eraser--active': store.activeToolId === 'eraser',
+}));
 </script>
 
 <style scoped>
@@ -27,10 +41,14 @@ import { Button } from '@/components/button';
     padding: 2px;
     width: var(--color-button-size);
     height: var(--color-button-size);
-    --button-background: color-mix(in srgb, var(--button-base-color), transparent 95%)
+    --button-background: color-mix(in srgb, var(--button-base-color), transparent 95%);
   }
 
-  .color-eraser svg {
+  .color-eraser--active {
+    background-color: color-mix(in srgb, var(--button-base-color), transparent 80%);
+  }
+
+  .color-eraser__icon {
     width: 100%;
     height: 100%;
   }

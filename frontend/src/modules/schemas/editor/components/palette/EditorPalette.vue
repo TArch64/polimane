@@ -2,17 +2,27 @@
   <Card as="section" class="palette">
     <ColorEraser />
     <div class="palette__divider" />
-    <ColorList v-model="store.palette" />
+
+    <ColorList
+      v-model="store.palette"
+      v-model:active-index="activeColorIndex"
+    />
   </Card>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { usePaletteStore } from '@/modules/schemas/editor/stores';
 import { Card } from '@/components/card';
 import ColorList from './ColorList.vue';
 import ColorEraser from './ColorEraser.vue';
 
 const store = usePaletteStore();
+
+const activeColorIndex = computed({
+  get: () => store.activeToolId === 'eraser' ? -1 : store.activeToolId,
+  set: (index) => store.activateTool(index),
+});
 </script>
 
 <style scoped>
