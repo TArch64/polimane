@@ -1,0 +1,3 @@
+.secret.tf
+.terraform
+.aws-credentials
