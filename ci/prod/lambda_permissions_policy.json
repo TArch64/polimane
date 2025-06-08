@@ -25,7 +25,7 @@
       ],
       "Resource": [
         "arn:aws:dynamodb:eu-central-1:708789309252:table/polimane",
-        "arn:aws:dynamodb:*:708789309252:table/*/index/*"
+        "arn:aws:dynamodb:eu-central-1:708789309252:table/*/index/*"
       ]
     },
     {
@@ -33,6 +33,15 @@
       "Effect": "Allow",
       "Action": "dynamodb:ListTables",
       "Resource": "*"
+    },
+    {
+      "Sid": "ParameterStore",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:GetParameter",
+        "ssm:PutParameter"
+      ],
+      "Resource": "arn:aws:ssm:eu-central-1:708789309252:parameter/polimane/*"
     }
   ]
 }

@@ -3,6 +3,8 @@ package app
 import (
 	"context"
 
+	awsssm "polimane/backend/services/ssm"
+
 	"github.com/gofiber/fiber/v2"
 
 	"polimane/backend/api"
@@ -22,7 +24,14 @@ func New(config *Config) (*fiber.App, error) {
 		return nil, err
 	}
 
-	err = awsdynamodb.Init(context.Background())
+	ctx := context.Background()
+
+	err = awsssm.Init(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	err = awsdynamodb.Init(ctx)
 	if err != nil {
 		return nil, err
 	}
