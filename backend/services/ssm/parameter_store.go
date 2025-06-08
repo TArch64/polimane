@@ -3,6 +3,8 @@ package awsssm
 import (
 	"context"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
@@ -21,9 +23,10 @@ func GetParameter(ctx context.Context, name string) (string, error) {
 
 func PutParameter(ctx context.Context, name, value string) error {
 	_, err := Client().PutParameter(ctx, &ssm.PutParameterInput{
-		Name:  &name,
-		Value: &value,
-		Type:  types.ParameterTypeString,
+		Name:      &name,
+		Value:     &value,
+		Type:      types.ParameterTypeString,
+		Overwrite: aws.Bool(true),
 	})
 
 	return err

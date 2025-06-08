@@ -46,5 +46,9 @@ func v0(ctx *migrationCtx) error {
 		},
 	})
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	return ctx.Table.Wait(ctx)
 }

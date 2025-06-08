@@ -42,8 +42,8 @@ func getTableVersion(ctx *migrationCtx) (*model.Version, error) {
 	return &version, nil
 }
 
-func Migrate(ctx_ context.Context, db *dynamo.DB) error {
-	table := db.Table("polimane")
+func Migrate(ctx_ context.Context, db *dynamo.DB, tableName string) error {
+	table := db.Table(tableName)
 	ctx := &migrationCtx{
 		Context:   ctx_,
 		Api:       db.Client().(*dynamodb.Client),

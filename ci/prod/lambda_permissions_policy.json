@@ -24,7 +24,7 @@
         "dynamodb:PartiQLDelete"
       ],
       "Resource": [
-        "arn:aws:dynamodb:eu-central-1:708789309252:table/polimane",
+        "arn:aws:dynamodb:eu-central-1:708789309252:table/polimane-prod",
         "arn:aws:dynamodb:eu-central-1:708789309252:table/*/index/*"
       ]
     },

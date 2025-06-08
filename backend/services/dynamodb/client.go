@@ -3,6 +3,7 @@ package awsdynamodb
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -45,6 +46,7 @@ func setTableLock(ctx context.Context, isLocked bool) {
 		value = "false"
 	}
 
+	fmt.Printf("[DynamoDB] Setting table lock to %s\n", value)
 	_ = awsssm.PutParameter(ctx, TableLockParameter, value)
 }
 
@@ -63,7 +65,7 @@ func Init(ctx context.Context) error {
 
 	if !isLocked {
 		setTableLock(ctx, true)
-		err = migrations.Migrate(ctx, db)
+		err = migrations.Migrate(ctx, db, TableName)
 		setTableLock(ctx, false)
 		if err != nil {
 			return err

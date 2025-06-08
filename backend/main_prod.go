@@ -15,20 +15,25 @@ import (
 )
 
 func main() {
-	api, err := app.New(&app.Config{
-		ApiConfig: func(config *fiber.Config) {
-			config.Prefork = true
-			config.DisableStartupMessage = true
-		},
-	})
-
-	if err != nil {
-		log.Panic(err)
-	}
-
-	fiberLambda := fiberadapter.New(api)
+	var fiberLambda *fiberadapter.FiberLambda
 
 	lambda.Start(func(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+		if fiberLambda != nil {
+			return fiberLambda.ProxyWithContext(ctx, request)
+		}
+
+		api, err := app.New(&app.Config{
+			ApiConfig: func(config *fiber.Config) {
+				config.Prefork = true
+				config.DisableStartupMessage = true
+			},
+		})
+
+		if err != nil {
+			log.Panic(err)
+		}
+
+		fiberLambda = fiberadapter.New(api)
 		return fiberLambda.ProxyWithContext(ctx, request)
 	})
 }
