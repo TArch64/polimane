@@ -16,21 +16,21 @@ Content-Type: application/json
 ###
 
 # @name by-id
-GET http://polimane.localhost/api/schemas/01js43hxkr9e2rf6x7nazb3ndq
+GET http://polimane.localhost/api/schemas/{{ schema_id}}
 Content-Type: application/json
 
 ###
 
 # @name delete
-DELETE http://polimane.localhost/api/schemas/01js40jpkhn1k39fpvb0wr6x34
+DELETE http://polimane.localhost/api/schemas/{{ schema_id}}
 Content-Type: application/json
 
 ###
 
 # @name update
-PATCH http://polimane.localhost/api/schemas/01jwk99nawmqmaghrwpsyyn706
+PATCH http://polimane.localhost/api/schemas/{{ schema_id}}
 Content-Type: application/json
 
 {
-  "palette": ["", "", "", "", "", "", "", "", "", ""]
+  "palette": ["", "", "", "", "", "", "", "", ""]
 }

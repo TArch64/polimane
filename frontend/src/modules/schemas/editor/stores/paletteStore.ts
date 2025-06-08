@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { useEditorStore } from './editorStore';
 
-type ActiveTool = 'eraser' | number;
+export type ActiveToolId = 'eraser' | number;
 
 export const usePaletteStore = defineStore('schemas/editor/palette', () => {
   const editorStore = useEditorStore();
@@ -12,8 +12,8 @@ export const usePaletteStore = defineStore('schemas/editor/palette', () => {
     set: (colors) => editorStore.schema.palette = colors,
   });
 
-  const activeToolId = ref<ActiveTool>(0);
-  const activateTool = (id: ActiveTool) => activeToolId.value = id;
+  const activeToolId = ref<ActiveToolId>(0);
+  const activateTool = (id: ActiveToolId) => activeToolId.value = id;
 
   const activeColor = computed(() => {
     return activeToolId.value === 'eraser' ? '' : palette.value[activeToolId.value] || '';
