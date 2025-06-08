@@ -18,6 +18,7 @@ import type { InferComponentProps, MaybeArray } from '@/types';
 import { newId } from '@/helpers';
 import { useNodeRef } from '@/modules/schemas/editor/composables';
 import { NodeRect } from '@/models';
+import { getClientRect } from '@/modules/schemas/editor/helpers';
 
 export interface IGroupLayoutEvent {
   clientRect: NodeRect;
@@ -102,7 +103,7 @@ export const GroupRenderer = defineComponent({
       let maxY = -Infinity;
 
       for (const node of nodes) {
-        const { height, width, x, y } = node.getClientRect();
+        const { height, width, x, y } = getClientRect(node);
 
         minX = Math.min(minX, x);
         minY = Math.min(minY, y);

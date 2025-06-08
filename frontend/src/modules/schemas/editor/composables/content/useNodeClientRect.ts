@@ -2,6 +2,7 @@ import { type MaybeRefOrGetter, onMounted, type ShallowRef, shallowRef } from 'v
 import Konva from 'konva';
 import { toRef, useDebounceFn } from '@vueuse/core';
 import { NodeRect } from '@/models';
+import { getClientRect } from '@/modules/schemas/editor/helpers';
 import { useNodeListener } from './useNodeListener';
 
 export function useNodeClientRect(nodeRef: MaybeRefOrGetter<Konva.Node | null>): ShallowRef<NodeRect> {
@@ -14,10 +15,10 @@ export function useNodeClientRect(nodeRef: MaybeRefOrGetter<Konva.Node | null>):
       return;
     }
 
-    const newRect = node.value!.getClientRect();
+    const newRect = getClientRect(node.value!);
 
     if (!clientRect.value.isEqual(newRect)) {
-      clientRect.value = new NodeRect(newRect);
+      clientRect.value = newRect;
     }
   }, 10);
 

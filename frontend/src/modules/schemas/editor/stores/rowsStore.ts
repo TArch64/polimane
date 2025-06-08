@@ -1,7 +1,7 @@
 import { type MaybeRefOrGetter, toValue } from 'vue';
-import { Collection, type ISchemaPattern, type ISchemaRow } from '@/models';
+import { Collection, type ISchemaBead, type ISchemaPattern, type ISchemaRow } from '@/models';
 import { newId } from '@/helpers';
-import { StoreFactory } from '@/stores';
+import { DynamicStore } from '@/stores';
 import { setObjectParent } from '../models';
 
 export interface INewSquareRowOptions {
@@ -10,7 +10,7 @@ export interface INewSquareRowOptions {
   toIndex: number;
 }
 
-const rowsStoreFactory = new StoreFactory({
+const rowsDynamicStore = new DynamicStore({
   buildPath(patternRef: MaybeRefOrGetter<ISchemaPattern>) {
     const { id } = toValue(patternRef);
     return `schemas/editor/patterns/${id}/rows` as const;
@@ -23,8 +23,9 @@ const rowsStoreFactory = new StoreFactory({
       onAdded: (parent, object) => setObjectParent(parent, object),
     });
 
-    const createBead = () => ({
+    const createBead = (): ISchemaBead => ({
       id: newId(),
+      color: '',
     });
 
     const createRow = (size: number): ISchemaRow => ({
@@ -53,4 +54,4 @@ const rowsStoreFactory = new StoreFactory({
 export const {
   useStore: useRowsStore,
   disposeStores: disposeRowsStores,
-} = rowsStoreFactory.build();
+} = rowsDynamicStore.build();

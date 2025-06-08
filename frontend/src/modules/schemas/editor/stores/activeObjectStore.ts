@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import type { ISchemaObject } from '@/models';
-import { StoreFactory } from '@/stores';
+import { DynamicStore } from '@/stores';
 import { getObjectPath } from '../models';
 
 export const enum ActiveObjectTrigger {
@@ -8,7 +8,7 @@ export const enum ActiveObjectTrigger {
   CANVAS = 'canvas',
 }
 
-const activeObjectStoreFactory = new StoreFactory({
+const activeObjectStoreFactory = new DynamicStore({
   buildPath(type: 'hover' | 'focus') {
     return `schemas/editor/object/${type}` as const;
   },

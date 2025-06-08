@@ -17,6 +17,7 @@ import type { Slot } from 'vue';
 import Konva from 'konva';
 import { useNodeRef } from '@/modules/schemas/editor/composables';
 import type { INodeRect } from '@/models';
+import { getClientRect } from '@/modules/schemas/editor/helpers';
 import type { IGroupLayoutEvent } from '../GroupRenderer';
 import CanvasStack from './CanvasStack.vue';
 import type { StackAlignment } from './StackAlignment';
@@ -46,7 +47,7 @@ function getAlignValue(parent: Konva.Group, childRect: INodeRect): number {
     return 0;
   }
 
-  const freeSpace = parent.getClientRect().height - childRect.height;
+  const freeSpace = getClientRect(parent).height - childRect.height;
 
   if (props.align === 'end') {
     return freeSpace;
@@ -56,7 +57,7 @@ function getAlignValue(parent: Konva.Group, childRect: INodeRect): number {
 }
 
 const update: StackUpdateFn<'x'> = (payload) => {
-  const childRect = payload.child.getClientRect();
+  const childRect = getClientRect(payload.child);
 
   return {
     next: childRect.width + props.gap,

@@ -1,9 +1,10 @@
 import { type MaybeRefOrGetter, toValue } from 'vue';
-import { Collection, type ISchemaRow } from '@/models';
-import { StoreFactory } from '@/stores';
+import { Collection, type ISchemaBead, type ISchemaRow } from '@/models';
+import { DynamicStore } from '@/stores';
 import { setObjectParent } from '../models';
+import { usePaletteStore } from './paletteStore';
 
-const beadsStoreFactory = new StoreFactory({
+const beadsDynamicStore = new DynamicStore({
   buildPath(rowRef: MaybeRefOrGetter<ISchemaRow>) {
     const { id } = toValue(rowRef);
     return `schemas/editor/rows/${id}/beads`;
@@ -11,16 +12,21 @@ const beadsStoreFactory = new StoreFactory({
 
   setup(rowRef: MaybeRefOrGetter<ISchemaRow>) {
     const row = toValue(rowRef);
+    const paletteStore = usePaletteStore();
 
     const beads = Collection.fromParent(row, {
       onAdded: (parent, object) => setObjectParent(parent, object),
     });
 
-    return { beads };
+    function paint(bead: ISchemaBead): void {
+      bead.color = paletteStore.activeColor;
+    }
+
+    return { beads, paint };
   },
 });
 
 export const {
   useStore: useBeadsStore,
   disposeStores: disposeBeadsStores,
-} = beadsStoreFactory.build();
+} = beadsDynamicStore.build();

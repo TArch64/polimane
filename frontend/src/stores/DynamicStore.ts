@@ -3,16 +3,16 @@ import type { SafeAny } from '@/types';
 import { destroyStore, fetchMapValue } from '@/helpers';
 import type { InferStore } from './InferStore';
 
-export interface IStoreFactoryOptions<A extends SafeAny[] = SafeAny[]> {
+export interface IDynamicStoreOptions<A extends SafeAny[] = SafeAny[]> {
   $args?: A;
   buildPath: (...value: A) => string;
   setup: (...value: A) => SafeAny;
 }
 
-type InferStoreArgs<O extends IStoreFactoryOptions> = Exclude<O['$args'], undefined>;
-type InferStoreFromOptions<O extends IStoreFactoryOptions> = InferStore<ReturnType<O['buildPath']>, O['setup']>;
+type InferStoreArgs<O extends IDynamicStoreOptions> = Exclude<O['$args'], undefined>;
+type InferStoreFromOptions<O extends IDynamicStoreOptions> = InferStore<ReturnType<O['buildPath']>, O['setup']>;
 
-export class StoreFactory<O extends IStoreFactoryOptions> {
+export class DynamicStore<O extends IDynamicStoreOptions> {
   private stores = new Map<string, InferStoreFromOptions<O>>();
   readonly $storeType!: InferStoreFromOptions<O>;
 

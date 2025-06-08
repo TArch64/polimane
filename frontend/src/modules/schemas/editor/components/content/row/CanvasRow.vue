@@ -2,10 +2,11 @@
   <GroupRenderer ref="rootRef">
     <KonvaRect :config="backgroundConfig" />
 
-    <CanvasStackH ref="contentRef" :gap="4">
+    <CanvasStackH ref="contentRef" :gap="1">
       <CanvasBead
         v-for="bead of row.content"
         :key="bead.id"
+        :row
         :bead
       />
     </CanvasStackH>

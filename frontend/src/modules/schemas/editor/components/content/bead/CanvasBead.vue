@@ -1,21 +1,34 @@
 <template>
-  <KonvaRect ref="rootRef" :config />
+  <KonvaRect
+    :config
+    ref="rootRef"
+    @click="beadsStore.paint(bead)"
+  />
 </template>
 
 <script setup lang="ts">
 import Konva from 'konva';
-import type { ISchemaBead } from '@/models';
-import { useNodeCursor, useNodeRef } from '@/modules/schemas/editor/composables';
+import { computed } from 'vue';
+import type { ISchemaBead, ISchemaRow } from '@/models';
+import { useNodeConfigs, useNodeCursor, useNodeRef } from '@/modules/schemas/editor/composables';
+import { useBeadsStore } from '@/modules/schemas/editor/stores';
 
-defineProps<{
+const props = defineProps<{
+  row: ISchemaRow;
   bead: ISchemaBead;
 }>();
 
-const config: Partial<Konva.RectConfig> = {
-  width: 14,
-  height: 14,
-  fill: 'rgba(0, 0, 0, 0.05)',
-};
+const beadsStore = useBeadsStore(() => props.row);
+
+const config = useNodeConfigs<Konva.RectConfig>([
+  {
+    width: 14,
+    height: 14,
+  },
+  computed(() => ({
+    fill: props.bead.color || 'rgba(0, 0, 0, 0.05)',
+  })),
+]);
 
 const rootRef = useNodeRef<Konva.Rect>();
 useNodeCursor(rootRef, 'crosshair');

@@ -38,7 +38,7 @@ const rowsStore = useRowsStore(() => props.pattern);
 
 const form = reactive({
   rows: 1,
-  size: 1,
+  size: 5,
 });
 
 function save() {
