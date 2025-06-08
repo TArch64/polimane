@@ -9,7 +9,7 @@ export interface ICreateSchemaInput {
   name: string;
 }
 
-type CreateSchemaRequest = Omit<ISchema, 'id'>;
+type CreateSchemaRequest = Omit<ISchema, 'id' | 'palette'>;
 
 export const useSchemasStore = defineStore('schemas/list', () => {
   const httpClient = useHttpClient();
@@ -21,12 +21,17 @@ export const useSchemasStore = defineStore('schemas/list', () => {
 
   const hasSchemas = computed(() => !!schemas.data.length);
 
-  async function createSchema(input: ICreateSchemaInput): Promise<SchemaListItem> {
+  function createSchema(input: ICreateSchemaInput): Promise<SchemaListItem> {
     return httpClient.post<SchemaListItem, CreateSchemaRequest>('/schemas', {
       ...input,
       content: [],
     });
   }
 
-  return { schemas, hasSchemas, createSchema };
+  async function deleteSchema(deletingSchema: ISchema): Promise<void> {
+    await httpClient.delete(['/schemas', deletingSchema.id]);
+    schemas.data = schemas.data.filter((schema) => schema.id !== deletingSchema.id);
+  }
+
+  return { schemas, hasSchemas, createSchema, deleteSchema };
 });
