@@ -5,3 +5,4 @@ export type * from './MaybePromise';
 export type * from './WrapMaybeRef';
 export type * from './SafeAny';
 export type * from './MaybeArray';
+export type * from './MarkOptional';

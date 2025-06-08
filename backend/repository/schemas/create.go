@@ -10,17 +10,26 @@ import (
 type CreateOptions struct {
 	User    *model.User
 	Name    string
+	Palette []string
 	Content model.SchemaContent
 }
 
 func Create(ctx context.Context, options *CreateOptions) (*model.Schema, error) {
+	if len(options.Palette) == 0 {
+		options.Palette = make([]string, 9)
+	}
+
+	if options.Content == nil {
+		options.Content = make(model.SchemaContent, 0)
+	}
+
 	schema := &model.Schema{
 		Base: &model.Base{
 			ID: options.User.ID,
 			SK: model.RandomID(model.SKSchema).Key(),
 		},
 		Name:    options.Name,
-		Palette: make([]string, 10),
+		Palette: options.Palette,
 		Content: options.Content,
 	}
 

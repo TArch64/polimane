@@ -11,4 +11,5 @@ func Group(group fiber.Router) {
 	group.Get("", apiById)
 	group.Delete("", apiDelete)
 	group.Patch("", apiUpdate)
+	group.Post("copy", apiCopy)
 }

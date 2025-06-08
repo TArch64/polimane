@@ -24,3 +24,4 @@ export const TrashIcon = makeIcon(() => import('~icons/eva/trash-outline'));
 export const PlusIcon = makeIcon(() => import('~icons/eva/plus-outline'));
 export const EditIcon = makeIcon(() => import('~icons/eva/edit-outline'));
 export const MoreHorizontalIcon = makeIcon(() => import('~icons/eva/more-horizontal-outline'));
+export const CopyIcon = makeIcon(() => import('~icons/eva/copy-outline'));
