@@ -1,3 +1,5 @@
 .secret.tf
 .terraform
 .aws-credentials
+tmp/*
+!tmp/.keep

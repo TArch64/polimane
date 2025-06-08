@@ -6,6 +6,11 @@ terraform {
       source  = "hashicorp/aws"
       version = "6.0.0-beta3"
     }
+
+    null = {
+      source  = "hashicorp/null"
+      version = "3.2.4"
+    }
   }
 
   backend "s3" {
@@ -19,3 +24,5 @@ terraform {
 provider "aws" {
   shared_credentials_files = ["${path.module}/.aws-credentials"]
 }
+
+provider "null" {}

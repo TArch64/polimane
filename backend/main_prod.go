@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	api, err := app.New(app.Config{
+	api, err := app.New(&app.Config{
 		ApiConfig: func(config *fiber.Config) {
 			config.Prefork = true
 			config.DisableStartupMessage = true
