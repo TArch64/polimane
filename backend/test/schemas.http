@@ -1,11 +1,11 @@
 # @name list
-GET http://polimane.localhost/api/schemas
+GET {{ url }}/schemas
 Content-Type: application/json
 
 ###
 
 # @name create
-POST http://polimane.localhost/api/schemas
+POST {{ url }}/schemas
 Content-Type: application/json
 
 {
@@ -16,19 +16,19 @@ Content-Type: application/json
 ###
 
 # @name by-id
-GET http://polimane.localhost/api/schemas/{{ schema_id}}
+GET {{ url }}/schemas/{{ schema_id}}
 Content-Type: application/json
 
 ###
 
 # @name delete
-DELETE http://polimane.localhost/api/schemas/{{ schema_id}}
+DELETE {{ url }}/schemas/{{ schema_id}}
 Content-Type: application/json
 
 ###
 
 # @name update
-PATCH http://polimane.localhost/api/schemas/{{ schema_id}}
+PATCH {{ url }}/schemas/{{ schema_id}}
 Content-Type: application/json
 
 {
