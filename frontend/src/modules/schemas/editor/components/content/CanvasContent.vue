@@ -1,13 +1,11 @@
 <template>
-  <KonvaLayer>
-    <CanvasStackV ref="stackRef" :config="stackConfig" :gap="16">
-      <CanvasPattern
-        v-for="pattern of editorStore.schema.content"
-        :key="pattern.id"
-        :pattern
-      />
-    </CanvasStackV>
-  </KonvaLayer>
+  <CanvasStackV ref="stackRef" :config="stackConfig" :gap="16">
+    <CanvasPattern
+      v-for="pattern of editorStore.schema.content"
+      :key="pattern.id"
+      :pattern
+    />
+  </CanvasStackV>
 </template>
 
 <script setup lang="ts">
