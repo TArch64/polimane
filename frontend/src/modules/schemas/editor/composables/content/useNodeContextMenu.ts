@@ -1,19 +1,14 @@
-import {
-  computed,
-  type MaybeRefOrGetter,
-  nextTick,
-  onBeforeUnmount,
-  onMounted,
-  toValue,
-} from 'vue';
+import { type MaybeRefOrGetter, nextTick, onBeforeUnmount, onMounted, toValue } from 'vue';
 import Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
+import { toRef } from '@vueuse/core';
 import {
   ContextMenuPlugin,
   type IContextMenuAction,
   type MaybeContextMenuAction,
 } from '@/components/contextMenu';
 import { Point } from '@/models';
+import { useNodeStage } from './useNodeStage';
 
 export interface INodeContextMenuOptions {
   nodeRef: MaybeRefOrGetter<Konva.Node>;
@@ -24,8 +19,8 @@ export interface INodeContextMenuOptions {
 export function useNodeContextMenu(options: INodeContextMenuOptions): void {
   const plugin = ContextMenuPlugin.inject();
 
-  const node = computed(() => toValue(options.nodeRef));
-  const stage = computed(() => node.value?.getStage());
+  const node = toRef(options.nodeRef);
+  const stage = useNodeStage(options.nodeRef);
 
   function isClosestCurrentNode(target: Konva.Stage | Konva.Node): boolean {
     if (target._id === node.value._id) {

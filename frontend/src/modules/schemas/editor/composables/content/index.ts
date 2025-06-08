@@ -8,3 +8,4 @@ export * from './useCanvasZoom';
 export * from './useCanvasNavigation';
 export * from './useNodeContextMenu';
 export * from './useNodeFiller';
+export * from './useNodeCursor';

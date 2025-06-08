@@ -1,18 +1,11 @@
-import {
-  computed,
-  type MaybeRefOrGetter,
-  onBeforeUnmount,
-  type ShallowRef,
-  shallowRef,
-  toValue,
-  watch,
-} from 'vue';
+import { type MaybeRefOrGetter, onMounted, type ShallowRef, shallowRef } from 'vue';
 import Konva from 'konva';
-import { useDebounceFn } from '@vueuse/core';
+import { toRef, useDebounceFn } from '@vueuse/core';
 import { NodeRect } from '@/models';
+import { useNodeListener } from './useNodeListener';
 
 export function useNodeClientRect(nodeRef: MaybeRefOrGetter<Konva.Node | null>): ShallowRef<NodeRect> {
-  const node = computed(() => toValue(nodeRef));
+  const node = toRef(nodeRef);
   const clientRect = shallowRef(NodeRect.BLANK);
 
   const update = useDebounceFn(() => {
@@ -28,17 +21,8 @@ export function useNodeClientRect(nodeRef: MaybeRefOrGetter<Konva.Node | null>):
     }
   }, 10);
 
-  watch(node, (node, oldNode) => {
-    if (oldNode) oldNode.off('layout', update);
-
-    if (node) {
-      node.on('layout', update);
-    }
-
-    update();
-  }, { immediate: true });
-
-  onBeforeUnmount(() => node.value?.off('layout', update));
+  onMounted(update);
+  useNodeListener(nodeRef, 'layout', update);
 
   return clientRect;
 }

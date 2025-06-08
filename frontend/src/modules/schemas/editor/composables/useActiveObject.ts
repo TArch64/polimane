@@ -1,5 +1,5 @@
-import { computed, type MaybeRefOrGetter, reactive, type Ref, toValue } from 'vue';
-import { createEventHook, type EventHookOn, whenever } from '@vueuse/core';
+import { computed, type MaybeRefOrGetter, reactive, type Ref } from 'vue';
+import { createEventHook, type EventHookOn, toRef, whenever } from '@vueuse/core';
 import type { ISchemaObject } from '@/models';
 import {
   type ActiveObjectStore,
@@ -43,7 +43,7 @@ function useActiveObjectState(store: ActiveObjectStore, object: Ref<ISchemaObjec
 export function useActiveObject(objectRef: MaybeRefOrGetter<ISchemaObject>): IActiveObject {
   const hoverStore = useHoverObjectStore();
   const focusStore = useFocusObjectStore();
-  const object = computed(() => toValue(objectRef));
+  const object = toRef(objectRef);
 
   return {
     hover: useActiveObjectState(hoverStore, object),

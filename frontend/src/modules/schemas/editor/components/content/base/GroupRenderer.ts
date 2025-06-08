@@ -200,3 +200,9 @@ export const GroupRenderer = defineComponent({
     };
   },
 });
+
+declare module 'konva/lib/Node' {
+  export interface NodeEventMap {
+    layout: IGroupLayoutEvent;
+  }
+}

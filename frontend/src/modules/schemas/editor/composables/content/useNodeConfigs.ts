@@ -1,5 +1,6 @@
 import Konva from 'konva';
-import { computed, type MaybeRefOrGetter, type Ref, ref, toValue, watch } from 'vue';
+import { type MaybeRefOrGetter, type Ref, ref, watch } from 'vue';
+import { toRef } from '@vueuse/core';
 
 export type MaybeNodeConfig<C extends Konva.NodeConfig> = Partial<C> | null | undefined | boolean;
 
@@ -16,7 +17,7 @@ export function flattenNodeConfigs<C extends Konva.NodeConfig>(configs: MaybeNod
 }
 
 export function useNodeConfigs<C extends Konva.NodeConfig>(configRefs: MaybeRefOrGetter<MaybeNodeConfig<C>>[]): Ref<Partial<C>> {
-  const refs = configRefs.map((configRef) => computed(() => toValue(configRef)));
+  const refs = configRefs.map((r) => toRef(r));
   const flatten: Ref<Partial<C>> = ref({});
   watch(refs, (values) => flatten.value = flattenNodeConfigs(values), { immediate: true });
   return flatten;

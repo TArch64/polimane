@@ -1,4 +1,5 @@
-import { computed, type MaybeRefOrGetter, nextTick, toValue } from 'vue';
+import { type MaybeRefOrGetter, nextTick } from 'vue';
+import { toRef } from '@vueuse/core';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { ArrowDownwardIcon, ArrowUpwardIcon, EditIcon, TrashIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';
@@ -9,7 +10,7 @@ import { PatternAddModal, PatternRenameModal } from '../components/modals';
 import { usePatternsStore } from '../stores';
 
 export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<ISchemaPattern>): MaybeContextMenuAction[] {
-  const pattern = computed(() => toValue(patternRef));
+  const pattern = toRef(patternRef);
 
   const routeTransition = useRouteTransition();
   const patternsStore = usePatternsStore();

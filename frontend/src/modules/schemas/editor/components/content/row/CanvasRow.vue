@@ -1,5 +1,7 @@
 <template>
   <GroupRenderer ref="rootRef">
+    <KonvaRect :config="backgroundConfig" />
+
     <CanvasStackH ref="contentRef" :gap="4">
       <CanvasBead
         v-for="bead of row.content"
@@ -7,8 +9,6 @@
         :bead
       />
     </CanvasStackH>
-
-    <KonvaRect :config="backgroundConfig" />
   </GroupRenderer>
 </template>
 

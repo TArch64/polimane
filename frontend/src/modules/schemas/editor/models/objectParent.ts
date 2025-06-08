@@ -1,3 +1,4 @@
+import { computed, type ComputedRef, type MaybeRefOrGetter, toValue } from 'vue';
 import { type ISchemaObject, type ISchemaWithContent, isSchemaWithContent } from '@/models';
 
 const OBJECT_PARENT = Symbol('[[OBJECT_PARENT]]');
@@ -19,6 +20,10 @@ export function setObjectParent(parent: ISchemaObject, object: ISchemaObject): v
 
 export function getObjectParent<P extends ISchemaWithContent>(object: P['content'][number]): P | undefined {
   return Object.getOwnPropertyDescriptor(object, OBJECT_PARENT)?.value;
+}
+
+export function useObjectParent<P extends ISchemaWithContent>(objectRef: MaybeRefOrGetter<P['content'][number]>): ComputedRef<P> {
+  return computed(() => getObjectParent(toValue(objectRef))!);
 }
 
 export function getObjectPath(object: ISchemaObject): string[] {

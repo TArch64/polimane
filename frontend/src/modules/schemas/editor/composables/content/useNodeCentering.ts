@@ -1,6 +1,6 @@
 import Konva from 'konva';
-import { computed, type MaybeRefOrGetter, nextTick, ref, toValue, watch } from 'vue';
-import { toReactive } from '@vueuse/core';
+import { computed, type MaybeRefOrGetter, nextTick, ref, watch } from 'vue';
+import { toReactive, toRef } from '@vueuse/core';
 import { useNodeClientRect } from './useNodeClientRect';
 import { useNodeParent } from './useNodeParent';
 
@@ -13,9 +13,8 @@ export interface INodeCenteringOptions {
 export function useNodeCentering(nodeRef: MaybeRefOrGetter<Konva.Node | null>, options: INodeCenteringOptions = {}): Partial<Konva.NodeConfig> {
   const padding = computed(() => options.padding ?? { vertical: 0, horizontal: 0 });
 
-  const node = computed(() => toValue(nodeRef));
+  const node = toRef(nodeRef);
   const nodeRect = useNodeClientRect(node);
-
   const parentNode = useNodeParent(node);
 
   const config = ref<Partial<Konva.NodeConfig>>({});

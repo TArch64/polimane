@@ -21,6 +21,11 @@ declare global {
   }
 }
 
+declare module 'konva/lib/Node' {
+  export interface NodeEventMap extends GlobalEventHandlersEventMap {
+  }
+}
+
 declare module 'vue-konva' {
   import Konva from 'konva';
   import { KonvaEventObject } from 'konva/lib/Node';

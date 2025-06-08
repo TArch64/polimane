@@ -1,4 +1,5 @@
-import { computed, type MaybeRefOrGetter, nextTick, toValue } from 'vue';
+import { type MaybeRefOrGetter, nextTick } from 'vue';
+import { toRef } from '@vueuse/core';
 import type { ISchemaPattern, ISchemaRow } from '@/models';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { ArrowDownwardIcon, ArrowUpwardIcon, TrashIcon } from '@/components/icon';
@@ -7,12 +8,12 @@ import { useRouteTransition } from '@/composables';
 import { useModal } from '@/components/modal';
 import { getPatternAddRowModal } from '@/modules/schemas/editor/components/modals';
 import { useRowsStore } from '../stores';
-import { getObjectParent } from '../models';
+import { useObjectParent } from '../models';
 import { useRowTitle } from './useRowTitle';
 
 export function useRowContextMenuActions(rowRef: MaybeRefOrGetter<ISchemaRow>): MaybeContextMenuAction[] {
-  const row = computed(() => toValue(rowRef));
-  const pattern = computed(() => getObjectParent<ISchemaPattern>(row.value)!);
+  const row = toRef(rowRef);
+  const pattern = useObjectParent<ISchemaPattern>(rowRef);
 
   const rowsStore = useRowsStore(pattern);
   const routeTransition = useRouteTransition();
