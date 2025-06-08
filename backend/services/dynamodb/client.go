@@ -2,9 +2,11 @@ package awsdynamodb
 
 import (
 	"context"
+	"errors"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/guregu/dynamo/v2"
 
 	"polimane/backend/services/dynamodb/migrations"
@@ -24,6 +26,10 @@ func newConfig(ctx context.Context) (*aws.Config, error) {
 
 func isTableLocked(ctx context.Context) (bool, error) {
 	locked, err := awsssm.GetParameter(ctx, TableLockParameter)
+	var notFoundErr *types.ParameterNotFound
+	if errors.As(err, &notFoundErr) {
+		return false, nil
+	}
 	if err != nil {
 		return false, err
 	}
