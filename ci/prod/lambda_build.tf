@@ -4,7 +4,7 @@ locals {
   lambda_zip = "${local.lambda_dist_dir}/lambda.zip"
 
   lambda_sources_hash = sha1(join("", [
-    for f in fileset(local.lambda_sources_dir, "*") : filesha1("${local.lambda_sources_dir}/${f}")
+    for f in fileset(local.lambda_sources_dir, "**") : filesha1("${local.lambda_sources_dir}/${f}")
   ]))
 }
 

@@ -11,12 +11,16 @@ type Version struct {
 	Version int    `dynamo:"Version"`
 }
 
-func NewVersion() *Version {
+func IntVersion(version int) *Version {
 	return &Version{
 		PK:      PKVersion,
 		SK:      SKVersion,
-		Version: -1,
+		Version: version,
 	}
+}
+
+func NewVersion() *Version {
+	return IntVersion(-1)
 }
 
 func (v *Version) NextVersion() int {

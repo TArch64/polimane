@@ -33,7 +33,7 @@ func getTableVersion(ctx *migrationCtx) (*model.Version, error) {
 		return model.NewVersion(), nil
 	}
 	if errors.Is(err, dynamo.ErrNotFound) {
-		return model.NewVersion(), nil
+		return model.IntVersion(0), nil
 	}
 	if err != nil {
 		return nil, err
