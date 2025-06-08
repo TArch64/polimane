@@ -5,8 +5,5 @@ import {
 
 resource "aws_s3_bucket" "bucket" {
   bucket = "polimane-prod"
-
-  tags = {
-    app = "polimane"
-  }
+  tags = local.aws_common_tags
 }

@@ -1,5 +1,5 @@
-.secret.tf
 .terraform
 .aws-credentials
+.env-lambda.yaml
 tmp/*
 !tmp/.keep

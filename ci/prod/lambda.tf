@@ -1,17 +1,25 @@
 locals {
-  lambda_sources_dir = abspath("${path.root}/../../backend")
-  lambda_bin = abspath("${path.root}/tmp/lambda")
+  lambda_name = "polimane-prod"
 }
 
-resource "null_resource" "lambda_build" {
-  triggers = {
-    sources = sha1(join("", [
-      for f in fileset(local.lambda_sources_dir, "*") : filesha1("${local.lambda_sources_dir}/${f}")
-    ]))
+resource "aws_lambda_function" "lambda" {
+  depends_on = [null_resource.lambda_build]
+
+  filename         = local.lambda_zip
+  function_name    = local.lambda_name
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "lambda"
+  runtime          = "provided.al2023"
+  timeout          = 30
+  memory_size      = 128
+  source_code_hash = local.lambda_sources_hash
+  tags             = local.aws_common_tags
+
+  environment {
+    variables = sensitive(yamldecode(file("${path.module}/.env-lambda.yaml")))
   }
 
-  provisioner "local-exec" {
-    command     = "make out_file=\"${local.lambda_bin}\" prod"
-    working_dir = local.lambda_sources_dir
+  lifecycle {
+    create_before_destroy = true
   }
 }

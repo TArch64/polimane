@@ -25,4 +25,10 @@ provider "aws" {
   shared_credentials_files = ["${path.module}/.aws-credentials"]
 }
 
+locals {
+  aws_common_tags = {
+    app = "polimane"
+  }
+}
+
 provider "null" {}
