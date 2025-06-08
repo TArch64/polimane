@@ -51,6 +51,10 @@ declare module 'vue-konva' {
   interface KonvaComponentEmits<C> {
     mouseover: (event: KonvaEvent<C, MouseEvent>) => void;
     mouseout: (event: KonvaEvent<C, MouseEvent>) => void;
+    mousedown: (event: KonvaEvent<C, MouseEvent>) => void;
+    mouseup: (event: KonvaEvent<C, MouseEvent>) => void;
+    mousemove: (event: KonvaEvent<C, MouseEvent>) => void;
+    contextmenu: (event: KonvaEvent<C, MouseEvent>) => void;
     click: (event: KonvaEvent<C, MouseEvent>) => void;
     wheel: (event: KonvaEvent<C, WheelEvent>) => void;
   }

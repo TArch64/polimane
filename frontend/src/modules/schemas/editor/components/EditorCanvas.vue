@@ -9,8 +9,8 @@
       :config
       :ref="onStageMounted"
       @wheel="onWheel"
-      @mousedown="paletteStore.setPainting(true)"
-      @mouseup="paletteStore.setPainting(false)"
+      @mousedown="togglePainting"
+      @mouseup="togglePainting"
       v-if="isReady"
     >
       <CanvasContent />
@@ -56,6 +56,11 @@ function onWheel(event: KonvaEventObject<WheelEvent, Konva.Stage>): void {
   event.evt.preventDefault();
   event.evt.ctrlKey ? canvasZoom.zoom(event) : canvasNavigation.navigate(event);
   event.currentTarget.batchDraw();
+}
+
+function togglePainting(event: Konva.KonvaEventObject<MouseEvent>) {
+  if (event.evt.buttons > 1) return;
+  paletteStore.setPainting(event.evt.buttons === 1);
 }
 </script>
 
