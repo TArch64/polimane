@@ -3,6 +3,7 @@
     :config
     ref="rootRef"
     @click="beadsStore.paint(bead)"
+    @mousemove="onMouseMove"
   />
 </template>
 
@@ -11,13 +12,14 @@ import Konva from 'konva';
 import { computed } from 'vue';
 import type { ISchemaBead, ISchemaRow } from '@/models';
 import { useNodeConfigs, useNodeCursor, useNodeRef } from '@/modules/schemas/editor/composables';
-import { useBeadsStore } from '@/modules/schemas/editor/stores';
+import { useBeadsStore, usePaletteStore } from '@/modules/schemas/editor/stores';
 
 const props = defineProps<{
   row: ISchemaRow;
   bead: ISchemaBead;
 }>();
 
+const paletteStore = usePaletteStore();
 const beadsStore = useBeadsStore(() => props.row);
 
 const config = useNodeConfigs<Konva.RectConfig>([
@@ -32,4 +34,10 @@ const config = useNodeConfigs<Konva.RectConfig>([
 
 const rootRef = useNodeRef<Konva.Rect>();
 useNodeCursor(rootRef, 'crosshair');
+
+function onMouseMove() {
+  if (paletteStore.isPainting) {
+    beadsStore.paint(props.bead);
+  }
+}
 </script>

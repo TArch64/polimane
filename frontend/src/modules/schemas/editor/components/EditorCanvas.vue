@@ -9,6 +9,8 @@
       :config
       :ref="onStageMounted"
       @wheel="onWheel"
+      @mousedown="paletteStore.setPainting(true)"
+      @mouseup="paletteStore.setPainting(false)"
       v-if="isReady"
     >
       <CanvasContent />
@@ -23,10 +25,11 @@ import Konva from 'konva';
 import type { KonvaStage } from 'vue-konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import { useCanvasNavigation, useCanvasZoom } from '../composables';
-import { useFocusObjectStore } from '../stores';
+import { useFocusObjectStore, usePaletteStore } from '../stores';
 import { CanvasContent } from './content';
 
 const focusObjectStore = useFocusObjectStore();
+const paletteStore = usePaletteStore();
 
 const wrapperRef = ref<HTMLElement | null>(null);
 const wrapperSize = useElementSize(wrapperRef);
