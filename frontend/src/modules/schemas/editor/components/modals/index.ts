@@ -12,3 +12,4 @@ export function getPatternAddRowModal(pattern: ISchemaPattern) {
 
 export { default as PatternAddModal } from './PatternAddModal.vue';
 export { default as PatternRenameModal } from './PatternRenameModal.vue';
+export { default as SchemaRenameModal } from './SchemaRenameModal.vue';

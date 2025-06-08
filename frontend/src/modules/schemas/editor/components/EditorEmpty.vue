@@ -1,10 +1,5 @@
 <template>
   <main class="editor-empty">
-    <Button class="editor-empty__back" :to="{ name: 'home' }">
-      <ArrowBackIcon />
-      Редактор
-    </Button>
-
     <p>
       Додайте перший паттерн до вашої схеми
     </p>
@@ -18,7 +13,6 @@
 <script setup lang="ts">
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
-import { ArrowBackIcon } from '@/components/icon';
 import { PatternAddModal } from './modals';
 
 const addPatternModal = useModal(PatternAddModal);
@@ -32,13 +26,6 @@ const addPatternModal = useModal(PatternAddModal);
     justify-content: center;
     flex-direction: column;
     gap: 12px;
-  }
-
-  .editor-empty__back {
-    position: fixed;
-    top: 4px;
-    left: 8px;
-    gap: 8px;
   }
 }
 </style>

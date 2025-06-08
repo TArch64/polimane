@@ -6,7 +6,7 @@
     @mouseover="activeObject.hover.activate(ActiveObjectTrigger.CANVAS)"
     @mouseout="activeObject.hover.deactivate"
   >
-    <KonvaRect ref="borderRef" :config="borderConfig" />
+    <KonvaRect :config="borderConfig" />
     <CanvasPatternLabel :pattern />
 
     <GroupRenderer ref="contentGroupRef" :config="contentGroupConfig">
@@ -18,7 +18,6 @@
 
 <script setup lang="ts">
 import Konva from 'konva';
-import { computed } from 'vue';
 import type { ISchemaPattern } from '@/models';
 import {
   useActiveObject,
@@ -27,7 +26,6 @@ import {
   useNodeContextMenu,
   useNodeFiller,
   useNodeRef,
-  useNodeTween,
   usePatternContextMenuActions,
 } from '@/modules/schemas/editor/composables';
 import { useModal } from '@/components/modal';
@@ -95,20 +93,6 @@ const borderConfig = useNodeConfigs<Konva.RectConfig>([
     },
   }),
 ]);
-
-const borderRef = useNodeRef<Konva.Rect | null>();
-
-const borderAnimatedConfig = computed((): Partial<Konva.RectConfig> => {
-  if (activeObject.focus.isActive) return { stroke: 'rgba(0, 0, 0, 0.7)' };
-  if (activeObject.hover.isActive) return { stroke: 'rgba(0, 0, 0, 0.5)' };
-  return { stroke: borderConfig.value.stroke! };
-});
-
-useNodeTween(borderRef, borderAnimatedConfig, (config) => ({
-  ...config,
-  duration: 0.15,
-  easing: Konva.Easings.EaseOut,
-}));
 
 activeObject.focus.onExactActive((trigger) => {
   if (trigger !== ActiveObjectTrigger.CANVAS) {

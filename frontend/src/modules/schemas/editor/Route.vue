@@ -1,9 +1,10 @@
 <template>
-  <div class="editor__fill editor__row" v-if="patternsStore.hasPatterns">
-    <EditorSidebar class="editor__sidebar" />
+  <EditorHeader />
+
+  <template v-if="patternsStore.hasPatterns">
     <EditorCanvas class="editor__fill" />
     <EditorPalette />
-  </div>
+  </template>
 
   <EditorEmpty class="editor__fill" v-else />
 </template>
@@ -20,7 +21,7 @@ import {
   usePaletteStore,
   usePatternsStore,
 } from './stores';
-import { EditorCanvas, EditorEmpty, EditorPalette, EditorSidebar } from './components';
+import { EditorCanvas, EditorEmpty, EditorHeader, EditorPalette } from './components';
 
 defineProps<{
   schemaId: string;
@@ -59,15 +60,6 @@ useEventListener(window, 'beforeunload', (event) => {
   :global(.app--schema-editor) {
     background-color: var(--color-background-2);
     overflow: hidden;
-  }
-
-  .editor__row {
-    display: flex;
-  }
-
-  .editor__sidebar {
-    width: 270px;
-    flex-shrink: 0;
   }
 
   .editor__fill {

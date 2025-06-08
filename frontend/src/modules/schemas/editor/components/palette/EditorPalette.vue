@@ -43,13 +43,14 @@ useEventListener('keydown', (event) => {
 <style scoped>
 @layer page {
   .palette {
-    position: absolute;
+    position: fixed;
     top: 8px;
     right: 8px;
     padding: 8px;
     display: flex;
     align-items: flex-start;
     gap: 8px;
+    z-index: 10;
     --color-button-size: 20px;
   }
 }
