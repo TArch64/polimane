@@ -11,6 +11,7 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/api/ping"
 	"polimane/backend/api/schemas"
 	"polimane/backend/api/users"
 	"polimane/backend/env"
@@ -48,6 +49,7 @@ func New(configFns ...Config) *fiber.App {
 
 	group := app.Group("/api")
 	auth.Group(group)
+	ping.Group(group)
 
 	group.Use(auth.NewMiddleware())
 	users.Group(group)
