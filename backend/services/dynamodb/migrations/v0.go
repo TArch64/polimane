@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
-func v0(ctx *migrationCtx) error {
+func v0(ctx *Ctx) error {
 	_, err := ctx.Api.CreateTable(ctx, &dynamodb.CreateTableInput{
 		TableName:   &ctx.TableName,
 		BillingMode: types.BillingModePayPerRequest,

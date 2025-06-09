@@ -2,16 +2,14 @@ package awsdynamodb
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/guregu/dynamo/v2"
 
+	dynamodbconfig "polimane/backend/services/dynamodb/config"
 	"polimane/backend/services/dynamodb/migrations"
-	awsssm "polimane/backend/services/ssm"
 )
 
 var table *dynamo.Table
@@ -25,54 +23,26 @@ func newConfig(ctx context.Context) (*aws.Config, error) {
 	return &cfg, err
 }
 
-func isTableLocked(ctx context.Context) (bool, error) {
-	locked, err := awsssm.GetParameter(ctx, TableLockParameter)
-	var notFoundErr *types.ParameterNotFound
-	if errors.As(err, &notFoundErr) {
-		return false, nil
-	}
-	if err != nil {
-		return false, err
-	}
-
-	return locked == "true", nil
-}
-
-func setTableLock(ctx context.Context, isLocked bool) {
-	var value string
-	if isLocked {
-		value = "true"
-	} else {
-		value = "false"
-	}
-
-	fmt.Printf("[DynamoDB] Setting table lock to %s\n", value)
-	_ = awsssm.PutParameter(ctx, TableLockParameter, value)
-}
-
 func Init(ctx context.Context) error {
 	cfg, err := newConfig(ctx)
 	if err != nil {
 		return err
 	}
 
-	db := dynamo.New(*cfg, configureClient)
+	db := dynamo.New(*cfg, dynamodbconfig.ConfigureClient)
+	table_ := db.Table(dynamodbconfig.TableName)
+	table = &table_
 
-	isLocked, err := isTableLocked(ctx)
-	if err != nil {
+	migrationCtx := &migrations.Ctx{
+		Context:   ctx,
+		Api:       db.Client().(*dynamodb.Client),
+		Table:     table,
+		TableName: table.Name(),
+	}
+
+	if err = migrations.Migrate(migrationCtx); err != nil {
 		return err
 	}
 
-	if !isLocked {
-		setTableLock(ctx, true)
-		err = migrations.Migrate(ctx, db, TableName)
-		setTableLock(ctx, false)
-		if err != nil {
-			return err
-		}
-	}
-
-	table_ := db.Table(TableName)
-	table = &table_
 	return nil
 }

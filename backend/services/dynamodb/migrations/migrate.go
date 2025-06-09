@@ -1,55 +1,26 @@
 package migrations
 
-import (
-	"context"
-	"errors"
-	"log"
+import "log"
 
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-
-	"polimane/backend/model"
-
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
-	"github.com/guregu/dynamo/v2"
-)
-
-type Migration func(ctx *migrationCtx) error
+type Migration func(ctx *Ctx) error
 
 var migrations = []Migration{
 	v0,
 	v1,
 }
 
-func getTableVersion(ctx *migrationCtx) (*model.Version, error) {
-	var version model.Version
-
-	err := ctx.Table.
-		Get("PK", model.PKVersion).
-		Range("SK", dynamo.Equal, model.SKVersion).
-		One(ctx, &version)
-
-	var notFoundErr *types.ResourceNotFoundException
-	if errors.As(err, &notFoundErr) {
-		return model.NewVersion(), nil
-	}
-	if errors.Is(err, dynamo.ErrNotFound) {
-		return model.IntVersion(0), nil
-	}
+func Migrate(ctx *Ctx) error {
+	isLocked, err := isTableLocked(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &version, nil
-}
-
-func Migrate(ctx_ context.Context, db *dynamo.DB, tableName string) error {
-	table := db.Table(tableName)
-	ctx := &migrationCtx{
-		Context:   ctx_,
-		Api:       db.Client().(*dynamodb.Client),
-		Table:     &table,
-		TableName: table.Name(),
+	if isLocked {
+		return nil
 	}
+
+	setTableLock(ctx, true)
+	defer setTableLock(ctx, false)
 
 	version, err := getTableVersion(ctx)
 	if err != nil {
@@ -67,19 +38,12 @@ func Migrate(ctx_ context.Context, db *dynamo.DB, tableName string) error {
 
 	for i := startVersion; i < len(migrations); i++ {
 		log.Printf("[DynamoDB] Running migration %d\n", i)
-		err = migrations[i](ctx)
-		if err != nil {
+		if err = migrations[i](ctx); err != nil {
 			return err
 		}
 
 		log.Printf("[DynamoDB] Migration %d complete\n", i)
-
-		version.Version = i
-		err = ctx.Table.Put(version).Run(ctx)
-
-		if err != nil {
-			return err
-		}
+		_ = setTableVersion(ctx, version, i)
 	}
 
 	return nil

@@ -7,7 +7,7 @@ import (
 	"github.com/guregu/dynamo/v2"
 )
 
-type migrationCtx struct {
+type Ctx struct {
 	context.Context
 	Table     *dynamo.Table
 	Api       *dynamodb.Client

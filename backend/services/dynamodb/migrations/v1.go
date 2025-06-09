@@ -6,7 +6,7 @@ import (
 	"polimane/backend/services/argon"
 )
 
-func v1(ctx *migrationCtx) error {
+func v1(ctx *Ctx) error {
 	config := env.Env().DefaultUser
 
 	passwordHash, err := argon.Hash(config.Password)
