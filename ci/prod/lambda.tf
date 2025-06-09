@@ -29,8 +29,3 @@ resource "aws_cloudwatch_log_group" "lambda_logs" {
   retention_in_days = 1
   tags              = local.aws_common_tags
 }
-
-resource "aws_lambda_function_url" "lambda_url" {
-  authorization_type = "NONE"
-  function_name      = aws_lambda_function.lambda.function_name
-}
