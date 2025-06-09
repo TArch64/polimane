@@ -1,0 +1,4 @@
+# @name ping
+GET {{ url }}/ping
+Content-Type: application/json
+
