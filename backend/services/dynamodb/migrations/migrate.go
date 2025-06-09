@@ -10,6 +10,16 @@ var migrations = []Migration{
 }
 
 func Migrate(ctx *Ctx) error {
+	version, err := getTableVersion(ctx)
+	if err != nil {
+		return err
+	}
+
+	if version.IsLatest(len(migrations)) {
+		log.Printf("[DynamoDB] Table is already at version %d\n", version.Version)
+		return nil
+	}
+
 	isLocked, err := isTableLocked(ctx)
 	if err != nil {
 		return err
@@ -21,16 +31,6 @@ func Migrate(ctx *Ctx) error {
 
 	setTableLock(ctx, true)
 	defer setTableLock(ctx, false)
-
-	version, err := getTableVersion(ctx)
-	if err != nil {
-		return err
-	}
-
-	if version.IsLatest(len(migrations)) {
-		log.Printf("[DynamoDB] Table is already at version %d\n", version.Version)
-		return nil
-	}
 
 	log.Printf("[DynamoDB] Current version: %d\n", version.Version)
 
