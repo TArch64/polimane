@@ -3,13 +3,12 @@ package app
 import (
 	"context"
 
-	awsssm "polimane/backend/services/ssm"
-
 	"github.com/gofiber/fiber/v2"
 
 	"polimane/backend/api"
 	"polimane/backend/env"
 	awsdynamodb "polimane/backend/services/dynamodb"
+	awsssm "polimane/backend/services/ssm"
 )
 
 type Config struct {

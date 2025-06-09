@@ -5,35 +5,58 @@ package main
 import (
 	"context"
 	"log"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	fiberadapter "github.com/awslabs/aws-lambda-go-api-proxy/fiber"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/adaptor"
 
 	"polimane/backend/app"
 )
 
 func main() {
-	var fiberLambda *fiberadapter.FiberLambda
+	api, err := app.New(&app.Config{
+		ApiConfig: func(config *fiber.Config) {
+			config.DisableStartupMessage = true
+		},
+	})
 
-	lambda.Start(func(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-		if fiberLambda != nil {
-			return fiberLambda.ProxyWithContext(ctx, request)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	handler := adaptor.FiberApp(api)
+
+	lambda.Start(func(ctx context.Context, req events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) {
+		url := req.RawPath
+		if req.RawQueryString != "" {
+			url += "?" + req.RawQueryString
 		}
 
-		api, err := app.New(&app.Config{
-			ApiConfig: func(config *fiber.Config) {
-				config.Prefork = true
-				config.DisableStartupMessage = true
-			},
-		})
+		httpReq, _ := http.NewRequestWithContext(ctx, req.RequestContext.HTTP.Method, url, strings.NewReader(req.Body))
 
-		if err != nil {
-			log.Panic(err)
+		for key, value := range req.Headers {
+			httpReq.Header.Set(key, value)
+		}
+		httpReq.RequestURI = url
+
+		recorder := httptest.NewRecorder()
+		handler.ServeHTTP(recorder, httpReq)
+
+		headers := make(map[string]string)
+		for key, values := range recorder.Header() {
+			if len(values) > 0 {
+				headers[key] = values[0]
+			}
 		}
 
-		fiberLambda = fiberadapter.New(api)
-		return fiberLambda.ProxyWithContext(ctx, request)
+		return events.LambdaFunctionURLResponse{
+			StatusCode: recorder.Code,
+			Headers:    headers,
+			Body:       recorder.Body.String(),
+		}, nil
 	})
 }

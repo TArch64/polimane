@@ -1,6 +1,8 @@
 package api
 
 import (
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
@@ -50,6 +52,14 @@ func New(configFns ...Config) *fiber.App {
 	group.Use(auth.NewMiddleware())
 	users.Group(group)
 	schemas.Group(group)
+
+	app.Use(func(c *fiber.Ctx) error {
+		log.Println("Unhandled route:", c.Path())
+
+		return c.
+			Status(404).
+			JSON(fiber.Map{"error": "Not Found"})
+	})
 
 	return app
 }
