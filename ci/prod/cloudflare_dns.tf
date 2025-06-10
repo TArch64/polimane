@@ -1,6 +1,7 @@
 locals {
-  cloudflare_zone_id = "a42f20d4ce852205c537bb0bb8eda260"
-  api_domain         = "api.${local.domain}"
+  cloudflare_zone_id    = "a42f20d4ce852205c537bb0bb8eda260"
+  cloudflare_account_id = "b9b2371ca5c6bb7fe6d42ed2a37b04ad"
+  api_domain            = "api.${local.domain}"
 }
 
 resource "cloudflare_dns_record" "api" {
@@ -38,5 +39,11 @@ resource "aws_acm_certificate" "cloudflare" {
   tags             = local.aws_common_tags
 }
 
-
-# https://medium.com/@amirhosseinsoltani7/connect-cloudflare-to-aws-api-gateway-c64f0713b5e9
+resource "cloudflare_dns_record" "webapp" {
+  name    = local.domain
+  type    = "CNAME"
+  proxied = true
+  ttl     = 1
+  zone_id = local.cloudflare_zone_id
+  content = "${cloudflare_pages_project.webapp.name}.pages.dev"
+}
