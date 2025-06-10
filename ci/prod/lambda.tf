@@ -3,9 +3,8 @@ locals {
 }
 
 resource "aws_lambda_function" "lambda" {
-  depends_on = [null_resource.lambda_build]
-
-  filename         = local.lambda_zip
+  depends_on = [data.external.lambda_build]
+  filename = local.lambda_build_zip
   function_name    = local.lambda_name
   role             = aws_iam_role.lambda_role.arn
   handler          = "lambda"
