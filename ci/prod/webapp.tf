@@ -15,17 +15,16 @@ resource "cloudflare_pages_domain" "webapp" {
   project_name = cloudflare_pages_project.webapp.name
 }
 
-data "external" "webapp_deploy" {
-  depends_on = [data.external.webapp_build]
-  program = ["bash", "${path.module}/deploy/webapp.sh"]
+resource "null_resource" "webapp_deploy" {
+  triggers = { sources_hash = local.webapp_sources_hash }
+  depends_on = [null_resource.webapp_build]
 
-  query = {
-    # deploy_id is used to track changes in the webapp source code
-    deploy_id = local.webapp_sources_hash
+  provisioner "local-exec" {
+    command = "npx -y wrangler pages deploy ${local.webapp_build_dir} --project-name ${cloudflare_pages_project.webapp.name}"
 
-    cloudflare_account_id = local.cloudflare_account_id
-    cloudflare_api_token  = local.cloudflare_api_token
-    build_dist            = local.webapp_build_dir
-    project_name          = cloudflare_pages_project.webapp.name
+    environment = {
+      CLOUDFLARE_ACCOUNT_ID = local.cloudflare_account_id
+      CLOUDFLARE_API_TOKEN  = local.cloudflare_api_token
+    }
   }
 }

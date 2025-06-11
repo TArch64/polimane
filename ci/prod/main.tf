@@ -21,11 +21,6 @@ terraform {
       source  = "hashicorp/null"
       version = "3.2.4"
     }
-
-    external = {
-      source  = "hashicorp/external"
-      version = "2.3.5"
-    }
   }
 
   backend "s3" {
@@ -53,5 +48,5 @@ locals {
   aws_common_tags = { app = "polimane" }
 }
 
-provider "external" {}
+provider "null" {}
 provider "tls" {}
