@@ -9,6 +9,8 @@ resource "aws_apigatewayv2_api" "lambda_api" {
     allow_origins = ["*"]
     allow_methods = ["*"]
     allow_headers = ["*"]
+    allow_credentials = true
+    expose_headers = ["*"]
   }
 }
 

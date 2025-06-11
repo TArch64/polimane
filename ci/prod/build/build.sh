@@ -2,7 +2,7 @@
 
 set -e
 
-BUILD_ARGS=$(echo "$BUILD_ARGS" | jq -r '. // {} | to_entries | map("--build-arg \"" + .key + "=" + .value + "\"") | join(" ")')
+BUILD_ARGS=$(echo "$BUILD_ARGS" | jq -r '. // {} | to_entries | map("--build-arg " + .key + "=" + .value) | join(" ")')
 
 cleanup() {
   docker container rm -f $BUILD_ID || true
@@ -14,4 +14,3 @@ docker build -t $BUILD_IMAGE -f $BUILD_DOCKERFILE $BUILD_ARGS $BUILD_CONTEXT
 docker run -d --name $BUILD_ID $BUILD_IMAGE tail -f /dev/null
 rm -rf $BUILD_DIST
 docker cp $BUILD_ID:/app/dist $BUILD_DIST
-docker container rm -f $BUILD_ID

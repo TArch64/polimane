@@ -20,11 +20,13 @@ resource "null_resource" "webapp_deploy" {
   depends_on = [null_resource.webapp_build]
 
   provisioner "local-exec" {
-    command = "npx -y wrangler pages deploy ${local.webapp_build_dir} --project-name ${cloudflare_pages_project.webapp.name}"
+    command = "npx -y wrangler pages deploy $BUILD_DIST --project-name $PROJECT_NAME"
 
     environment = {
       CLOUDFLARE_ACCOUNT_ID = local.cloudflare_account_id
       CLOUDFLARE_API_TOKEN  = local.cloudflare_api_token
+      BUILD_DIST   = local.webapp_build_dir
+      PROJECT_NAME = cloudflare_pages_project.webapp.name
     }
   }
 }
