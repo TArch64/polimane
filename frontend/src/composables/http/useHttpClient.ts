@@ -2,6 +2,7 @@ import { type FunctionPlugin, inject, type InjectionKey } from 'vue';
 import { HttpClient } from './HttpClient';
 import { HttpMiddlewareExecutor } from './HttpMiddlewareExecutor';
 import { useUnauthorizedMiddleware } from './useUnauthorizedMiddleware';
+import { useAuthorizationMiddleware } from './useAuthorizationMiddleware';
 import { useApiPing } from './useApiPing';
 
 const Provider = Symbol('HttpClient') as InjectionKey<HttpClient>;
@@ -20,6 +21,7 @@ export const httpClientPlugin: FunctionPlugin<IPluginHttpClientOptions> = (app, 
 
   app.runWithContext(() => {
     client.middleware(useUnauthorizedMiddleware());
+    client.middleware(useAuthorizationMiddleware());
     useApiPing(client);
   });
 };

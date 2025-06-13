@@ -38,14 +38,10 @@ func apiLogin(ctx *fiber.Ctx) error {
 	}
 
 	expiresAt := newTokenExpiresAt()
-	token, err := newCookieToken(user, expiresAt)
+	token, err := newAuthToken(user, expiresAt)
 
-	ctx.Cookie(&fiber.Cookie{
-		Name:     cookieName,
-		Value:    token,
-		HTTPOnly: true,
-		Expires:  expiresAt,
+	return ctx.JSON(fiber.Map{
+		"token": token,
+		"user":  user,
 	})
-
-	return ctx.JSON(user)
 }

@@ -12,7 +12,7 @@ import (
 )
 
 type Config struct {
-	ApiConfig api.Config
+	ApiOptions *api.Options
 }
 
 func New(config *Config) (*fiber.App, error) {
@@ -35,5 +35,5 @@ func New(config *Config) (*fiber.App, error) {
 		return nil, err
 	}
 
-	return api.New(config.ApiConfig), nil
+	return api.New(config.ApiOptions), nil
 }

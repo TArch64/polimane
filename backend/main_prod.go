@@ -14,13 +14,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 
+	"polimane/backend/api"
 	"polimane/backend/app"
 )
 
 func main() {
-	api, err := app.New(&app.Config{
-		ApiConfig: func(config *fiber.Config) {
-			config.DisableStartupMessage = true
+	instance, err := app.New(&app.Config{
+		ApiOptions: &api.Options{
+			Protocol: "https",
+			Configure: func(config *fiber.Config) {
+				config.DisableStartupMessage = true
+			},
 		},
 	})
 
@@ -28,7 +32,7 @@ func main() {
 		log.Panic(err)
 	}
 
-	handler := adaptor.FiberApp(api)
+	handler := adaptor.FiberApp(instance)
 
 	lambda.Start(func(ctx context.Context, req events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) {
 		url := req.RawPath
@@ -41,6 +45,7 @@ func main() {
 		for key, value := range req.Headers {
 			httpReq.Header.Set(key, value)
 		}
+
 		httpReq.RequestURI = url
 
 		recorder := httptest.NewRecorder()

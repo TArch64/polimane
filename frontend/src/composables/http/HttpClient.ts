@@ -1,5 +1,5 @@
 import { HttpError } from './HttpError';
-import type { HttpMiddlewareExecutor, IHttpMiddleware } from './HttpMiddlewareExecutor';
+import type { HttpMiddleware, HttpMiddlewareExecutor } from './HttpMiddlewareExecutor';
 
 export type HttpBody = object;
 export type HttpParams = Record<string, string | number>;
@@ -66,14 +66,14 @@ export class HttpClient {
   >(config: IRequestConfig<P, B>): Promise<R> {
     const body = config.body ? JSON.stringify(config.body) : undefined;
 
-    const response = await fetch(this.buildUrl(config), {
+    const request = new Request(this.buildUrl(config), {
       method: config.method,
       body,
-
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
     });
+
+    await this.middlewareExecutor.callBeforeRequestInterceptor(request);
+    const response = await fetch(request);
 
     if (!response.ok) {
       return this.handleError(response);
@@ -99,7 +99,7 @@ export class HttpClient {
     throw error;
   }
 
-  middleware(middleware: IHttpMiddleware): void {
+  middleware(middleware: HttpMiddleware): void {
     this.middlewareExecutor.add(middleware);
   }
 }

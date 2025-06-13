@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,18 +18,18 @@ import (
 	"polimane/backend/env"
 )
 
-type Config func(config *fiber.Config)
+type Options struct {
+	Protocol  string
+	Configure func(config *fiber.Config)
+}
 
-func New(configFns ...Config) *fiber.App {
+func New(options *Options) *fiber.App {
 	config := fiber.Config{
 		AppName:      "Polimane",
 		ErrorHandler: base.ErrorHandler,
 	}
 
-	for _, configure := range configFns {
-		configure(&config)
-	}
-
+	options.Configure(&config)
 	app := fiber.New(config)
 
 	app.Use(recover2.New(recover2.Config{
@@ -38,7 +39,11 @@ func New(configFns ...Config) *fiber.App {
 	app.Use(helmet.New())
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: env.Env().FrontendOrigin,
+		AllowOrigins:     fmt.Sprintf("%s://%s", options.Protocol, env.Env().AppDomain),
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization, X-Requested-With, X-CSRF-Token, Cookie",
+		AllowMethods:     "*",
+		ExposeHeaders:    "*",
+		AllowCredentials: true,
 	}))
 
 	app.Use(encryptcookie.New(encryptcookie.Config{

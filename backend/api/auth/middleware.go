@@ -40,7 +40,7 @@ func (m *middleware) Handler(ctx *fiber.Ctx) error {
 		return unauthorizedErr
 	}
 
-	claims, err := m.parseCookieToken(token)
+	claims, err := m.parseToken(token)
 	if err != nil {
 		return err
 	}
@@ -55,14 +55,14 @@ func (m *middleware) Handler(ctx *fiber.Ctx) error {
 }
 
 func (m *middleware) getToken(ctx *fiber.Ctx) (string, error) {
-	token := ctx.Cookies(cookieName)
-	if len(token) == 0 {
+	tokens := ctx.GetReqHeaders()["Authorization"]
+	if len(tokens) == 0 || len(tokens[0]) == 0 {
 		return "", unauthorizedErr
 	}
-	return token, nil
+	return tokens[0], nil
 }
 
-func (m *middleware) parseCookieToken(token string) (*tokenClaims, error) {
+func (m *middleware) parseToken(token string) (*tokenClaims, error) {
 	claims := &tokenClaims{}
 
 	_, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {

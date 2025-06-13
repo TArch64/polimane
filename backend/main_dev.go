@@ -7,13 +7,17 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
+	"polimane/backend/api"
 	"polimane/backend/app"
 )
 
 func main() {
-	api, err := app.New(&app.Config{
-		ApiConfig: func(config *fiber.Config) {
-			config.EnablePrintRoutes = true
+	instance, err := app.New(&app.Config{
+		ApiOptions: &api.Options{
+			Protocol: "http",
+			Configure: func(config *fiber.Config) {
+				config.EnablePrintRoutes = true
+			},
 		},
 	})
 
@@ -21,7 +25,7 @@ func main() {
 		log.Panic(err)
 	}
 
-	err = api.Listen(":3000")
+	err = instance.Listen(":3000")
 	if err != nil {
 		log.Panic(err)
 	}
@@ -29,7 +33,7 @@ func main() {
 	defer func() {
 		log.Println("Shutting down application")
 
-		if err = api.Shutdown(); err != nil {
+		if err = instance.Shutdown(); err != nil {
 			log.Println(err)
 		}
 	}()

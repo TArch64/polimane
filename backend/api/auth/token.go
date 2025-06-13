@@ -22,7 +22,7 @@ type tokenClaims struct {
 	UserID model.ID `json:"userId"`
 }
 
-func newCookieToken(user *model.User, expiresAt time.Time) (string, error) {
+func newAuthToken(user *model.User, expiresAt time.Time) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expiresAt),

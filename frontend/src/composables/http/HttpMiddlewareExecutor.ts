@@ -1,19 +1,35 @@
 import type { MaybePromise } from '@/types';
 import type { HttpError } from './HttpError';
 
-export interface IHttpMiddleware {
-  interceptResponseError: (error: HttpError) => MaybePromise<void>;
+export interface IHttpBeforeRequestInterceptor {
+  interceptBeforeRequest(request: Request): MaybePromise<void>;
 }
 
-export class HttpMiddlewareExecutor {
-  private readonly middlewares: IHttpMiddleware[] = [];
+export interface IHttpResponseErrorInterceptor {
+  interceptResponseError(error: HttpError): MaybePromise<void>;
+}
 
-  add(middleware: IHttpMiddleware): void {
+export type HttpMiddleware = IHttpBeforeRequestInterceptor | IHttpResponseErrorInterceptor;
+
+export class HttpMiddlewareExecutor {
+  private readonly middlewares: HttpMiddleware[] = [];
+
+  add(middleware: HttpMiddleware): void {
     this.middlewares.push(middleware);
   }
 
+  async callBeforeRequestInterceptor(request: Request): Promise<void> {
+    const middlewares = this.middlewares.filter((m): m is IHttpBeforeRequestInterceptor => 'interceptBeforeRequest' in m);
+
+    for (const middleware of middlewares) {
+      await middleware.interceptBeforeRequest(request);
+    }
+  }
+
   async callResponseErrorInterceptor(error: HttpError): Promise<void> {
-    for (const middleware of this.middlewares) {
+    const middlewares = this.middlewares.filter((m): m is IHttpResponseErrorInterceptor => 'interceptResponseError' in m);
+
+    for (const middleware of middlewares) {
       await middleware.interceptResponseError(error);
     }
   }
