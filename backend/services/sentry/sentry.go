@@ -9,15 +9,15 @@ import (
 )
 
 func Init() (fiber.Handler, error) {
-	dsn := env.Env().Sentry.Dsn
-	if len(dsn) == 0 {
+	config := env.Env().Sentry
+	if len(config.Dsn) == 0 {
 		return nil, nil
 	}
 
 	err := sentry.Init(sentry.ClientOptions{
-		Dsn:              dsn,
+		Dsn:              config.Dsn,
+		Release:          config.Release,
 		AttachStacktrace: true,
-		Debug:            true,
 	})
 
 	if err != nil {

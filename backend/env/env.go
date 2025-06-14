@@ -12,7 +12,8 @@ type Environment struct {
 	}
 
 	Sentry struct {
-		Dsn string `env:"BACKEND_SENTRY_DSN"`
+		Dsn     string `env:"BACKEND_SENTRY_DSN"`
+		Release string `env:"BACKEND_SENTRY_RELEASE"`
 	}
 }
 

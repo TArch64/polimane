@@ -15,7 +15,9 @@ resource "aws_lambda_function" "lambda" {
   tags             = local.aws_common_tags
 
   environment {
-    variables = sensitive(yamldecode(file("${path.module}/.env-lambda.yaml")))
+    variables = merge(sensitive(yamldecode(file("${path.module}/.env-lambda.yaml"))), {
+      BACKEND_SENTRY_RELEASE = local.lambda_sources_hash
+    })
   }
 
   lifecycle {

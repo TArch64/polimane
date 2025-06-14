@@ -3,6 +3,9 @@ import vue from '@vitejs/plugin-vue';
 import vueDevTools from 'vite-plugin-vue-devtools';
 import postcssNesting from 'postcss-nesting';
 import icons from 'unplugin-icons/vite';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
+
+const { SENTRY_AUTH_TOKEN, FRONTEND_PUBLIC_SENTRY_RELEASE } = process.env;
 
 export default defineConfig({
   clearScreen: false,
@@ -18,14 +21,13 @@ export default defineConfig({
     transformer: 'lightningcss',
 
     postcss: {
-      plugins: [
-        postcssNesting(),
-      ],
+      plugins: [postcssNesting()],
     },
   },
 
   build: {
     cssMinify: 'lightningcss',
+    sourcemap: true,
   },
 
   server: {
@@ -37,8 +39,14 @@ export default defineConfig({
     vue(),
     vueDevTools(),
 
-    icons({
-      compiler: 'vue3',
+    icons({ compiler: 'vue3' }),
+
+    SENTRY_AUTH_TOKEN && sentryVitePlugin({
+      org: 'myself-zmf',
+      project: 'polimane-frontend',
+      authToken: SENTRY_AUTH_TOKEN,
+      telemetry: false,
+      release: { name: FRONTEND_PUBLIC_SENTRY_RELEASE },
     }),
   ],
 });
