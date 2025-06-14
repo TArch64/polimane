@@ -20,6 +20,7 @@
     "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "^2.1.0",
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
     "@iconify-json/eva": "^1.2.1",
+    "@sentry/vue": "^9.29.0",
     "@types/bun": "^1.2.10",
     "@vitejs/plugin-vue": "^5.2.3",
     "@vue/tsconfig": "^0.7.0",

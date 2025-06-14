@@ -3,6 +3,7 @@ import './style/main.css';
 import { createApp, h, ref, shallowRef } from 'vue';
 import { createPinia } from 'pinia';
 import VueKonva from 'vue-konva';
+import { sentryPlugin } from '@/plugins';
 import { TOKEN_SCROLLER, TOKEN_TOP_EL } from './InjectionToken';
 import { ContextMenuPlugin } from './components/contextMenu';
 import { ConfirmPlugin } from './components/confirm';
@@ -34,6 +35,10 @@ app.use(ConfirmPlugin);
 app.use(ContextMenuPlugin);
 
 app.use(VueKonva, { prefix: 'Konva' });
+
+app.use(sentryPlugin, {
+  dsn: import.meta.env.FRONTEND_PUBLIC_SENTRY_DSN || '',
+});
 
 if (import.meta.env.DEV) {
   const m = await import('./modules/konvaInspector');
