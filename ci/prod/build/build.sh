@@ -2,7 +2,7 @@
 
 set -e
 
-BUILD_ARGS=$(echo "$BUILD_ARGS" | jq -r '. // {} | to_entries | map("--build-arg " + .key + "=" + .value) | join(" ")')
+BUILD_ARGS=$(echo "$BUILD_ARGS" | jq -r '. // [] | map("--build-arg " + .) | join(" ")')
 
 cleanup() {
   docker container rm -f $BUILD_ID || true

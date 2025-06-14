@@ -11,6 +11,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.59.1
 	github.com/aws/smithy-go v1.22.3
 	github.com/fatih/color v1.18.0
+	github.com/getsentry/sentry-go v0.33.0
+	github.com/getsentry/sentry-go/fiber v0.33.0
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/gofiber/fiber/v2 v2.52.8
 	github.com/golang-jwt/jwt/v5 v5.2.2

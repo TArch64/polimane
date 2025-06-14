@@ -35,5 +35,5 @@ func New(config *Config) (*fiber.App, error) {
 		return nil, err
 	}
 
-	return api.New(config.ApiOptions), nil
+	return api.New(config.ApiOptions)
 }

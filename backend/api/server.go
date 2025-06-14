@@ -8,7 +8,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
-	recover2 "github.com/gofiber/fiber/v2/middleware/recover"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
@@ -16,6 +15,7 @@ import (
 	"polimane/backend/api/schemas"
 	"polimane/backend/api/users"
 	"polimane/backend/env"
+	"polimane/backend/services/sentry"
 )
 
 type Options struct {
@@ -23,7 +23,12 @@ type Options struct {
 	Configure func(config *fiber.Config)
 }
 
-func New(options *Options) *fiber.App {
+func New(options *Options) (*fiber.App, error) {
+	sentryHandler, err := sentry.Init()
+	if err != nil {
+		return nil, err
+	}
+
 	config := fiber.Config{
 		AppName:      "Polimane",
 		ErrorHandler: base.ErrorHandler,
@@ -32,9 +37,9 @@ func New(options *Options) *fiber.App {
 	options.Configure(&config)
 	app := fiber.New(config)
 
-	app.Use(recover2.New(recover2.Config{
-		EnableStackTrace: true,
-	}))
+	if sentryHandler != nil {
+		app.Use(sentryHandler)
+	}
 
 	app.Use(helmet.New())
 
@@ -68,5 +73,5 @@ func New(options *Options) *fiber.App {
 			JSON(fiber.Map{"error": "Not Found"})
 	})
 
-	return app
+	return app, nil
 }

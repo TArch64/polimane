@@ -20,9 +20,9 @@ resource "null_resource" "webapp_build" {
       BUILD_CONTEXT = local.webapp_sources_dir
       BUILD_DIST    = local.webapp_build_dir
 
-      BUILD_ARGS = jsonencode({
-        API_URL = "https://${local.api_domain}/api"
-      })
+      BUILD_ARGS = jsonencode(["FRONTEND_PUBLIC_API_URL", "FRONTEND_PUBLIC_SENTRY_DSN"])
+      FRONTEND_PUBLIC_API_URL    = "https://${local.api_domain}/api",
+      FRONTEND_PUBLIC_SENTRY_DSN = local.webapp_sentry_dsn,
     }
   }
 }
