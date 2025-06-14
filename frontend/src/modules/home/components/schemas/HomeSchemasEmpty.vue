@@ -5,7 +5,7 @@
     </p>
 
     <Button variant="primary" @click="createSchemaModal.open()">
-      Створити Схему
+      Додати Схему
     </Button>
   </div>
 </template>
