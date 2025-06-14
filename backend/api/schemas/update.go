@@ -15,7 +15,7 @@ import (
 
 type updateBody struct {
 	Name    string              `json:"name" validate:"omitempty,min=1"`
-	Palette []string            `json:"palette" validate:"omitempty,len=9,hexcolor|rgb|rgba"`
+	Palette []string            `json:"palette" validate:"omitempty,len=9"`
 	Content model.SchemaContent `json:"content"`
 }
 
