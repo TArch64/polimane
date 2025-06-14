@@ -9,10 +9,18 @@ export type IconComponent = FunctionalComponent<IIconProps>;
 const makeIcon = (loader: AsyncComponentLoader): IconComponent => {
   const asyncComponent = defineAsyncComponent(loader);
 
-  return (props) => h(asyncComponent, {
-    width: `${props.size ?? 20}px`,
-    height: `${props.size ?? 20}px`,
-  });
+  return (props) => h('span', {
+    style: {
+      display: 'flex',
+      width: `${props.size ?? 20}px`,
+      height: `${props.size ?? 20}px`,
+    },
+  }, [
+    h(asyncComponent, {
+      width: '100%',
+      height: '100%',
+    }),
+  ]);
 };
 
 export const SettingsIcon = makeIcon(() => import('~icons/eva/settings-outline'));
