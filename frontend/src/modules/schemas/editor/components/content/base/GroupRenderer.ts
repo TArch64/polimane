@@ -193,7 +193,7 @@ export const GroupRenderer = defineComponent({
       };
 
       for (const proxyProp of PROXY_PROPS) {
-        const prop = instance!.vnode.props![proxyProp];
+        const prop = instance?.vnode.props?.[proxyProp];
         if (prop) groupProps[proxyProp] = prop;
       }
 
