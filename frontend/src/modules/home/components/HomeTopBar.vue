@@ -1,5 +1,7 @@
 <template>
   <header class="home-top-bar">
+    <LogoIcon size="28" />
+
     <h1 class="home-top-bar__title">
       Polimane
     </h1>
@@ -20,7 +22,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
-import { PlusIcon } from '@/components/icon';
+import { LogoIcon, PlusIcon } from '@/components/icon';
 import { useSchemasStore } from '../stores';
 import { HomeCreateSchemaModal } from './schemas';
 
@@ -42,6 +44,7 @@ const createSchemaModal = useModal(HomeCreateSchemaModal);
   }
 
   .home-top-bar__title {
+    margin-left: 8px;
     font-size: 20px;
     font-weight: 500;
   }

@@ -39,7 +39,15 @@ export default defineConfig({
     vue(),
     vueDevTools(),
 
-    icons({ compiler: 'vue3' }),
+    icons({
+      compiler: 'vue3',
+
+      customCollections: {
+        custom: {
+          logo: () => Bun.file('./src/assets/icons/logo.svg').text(),
+        },
+      },
+    }),
 
     SENTRY_AUTH_TOKEN && sentryVitePlugin({
       org: 'myself-zmf',
