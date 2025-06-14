@@ -1,14 +1,22 @@
-import { type MaybeRefOrGetter, nextTick, onBeforeUnmount, onMounted, toValue } from 'vue';
+import {
+  inject,
+  type InjectionKey,
+  type MaybeRefOrGetter,
+  onBeforeUnmount,
+  provide,
+  type Ref,
+  ref,
+  toValue,
+} from 'vue';
 import Konva from 'konva';
-import type { KonvaEventObject } from 'konva/lib/Node';
-import { toRef } from '@vueuse/core';
 import {
   ContextMenuPlugin,
   type IContextMenuAction,
   type MaybeContextMenuAction,
 } from '@/components/contextMenu';
 import { Point } from '@/models';
-import { useNodeStage } from './useNodeStage';
+import { newId } from '@/helpers';
+import { useNodeListener } from './useNodeListener';
 
 export interface INodeContextMenuOptions {
   nodeRef: MaybeRefOrGetter<Konva.Node>;
@@ -16,30 +24,38 @@ export interface INodeContextMenuOptions {
   actions: MaybeRefOrGetter<MaybeContextMenuAction[]>;
 }
 
-export function useNodeContextMenu(options: INodeContextMenuOptions): void {
+interface INodeContextMenuItem extends INodeContextMenuOptions {
+  id: string;
+}
+
+const TOKEN = Symbol('nodeContextMenu') as InjectionKey<Ref<INodeContextMenuItem[]>>;
+
+export function provideNodeContextMenu(stage: Ref<Konva.Stage>): void {
   const plugin = ContextMenuPlugin.inject();
+  const items: Ref<INodeContextMenuItem[]> = ref([]);
 
-  const node = toRef(options.nodeRef);
-  const stage = useNodeStage(options.nodeRef);
+  provide(TOKEN, items);
 
-  function isClosestCurrentNode(target: Konva.Stage | Konva.Node): boolean {
-    if (target._id === node.value._id) {
+  function isClosestNode(parent: Konva.Stage | Konva.Node, node: Konva.Node): boolean {
+    if (parent._id === node._id) {
       return true;
     }
 
-    return target.parent ? isClosestCurrentNode(target.parent) : false;
+    return node.parent ? isClosestNode(parent, node.parent) : false;
   }
 
-  function onContextMenu(event: KonvaEventObject<MouseEvent>): void {
-    if (event.cancelBubble) {
-      return;
-    }
+  function matchOptions(node: Konva.Node): INodeContextMenuOptions | null {
+    const matched = items.value
+      .filter((item) => isClosestNode(toValue(item.nodeRef), node))
+      .sort((i1, i2) => toValue(i2.nodeRef).getDepth() - toValue(i1.nodeRef).getDepth());
 
-    if (!isClosestCurrentNode(event.target)) {
-      return;
-    }
+    return matched[0] || null;
+  }
 
-    event.cancelBubble = true;
+  useNodeListener(stage, 'contextmenu', (event: Konva.KonvaEventObject<MouseEvent>) => {
+    const options = matchOptions(event.target);
+
+    if (!options) return;
 
     plugin.show({
       position: new Point({
@@ -48,20 +64,19 @@ export function useNodeContextMenu(options: INodeContextMenuOptions): void {
       }),
 
       title: toValue(options.title),
-
-      actions: toValue(options.actions)
-        .filter((action): action is IContextMenuAction => !!action),
+      actions: toValue(options.actions).filter((action): action is IContextMenuAction => !!action),
     });
 
     addEventListener('click', () => plugin.hide(), { once: true, capture: true });
-  }
-
-  onMounted(async () => {
-    await nextTick();
-    stage.value?.on('contextmenu', onContextMenu);
   });
+}
+
+export function useNodeContextMenu(options: INodeContextMenuOptions): void {
+  const item: INodeContextMenuItem = { ...options, id: newId() };
+  const items = inject(TOKEN)!;
+  items.value.push(item);
 
   onBeforeUnmount(() => {
-    stage.value?.off('contextmenu', onContextMenu);
+    items.value = items.value.filter((i) => i.id !== item.id);
   });
 }
