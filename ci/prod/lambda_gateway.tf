@@ -33,6 +33,11 @@ resource "aws_apigatewayv2_stage" "lambda_stage" {
   name        = "$default"
   auto_deploy = true
   tags        = local.aws_common_tags
+
+  default_route_settings {
+    throttling_burst_limit = 10
+    throttling_rate_limit  = 2
+  }
 }
 
 resource "aws_apigatewayv2_domain_name" "cloudflare" {
