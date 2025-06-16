@@ -3,7 +3,7 @@ import { HttpClient } from './HttpClient';
 import { HttpMiddlewareExecutor } from './HttpMiddlewareExecutor';
 import { useUnauthorizedMiddleware } from './useUnauthorizedMiddleware';
 import { useAuthorizationMiddleware } from './useAuthorizationMiddleware';
-import { useApiPing } from './useApiPing';
+import { HttpApiPing } from './HttpApiPing';
 
 const Provider = Symbol('HttpClient') as InjectionKey<HttpClient>;
 
@@ -22,7 +22,7 @@ export const httpClientPlugin: FunctionPlugin<IPluginHttpClientOptions> = (app, 
   app.runWithContext(() => {
     client.middleware(useUnauthorizedMiddleware());
     client.middleware(useAuthorizationMiddleware());
-    useApiPing(client);
+    client.middleware(HttpApiPing.use(client));
   });
 };
 

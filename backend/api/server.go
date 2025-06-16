@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	"polimane/backend/api/ping"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
@@ -11,7 +13,6 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
-	"polimane/backend/api/ping"
 	"polimane/backend/api/schemas"
 	"polimane/backend/api/users"
 	"polimane/backend/env"
@@ -59,11 +60,11 @@ func New(options *Options) (*fiber.App, error) {
 
 	group := app.Group("/api")
 	auth.Group(group)
-	ping.Group(group)
 
 	group.Use(auth.NewMiddleware())
 	users.Group(group)
 	schemas.Group(group)
+	ping.Group(group)
 
 	app.Use(func(c *fiber.Ctx) error {
 		log.Println("Unhandled route:", c.Path())
