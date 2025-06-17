@@ -1,5 +1,5 @@
 locals {
-  lambda_name = "polimane-prod"
+  lambda_name = local.app_name
 }
 
 resource "aws_lambda_function" "lambda" {

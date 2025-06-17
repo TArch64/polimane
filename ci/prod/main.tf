@@ -34,6 +34,10 @@ terraform {
 
 provider "aws" {
   shared_credentials_files = [local.aws_credentials_file]
+
+  default_tags {
+    tags = { app = "polimane" }
+  }
 }
 
 provider "cloudflare" {
@@ -42,10 +46,11 @@ provider "cloudflare" {
 
 locals {
   domain = "polimane.com"
+  app_name = "polimane-prod"
 
   aws_region           = "eu-central-1"
   aws_credentials_file = "${path.module}/.aws-credentials"
-  aws_common_tags = { app = "polimane" }
+  aws_common_tags = aws_servicecatalogappregistry_application.app.application_tag
 }
 
 provider "null" {}

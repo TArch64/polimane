@@ -1,10 +1,10 @@
 data "aws_dynamodb_table" "database" {
   depends_on = [aws_lambda_function.lambda]
-  name = "polimane-prod"
+  name = local.app_name
 }
 
 resource "aws_backup_vault" "vault" {
-  name = "polimane-prod"
+  name = local.app_name
   tags = local.aws_common_tags
 }
 
