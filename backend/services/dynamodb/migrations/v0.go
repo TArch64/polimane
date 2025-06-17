@@ -8,8 +8,9 @@ import (
 
 func v0(ctx *Ctx) error {
 	_, err := ctx.Api.CreateTable(ctx, &dynamodb.CreateTableInput{
-		TableName:   &ctx.TableName,
-		BillingMode: types.BillingModePayPerRequest,
+		TableName:                 &ctx.TableName,
+		BillingMode:               types.BillingModePayPerRequest,
+		DeletionProtectionEnabled: aws.Bool(true),
 		AttributeDefinitions: []types.AttributeDefinition{
 			{
 				AttributeName: aws.String("PK"),
@@ -42,6 +43,12 @@ func v0(ctx *Ctx) error {
 				Projection: &types.Projection{
 					ProjectionType: types.ProjectionTypeAll,
 				},
+			},
+		},
+		Tags: []types.Tag{
+			{
+				Key:   aws.String("app"),
+				Value: aws.String("polimane"),
 			},
 		},
 	})
