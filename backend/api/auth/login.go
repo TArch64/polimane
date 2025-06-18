@@ -39,6 +39,9 @@ func apiLogin(ctx *fiber.Ctx) error {
 
 	expiresAt := newTokenExpiresAt()
 	token, err := newAuthToken(user, expiresAt)
+	if err != nil {
+		return err
+	}
 
 	return ctx.JSON(fiber.Map{
 		"token": token,
