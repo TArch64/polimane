@@ -1,0 +1,61 @@
+x-common: &common
+  restart: always
+  env_file: .env
+  tty: true
+  stdin_open: true
+
+services:
+  nginx:
+    <<: *common
+    image: nginx:1.27-alpine
+    stop_grace_period: 1s
+    volumes:
+    - ./ci/dev/nginx/nginx.conf:/etc/nginx/nginx.conf
+    - ./ci/dev/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+    - ./ci/dev/nginx/partials:/etc/nginx/partials
+    ports:
+    - "80:80"
+    depends_on:
+#    - frontend
+    - backend
+
+#  frontend:
+#    <<: *common
+#    build:
+#      context: .
+#      dockerfile: ./ci/dev/frontend/Dockerfile
+#    command: bun --bun dev
+#    volumes:
+#    - ./frontend:/app
+#    - ./frontend/node_modules:/app/node_modules
+#    - bun_cache:/root/.bun/install/cache
+
+  backend:
+    <<: *common
+    build:
+      context: .
+      dockerfile: ./ci/dev/backend/Dockerfile
+    command: make dev
+    stop_grace_period: 1s
+    volumes:
+    - ./backend:/app
+    - gomod_cache:/go/pkg/mod
+    depends_on:
+    - dynamodb
+
+  dynamodb:
+    <<: *common
+    image: "amazon/dynamodb-local:2.6.0"
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    user: root
+    working_dir: /home/dynamodblocal
+    volumes:
+    - dynamodb_data:/home/dynamodblocal/data
+
+volumes:
+#  bun_cache:
+#    driver: local
+  gomod_cache:
+    driver: local
+  dynamodb_data:
+    driver: local

@@ -1,0 +1,36 @@
+# @name list
+GET {{ url }}/schemas
+Content-Type: application/json
+
+###
+
+# @name create
+POST {{ url }}/schemas
+Content-Type: application/json
+
+{
+  "name": "test {{ $random.uuid }}",
+  "content": []
+}
+
+###
+
+# @name by-id
+GET {{ url }}/schemas/{{ schema_id}}
+Content-Type: application/json
+
+###
+
+# @name delete
+DELETE {{ url }}/schemas/{{ schema_id}}
+Content-Type: application/json
+
+###
+
+# @name update
+PATCH {{ url }}/schemas/{{ schema_id}}
+Content-Type: application/json
+
+{
+  "palette": ["", "", "", "", "", "", "", "", ""]
+}
