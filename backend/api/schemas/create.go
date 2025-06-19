@@ -11,7 +11,7 @@ import (
 
 type createBody struct {
 	Name    string              `json:"name" validate:"required"`
-	Content model.SchemaContent `json:"content"`
+	Content model.SchemaContent `json:"content" validate:"required,dive,required"`
 }
 
 func apiCreate(ctx *fiber.Ctx) error {

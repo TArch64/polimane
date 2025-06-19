@@ -25,11 +25,6 @@ func main() {
 		log.Panic(err)
 	}
 
-	err = instance.Listen(":3000")
-	if err != nil {
-		log.Panic(err)
-	}
-
 	defer func() {
 		log.Println("Shutting down application")
 
@@ -37,4 +32,9 @@ func main() {
 			log.Println(err)
 		}
 	}()
+
+	err = instance.Listen(":3000")
+	if err != nil {
+		log.Panic(err)
+	}
 }
