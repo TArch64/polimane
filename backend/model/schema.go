@@ -6,24 +6,24 @@ const SKSchema = "SCHEMA"
 const IndexSchemaID = "SchemaIdIndex"
 
 type SchemaObject struct {
-	ID string `json:"id"`
+	ID string `json:"id" validate:"required,ulid"`
 }
 
 type SchemaPattern struct {
 	*SchemaObject
-	Name    string       `json:"name"`
-	Type    string       `json:"type"`
-	Content []*SchemaRow `json:"content,omitempty"`
+	Name    string       `json:"name" validate:"required"`
+	Type    string       `json:"type" validate:"required,oneof=square diamond"`
+	Content []*SchemaRow `json:"content" validate:"required,dive,required"`
 }
 
 type SchemaRow struct {
 	*SchemaObject
-	Content []*SchemaBead `json:"content,omitempty"`
+	Content []*SchemaBead `json:"content" validate:"required,dive,required"`
 }
 
 type SchemaBead struct {
 	*SchemaObject
-	Color string `json:"color"`
+	Color string `json:"color" validate:"required,iscolor"`
 }
 
 type SchemaContent []*SchemaPattern
