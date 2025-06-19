@@ -3,7 +3,8 @@
   font-stretch: 75% 100%;
   font-style: normal;
   font-weight: 100 900;
-  src: url("./roboto.ttf") format('ttf');
+  src: url("./roboto.ttf") format('truetype');
+  font-display: swap
 }
 
 @font-face {
