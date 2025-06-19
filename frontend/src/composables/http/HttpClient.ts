@@ -86,7 +86,7 @@ export class HttpClient {
     const path = [config.path].flat().join('/');
     const url = new URL(this.baseUrl + path);
 
-    if (config.params && Object.keys(config.params)) {
+    if (config.params && Object.keys(config.params).length) {
       url.search = new URLSearchParams(config.params as Record<string, string>).toString();
     }
 

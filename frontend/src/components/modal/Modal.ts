@@ -18,7 +18,7 @@ export class Modal<C extends Component = Component, P = InferComponentProps<C>> 
 
   constructor(
     readonly id: string,
-    readonly component: Component,
+    readonly component: C,
   ) {
   }
 
@@ -41,7 +41,7 @@ export class Modal<C extends Component = Component, P = InferComponentProps<C>> 
   }
 
   async completeClose(): Promise<void> {
-    this.onClose?.();
+    await this.onClose?.();
     this.state.props = null;
   }
 }

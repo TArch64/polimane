@@ -15,8 +15,8 @@ import (
 
 type updateBody struct {
 	Name    string              `json:"name" validate:"omitempty,min=1"`
-	Palette []string            `json:"palette" validate:"omitempty,len=9"`
-	Content model.SchemaContent `json:"content"`
+	Palette []string            `json:"palette" validate:"omitempty,len=9,dive,omitempty,iscolor"`
+	Content model.SchemaContent `json:"content" validate:"omitempty,dive,required"`
 }
 
 func collectUpdates(body *updateBody) awsdynamodb.UpdateMap {
@@ -30,7 +30,7 @@ func collectUpdates(body *updateBody) awsdynamodb.UpdateMap {
 		updates["Content"] = body.Content
 	}
 
-	if len(body.Palette) != 0 {
+	if len(body.Palette) == repositoryschemas.PaletteSize {
 		updates["Palette"] = body.Palette
 	}
 

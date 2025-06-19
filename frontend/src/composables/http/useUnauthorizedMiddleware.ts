@@ -10,7 +10,7 @@ export function useUnauthorizedMiddleware(): HttpMiddleware {
   return {
     async interceptResponseError(error): Promise<void> {
       if (error.reason === HttpErrorReason.UNAUTHORIZED) {
-        delete authToken.value;
+        authToken.value = undefined;
 
         await router.push({
           name: 'welcome',

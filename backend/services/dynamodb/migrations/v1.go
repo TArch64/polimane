@@ -9,7 +9,7 @@ import (
 func v1(ctx *Ctx) error {
 	config := env.Env().DefaultUser
 
-	passwordHash, err := argon.Hash(config.Password)
+	passwordHash, err := argon.HashString(config.Password)
 	if err != nil {
 		return err
 	}

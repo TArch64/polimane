@@ -8,5 +8,5 @@ prod:
 	GOARCH=amd64 \
 	CGO_ENABLED=0 \
 	go build -tags "prod" -o "$(out_dir)/bootstrap" main_prod.go
-	zip -j "$(out_dir)/boostrap.zip" "$(out_dir)/bootstrap"
+	zip -j "$(out_dir)/bootstrap.zip" "$(out_dir)/bootstrap"
 	rm "$(out_dir)/bootstrap"

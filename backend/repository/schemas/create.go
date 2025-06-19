@@ -14,9 +14,11 @@ type CreateOptions struct {
 	Content model.SchemaContent
 }
 
+const PaletteSize = 9
+
 func Create(ctx context.Context, options *CreateOptions) (*model.Schema, error) {
 	if len(options.Palette) == 0 {
-		options.Palette = make([]string, 9)
+		options.Palette = make([]string, PaletteSize)
 	}
 
 	if options.Content == nil {

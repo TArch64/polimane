@@ -10,7 +10,7 @@ import { HomeSchemasEmpty, HomeSchemasList, HomeTopBar } from './components';
 import { useSchemasStore } from './stores';
 
 defineOptions({
-  beforeRouteEnter: definePreload<'welcome'>(async () => {
+  beforeRouteEnter: definePreload<'home'>(async () => {
     const store = useSchemasStore();
     await store.schemas.load();
   }),

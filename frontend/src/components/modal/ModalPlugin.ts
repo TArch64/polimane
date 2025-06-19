@@ -32,7 +32,7 @@ export class ModalPlugin {
     return this.state.modals.find((modal) => modal.isOpened) ?? null;
   }
 
-  create(component: Component): Modal {
+  create<C extends Component>(component: C): Modal<C> {
     const modal = new Modal(newId(), markRaw(component));
     this.state.modals.push(modal);
     return modal;

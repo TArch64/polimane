@@ -5,7 +5,28 @@ import "encoding/json"
 const SKSchema = "SCHEMA"
 const IndexSchemaID = "SchemaIdIndex"
 
-type SchemaContent []interface{}
+type SchemaObject struct {
+	ID string `json:"id" validate:"required,ulid"`
+}
+
+type SchemaPattern struct {
+	*SchemaObject
+	Name    string       `json:"name" validate:"required"`
+	Type    string       `json:"type" validate:"required,oneof=square diamond"`
+	Content []*SchemaRow `json:"content" validate:"required,dive,required"`
+}
+
+type SchemaRow struct {
+	*SchemaObject
+	Content []*SchemaBead `json:"content" validate:"required,dive,required"`
+}
+
+type SchemaBead struct {
+	*SchemaObject
+	Color string `json:"color" validate:"required,iscolor"`
+}
+
+type SchemaContent []*SchemaPattern
 
 type Schema struct {
 	*Base
