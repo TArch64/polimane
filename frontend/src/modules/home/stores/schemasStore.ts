@@ -25,11 +25,7 @@ export const useSchemasStore = defineStore('schemas/list', () => {
   const hasSchemas = computed(() => !!schemas.data.length);
 
   function createSchema(input: ICreateSchemaInput): Promise<SchemaListItem> {
-    return httpClient.post<SchemaListItem, CreateSchemaRequest>('/schemas', {
-      ...input,
-      palette: input.palette,
-      content: input.content,
-    });
+    return httpClient.post<SchemaListItem, CreateSchemaRequest>('/schemas', input);
   }
 
   async function deleteSchema(deletingSchema: ISchema): Promise<void> {

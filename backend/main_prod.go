@@ -54,7 +54,7 @@ func main() {
 		headers := make(map[string]string)
 		for key, values := range recorder.Header() {
 			if len(values) > 0 {
-				headers[key] = values[0]
+				headers[key] = strings.Join(values, ", ")
 			}
 		}
 

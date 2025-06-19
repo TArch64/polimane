@@ -19,7 +19,7 @@ const modal = useActiveModal();
 const editingName = ref(editorStore.schema.name);
 
 function save(): void {
-  editorStore.schema.name = editingName.value;
+  editorStore.schema.name = editingName.value.trim();
   modal.close();
 }
 </script>

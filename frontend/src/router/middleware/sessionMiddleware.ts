@@ -8,11 +8,11 @@ export const sessionMiddleware: NavigationGuard = async (to, _, next) => {
     return next();
   }
 
-  if (!sessionStore.isLoginedIn) {
+  if (!sessionStore.isLoggedIn) {
     await sessionStore.refresh();
   }
 
-  if (sessionStore.isLoginedIn) {
+  if (sessionStore.isLoggedIn) {
     return next();
   }
 

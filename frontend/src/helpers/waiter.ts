@@ -9,10 +9,9 @@ export function createWaiter(): IWaiter {
   const waiters: Promise<void>[] = [];
 
   function add(): () => void {
-    let resolve: () => void;
-    const promise = new Promise<void>((res) => resolve = res);
+    const { promise, resolve } = Promise.withResolvers<void>();
     waiters.push(promise);
-    return resolve!;
+    return resolve;
   }
 
   async function wait(): Promise<void> {

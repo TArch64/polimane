@@ -20,6 +20,7 @@
         "npm-run-all2": "^8.0.4",
         "pinia": "^3.0.3",
         "postcss-nesting": "^13.0.2",
+        "rambda": "^10.2.0",
         "typescript": "^5.8.3",
         "ulid": "^3.0.1",
         "unplugin-icons": "^22.1.0",
@@ -1895,6 +1896,12 @@
 
     "raf-schd": ["raf-schd@4.0.3", "", {}, "sha512-tQkJl2GRWh83ui2DiPTJz9wEiMN20syf+5oKfB03yYP7ioZcJwsIK8FjrtLwH1m7C7e+Tt2yYBlrOpdT+dyeIQ=="],
 
+    "rambda": [
+      "rambda@10.2.0",
+      "",
+      {},
+      "sha512-+ucs+OgkatwV3MNfV7GO55xVQ8xTHRN1sca7qp6+6lZYmNXw3h+IW9aIjzb4cpoT4dJVHxoJqzEbLCOS3i6CJQ=="
+    ],
     "read-package-json-fast": ["read-package-json-fast@4.0.0", "", { "dependencies": { "json-parse-even-better-errors": "^4.0.0", "npm-normalize-package-bin": "^4.0.0" } }, "sha512-qpt8EwugBWDw2cgE2W+/3oxC+KTez2uSVR8JU9Q36TXPAGCaozfQUs59v4j4GFpWTaw0i6hAZSvOmu1J0uOEUg=="],
 
     "readdirp": [

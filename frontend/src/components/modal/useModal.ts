@@ -8,7 +8,7 @@ export interface IModal<C extends Component> {
 
 export function useModal<C extends Component>(component: C): IModal<C> {
   const plugin = ModalPlugin.inject();
-  const modal = plugin.create(component);
+  const modal = plugin.create<C>(component);
 
   function open(props?: InferComponentProps<C>): void {
     modal.open(props ?? null);

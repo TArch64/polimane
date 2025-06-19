@@ -16,7 +16,7 @@ func ByUser(ctx context.Context, user *model.User, attributes []string) ([]*mode
 		Get("PK", user.ID).
 		Range("SK", dynamo.BeginsWith, model.SKSchema)
 
-	if attributes != nil && len(attributes) > 0 {
+	if len(attributes) > 0 {
 		attributes = append([]string{"PK", "SK"}, attributes...)
 		query = query.Project(attributes...)
 	}

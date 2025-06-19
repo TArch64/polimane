@@ -42,7 +42,6 @@ const classes = computed(() => [
     position-anchor: v-bind("sortableAnchorVar");
     margin: 0;
     padding: 0;
-    background-color: red;
   }
 
   .sortable__indicator--vertical {

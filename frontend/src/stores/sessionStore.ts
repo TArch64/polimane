@@ -17,7 +17,7 @@ export const useSessionStore = defineStore('session', () => {
   const httpClient = useHttpClient();
   const user = ref<IUser | null>(null);
   const authToken = useAuthToken();
-  const isLoginedIn = computed(() => !!user.value);
+  const isLoggedIn = computed(() => !!user.value);
 
   async function login(input: ILoginInput): Promise<void> {
     const response = await httpClient.post<ILoginResponse, ILoginInput>('/auth/login', input);
@@ -36,7 +36,7 @@ export const useSessionStore = defineStore('session', () => {
 
   return {
     user: user as Ref<IUser>,
-    isLoginedIn,
+    isLoggedIn,
     login,
     refresh,
   };

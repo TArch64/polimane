@@ -1,6 +1,7 @@
 import { computed, reactive, type Ref, ref, watch, type WatchStopHandle } from 'vue';
 import type { ISchema } from '@/models';
 import { combineStopHandles } from '@/helpers';
+import type { SafeAny } from '@/types';
 
 const SAVE_TIMEOUT = 2000;
 
@@ -36,8 +37,7 @@ export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSave
       }
 
       unsavedChanges.value ??= {};
-      // @ts-expect-error no easy way to match types
-      unsavedChanges.value[attr] = value;
+      (unsavedChanges.value as Record<WatchableAttribute, SafeAny>)[attr] = value;
       saveTimeout = setTimeout(dispatchSave, SAVE_TIMEOUT);
     }, { deep: true });
   }
