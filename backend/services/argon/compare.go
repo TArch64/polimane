@@ -2,13 +2,17 @@ package argon
 
 import (
 	"crypto/subtle"
+
+	"github.com/matthewhartstonge/argon2"
 )
 
 func Compare(raw, hash string) bool {
-	checkingBytes, err := Hash(raw)
+	hashBytes := []byte(hash)
+	equal, err := argon2.VerifyEncoded([]byte(raw), hashBytes)
+
 	if err != nil {
-		checkingBytes = make([]byte, len(hash))
+		return subtle.ConstantTimeCompare(make([]byte, len(hash)), hashBytes) == 1
 	}
 
-	return subtle.ConstantTimeCompare(checkingBytes, []byte(hash)) == 1
+	return equal
 }
