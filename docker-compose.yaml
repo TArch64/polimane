@@ -16,19 +16,19 @@ services:
     ports:
     - "80:80"
     depends_on:
-#    - frontend
+    - frontend
     - backend
 
-#  frontend:
-#    <<: *common
-#    build:
-#      context: .
-#      dockerfile: ./ci/dev/frontend/Dockerfile
-#    command: bun --bun dev
-#    volumes:
-#    - ./frontend:/app
-#    - ./frontend/node_modules:/app/node_modules
-#    - bun_cache:/root/.bun/install/cache
+  frontend:
+    <<: *common
+    build:
+      context: .
+      dockerfile: ./ci/dev/frontend/Dockerfile
+    command: bun --bun dev
+    volumes:
+    - ./frontend:/app
+    - ./frontend/node_modules:/app/node_modules
+    - bun_cache:/root/.bun/install/cache
 
   backend:
     <<: *common
@@ -53,8 +53,8 @@ services:
     - dynamodb_data:/home/dynamodblocal/data
 
 volumes:
-#  bun_cache:
-#    driver: local
+  bun_cache:
+    driver: local
   gomod_cache:
     driver: local
   dynamodb_data:
