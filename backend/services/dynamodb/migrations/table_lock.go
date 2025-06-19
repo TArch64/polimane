@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 
@@ -25,13 +26,7 @@ func isTableLocked(ctx context.Context) (bool, error) {
 }
 
 func setTableLock(ctx context.Context, isLocked bool) {
-	var value string
-	if isLocked {
-		value = "true"
-	} else {
-		value = "false"
-	}
-
+	value := strconv.FormatBool(isLocked)
 	fmt.Printf("[DynamoDB] Setting table lock to %s\n", value)
 	_ = awsssm.PutParameter(ctx, dynamodbconfig.TableLockParameter, value)
 }

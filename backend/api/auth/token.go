@@ -9,10 +9,6 @@ import (
 	"polimane/backend/model"
 )
 
-const (
-	cookieName = "pa"
-)
-
 func newTokenExpiresAt() time.Time {
 	return time.Now().Add(time.Hour * 24 * 30)
 }
