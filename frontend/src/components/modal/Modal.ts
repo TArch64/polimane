@@ -18,7 +18,7 @@ export class Modal<C extends Component = Component, P = InferComponentProps<C>> 
 
   constructor(
     readonly id: string,
-    readonly component: Component,
+    readonly component: C,
   ) {
   }
 
