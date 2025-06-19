@@ -30,6 +30,7 @@ const schema: ICreateSchemaInput = reactive({
 });
 
 const create = useAsyncAction(async () => {
+  schema.name = schema.name.trim();
   const created = await schemasStore.createSchema(schema);
 
   modal.close(async () => {

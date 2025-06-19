@@ -48,7 +48,11 @@ function getSuccessRedirect(): RouteLocationRaw {
 }
 
 const login = useAsyncAction(async () => {
-  await sessionStore.login(form);
+  await sessionStore.login({
+    username: form.username.trim(),
+    password: form.password.trim(),
+  });
+
   document.startViewTransition(() => router.push(getSuccessRedirect()));
 });
 </script>
