@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import type { DevtoolsPluginApi } from './types';
-import { InspectorHighlight } from './hightlight';
+import { InspectorHighlight } from './highlight';
 import { InspectorTree } from './InspectorTree';
 import { InspectorState } from './InspectorState';
 
