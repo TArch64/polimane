@@ -30,7 +30,7 @@ func collectUpdates(body *updateBody) awsdynamodb.UpdateMap {
 		updates["Content"] = body.Content
 	}
 
-	if len(body.Palette) != 0 {
+	if len(body.Palette) == repositoryschemas.PaletteSize {
 		updates["Palette"] = body.Palette
 	}
 
