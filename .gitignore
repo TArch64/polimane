@@ -1,0 +1,9 @@
+.DS_Store
+.env
+.idea
+.vscode
+*.local
+dist
+logs
+*.log
+*.private.env.json

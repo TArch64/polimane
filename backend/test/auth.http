@@ -1,0 +1,8 @@
+# @name login
+POST {{ url }}/auth/login
+Content-Type: application/json
+
+{
+  "username": "yulyko",
+  "password": "{{ user_password }}"
+}
