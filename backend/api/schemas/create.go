@@ -5,13 +5,11 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
-	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
 type createBody struct {
-	Name    string              `json:"name" validate:"required"`
-	Content model.SchemaContent `json:"content" validate:"required,dive,required"`
+	Name string `json:"name" validate:"required"`
 }
 
 func apiCreate(ctx *fiber.Ctx) error {
@@ -24,9 +22,8 @@ func apiCreate(ctx *fiber.Ctx) error {
 	user := auth.GetSessionUser(ctx)
 
 	schema, err := repositoryschemas.Create(ctx.Context(), &repositoryschemas.CreateOptions{
-		User:    user,
-		Name:    body.Name,
-		Content: body.Content,
+		User: user,
+		Name: body.Name,
 	})
 
 	if err != nil {

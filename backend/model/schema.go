@@ -5,34 +5,13 @@ import "encoding/json"
 const SKSchema = "SCHEMA"
 const IndexSchemaID = "SchemaIdIndex"
 
-type SchemaObject struct {
-	ID string `json:"id" validate:"required,ulid"`
-}
-
-type SchemaPattern struct {
-	*SchemaObject
-	Name    string       `json:"name" validate:"required"`
-	Type    string       `json:"type" validate:"required,oneof=square diamond"`
-	Content []*SchemaRow `json:"content" validate:"required,dive,required"`
-}
-
-type SchemaRow struct {
-	*SchemaObject
-	Content []*SchemaBead `json:"content" validate:"required,dive,required"`
-}
-
-type SchemaBead struct {
-	*SchemaObject
-	Color string `json:"color" validate:"required,iscolor"`
-}
-
-type SchemaContent []*SchemaPattern
+type SchemaContent []interface{}
 
 type Schema struct {
 	*Base
-	Name    string        `dynamo:"Name"`
-	Palette []string      `dynamo:"Palette"`
-	Content SchemaContent `dynamo:"Content"`
+	Name    string        `json:"name" dynamo:"Name"`
+	Palette []string      `json:"palette" dynamo:"Palette"`
+	Content SchemaContent `json:"content" dynamo:"Content"`
 }
 
 func (u *Schema) MarshalJSON() ([]byte, error) {

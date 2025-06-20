@@ -1,12 +1,14 @@
 # @name list
 GET {{ url }}/schemas
 Content-Type: application/json
+Authorization: {{ token }}
 
 ###
 
 # @name create
 POST {{ url }}/schemas
 Content-Type: application/json
+Authorization: {{ token }}
 
 {
   "name": "test {{ $random.uuid }}",
@@ -18,18 +20,21 @@ Content-Type: application/json
 # @name by-id
 GET {{ url }}/schemas/{{ schema_id}}
 Content-Type: application/json
+Authorization: {{ token }}
 
 ###
 
 # @name delete
 DELETE {{ url }}/schemas/{{ schema_id}}
 Content-Type: application/json
+Authorization: {{ token }}
 
 ###
 
 # @name update
 PATCH {{ url }}/schemas/{{ schema_id}}
 Content-Type: application/json
+Authorization: {{ token }}
 
 {
   "palette": ["", "", "", "", "", "", "", "", ""]
