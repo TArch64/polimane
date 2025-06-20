@@ -1,7 +1,18 @@
 import { computed, type ComputedRef, type MaybeRefOrGetter, toValue } from 'vue';
-import { type ISchemaObject, type ISchemaWithContent, isSchemaWithContent } from '@/models';
+import {
+  type ISchema,
+  type ISchemaObject,
+  type ISchemaWithContent,
+  isSchemaWithContent,
+} from '@/models';
 
 const OBJECT_PARENT = Symbol('[[OBJECT_PARENT]]');
+
+export function setSchemaRelations(schema: ISchema): void {
+  for (const object of schema.content) {
+    setObjectParent(schema, object);
+  }
+}
 
 export function setObjectParent(parent: ISchemaObject, object: ISchemaObject): void {
   Object.defineProperty(object, OBJECT_PARENT, {

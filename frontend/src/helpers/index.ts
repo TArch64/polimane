@@ -7,3 +7,4 @@ export * from './combineStopHandles';
 export * from './waiter';
 export * from './fetchMapValue';
 export * from './destroyStore';
+export * from './compressor';

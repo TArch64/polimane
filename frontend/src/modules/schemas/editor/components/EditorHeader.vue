@@ -5,6 +5,14 @@
       Едітор
     </Button>
 
+    <Button icon :disabled="!editorStore.canUndo" @click="editorStore.undo">
+      <CornerUpLeftIcon />
+    </Button>
+
+    <Button icon :disabled="!editorStore.canRedo" @click="editorStore.redo">
+      <CornerUpRightIcon />
+    </Button>
+
     <Dropdown>
       <template #activator="{ open, activatorStyle }">
         <Button
@@ -35,7 +43,14 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { Button } from '@/components/button';
-import { ArrowBackIcon, EditIcon, MoreHorizontalIcon, TrashIcon } from '@/components/icon';
+import {
+  ArrowBackIcon,
+  CornerUpLeftIcon,
+  CornerUpRightIcon,
+  EditIcon,
+  MoreHorizontalIcon,
+  TrashIcon,
+} from '@/components/icon';
 import { useAsyncAction } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { Dropdown, DropdownAction } from '@/components/dropdown';
@@ -74,12 +89,13 @@ const deleteSchema = useAsyncAction(async () => {
     z-index: 10;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 6px 8px;
+    gap: 4px;
   }
 
   .editor-header-back {
     gap: 8px;
+    margin-right: auto;
   }
 }
 </style>

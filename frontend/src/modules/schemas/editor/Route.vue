@@ -14,7 +14,6 @@ import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
 import { destroyStore, lazyDestroyStore } from '@/helpers';
 import {
-  disposeActiveObjectStores,
   disposeBeadsStores,
   disposeRowsStores,
   useEditorStore,
@@ -38,7 +37,6 @@ defineOptions({
     lazyDestroyStore(usePatternsStore);
     disposeBeadsStores();
     disposeRowsStores();
-    disposeActiveObjectStores();
     lazyDestroyStore(usePaletteStore);
     next();
   },

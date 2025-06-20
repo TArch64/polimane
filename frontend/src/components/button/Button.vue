@@ -90,6 +90,8 @@ const classes = computed(() => [
 
     &[disabled] {
       background-color: var(--button-disabled-background);
+      color: var(--button-disabled-foreground);
+      cursor: default;
     }
   }
 
@@ -98,13 +100,15 @@ const classes = computed(() => [
     --button-hover-background: color-mix(in srgb, var(--button-base-color), transparent 20%);
     --button-disabled-background: color-mix(in srgb, var(--button-base-color), transparent 70%);
     --button-foreground: var(--color-white);
+    --button-disabled-foreground: var(--color-white);
   }
 
   .button--secondary {
     --button-background: transparent;
     --button-hover-background: color-mix(in srgb, var(--button-base-color), transparent 90%);
-    --button-disabled-background: color-mix(in srgb, var(--button-base-color), transparent 70%);
+    --button-disabled-background: transparent;
     --button-foreground: var(--button-base-color);
+    --button-disabled-foreground: color-mix(in srgb, var(--button-base-color), transparent 70%);
   }
 }
 </style>
