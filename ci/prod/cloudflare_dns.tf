@@ -37,6 +37,10 @@ resource "aws_acm_certificate" "cloudflare" {
   private_key      = tls_private_key.aws_origin.private_key_pem
   certificate_body = cloudflare_origin_ca_certificate.aws_origin.certificate
   tags             = local.aws_common_tags
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "webapp" {
