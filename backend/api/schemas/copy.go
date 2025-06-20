@@ -21,6 +21,10 @@ func apiCopy(ctx *fiber.Ctx) error {
 		SchemaID: schemaId,
 	})
 
+	if err != nil {
+		return err
+	}
+
 	schema.Content = nil
 	return ctx.JSON(schema)
 }

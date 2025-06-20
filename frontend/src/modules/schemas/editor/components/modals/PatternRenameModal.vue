@@ -23,7 +23,7 @@ const modal = useActiveModal();
 const editingName = ref(props.pattern.name);
 
 function save(): void {
-  set(props.pattern, 'name', editingName.value);
+  set(props.pattern, 'name', editingName.value.trim());
   modal.close();
 }
 </script>

@@ -101,7 +101,7 @@ const classes = computed(() => [
   }
 
   .button--secondary {
-    --button-background: tranparent;
+    --button-background: transparent;
     --button-hover-background: color-mix(in srgb, var(--button-base-color), transparent 90%);
     --button-disabled-background: color-mix(in srgb, var(--button-base-color), transparent 70%);
     --button-foreground: var(--button-base-color);

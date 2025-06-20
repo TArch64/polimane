@@ -9,9 +9,9 @@ type SchemaContent []interface{}
 
 type Schema struct {
 	*Base
-	Name    string        `dynamo:"Name"`
-	Palette []string      `dynamo:"Palette"`
-	Content SchemaContent `dynamo:"Content"`
+	Name    string        `json:"name" dynamo:"Name"`
+	Palette []string      `json:"palette" dynamo:"Palette"`
+	Content SchemaContent `json:"content" dynamo:"Content"`
 }
 
 func (u *Schema) MarshalJSON() ([]byte, error) {

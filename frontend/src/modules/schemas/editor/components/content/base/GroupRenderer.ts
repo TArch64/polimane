@@ -97,10 +97,10 @@ export const GroupRenderer = defineComponent({
         return NodeRect.BLANK;
       }
 
-      let minX = Infinity;
-      let minY = Infinity;
-      let maxX = -Infinity;
-      let maxY = -Infinity;
+      let minX = Number.POSITIVE_INFINITY;
+      let minY = Number.POSITIVE_INFINITY;
+      let maxX = Number.NEGATIVE_INFINITY;
+      let maxY = Number.NEGATIVE_INFINITY;
 
       for (const node of nodes) {
         const { height, width, x, y } = getClientRect(node);

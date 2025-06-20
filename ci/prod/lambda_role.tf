@@ -11,6 +11,6 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
 
 resource "aws_iam_role_policy" "lambda_permissions" {
   role = aws_iam_role.lambda_role.name
-  name = "X-LambdaPermissions"
+  name = "x-${local.lambda_name}-permissions"
   policy = file("${path.module}/lambda_permissions_policy.json")
 }

@@ -1,7 +1,7 @@
 locals {
   lambda_sources_dir = abspath("${path.root}/../../backend")
   lambda_build_dir = abspath("${path.root}/tmp/lambda")
-  lambda_build_zip = abspath("${local.lambda_build_dir}/boostrap.zip")
+  lambda_build_zip = abspath("${local.lambda_build_dir}/bootstrap.zip")
 
   lambda_sources_hash = sha1(join("", [
     for f in fileset(local.lambda_sources_dir, "**") : filesha1("${local.lambda_sources_dir}/${f}")
