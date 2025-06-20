@@ -1,10 +1,12 @@
-import { computed, reactive, ref, type Ref, shallowRef } from 'vue';
+import { computed, markRaw, reactive, ref, type Ref, shallowRef } from 'vue';
 import { watchDebounced } from '@vueuse/core';
 import type { ISchema } from '@/models';
 import { setSchemaRelations } from '@/modules/schemas/editor/models';
 import { compressObject, decompressObject } from '@/helpers';
 
 export interface IEditorHistory {
+  canUndo: boolean;
+  canRedo: boolean;
   init: () => Promise<void>;
   destroy: () => void;
   undo: () => Promise<void>;
@@ -25,7 +27,7 @@ export function useEditorHistory(schema: Ref<ISchema>): IEditorHistory {
       history.value = history.value.slice(0, cursor.value + 1);
     }
 
-    const blob = await compressObject(schema.value.content);
+    const blob = markRaw(await compressObject(schema.value.content));
     history.value = [...history.value, blob].slice(-30);
     cursor.value = history.value.length - 1;
   }
@@ -67,14 +69,20 @@ export function useEditorHistory(schema: Ref<ISchema>): IEditorHistory {
     startWatcher();
   }
 
+  async function undo(): Promise<void> {
+    if (canUndo.value) await restoreVersion(-1);
+  }
+
+  async function redo(): Promise<void> {
+    if (canRedo.value) await restoreVersion(1);
+  }
+
   return reactive({
     init,
     destroy,
-    undo: async () => {
-      canUndo.value && await restoreVersion(-1);
-    },
-    redo: async () => {
-      canRedo.value && await restoreVersion(1);
-    },
+    undo,
+    canUndo,
+    redo,
+    canRedo,
   });
 }

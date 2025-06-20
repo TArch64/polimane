@@ -34,3 +34,5 @@ export const EditIcon = makeIcon(() => import('~icons/eva/edit-outline'));
 export const MoreHorizontalIcon = makeIcon(() => import('~icons/eva/more-horizontal-outline'));
 export const CopyIcon = makeIcon(() => import('~icons/eva/copy-outline'));
 export const LogoIcon = makeIcon(() => import('~icons/custom/logo'));
+export const CornerUpLeftIcon = makeIcon(() => import('~icons/eva/corner-up-left-outline'));
+export const CornerUpRightIcon = makeIcon(() => import('~icons/eva/corner-up-right-outline'));
