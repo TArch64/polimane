@@ -1,3 +1,4 @@
 # @name current
 GET {{ url }}/users/current
 Content-Type: application/json
+Authorization: {{ token }}
