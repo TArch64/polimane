@@ -26,6 +26,7 @@ const config = useNodeConfigs<Konva.RectConfig>([
   {
     width: 14,
     height: 14,
+    cornerRadius: 4,
   },
   computed(() => ({
     fill: props.bead.color || 'rgba(0, 0, 0, 0.05)',

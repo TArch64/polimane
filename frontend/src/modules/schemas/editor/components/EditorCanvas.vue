@@ -3,6 +3,7 @@
     ref="wrapperRef"
     class="editor-canvas"
     @contextmenu.prevent
+    @keydown="onKeydown"
   >
     <KonvaStage
       :config
@@ -31,9 +32,10 @@ import {
   useCanvasZoom,
   useNodeRef,
 } from '../composables';
-import { usePaletteStore } from '../stores';
+import { useEditorStore, usePaletteStore } from '../stores';
 import { CanvasContent, type IGroupLayoutEvent } from './content';
 
+const editorStore = useEditorStore();
 const paletteStore = usePaletteStore();
 
 const wrapperRef = ref<HTMLElement | null>(null);
@@ -82,6 +84,15 @@ function onWheel(event: KonvaEventObject<WheelEvent, Konva.Stage>): void {
   event.evt.preventDefault();
   event.evt.ctrlKey ? canvasZoom.zoom(event) : canvasNavigation.navigate(event);
   event.currentTarget.batchDraw();
+}
+
+function onKeydown(event: KeyboardEvent) {
+  if (!event.metaKey || event.key.toLowerCase() !== 'z') {
+    return;
+  }
+
+  event.preventDefault();
+  event.shiftKey ? editorStore.redo() : editorStore.undo();
 }
 
 function togglePainting(event: Konva.KonvaEventObject<MouseEvent>) {
