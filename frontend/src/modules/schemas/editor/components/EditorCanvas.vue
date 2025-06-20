@@ -3,7 +3,6 @@
     ref="wrapperRef"
     class="editor-canvas"
     @contextmenu.prevent
-    @keydown.esc="focusObjectStore.deactivatePath"
   >
     <KonvaStage
       :config
@@ -25,7 +24,6 @@
 import { computed, ref, watch } from 'vue';
 import { useDebounceFn, useElementSize } from '@vueuse/core';
 import Konva from 'konva';
-import type { KonvaStage } from 'vue-konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import {
   provideNodeContextMenu,
@@ -33,10 +31,9 @@ import {
   useCanvasZoom,
   useNodeRef,
 } from '../composables';
-import { useFocusObjectStore, usePaletteStore } from '../stores';
+import { usePaletteStore } from '../stores';
 import { CanvasContent, type IGroupLayoutEvent } from './content';
 
-const focusObjectStore = useFocusObjectStore();
 const paletteStore = usePaletteStore();
 
 const wrapperRef = ref<HTMLElement | null>(null);

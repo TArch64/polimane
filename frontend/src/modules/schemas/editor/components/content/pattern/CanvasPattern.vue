@@ -1,11 +1,5 @@
 <template>
-  <GroupRenderer
-    :config
-    ref="rootRef"
-    @click="onClick"
-    @mouseover="activeObject.hover.activate(ActiveObjectTrigger.CANVAS)"
-    @mouseout="activeObject.hover.deactivate"
-  >
+  <GroupRenderer :config ref="rootRef" @click="onClick">
     <KonvaRect :config="borderConfig" />
     <CanvasPatternLabel :pattern />
 
@@ -20,7 +14,6 @@
 import Konva from 'konva';
 import type { ISchemaPattern } from '@/models';
 import {
-  useActiveObject,
   useNodeCentering,
   useNodeConfigs,
   useNodeContextMenu,
@@ -29,8 +22,6 @@ import {
   usePatternContextMenuActions,
 } from '@/modules/schemas/editor/composables';
 import { useModal } from '@/components/modal';
-import { ActiveObjectTrigger } from '@/modules/schemas/editor/stores';
-import { scrollNodeIntoView } from '@/modules/schemas/editor/helpers';
 import { getPatternAddRowModal } from '../../modals';
 import { GroupRenderer } from '../base';
 import CanvasPatternLabel from './CanvasPatternLabel.vue';
@@ -41,13 +32,12 @@ const props = defineProps<{
   pattern: ISchemaPattern;
 }>();
 
-const activeObject = useActiveObject(() => props.pattern);
 const addModal = useModal(getPatternAddRowModal(props.pattern));
 
 function onClick() {
-  props.pattern.content.length
-    ? activeObject.focus.activate(ActiveObjectTrigger.CANVAS)
-    : addModal.open({ pattern: props.pattern });
+  if (!props.pattern.content.length) {
+    addModal.open({ pattern: props.pattern });
+  }
 }
 
 const rootRef = useNodeRef<Konva.Group>();
@@ -93,10 +83,4 @@ const borderConfig = useNodeConfigs<Konva.RectConfig>([
     },
   }),
 ]);
-
-activeObject.focus.onExactActive((trigger) => {
-  if (trigger !== ActiveObjectTrigger.CANVAS) {
-    scrollNodeIntoView(rootRef.value, { scale: true });
-  }
-});
 </script>
