@@ -23,7 +23,7 @@ type SchemaRow struct {
 
 type SchemaBead struct {
 	*SchemaObject
-	Color string `json:"color" validate:"required,iscolor"`
+	Color string `json:"color" validate:"omitempty,iscolor"`
 }
 
 type SchemaContent []*SchemaPattern
