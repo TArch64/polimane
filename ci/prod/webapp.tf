@@ -17,7 +17,11 @@ resource "cloudflare_pages_domain" "webapp" {
 
 resource "null_resource" "webapp_deploy" {
   triggers = { sources_hash = local.webapp_sources_hash }
-  depends_on = [null_resource.webapp_build]
+
+  depends_on = [
+    null_resource.webapp_build,
+    cloudflare_pages_project.webapp
+  ]
 
   provisioner "local-exec" {
     command = "npx -y wrangler pages deploy $BUILD_DIST --project-name $PROJECT_NAME"
