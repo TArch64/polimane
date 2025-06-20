@@ -6,6 +6,7 @@ import { ShallowRef } from 'vue';
 
 interface ImportMetaEnv {
   FRONTEND_PUBLIC_API_URL: string;
+  FRONTEND_PUBLIC_SENTRY_DSN: string;
 }
 
 interface ImportMeta {
