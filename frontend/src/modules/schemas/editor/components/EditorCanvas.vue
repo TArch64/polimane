@@ -50,7 +50,7 @@ const setRendered = useDebounceFn(async (event: Konva.KonvaEventObject<IGroupLay
 
   stage.findOne(`#${layerConfig.id}`)!.to({
     opacity: 1,
-    duration: 0.1,
+    duration: 0.3,
     easing: Konva.Easings.EaseOut,
   });
 }, 100);
