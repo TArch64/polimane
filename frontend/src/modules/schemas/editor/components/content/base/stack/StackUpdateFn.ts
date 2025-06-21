@@ -1,8 +1,9 @@
 import Konva from 'konva';
+import { NodeRect } from '@/models';
 
 export interface IStackUpdatePayload {
-  parent: Konva.Group;
-  child: Konva.Node;
+  parentRect: NodeRect;
+  childRect: NodeRect;
   next: number;
 }
 

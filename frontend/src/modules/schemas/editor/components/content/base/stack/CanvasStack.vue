@@ -7,13 +7,13 @@
 <script setup lang="ts">
 import { nextTick, type Slot } from 'vue';
 import Konva from 'konva';
-import { useNodeRef } from '@/modules/schemas/editor/composables';
 import { createWaiter } from '@/helpers';
+import { useNodeRef } from '@/modules/schemas/editor/composables';
+import { getClientRect } from '@/modules/schemas/editor/helpers';
 import { GroupRenderer, type IGroupLayoutEvent } from '../GroupRenderer';
 import type { StackUpdateFn } from './StackUpdateFn';
 
 const props = defineProps<{
-  initial: number;
   update: StackUpdateFn<keyof Konva.NodeConfig>;
   gap: number;
   config?: Partial<Konva.GroupConfig>;
@@ -32,13 +32,14 @@ const rendered: Record<number, boolean> = {};
 
 async function onLayout(event: IGroupLayoutEvent): Promise<void> {
   const waiter = createWaiter();
-  let next = props.initial;
+  const nodeRects = event.nodes.map(getClientRect);
+  let next = 0;
 
-  for (const child of event.nodes) {
+  for (const [index, child] of event.nodes.entries()) {
     const update = props.update({
-      parent: groupRef.value!,
       next,
-      child,
+      parentRect: getClientRect(groupRef.value!),
+      childRect: nodeRects[index]!,
     });
 
     if (update.extra) {

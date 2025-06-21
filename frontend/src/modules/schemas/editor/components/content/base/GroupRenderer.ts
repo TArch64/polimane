@@ -160,6 +160,7 @@ export const GroupRenderer = defineComponent({
           node.on('yChange', updateSize);
           node.on('widthChange', updateSize);
           node.on('heightChange', updateSize);
+          node.on('layout', updateSize);
         }
       }
     }

@@ -3,7 +3,6 @@
     :gap
     :config
     :update
-    :initial="0"
     ref="stackRef"
     @layout="$emit('layout', $event)"
     v-slot="ctx"
@@ -16,8 +15,7 @@
 import type { Slot } from 'vue';
 import Konva from 'konva';
 import { useNodeRef } from '@/modules/schemas/editor/composables';
-import type { INodeRect } from '@/models';
-import { getClientRect } from '@/modules/schemas/editor/helpers';
+import { NodeRect } from '@/models';
 import type { IGroupLayoutEvent } from '../GroupRenderer';
 import CanvasStack from './CanvasStack.vue';
 import type { StackAlignment } from './StackAlignment';
@@ -42,12 +40,12 @@ defineSlots<{
 
 const stackRef = useNodeRef<Konva.Group>();
 
-function getAlignValue(parent: Konva.Group, childRect: INodeRect): number {
+function getAlignValue(parentRect: NodeRect, childRect: NodeRect): number {
   if (props.align === 'start') {
     return 0;
   }
 
-  const freeSpace = getClientRect(parent).width - childRect.width;
+  const freeSpace = parentRect.width - childRect.width;
 
   if (props.align === 'end') {
     return freeSpace;
@@ -56,18 +54,14 @@ function getAlignValue(parent: Konva.Group, childRect: INodeRect): number {
   return freeSpace / 2;
 }
 
-const update: StackUpdateFn<'y'> = (payload) => {
-  const childRect = getClientRect(payload.child);
+const update: StackUpdateFn<'y'> = (payload) => ({
+  next: payload.childRect.height + props.gap,
+  property: 'y',
 
-  return {
-    next: childRect.height + props.gap,
-    property: 'y',
-
-    extra: {
-      x: getAlignValue(payload.parent, childRect),
-    },
-  };
-};
+  extra: {
+    x: getAlignValue(payload.parentRect, payload.childRect),
+  },
+});
 
 defineExpose({ getNode: () => stackRef.value! });
 </script>
