@@ -20,7 +20,6 @@ defineSlots<{
 
 const linkBinding = makeBinding(RouterLink, () => ({
   to: props.to!,
-  viewTransition: true,
 }));
 
 const buttonBinding = makeBinding('button', () => ({
