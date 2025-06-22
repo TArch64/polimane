@@ -34,6 +34,7 @@ const selectedType = ref(PatternType.SQUARE);
 const options = PatternKindValues.map((type): ISelectOption<PatternType> => ({
   value: type,
   label: getPatternTitle(type),
+  disabled: type === PatternType.DIAMOND,
 }));
 
 function addPattern(): void {

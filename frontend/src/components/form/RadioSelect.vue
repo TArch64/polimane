@@ -11,13 +11,14 @@
         :name
         :required
         :value="option.value"
+        :disabled="option.disabled"
         :checked="option.value === model"
         @change="model = option.value"
       />
 
-      <p>
+      <span class="radio-select__label">
         {{ option.label }}
-      </p>
+      </span>
     </label>
   </div>
 </template>
@@ -47,6 +48,10 @@ const model = defineModel<V>({ required: true });
   .radio-select__option {
     display: flex;
     gap: 8px;
+
+    &:has(input:disabled) {
+      color: var(--color-text-2);
+    }
   }
 
   .radio-select__input {

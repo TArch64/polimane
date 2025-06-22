@@ -2,7 +2,7 @@
   <slot
     name="activator"
     :open
-    :activatorStyle="{ anchorName: anchorVar }"
+    :activatorStyle="{ anchorName }"
   />
 
   <Teleport to="body" v-if="isOpened">
@@ -30,11 +30,11 @@ defineSlots<{
 const routeTransition = useRouteTransition();
 const menuRef = useDomRef<HTMLElement | null>();
 
-const anchorVar = `--dropdown-${newId()}`;
+const anchorName = `--dropdown-${newId()}`;
 const isOpened = ref(false);
 
 const menuStyles = computed(() => ({
-  positionAnchor: anchorVar,
+  positionAnchor: anchorName,
 }));
 
 let closeController: AbortController | null = null;
