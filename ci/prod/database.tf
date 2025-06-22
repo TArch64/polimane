@@ -51,4 +51,8 @@ resource "aws_backup_selection" "database" {
   iam_role_arn = aws_iam_role.backup_role.arn
   plan_id      = aws_backup_plan.vault.id
   resources = [data.aws_dynamodb_table.database.arn]
+
+  lifecycle {
+    ignore_changes = [resources]
+  }
 }
