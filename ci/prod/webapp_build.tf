@@ -1,3 +1,15 @@
+variable "frontend_sentry_dsn" {
+  type      = string
+  sensitive = true
+  nullable  = false
+}
+
+variable "frontend_sentry_auth_token" {
+  type      = string
+  sensitive = true
+  nullable  = false
+}
+
 locals {
   webapp_sources_dir = abspath("${path.root}/../../frontend")
   webapp_build_dir = abspath("${path.root}/tmp/webapp")
@@ -19,7 +31,11 @@ resource "null_resource" "webapp_build" {
       BUILD_DOCKERFILE = abspath("${path.root}/build/frontend.Dockerfile")
       BUILD_CONTEXT = local.webapp_sources_dir
       BUILD_DIST    = local.webapp_build_dir
-      BUILD_SECRET = "${path.module}/.env.webapp"
+
+      BUILD_SECRET = jsonencode(["FRONTEND_PUBLIC_SENTRY_DSN", "SENTRY_AUTH_TOKEN"])
+      FRONTEND_PUBLIC_SENTRY_DSN = var.frontend_sentry_dsn
+      SENTRY_AUTH_TOKEN          = var.frontend_sentry_auth_token
+
 
       BUILD_ARGS = jsonencode(["FRONTEND_PUBLIC_API_URL", "FRONTEND_PUBLIC_SENTRY_RELEASE"])
       FRONTEND_PUBLIC_API_URL        = "https://${local.api_domain}/api",

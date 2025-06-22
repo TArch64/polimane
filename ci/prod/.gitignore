@@ -1,8 +1,6 @@
 .terraform
 .wrangler
 .aws-credentials
-.env-lambda.yaml
-.env.*
 .vars.tfvars
 tmp/*
 !tmp/.keep

@@ -1,3 +1,27 @@
+variable "backend_default_user" {
+  type      = string
+  sensitive = true
+  nullable  = false
+}
+
+variable "backend_default_password" {
+  type      = string
+  sensitive = true
+  nullable  = false
+}
+
+variable "backend_secret_key" {
+  type      = string
+  sensitive = true
+  nullable  = false
+}
+
+variable "backend_sentry_dsn" {
+  type      = string
+  sensitive = true
+  nullable  = false
+}
+
 locals {
   lambda_name = local.app_name
 }
@@ -15,9 +39,14 @@ resource "aws_lambda_function" "lambda" {
   tags             = local.aws_common_tags
 
   environment {
-    variables = merge(sensitive(yamldecode(file("${path.module}/.env-lambda.yaml"))), {
-      BACKEND_SENTRY_RELEASE = local.lambda_sources_hash
-    })
+    variables = {
+      BACKEND_DEFAULT_USER     = var.backend_default_user
+      BACKEND_DEFAULT_PASSWORD = var.backend_default_password
+      BACKEND_SECRET_KEY       = var.backend_secret_key
+      BACKEND_APP_DOMAIN       = local.domain
+      BACKEND_SENTRY_DSN       = var.backend_sentry_dsn
+      BACKEND_SENTRY_RELEASE   = local.lambda_sources_hash,
+    }
   }
 
   lifecycle {

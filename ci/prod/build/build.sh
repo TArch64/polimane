@@ -3,10 +3,7 @@
 set -e
 
 BUILD_ARGS=$(echo "$BUILD_ARGS" | jq -r '. // [] | map("--build-arg " + .) | join(" ")')
-
-if [ -n "$BUILD_SECRET" ]; then
-  BUILD_SECRET="--secret id=build_secret,src=$BUILD_SECRET"
-fi
+BUILD_SECRET=$(echo "$BUILD_SECRET" | jq -r '. // [] | map("--secret id=" + .) | join(" ")')
 
 cleanup() {
   docker container rm -f $BUILD_ID || true

@@ -18,6 +18,7 @@ ENV FRONTEND_PUBLIC_SENTRY_RELEASE=$FRONTEND_PUBLIC_SENTRY_RELEASE
 
 ENV NODE_ENV=production
 
-RUN --mount=type=secret,id=build_secret export $(cat /run/secrets/build_secret | xargs) && \
+RUN --mount=type=secret,id=FRONTEND_PUBLIC_API_URL,env=FRONTEND_PUBLIC_API_URL \
+    --mount=type=secret,id=FRONTEND_PUBLIC_SENTRY_RELEASE,env=FRONTEND_PUBLIC_SENTRY_RELEASE \
     bun run build && \
     find ./dist/assets/*.map -exec rm {} \;
