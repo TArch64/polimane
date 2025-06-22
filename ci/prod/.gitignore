@@ -3,6 +3,6 @@
 .aws-credentials
 .env-lambda.yaml
 .env.*
-secret.tf
+.vars.tfvars
 tmp/*
 !tmp/.keep

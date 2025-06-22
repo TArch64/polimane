@@ -28,7 +28,7 @@ resource "null_resource" "webapp_deploy" {
 
     environment = {
       CLOUDFLARE_ACCOUNT_ID = local.cloudflare_account_id
-      CLOUDFLARE_API_TOKEN  = local.cloudflare_api_token
+      CLOUDFLARE_API_TOKEN = var.cloudflare_api_token
       BUILD_DIST   = local.webapp_build_dir
       PROJECT_NAME = cloudflare_pages_project.webapp.name
     }

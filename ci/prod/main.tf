@@ -4,17 +4,17 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "6.0.0-beta3"
+      version = "6.0.0"
     }
 
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "5.5.0"
+      version = "5.6.0"
     }
 
     tls = {
       source  = "hashicorp/tls"
-      version = "4.0.6"
+      version = "4.1.0"
     }
 
     null = {
@@ -40,8 +40,14 @@ provider "aws" {
   }
 }
 
+variable "cloudflare_api_token" {
+  type      = string
+  nullable  = false
+  sensitive = true
+}
+
 provider "cloudflare" {
-  api_token = local.cloudflare_api_token
+  api_token = var.cloudflare_api_token
 }
 
 locals {
