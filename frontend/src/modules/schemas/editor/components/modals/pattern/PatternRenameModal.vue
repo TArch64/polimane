@@ -24,6 +24,6 @@ const editingName = ref(props.pattern.name);
 
 function save(): void {
   set(props.pattern, 'name', editingName.value.trim());
-  modal.close();
+  modal.close(null);
 }
 </script>

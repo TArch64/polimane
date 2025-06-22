@@ -54,7 +54,7 @@ defineSlots<{
 }>();
 
 const modal = useActiveModal();
-const close = () => modal.close();
+const close = () => modal.close(null);
 
 const dialogRef = ref<HTMLDialogElement>(null!);
 

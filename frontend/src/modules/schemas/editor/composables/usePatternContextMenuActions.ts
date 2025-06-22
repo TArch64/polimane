@@ -6,7 +6,7 @@ import { useModal } from '@/components/modal';
 import type { ISchemaPattern } from '@/models';
 import { useRouteTransition } from '@/composables';
 import { useConfirm } from '@/components/confirm';
-import { PatternAddModal, PatternRenameModal } from '../components/modals';
+import { PatternRenameModal, usePatternAddModal } from '../components/modals';
 import { usePatternsStore } from '../stores';
 
 export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<ISchemaPattern>): MaybeContextMenuAction[] {
@@ -16,7 +16,7 @@ export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<ISchem
   const patternsStore = usePatternsStore();
 
   const renameModal = useModal(PatternRenameModal);
-  const addModal = useModal(PatternAddModal);
+  const addModal = usePatternAddModal();
 
   const deleteConfirm = useConfirm({
     danger: true,

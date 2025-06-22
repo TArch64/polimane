@@ -12,10 +12,9 @@
 
 <script setup lang="ts">
 import { Button } from '@/components/button';
-import { useModal } from '@/components/modal';
-import { PatternAddModal } from './modals';
+import { usePatternAddModal } from './modals';
 
-const addPatternModal = useModal(PatternAddModal);
+const addPatternModal = usePatternAddModal();
 </script>
 
 <style scoped>

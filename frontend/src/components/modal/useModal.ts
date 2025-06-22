@@ -1,20 +1,26 @@
 import { type Component, onUnmounted } from 'vue';
+import { createEventHook } from '@vueuse/core';
+import type { EventHookOn } from '@vueuse/shared';
 import type { InferComponentProps } from '@/types';
 import { ModalPlugin } from './ModalPlugin';
 
-export interface IModal<C extends Component> {
-  open(props?: InferComponentProps<C>): void;
+export interface IModal<C extends Component, R = null> {
+  open: (props?: InferComponentProps<C>) => Promise<R>;
+  onClose: EventHookOn<[R]>;
 }
 
-export function useModal<C extends Component>(component: C): IModal<C> {
+export function useModal<C extends Component, R = null>(component: C): IModal<C, R> {
   const plugin = ModalPlugin.inject();
-  const modal = plugin.create<C>(component);
+  const modal = plugin.create<C, R>(component);
+  const closeHook = createEventHook<[R]>();
 
-  function open(props?: InferComponentProps<C>): void {
-    modal.open(props ?? null);
+  async function open(props?: InferComponentProps<C>): Promise<R> {
+    const result = await modal.open(props ?? null);
+    await closeHook.trigger(result);
+    return result;
   }
 
   onUnmounted(() => plugin.remove(modal));
 
-  return { open };
+  return { open, onClose: closeHook.on };
 }

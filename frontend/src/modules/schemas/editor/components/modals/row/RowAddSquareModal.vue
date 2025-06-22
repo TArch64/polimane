@@ -21,10 +21,10 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
+import type { ISchemaPattern } from '@/models';
 import { Modal, useActiveModal } from '@/components/modal';
 import { NumberField } from '@/components/form';
-import type { ISchemaPattern } from '@/models';
-import { useRowsStore } from '../../stores';
+import { useRowsStore } from '@/modules/schemas/editor/stores';
 
 const props = withDefaults(defineProps<{
   pattern: ISchemaPattern;
@@ -37,8 +37,8 @@ const modal = useActiveModal();
 const rowsStore = useRowsStore(() => props.pattern);
 
 const form = reactive({
-  rows: 1,
-  size: 5,
+  rows: 4,
+  size: 50,
 });
 
 function save() {
@@ -47,7 +47,7 @@ function save() {
     toIndex: props.toIndex,
   });
 
-  modal.close();
+  modal.close(null);
 }
 </script>
 

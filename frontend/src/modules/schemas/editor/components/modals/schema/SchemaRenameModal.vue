@@ -20,6 +20,6 @@ const editingName = ref(editorStore.schema.name);
 
 function save(): void {
   editorStore.schema.name = editingName.value.trim();
-  modal.close();
+  modal.close(null);
 }
 </script>

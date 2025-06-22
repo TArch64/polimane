@@ -4,8 +4,8 @@ import {
   type MaybeRefOrGetter,
   onBeforeUnmount,
   provide,
-  type Ref,
   ref,
+  type Ref,
   toValue,
 } from 'vue';
 import Konva from 'konva';
@@ -58,13 +58,14 @@ export function provideNodeContextMenu(stage: Ref<Konva.Stage>): void {
     if (!options) return;
 
     plugin.show({
+      control: false,
+      title: toValue(options.title),
+      actions: toValue(options.actions).filter((action): action is IContextMenuAction => !!action),
+
       position: new Point({
         x: event.evt.clientX,
         y: event.evt.clientY,
       }),
-
-      title: toValue(options.title),
-      actions: toValue(options.actions).filter((action): action is IContextMenuAction => !!action),
     });
 
     addEventListener('click', () => plugin.hide(), { once: true, capture: true });

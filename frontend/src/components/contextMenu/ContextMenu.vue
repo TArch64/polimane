@@ -1,5 +1,11 @@
 <template>
-  <DropdownMenu ref="menuRef" class="dropdown" :class="classes">
+  <DropdownMenu
+    ref="menuRef"
+    class="dropdown"
+    view-transition-name="context-menu"
+    :control="menu.control"
+    :class="classes"
+  >
     <h1 class="dropdown__title">
       {{ menu.title }}
     </h1>
