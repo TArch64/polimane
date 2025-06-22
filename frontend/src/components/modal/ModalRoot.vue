@@ -5,11 +5,11 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, h, nextTick, type PropType, type Ref, ref, watch } from 'vue';
+import { nextTick, type Ref, ref, watch } from 'vue';
 import { useRouteTransition } from '@/composables';
 import { ModalPlugin } from './ModalPlugin';
+import { ModalRender } from './ModalRender';
 import type { Modal } from './Modal';
-import { provideActiveModal } from './useActiveModal';
 
 const plugin = ModalPlugin.inject();
 const routeTransition = useRouteTransition();
@@ -19,24 +19,13 @@ watch(() => plugin.openedModal?.id, () => {
   routeTransition.start(async () => {
     const previousModal = openedModal.value;
     openedModal.value = plugin.openedModal;
-    await nextTick();
+
     await previousModal?.completeClose();
+
+    // Catch next possible modal
+    await nextTick();
+    await nextTick();
+    await nextTick();
   });
-});
-
-const ModalRender = defineComponent({
-  name: 'ModalRender',
-
-  props: {
-    modal: {
-      type: Object as PropType<Modal>,
-      required: true,
-    },
-  },
-
-  setup(props) {
-    provideActiveModal(props.modal);
-    return () => h(props.modal.component, props.modal.props);
-  },
 });
 </script>

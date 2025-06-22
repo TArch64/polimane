@@ -50,7 +50,9 @@ export class Collection<P extends ISchemaWithContent, O extends ISchemaObject = 
     return this.values.length;
   }
 
-  insert(singleOrList: O | O[], options: ICollectionInsertOptions = {}): void {
+  insert(item: O, options?: ICollectionInsertOptions): O;
+  insert(list: O[], options?: ICollectionInsertOptions): O[];
+  insert(singleOrList: O | O[], options: ICollectionInsertOptions = {}): O | O[] {
     const list = Array.isArray(singleOrList) ? singleOrList : [singleOrList];
     const toIndex = options.toIndex ?? -1;
     toIndex === -1 ? this.values.push(...list) : this.values.splice(toIndex, 0, ...list);
@@ -60,6 +62,8 @@ export class Collection<P extends ISchemaWithContent, O extends ISchemaObject = 
         this.options.onAdded(this.parent, item);
       }
     }
+
+    return singleOrList;
   }
 
   delete(item: O): void {

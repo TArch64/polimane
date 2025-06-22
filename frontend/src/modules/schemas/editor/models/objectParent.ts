@@ -15,12 +15,14 @@ export function setSchemaRelations(schema: ISchema): void {
 }
 
 export function setObjectParent(parent: ISchemaObject, object: ISchemaObject): void {
-  Object.defineProperty(object, OBJECT_PARENT, {
-    value: parent,
-    enumerable: false,
-    configurable: false,
-    writable: false,
-  });
+  if (!Object.getOwnPropertyDescriptor(object, OBJECT_PARENT)) {
+    Object.defineProperty(object, OBJECT_PARENT, {
+      value: parent,
+      enumerable: false,
+      configurable: false,
+      writable: false,
+    });
+  }
 
   if (isSchemaWithContent(object)) {
     for (const child of object.content) {

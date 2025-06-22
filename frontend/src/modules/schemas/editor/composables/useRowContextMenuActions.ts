@@ -1,12 +1,12 @@
-import { type MaybeRefOrGetter, nextTick } from 'vue';
 import { toRef } from '@vueuse/core';
+import { type MaybeRefOrGetter, nextTick } from 'vue';
 import type { ISchemaPattern, ISchemaRow } from '@/models';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { ArrowDownwardIcon, ArrowUpwardIcon, TrashIcon } from '@/components/icon';
 import { useConfirm } from '@/components/confirm';
 import { useRouteTransition } from '@/composables';
+import { RowAddModal } from '@/modules/schemas/editor/components/modals';
 import { useModal } from '@/components/modal';
-import { getPatternAddRowModal } from '@/modules/schemas/editor/components/modals';
 import { useRowsStore } from '../stores';
 import { useObjectParent } from '../models';
 import { useRowTitle } from './useRowTitle';
@@ -19,7 +19,7 @@ export function useRowContextMenuActions(rowRef: MaybeRefOrGetter<ISchemaRow>): 
   const routeTransition = useRouteTransition();
   const title = useRowTitle(row);
 
-  const addModal = useModal(getPatternAddRowModal(pattern.value));
+  const addModal = useModal(RowAddModal);
 
   function addRow(after: boolean): void {
     const index = rowsStore.rows.indexOf(row.value);

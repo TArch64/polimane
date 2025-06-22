@@ -22,7 +22,7 @@ import {
   usePatternContextMenuActions,
 } from '@/modules/schemas/editor/composables';
 import { useModal } from '@/components/modal';
-import { getPatternAddRowModal } from '../../modals';
+import { RowAddModal } from '../../modals';
 import { GroupRenderer } from '../base';
 import CanvasPatternLabel from './CanvasPatternLabel.vue';
 import CanvasPatternContent from './CanvasPatternContent.vue';
@@ -32,7 +32,7 @@ const props = defineProps<{
   pattern: ISchemaPattern;
 }>();
 
-const addModal = useModal(getPatternAddRowModal(props.pattern));
+const addModal = useModal(RowAddModal);
 
 function onClick() {
   if (!props.pattern.content.length) {

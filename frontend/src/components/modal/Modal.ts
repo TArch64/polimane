@@ -1,5 +1,6 @@
 import { type Component, reactive } from 'vue';
-import type { InferComponentProps } from '@/types';
+import type { InferComponentProps, SafeAny } from '@/types';
+import { createWaiter, type IWaiter, type WaiterRelease } from '@/helpers';
 
 interface IModalState<P> {
   isOpened: boolean;
@@ -8,13 +9,18 @@ interface IModalState<P> {
 
 export type ModalCloseCallback = () => Promise<void>;
 
-export class Modal<C extends Component = Component, P = InferComponentProps<C>> {
+export type AnyModal = Modal<Component, SafeAny, SafeAny>;
+
+export class Modal<C extends Component = Component, R = null, P = InferComponentProps<C>> {
   private state: IModalState<P> = reactive({
     isOpened: false,
     props: null,
   });
 
   onClose?: ModalCloseCallback;
+  private closeWaiter?: IWaiter;
+  private closeResult?: R;
+  private releaseCloseWaiter?: WaiterRelease;
 
   constructor(
     readonly id: string,
@@ -30,18 +36,25 @@ export class Modal<C extends Component = Component, P = InferComponentProps<C>> 
     return this.state.props;
   }
 
-  open(props: P | null) {
+  async open(props: P | null): Promise<R> {
     this.state.props = props;
     this.state.isOpened = true;
+
+    this.closeWaiter = createWaiter();
+    this.releaseCloseWaiter = this.closeWaiter.add();
+    await this.closeWaiter.wait();
+    return this.closeResult!;
   }
 
-  close(onClose?: ModalCloseCallback) {
+  close(result: R, onClose?: ModalCloseCallback) {
     this.onClose = onClose;
+    this.closeResult = result;
     this.state.isOpened = false;
   }
 
   async completeClose(): Promise<void> {
     await this.onClose?.();
+    this.releaseCloseWaiter?.();
     this.state.props = null;
   }
 }
