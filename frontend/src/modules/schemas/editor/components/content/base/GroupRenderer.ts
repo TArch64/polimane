@@ -1,6 +1,5 @@
 import {
   Comment,
-  computed,
   defineComponent,
   getCurrentInstance,
   h,
@@ -15,7 +14,6 @@ import Konva from 'konva';
 import type { IKonvaNodeHolder, KonvaGroup } from 'vue-konva';
 import { useDebounceFn } from '@vueuse/core';
 import type { InferComponentProps, MaybeArray } from '@/types';
-import { newId } from '@/helpers';
 import { useNodeRef } from '@/modules/schemas/editor/composables';
 import { NodeRect } from '@/models';
 import { getClientRect } from '@/modules/schemas/editor/helpers';
@@ -59,13 +57,7 @@ export const GroupRenderer = defineComponent({
 
     const instance = getCurrentInstance();
     const groupRef = useNodeRef<Konva.Group>();
-    const groupId = props.config?.id ?? newId();
     let nodes: Konva.Node[] = [];
-
-    const config = computed(() => ({
-      ...props.config,
-      id: groupId,
-    }));
 
     function isKonvaComponent(node: VNode): node is VNode & {
       component: { exposed: IKonvaNodeHolder };
@@ -126,12 +118,12 @@ export const GroupRenderer = defineComponent({
 
       let clientRect = getChildrenClientRect();
 
-      if (config.value.width) {
-        clientRect = clientRect.with({ width: config.value.width });
+      if (props.config?.width) {
+        clientRect = clientRect.with({ width: props.config.width });
       }
 
-      if (config.value.height) {
-        clientRect = clientRect.with({ height: config.value.height });
+      if (props.config?.height) {
+        clientRect = clientRect.with({ height: props.config.height });
       }
 
       groupRef.value.width(clientRect.width);
@@ -147,13 +139,9 @@ export const GroupRenderer = defineComponent({
     }, 5);
 
     function syncChildNames(): void {
-      const groupName = `managed-by-${groupId}`;
+      const groupName = `managed-by-${groupRef.value._id}`;
 
       for (const node of nodes) {
-        if (!node.id()) {
-          node.id(newId());
-        }
-
         if (!node.hasName(groupName)) {
           node.addName(groupName);
           node.on('xChange', updateSize);
@@ -188,7 +176,7 @@ export const GroupRenderer = defineComponent({
     return () => {
       const groupProps: GroupProps = {
         ref: groupRef,
-        config: config.value,
+        config: props.config,
         onVnodeMounted: onMounted,
         onVnodeUpdated: onUpdated,
       };
