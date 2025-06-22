@@ -9,7 +9,6 @@ module.exports = {
       name: 'preset-default',
       params: {
         overrides: {
-          removeViewBox: false,
           minifyStyles: false, // Removes 100% step in @keyframe
           removeHiddenElems: false, // Removes svg sprite content
         },
@@ -18,6 +17,7 @@ module.exports = {
     'removeDimensions',
     'sortAttrs',
     'convertStyleToAttrs',
+    'removeTitle',
     {
       name: 'removeAttrs',
       params: {
