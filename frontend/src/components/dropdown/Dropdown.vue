@@ -37,6 +37,8 @@ const menuStyles = computed(() => ({
   positionAnchor: anchorVar,
 }));
 
+let closeController: AbortController | null = null;
+
 function open() {
   if (isOpened.value) {
     return;
@@ -49,11 +51,15 @@ function open() {
   });
 
   waitClickComplete().then(() => {
-    window.addEventListener('click', close, { once: true });
+    closeController = new AbortController();
+    window.addEventListener('click', close, { signal: closeController.signal });
+    window.addEventListener('contextmenu', close, { signal: closeController.signal });
   });
 }
 
 function close(): void {
+  closeController?.abort();
+
   routeTransition.start(async () => {
     isOpened.value = false;
     await nextTick();

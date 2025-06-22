@@ -21,6 +21,7 @@ export interface IContextMenuOptions {
   id: string;
   title: string;
   position: Point;
+  control?: boolean;
   actions: IContextMenuAction[];
 }
 
@@ -32,6 +33,7 @@ export class ContextMenuModel {
   readonly id;
   readonly title;
   readonly position;
+  readonly control;
   readonly actions;
 
   private readonly state = shallowReactive<IState>({});
@@ -40,6 +42,7 @@ export class ContextMenuModel {
     this.id = options.id;
     this.title = options.title;
     this.position = options.position;
+    this.control = options.control ?? true;
     this.actions = options.actions;
   }
 
