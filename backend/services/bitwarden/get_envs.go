@@ -8,6 +8,7 @@ func LoadToEnviron(names []string) error {
 	idNameMap := make(map[string]string)
 	for _, name := range names {
 		id = os.Getenv(name + "_SID")
+		ids = append(ids, id)
 		idNameMap[id] = name
 	}
 
