@@ -1,23 +1,18 @@
-variable "frontend_sentry_dsn" {
-  type      = string
-  sensitive = true
-  nullable  = false
+data "bitwarden_secret" "frontend_sentry_dsn" {
+  key = "frontend_sentry_dsn"
 }
 
-variable "frontend_sentry_auth_token" {
-  type      = string
-  sensitive = true
-  nullable  = false
+data "bitwarden_secret" "frontend_sentry_auth_token" {
+  key = "frontend_sentry_auth_token"
 }
 
 locals {
   webapp_sources_dir = abspath("${path.root}/../../frontend")
   webapp_build_dir = abspath("${path.root}/tmp/webapp")
 
-  webapp_sources_hash = uuid()
-  # webapp_sources_hash = sha1(join("", [
-  #   for f in fileset(local.webapp_sources_dir, "**") : filesha1("${local.webapp_sources_dir}/${f}")
-  # ]))
+  webapp_sources_hash = sha1(join("", [
+    for f in fileset(local.webapp_sources_dir, "**") : filesha1("${local.webapp_sources_dir}/${f}")
+  ]))
 }
 
 resource "null_resource" "webapp_build" {
@@ -34,8 +29,8 @@ resource "null_resource" "webapp_build" {
       BUILD_DIST    = local.webapp_build_dir
 
       BUILD_SECRET = jsonencode(["FRONTEND_PUBLIC_SENTRY_DSN", "SENTRY_AUTH_TOKEN"])
-      FRONTEND_PUBLIC_SENTRY_DSN = var.frontend_sentry_dsn
-      SENTRY_AUTH_TOKEN          = var.frontend_sentry_auth_token
+      FRONTEND_PUBLIC_SENTRY_DSN = data.bitwarden_secret.frontend_sentry_dsn.value
+      SENTRY_AUTH_TOKEN          = data.bitwarden_secret.frontend_sentry_auth_token.value
 
 
       BUILD_ARGS = jsonencode(["FRONTEND_PUBLIC_API_URL", "FRONTEND_PUBLIC_SENTRY_RELEASE"])

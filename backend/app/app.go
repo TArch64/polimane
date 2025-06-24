@@ -7,6 +7,7 @@ import (
 
 	"polimane/backend/api"
 	"polimane/backend/env"
+	"polimane/backend/services/bitwarden"
 	awsdynamodb "polimane/backend/services/dynamodb"
 	awsssm "polimane/backend/services/ssm"
 )
@@ -17,6 +18,11 @@ type Config struct {
 
 func New(config *Config) (*fiber.App, error) {
 	var err error
+
+	err = bitwarden.Init()
+	if err != nil {
+		return nil, err
+	}
 
 	err = env.Init()
 	if err != nil {

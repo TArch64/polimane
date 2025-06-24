@@ -2,6 +2,11 @@ terraform {
   required_version = ">= 1.12.0"
 
   required_providers {
+    bitwarden = {
+      source  = "maxlaverse/bitwarden"
+      version = "0.14.0"
+    }
+
     aws = {
       source  = "hashicorp/aws"
       version = "6.0.0"
@@ -32,6 +37,21 @@ terraform {
   }
 }
 
+variable "bitwarden_token" {
+  type      = string
+  sensitive = true
+  nullable  = false
+}
+
+provider "bitwarden" {
+  access_token = var.bitwarden_token
+  server       = "https://vault.bitwarden.eu"
+
+  experimental {
+    embedded_client = true
+  }
+}
+
 provider "aws" {
   shared_credentials_files = [".aws-credentials"]
 
@@ -40,14 +60,12 @@ provider "aws" {
   }
 }
 
-variable "cloudflare_api_token" {
-  type      = string
-  nullable  = false
-  sensitive = true
+data "bitwarden_secret" "cloudflare_api_token" {
+  key = "cloudflare_api_token"
 }
 
 provider "cloudflare" {
-  api_token = var.cloudflare_api_token
+  api_token = data.bitwarden_secret.cloudflare_api_token.value
 }
 
 locals {

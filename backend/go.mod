@@ -10,9 +10,10 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.43.4
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.59.3
 	github.com/aws/smithy-go v1.22.4
+	github.com/bitwarden/sdk-go v1.0.2
 	github.com/fatih/color v1.18.0
-	github.com/getsentry/sentry-go v0.33.0
-	github.com/getsentry/sentry-go/fiber v0.33.0
+	github.com/getsentry/sentry-go v0.34.0
+	github.com/getsentry/sentry-go/fiber v0.34.0
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/gofiber/fiber/v2 v2.52.8
 	github.com/golang-jwt/jwt/v5 v5.2.2
@@ -23,7 +24,7 @@ require (
 )
 
 require (
-	github.com/andybalholm/brotli v1.1.1 // indirect
+	github.com/andybalholm/brotli v1.2.0 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.70 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.19.3 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.32 // indirect
