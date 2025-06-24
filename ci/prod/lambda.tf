@@ -33,11 +33,12 @@ resource "aws_lambda_function" "lambda" {
   environment {
     variables = {
       BACKEND_APP_DOMAIN       = local.domain
-      BACKEND_DEFAULT_USER = sensitive(data.bitwarden_secret.backend_default_user.value)
-      BACKEND_DEFAULT_PASSWORD = sensitive(data.bitwarden_secret.backend_default_password.value)
-      BACKEND_SECRET_KEY = sensitive(data.bitwarden_secret.backend_secret_key.value)
-      BACKEND_SENTRY_DSN = sensitive(data.bitwarden_secret.backend_sentry_dsn.value)
       BACKEND_SENTRY_RELEASE   = local.lambda_sources_hash,
+      BACKEND_BITWARDEN_TOKEN      = var.bitwarden_token
+      BACKEND_DEFAULT_USER_SID     = data.bitwarden_secret.backend_default_user.id
+      BACKEND_DEFAULT_PASSWORD_SID = data.bitwarden_secret.backend_default_password.id
+      BACKEND_SECRET_KEY_SID       = data.bitwarden_secret.backend_secret_key.id
+      BACKEND_SENTRY_DSN_SID       = data.bitwarden_secret.backend_sentry_dsn.id
     }
   }
 
