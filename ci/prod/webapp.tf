@@ -28,9 +28,9 @@ resource "null_resource" "webapp_deploy" {
 
     environment = {
       CLOUDFLARE_ACCOUNT_ID = local.cloudflare_account_id
-      CLOUDFLARE_API_TOKEN = var.cloudflare_api_token
-      BUILD_DIST   = local.webapp_build_dir
-      PROJECT_NAME = cloudflare_pages_project.webapp.name
+      CLOUDFLARE_API_TOKEN = data.bitwarden_secret.cloudflare_api_token.value
+      BUILD_DIST           = local.webapp_build_dir
+      PROJECT_NAME         = cloudflare_pages_project.webapp.name
     }
   }
 }

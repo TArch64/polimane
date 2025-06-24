@@ -1,25 +1,17 @@
-variable "backend_default_user" {
-  type      = string
-  sensitive = true
-  nullable  = false
+data "bitwarden_secret" "backend_default_user" {
+  key = "backend_default_user"
 }
 
-variable "backend_default_password" {
-  type      = string
-  sensitive = true
-  nullable  = false
+data "bitwarden_secret" "backend_default_password" {
+  key = "backend_default_password"
 }
 
-variable "backend_secret_key" {
-  type      = string
-  sensitive = true
-  nullable  = false
+data "bitwarden_secret" "backend_secret_key" {
+  key = "backend_secret_key"
 }
 
-variable "backend_sentry_dsn" {
-  type      = string
-  sensitive = true
-  nullable  = false
+data "bitwarden_secret" "backend_sentry_dsn" {
+  key = "backend_sentry_dsn"
 }
 
 locals {
@@ -40,11 +32,11 @@ resource "aws_lambda_function" "lambda" {
 
   environment {
     variables = {
-      BACKEND_DEFAULT_USER     = var.backend_default_user
-      BACKEND_DEFAULT_PASSWORD = var.backend_default_password
-      BACKEND_SECRET_KEY       = var.backend_secret_key
       BACKEND_APP_DOMAIN       = local.domain
-      BACKEND_SENTRY_DSN       = var.backend_sentry_dsn
+      BACKEND_DEFAULT_USER = sensitive(data.bitwarden_secret.backend_default_user.value)
+      BACKEND_DEFAULT_PASSWORD = sensitive(data.bitwarden_secret.backend_default_password.value)
+      BACKEND_SECRET_KEY = sensitive(data.bitwarden_secret.backend_secret_key.value)
+      BACKEND_SENTRY_DSN = sensitive(data.bitwarden_secret.backend_sentry_dsn.value)
       BACKEND_SENTRY_RELEASE   = local.lambda_sources_hash,
     }
   }

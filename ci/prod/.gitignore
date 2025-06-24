@@ -1,5 +1,6 @@
 .terraform
 .wrangler
+.bitwarden
 .aws-credentials
 *.tfvars
 tmp/*
