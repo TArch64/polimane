@@ -17,7 +17,6 @@ defineSlots<{
 }>();
 
 const { href, navigate } = useLink({
-  viewTransition: true,
   to: toRef(props, 'to'),
 });
 </script>

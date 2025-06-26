@@ -53,7 +53,7 @@ const login = useAsyncAction(async () => {
     password: form.password.trim(),
   });
 
-  document.startViewTransition(() => router.push(getSuccessRedirect()));
+  router.push(getSuccessRedirect());
 });
 </script>
 

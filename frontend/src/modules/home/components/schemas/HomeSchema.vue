@@ -49,12 +49,12 @@ useContextMenu({
       async onAction() {
         const created = await schemasStore.copySchema(props.schema);
 
-        document.startViewTransition(() => router.push({
+        router.push({
           name: 'schema-editor',
           params: {
             schemaId: created.id,
           },
-        }));
+        });
       },
     },
 

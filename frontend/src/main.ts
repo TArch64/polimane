@@ -3,6 +3,7 @@ import './style/main.css';
 import { createApp, h, ref, shallowRef } from 'vue';
 import { createPinia } from 'pinia';
 import VueKonva from 'vue-konva';
+import { configure as configureProgress } from 'nprogress';
 import { sentryPlugin } from '@/plugins';
 import { TOKEN_SCROLLER, TOKEN_TOP_EL } from './InjectionToken';
 import { ContextMenuPlugin } from './components/contextMenu';
@@ -11,6 +12,10 @@ import { ModalPlugin } from './components/modal';
 import { httpClientPlugin } from './composables';
 import App from './App.vue';
 import { router } from './router';
+
+configureProgress({
+  showSpinner: false,
+});
 
 window.__KONVA_STAGE_REF__ = shallowRef(null);
 
@@ -45,7 +50,4 @@ if (import.meta.env.DEV) {
   app.use(m.konvaInspectorPlugin);
 }
 
-document.startViewTransition(async () => {
-  app.mount('#app');
-  return router.isReady();
-});
+app.mount('#app');

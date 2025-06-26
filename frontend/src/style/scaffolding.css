@@ -56,3 +56,13 @@ button {
   animation-duration: 0.15s;
   animation-timing-function: ease-out;
 }
+
+#nprogress {
+  .bar {
+    background-color: var(--color-primary)
+  }
+
+  .peg {
+    box-shadow: 0 0 10px var(--color-primary), 0 0 5px var(--color-primary)
+  }
+}
