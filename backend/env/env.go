@@ -1,5 +1,7 @@
 package env
 
+import "polimane/backend/base"
+
 type Environment struct {
 	SecretKey string `env:"BACKEND_SECRET_KEY,required=true"`
 	AppDomain string `env:"BACKEND_APP_DOMAIN,required=true"`
@@ -19,7 +21,7 @@ var environment *Environment
 
 func Init() error {
 	environment = &Environment{}
-	return loadEnvs()
+	return base.TagError("env.load", loadEnvs())
 }
 
 func Env() *Environment {

@@ -25,6 +25,7 @@ resource "aws_lambda_function" "lambda" {
   role             = aws_iam_role.lambda_role.arn
   handler          = "lambda"
   runtime          = "provided.al2023"
+  architectures = ["arm64"]
   timeout          = 30
   memory_size      = 128
   source_code_hash = local.lambda_sources_hash
@@ -32,8 +33,8 @@ resource "aws_lambda_function" "lambda" {
 
   environment {
     variables = {
-      BACKEND_APP_DOMAIN       = local.domain
-      BACKEND_SENTRY_RELEASE   = local.lambda_sources_hash,
+      BACKEND_APP_DOMAIN     = local.domain
+      BACKEND_SENTRY_RELEASE = local.lambda_sources_hash,
       BACKEND_BITWARDEN_TOKEN      = var.bitwarden_token
       BACKEND_DEFAULT_USER_SID     = data.bitwarden_secret.backend_default_user.id
       BACKEND_DEFAULT_PASSWORD_SID = data.bitwarden_secret.backend_default_password.id

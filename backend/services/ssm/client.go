@@ -6,6 +6,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
+
+	"polimane/backend/base"
 )
 
 var client *ssm.Client
@@ -18,7 +20,7 @@ func newConfig(ctx context.Context) (*aws.Config, error) {
 func Init(ctx context.Context) error {
 	cfg, err := newConfig(ctx)
 	if err != nil {
-		return err
+		return base.TagError("ssm.config", err)
 	}
 
 	client = ssm.NewFromConfig(*cfg)

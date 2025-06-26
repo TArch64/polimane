@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/guregu/dynamo/v2"
 
+	"polimane/backend/base"
 	dynamodbconfig "polimane/backend/services/dynamodb/config"
 	"polimane/backend/services/dynamodb/migrations"
 )
@@ -26,7 +27,7 @@ func newConfig(ctx context.Context) (*aws.Config, error) {
 func Init(ctx context.Context) error {
 	cfg, err := newConfig(ctx)
 	if err != nil {
-		return err
+		return base.TagError("dynamodb.config", err)
 	}
 
 	db := dynamo.New(*cfg, dynamodbconfig.ConfigureClient)
@@ -40,9 +41,6 @@ func Init(ctx context.Context) error {
 		TableName: table.Name(),
 	}
 
-	if err = migrations.Migrate(migrationCtx); err != nil {
-		return err
-	}
-
-	return nil
+	err = migrations.Migrate(migrationCtx)
+	return base.TagError("dynamodb.migrations", err)
 }

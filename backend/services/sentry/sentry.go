@@ -5,6 +5,7 @@ import (
 	sentryfiber "github.com/getsentry/sentry-go/fiber"
 	"github.com/gofiber/fiber/v2"
 
+	"polimane/backend/base"
 	"polimane/backend/env"
 )
 
@@ -21,7 +22,7 @@ func Init() (fiber.Handler, error) {
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, base.TagError("sentry", err)
 	}
 
 	sentryHandler := sentryfiber.New(sentryfiber.Options{

@@ -2,7 +2,8 @@ FROM golang:1.24-bullseye
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends zip musl-tools && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends zip musl-tools build-essential && \
     rm -rf /var/lib/apt/lists/*
 
 COPY go.mod go.sum ./
