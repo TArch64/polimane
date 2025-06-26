@@ -12,7 +12,7 @@ export function usePatternAddModal() {
   const addPatternModal = useModal<typeof PatternAddModal, IAddingPattern>(PatternAddModal);
   const addRowModal = useModal(RowAddModal);
 
-  addPatternModal.onClose(async ({ pattern, toIndex }) => {
+  addPatternModal.onResult(async ({ pattern, toIndex }) => {
     await addRowModal.open({ pattern });
     patternsStore.patterns.insert(pattern, { toIndex });
   });
