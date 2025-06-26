@@ -5,9 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 import { Card } from '@/components/card';
-import { RouterLink } from '@/components/button';
 import type { ISchema } from '@/models';
 import { makeBinding } from '@/components/binding';
 import { useContextMenu } from '@/components/contextMenu';
