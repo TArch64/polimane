@@ -10,7 +10,7 @@ type SchemaContent []interface{}
 type Schema struct {
 	*Base
 	Name    string        `json:"name" dynamo:"Name"`
-	Palette []string      `json:"palette" dynamo:"Palette,set"`
+	Palette []string      `json:"palette" dynamo:"Palette"`
 	Content SchemaContent `json:"content" dynamo:"Content"`
 }
 
