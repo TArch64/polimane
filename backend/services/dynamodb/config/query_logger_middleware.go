@@ -6,6 +6,7 @@ import (
 	"log"
 	"maps"
 	"reflect"
+	"regexp"
 	"strings"
 	"time"
 
@@ -14,6 +15,8 @@ import (
 	"github.com/aws/smithy-go/middleware"
 	"github.com/fatih/color"
 )
+
+var sensitiveAttrRegex = regexp.MustCompile(`(?i)(password|secret|token|key|credentials|auth|signature)`)
 
 type queryLoggerMiddleware struct{}
 
@@ -119,7 +122,11 @@ func (m *queryLoggerMiddleware) formatAttrMap(attrMap map[string]types.Attribute
 			result += ", "
 		}
 
-		result += m.formatCondition(name, types.ComparisonOperatorEq, attr)
+		if sensitiveAttrRegex.MatchString(name) {
+			result += m.formatCondition(name, types.ComparisonOperatorEq, &types.AttributeValueMemberS{Value: "{SENSITIVE}"})
+		} else {
+			result += m.formatCondition(name, types.ComparisonOperatorEq, attr)
+		}
 	}
 
 	return result
