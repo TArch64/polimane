@@ -10,7 +10,6 @@ import (
 	"polimane/backend/api/base"
 	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
-	awsdynamodb "polimane/backend/services/dynamodb"
 )
 
 type updateBody struct {
@@ -19,19 +18,19 @@ type updateBody struct {
 	Content model.SchemaContent `json:"content" validate:"omitempty,dive,required"`
 }
 
-func collectUpdates(body *updateBody) awsdynamodb.UpdateMap {
-	updates := awsdynamodb.UpdateMap{}
+func collectUpdates(body *updateBody) model.Updates {
+	updates := model.NewUpdates()
 
 	if len(body.Name) > 0 {
-		updates["Name"] = body.Name
+		updates = updates.Set("Name", body.Name)
 	}
 
 	if body.Content != nil {
-		updates["Content"] = body.Content
+		updates = updates.Set("Content", body.Content)
 	}
 
 	if len(body.Palette) == repositoryschemas.PaletteSize {
-		updates["Palette"] = body.Palette
+		updates = updates.Set("Palette", body.Palette)
 	}
 
 	return updates
@@ -56,7 +55,7 @@ func apiUpdate(ctx *fiber.Ctx) error {
 
 	user := auth.GetSessionUser(ctx)
 
-	err = repositoryschemas.Update(ctx.Context(), user, schemaId, updates)
+	err = repositoryschemas.Update(ctx.Context(), user, model.NewID(model.PKSchemaPrefix, schemaId), updates)
 	if errors.Is(err, dynamo.ErrNotFound) {
 		return base.NotFoundErr
 	}

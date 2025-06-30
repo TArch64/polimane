@@ -49,15 +49,15 @@ func (v *requestValidator) Validate(data interface{}) []ValidationErrorResponse 
 
 func Validate(data interface{}) error {
 	if errs := validatorInstance.Validate(data); len(errs) > 0 && errs[0].Error {
-		errMsgs := make([]string, 0)
+		errMsgs := make([]string, len(errs))
 
-		for _, err := range errs {
-			errMsgs = append(errMsgs, fmt.Sprintf(
+		for i, err := range errs {
+			errMsgs[i] = fmt.Sprintf(
 				"[%s]: '%v' | Needs to implement '%s'",
 				err.FailedField,
 				err.Value,
 				err.Tag,
-			))
+			)
 		}
 
 		return &fiber.Error{

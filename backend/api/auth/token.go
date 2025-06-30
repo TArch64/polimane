@@ -23,7 +23,7 @@ func newAuthToken(user *model.User, expiresAt time.Time) (string, error) {
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expiresAt),
 		},
-		UserID: user.ID,
+		UserID: user.PK,
 	})
 
 	return token.SignedString([]byte(env.Env().SecretKey))

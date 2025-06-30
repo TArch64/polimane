@@ -9,12 +9,12 @@ import (
 	awsdynamodb "polimane/backend/services/dynamodb"
 )
 
-func ByPK(ctx context.Context, pk model.ID) (*model.User, error) {
+func ByID(ctx context.Context, id model.ID) (*model.User, error) {
 	var user model.User
 
 	err := awsdynamodb.Table().
-		Get("PK", pk).
-		Range("SK", dynamo.BeginsWith, model.SKUser).
+		Get("PK", id).
+		Range("SK", dynamo.BeginsWith, model.SKUserPrefix).
 		One(ctx, &user)
 
 	return &user, err

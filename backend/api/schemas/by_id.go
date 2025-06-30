@@ -8,6 +8,7 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
@@ -19,7 +20,12 @@ func apiById(ctx *fiber.Ctx) error {
 
 	user := auth.GetSessionUser(ctx)
 
-	schema, err := repositoryschemas.ById(ctx.Context(), user, schemaId)
+	schema, err := repositoryschemas.ByID(&repositoryschemas.ByIDOptions{
+		Ctx:  ctx.Context(),
+		User: user,
+		ID:   model.NewID(model.PKSchemaPrefix, schemaId),
+	})
+
 	if errors.Is(err, dynamo.ErrNotFound) {
 		return base.NotFoundErr
 	}

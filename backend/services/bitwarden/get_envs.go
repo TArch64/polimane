@@ -3,13 +3,11 @@ package bitwarden
 import "os"
 
 func LoadToEnviron(names []string) error {
-	var id string
-	var ids []string
+	ids := make([]string, len(names))
 	idNameMap := make(map[string]string)
-	for _, name := range names {
-		id = os.Getenv(name + "_SID")
-		ids = append(ids, id)
-		idNameMap[id] = name
+	for i, name := range names {
+		ids[i] = os.Getenv(name + "_SID")
+		idNameMap[ids[i]] = name
 	}
 
 	res, err := client.Secrets().GetByIDS(ids)

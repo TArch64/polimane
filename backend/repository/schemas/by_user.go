@@ -9,18 +9,32 @@ import (
 	awsdynamodb "polimane/backend/services/dynamodb"
 )
 
-func ByUser(ctx context.Context, user *model.User, attributes []string) ([]*model.Schema, error) {
-	var schemas []*model.Schema
+type ByUserOptions struct {
+	Ctx        context.Context
+	User       *model.User
+	Attributes []string
+}
 
-	query := awsdynamodb.Table().
-		Get("PK", user.ID).
-		Range("SK", dynamo.BeginsWith, model.SKSchema)
-
-	if len(attributes) > 0 {
-		attributes = append([]string{"PK", "SK"}, attributes...)
-		query = query.Project(attributes...)
+func ByUser(options *ByUserOptions) ([]*model.Schema, error) {
+	if len(options.User.SchemaIDs) == 0 {
+		return nil, nil
 	}
 
-	err := query.All(ctx, &schemas)
+	batchKeys := make([]dynamo.Keyed, len(options.User.SchemaIDs))
+	for i, key := range options.User.SchemaIDs {
+		batchKeys[i] = key.Keys()
+	}
+
+	query := awsdynamodb.Table().
+		Batch("PK", "SK").
+		Get(batchKeys...)
+
+	if len(options.Attributes) > 0 {
+		options.Attributes = append([]string{"PK", "SK"}, options.Attributes...)
+		query = query.Project(options.Attributes...)
+	}
+
+	var schemas []*model.Schema
+	err := query.All(options.Ctx, &schemas)
 	return schemas, err
 }

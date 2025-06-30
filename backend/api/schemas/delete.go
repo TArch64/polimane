@@ -8,6 +8,7 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
@@ -19,7 +20,7 @@ func apiDelete(ctx *fiber.Ctx) error {
 
 	user := auth.GetSessionUser(ctx)
 
-	err = repositoryschemas.Delete(ctx.Context(), user, schemaId)
+	err = repositoryschemas.Delete(ctx.Context(), user, model.NewID(model.PKSchemaPrefix, schemaId))
 	if errors.Is(err, dynamo.ErrNotFound) {
 		return base.NotFoundErr
 	}

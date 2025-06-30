@@ -41,7 +41,8 @@ services:
     - ./backend:/app
     - gomod_cache:/go/pkg/mod
     depends_on:
-    - dynamodb
+      dynamodb:
+        condition: service_healthy
 
   dynamodb:
     <<: *common
@@ -51,6 +52,14 @@ services:
     working_dir: /home/dynamodblocal
     volumes:
     - dynamodb_data:/home/dynamodblocal/data
+    ports:
+    - 8000:8000
+    healthcheck:
+      test: ["CMD-SHELL", '[ "$(curl -s -o /dev/null -I -w ''%{http_code}'' http://localhost:8000)" == "400" ]']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
 volumes:
   bun_cache:

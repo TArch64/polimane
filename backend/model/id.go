@@ -12,6 +12,12 @@ func NewID(modelType string, id string) ID {
 	return ID(NewKey(modelType, id))
 }
 
+func StringToID(str string) ID {
+	id := ID(StringToKey(str))
+	ulid.MustParse(id.Value())
+	return id
+}
+
 func RandomID(modelType string) ID {
 	return NewID(modelType, strings.ToLower(ulid.Make().String()))
 }

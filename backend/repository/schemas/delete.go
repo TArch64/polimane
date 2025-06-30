@@ -2,26 +2,48 @@ package repositoryschemas
 
 import (
 	"context"
-	"errors"
-
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/guregu/dynamo/v2"
 
 	"polimane/backend/model"
+	repositoryusers "polimane/backend/repository/users"
 	awsdynamodb "polimane/backend/services/dynamodb"
+	"polimane/backend/signal"
 )
 
-func Delete(ctx context.Context, user *model.User, id string) error {
-	err := awsdynamodb.Table().
-		Delete("PK", user.ID).
-		Range("SK", model.NewID(model.SKSchema, id)).
-		If(model.IfKeyExists).
-		Run(ctx)
-
-	var checkFailedErr *types.ConditionalCheckFailedException
-	if errors.As(err, &checkFailedErr) {
-		return dynamo.ErrNotFound
+func Delete(ctx context.Context, user *model.User, id model.ID) (err error) {
+	if err = user.CheckSchemaAccess(id); err != nil {
+		return err
 	}
 
-	return err
+	schema, err := ByID(&ByIDOptions{
+		Ctx:        ctx,
+		ID:         id,
+		User:       user,
+		Attributes: []string{"UserIDs"},
+	})
+
+	if err != nil {
+		return err
+	}
+
+	del := awsdynamodb.Table().
+		Delete("PK", id).
+		Range("SK", model.SKSchema)
+
+	userUpdates := model.NewUpdates().
+		Delete("SchemaIDs", schema.PrimaryKey().String())
+
+	tx := awsdynamodb.WriteTX().
+		Delete(del)
+
+	for _, userID := range schema.UserIDs {
+		tx.Update(repositoryusers.UpdateTx(userID, userUpdates))
+	}
+
+	if err = tx.Run(ctx); err != nil {
+		return model.ConditionErrToNotFound(err)
+	}
+
+	user.DeleteSchemaID(id)
+	signal.InvalidateAuthCache.Emit(ctx, user.PK)
+	return nil
 }

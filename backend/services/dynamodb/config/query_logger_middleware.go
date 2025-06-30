@@ -2,6 +2,7 @@ package dynamodbconfig
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"maps"
@@ -36,12 +37,32 @@ func (m *queryLoggerMiddleware) HandleInitialize(
 	err error,
 ) {
 	label, content := m.formatMessage(in)
-	if label == "" || content == "" {
-		return next.HandleInitialize(ctx, in)
-	}
-
 	log.Println()
 	log.Println(label + content)
+
+	if tx, ok := in.Parameters.(*dynamodb.TransactWriteItemsInput); ok {
+		var itemLabel string
+
+		for _, item := range tx.TransactItems {
+			itemLabel, content = m.formatMessage(middleware.InitializeInput{
+				Parameters: m.convertTransactionParams(&item),
+			})
+
+			log.Println(itemLabel + content)
+		}
+	}
+
+	if batch, ok := in.Parameters.(*dynamodb.BatchGetItemInput); ok {
+		var itemLabel string
+
+		for _, item := range batch.RequestItems {
+			itemLabel, content = m.formatMessage(middleware.InitializeInput{
+				Parameters: m.convertBatchGetParams(&item),
+			})
+
+			log.Println(itemLabel + content)
+		}
+	}
 
 	start := time.Now()
 	out, metadata, err = next.HandleInitialize(ctx, in)
@@ -51,6 +72,52 @@ func (m *queryLoggerMiddleware) HandleInitialize(
 
 	log.Printf("%s: Executed in %s", label, color.YellowString(time.Since(start).String()))
 	return out, metadata, err
+}
+
+func (m *queryLoggerMiddleware) convertTransactionParams(item *types.TransactWriteItem) interface{} {
+	if item.Update != nil {
+		j, _ := json.MarshalIndent(item.Update, "", "  ")
+		log.Println(reflect.TypeOf(item.Update.ExpressionAttributeValues[":v0"]), string(j))
+
+		return &dynamodb.UpdateItemInput{
+			Key:                       item.Update.Key,
+			TableName:                 item.Update.TableName,
+			ConditionExpression:       item.Update.ConditionExpression,
+			ExpressionAttributeNames:  item.Update.ExpressionAttributeNames,
+			ExpressionAttributeValues: item.Update.ExpressionAttributeValues,
+			UpdateExpression:          item.Update.UpdateExpression,
+		}
+	}
+
+	if item.Put != nil {
+		return &dynamodb.PutItemInput{
+			Item:                                item.Put.Item,
+			TableName:                           item.Put.TableName,
+			ConditionExpression:                 item.Put.ConditionExpression,
+			ExpressionAttributeNames:            item.Put.ExpressionAttributeNames,
+			ExpressionAttributeValues:           item.Put.ExpressionAttributeValues,
+			ReturnValuesOnConditionCheckFailure: item.Put.ReturnValuesOnConditionCheckFailure,
+		}
+	}
+
+	return &dynamodb.DeleteItemInput{
+		Key:                                 item.Delete.Key,
+		TableName:                           item.Delete.TableName,
+		ConditionExpression:                 item.Delete.ConditionExpression,
+		ExpressionAttributeNames:            item.Delete.ExpressionAttributeNames,
+		ExpressionAttributeValues:           item.Delete.ExpressionAttributeValues,
+		ReturnValuesOnConditionCheckFailure: item.Delete.ReturnValuesOnConditionCheckFailure,
+	}
+}
+
+func (m *queryLoggerMiddleware) convertBatchGetParams(item *types.KeysAndAttributes) interface{} {
+	return &dynamodb.GetItemInput{
+		Key:                      item.Keys[0],
+		AttributesToGet:          item.AttributesToGet,
+		ConsistentRead:           item.ConsistentRead,
+		ExpressionAttributeNames: item.ExpressionAttributeNames,
+		ProjectionExpression:     item.ProjectionExpression,
+	}
 }
 
 func (m *queryLoggerMiddleware) formatMessage(in middleware.InitializeInput) (string, string) {
@@ -70,7 +137,15 @@ func (m *queryLoggerMiddleware) formatMessage(in middleware.InitializeInput) (st
 			content += " By Index " + *typed.IndexName
 		}
 		if typed.ProjectionExpression != nil {
-			content += " Select " + m.formatProjectionExpression(*typed.ProjectionExpression, typed.ExpressionAttributeNames)
+			content += " Select " + m.formatExpressionWithNames(*typed.ProjectionExpression, typed.ExpressionAttributeNames)
+		}
+		return label, content
+
+	case *dynamodb.ScanInput:
+		label = color.BlueString("[DynamoDB/Scan]")
+		content = fmt.Sprintf(": Where %s", m.formatExpressionWithValues(*typed.FilterExpression, typed.ExpressionAttributeNames, typed.ExpressionAttributeValues))
+		if typed.ProjectionExpression != nil {
+			content += " Select " + m.formatExpressionWithNames(*typed.ProjectionExpression, typed.ExpressionAttributeNames)
 		}
 		return label, content
 
@@ -78,8 +153,12 @@ func (m *queryLoggerMiddleware) formatMessage(in middleware.InitializeInput) (st
 		label = color.BlueString("[DynamoDB/GetItem]")
 		content = fmt.Sprintf(": Where %s", m.formatAttrMap(typed.Key))
 		if typed.ProjectionExpression != nil {
-			content += " Select " + m.formatProjectionExpression(*typed.ProjectionExpression, typed.ExpressionAttributeNames)
+			content += " Select " + m.formatExpressionWithNames(*typed.ProjectionExpression, typed.ExpressionAttributeNames)
 		}
+		return label, content
+
+	case *dynamodb.BatchGetItemInput:
+		label = color.BlueString("[DynamoDB/BatchGetItem]")
 		return label, content
 
 	case *dynamodb.PutItemInput:
@@ -99,17 +178,25 @@ func (m *queryLoggerMiddleware) formatMessage(in middleware.InitializeInput) (st
 		return label, content
 
 	case *dynamodb.UpdateItemInput:
+		j, _ := json.MarshalIndent(typed, "", "  ")
+		log.Println(reflect.TypeOf(typed.ExpressionAttributeValues[":v0"]), string(j))
+
 		label = color.YellowString("[DynamoDB/UpdateItem]")
 		content = fmt.Sprintf(": Where %s %s",
 			m.formatAttrMap(typed.Key),
-			m.formatUpdateExpression(*typed.UpdateExpression, typed.ExpressionAttributeNames, typed.ExpressionAttributeValues),
+			m.formatExpressionWithValues(*typed.UpdateExpression, typed.ExpressionAttributeNames, typed.ExpressionAttributeValues),
 		)
 		if typed.ConditionExpression != nil {
 			content += " If " + m.formatConditionExpression(*typed.ConditionExpression)
 		}
 		return label, content
+
+	case *dynamodb.TransactWriteItemsInput:
+		label = color.YellowString("[DynamoDB/TransactWriteItems]")
+		return label, content
+
 	default:
-		return "", ""
+		return "[Unknown]", fmt.Sprintf("Unknown DynamoDB operation %v", reflect.TypeOf(in.Parameters))
 	}
 }
 
@@ -205,7 +292,7 @@ func (m *queryLoggerMiddleware) formatSliceValue(values []types.AttributeValue) 
 	return "(" + result + ")"
 }
 
-func (m *queryLoggerMiddleware) formatProjectionExpression(expression string, attrNames map[string]string) string {
+func (m *queryLoggerMiddleware) formatExpressionWithNames(expression string, attrNames map[string]string) string {
 	for name, value := range attrNames {
 		expression = strings.Replace(expression, name, value, 1)
 	}
@@ -216,7 +303,7 @@ func (m *queryLoggerMiddleware) formatConditionExpression(expression string) str
 	return strings.TrimSuffix(strings.TrimPrefix(expression, "("), ")")
 }
 
-func (m *queryLoggerMiddleware) formatUpdateExpression(expression string, names map[string]string, values map[string]types.AttributeValue) string {
+func (m *queryLoggerMiddleware) formatExpressionWithValues(expression string, names map[string]string, values map[string]types.AttributeValue) string {
 	for key, name := range names {
 		expression = strings.ReplaceAll(expression, key, name)
 	}
@@ -233,13 +320,26 @@ func (m *queryLoggerMiddleware) formatAttrValue(value types.AttributeValue) stri
 	case *types.AttributeValueMemberN:
 		return typed.Value
 	case *types.AttributeValueMemberM:
-		return "{TRUNCATED MAP}"
+		return m.stringifyValue(typed.Value, "}")
 	case *types.AttributeValueMemberL:
-		return "{TRUNCATED LIST}"
+		return m.stringifyValue(typed.Value, "]")
+	case *types.AttributeValueMemberSS:
+		return m.stringifyValue(typed.Value, "]")
 	default:
 		log.Println("[QueryLoggerMiddleware]: Unknown attribute type:", reflect.TypeOf(value))
 		return ""
 	}
+}
+
+func (m *queryLoggerMiddleware) stringifyValue(value interface{}, end string) string {
+	j, _ := json.Marshal(value)
+	str := string(j)
+
+	if len(j) > 100 {
+		return str[:100] + "..." + end
+	}
+
+	return str
 }
 
 var priorityQueryAttrOrder = []string{"PK", "SK"}

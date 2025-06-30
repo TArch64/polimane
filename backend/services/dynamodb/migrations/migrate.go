@@ -7,6 +7,7 @@ type Migration func(ctx *Ctx) error
 var migrations = []Migration{
 	v0,
 	v1,
+	v2,
 }
 
 func Migrate(ctx *Ctx) error {

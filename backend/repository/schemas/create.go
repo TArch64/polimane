@@ -4,10 +4,13 @@ import (
 	"context"
 
 	"polimane/backend/model"
+	repositoryusers "polimane/backend/repository/users"
 	awsdynamodb "polimane/backend/services/dynamodb"
+	"polimane/backend/signal"
 )
 
 type CreateOptions struct {
+	Ctx     context.Context
 	User    *model.User
 	Name    string
 	Palette []string
@@ -16,7 +19,7 @@ type CreateOptions struct {
 
 const PaletteSize = 9
 
-func Create(ctx context.Context, options *CreateOptions) (*model.Schema, error) {
+func Create(options *CreateOptions) (*model.Schema, error) {
 	if len(options.Palette) == 0 {
 		options.Palette = make([]string, PaletteSize)
 	}
@@ -27,14 +30,26 @@ func Create(ctx context.Context, options *CreateOptions) (*model.Schema, error) 
 
 	schema := &model.Schema{
 		Base: &model.Base{
-			ID: options.User.ID,
-			SK: model.RandomID(model.SKSchema).Key(),
+			PK: model.RandomID(model.PKSchemaPrefix),
+			SK: model.SKSchema,
 		},
+		UserIDs: []model.PrimaryKey{options.User.PrimaryKey()},
 		Name:    options.Name,
 		Palette: options.Palette,
 		Content: options.Content,
 	}
 
-	err := awsdynamodb.Table().Put(schema).Run(ctx)
-	return schema, err
+	userUpdates := model.NewUpdates().Add("SchemaIDs", schema.PrimaryKey().String())
+
+	tx := awsdynamodb.WriteTX().
+		Put(awsdynamodb.Table().Put(schema)).
+		Update(repositoryusers.UpdateTx(options.User.PrimaryKey(), userUpdates))
+
+	if err := tx.Run(options.Ctx); err != nil {
+		return nil, err
+	}
+
+	options.User.AddSchemaID(schema.PrimaryKey())
+	signal.InvalidateAuthCache.Emit(options.Ctx, options.User.PK)
+	return schema, nil
 }

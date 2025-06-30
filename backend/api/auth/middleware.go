@@ -15,6 +15,7 @@ import (
 	"polimane/backend/env"
 	"polimane/backend/model"
 	repositoryusers "polimane/backend/repository/users"
+	"polimane/backend/signal"
 )
 
 var unauthorizedErr = base.NewReasonedError(fiber.StatusUnauthorized, "Unauthorized")
@@ -31,7 +32,12 @@ func NewMiddleware() fiber.Handler {
 		),
 	}
 
+	signal.InvalidateAuthCache.AddListener(m.invalidateCache)
 	return m.Handler
+}
+
+func (m *middleware) invalidateCache(ctx context.Context, userID model.ID) {
+	_ = m.cache.Invalidate(ctx, userID.String())
 }
 
 func (m *middleware) Handler(ctx *fiber.Ctx) error {
@@ -74,7 +80,7 @@ func (m *middleware) parseToken(token string) (*tokenClaims, error) {
 
 func (m *middleware) getUser(ctx context.Context, claims *tokenClaims) (*model.User, error) {
 	return m.cache.Get(ctx, claims.UserID.String(), func() (*model.User, *time.Duration, error) {
-		user, err := repositoryusers.ByPK(ctx, claims.UserID)
+		user, err := repositoryusers.ByID(ctx, claims.UserID)
 
 		if errors.Is(err, dynamo.ErrNotFound) {
 			return nil, nil, unauthorizedErr

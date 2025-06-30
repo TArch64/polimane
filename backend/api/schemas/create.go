@@ -21,7 +21,8 @@ func apiCreate(ctx *fiber.Ctx) error {
 
 	user := auth.GetSessionUser(ctx)
 
-	schema, err := repositoryschemas.Create(ctx.Context(), &repositoryschemas.CreateOptions{
+	schema, err := repositoryschemas.Create(&repositoryschemas.CreateOptions{
+		Ctx:  ctx.Context(),
 		User: user,
 		Name: body.Name,
 	})

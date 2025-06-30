@@ -13,6 +13,7 @@ import (
 	"polimane/backend/services/dynamodb/migrations"
 )
 
+var db *dynamo.DB
 var table *dynamo.Table
 
 func Table() *dynamo.Table {
@@ -30,7 +31,7 @@ func Init(ctx context.Context) error {
 		return base.TagError("dynamodb.config", err)
 	}
 
-	db := dynamo.New(*cfg, dynamodbconfig.ConfigureClient)
+	db = dynamo.New(*cfg, dynamodbconfig.ConfigureClient)
 	table_ := db.Table(dynamodbconfig.TableName)
 	table = &table_
 
@@ -38,9 +39,14 @@ func Init(ctx context.Context) error {
 		Context:   ctx,
 		Api:       db.Client().(*dynamodb.Client),
 		Table:     table,
+		DB:        db,
 		TableName: table.Name(),
 	}
 
 	err = migrations.Migrate(migrationCtx)
 	return base.TagError("dynamodb.migrations", err)
+}
+
+func WriteTX() *dynamo.WriteTx {
+	return db.WriteTx()
 }

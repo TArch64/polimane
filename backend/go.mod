@@ -19,6 +19,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/guregu/dynamo/v2 v2.3.0
 	github.com/kittipat1413/go-common v0.16.0
+	github.com/maniartech/signals v1.2.0
 	github.com/matthewhartstonge/argon2 v1.3.2
 	github.com/oklog/ulid/v2 v2.1.1
 )

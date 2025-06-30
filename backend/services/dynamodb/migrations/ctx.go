@@ -9,6 +9,7 @@ import (
 
 type Ctx struct {
 	context.Context
+	DB        *dynamo.DB
 	Table     *dynamo.Table
 	Api       *dynamodb.Client
 	TableArn  string

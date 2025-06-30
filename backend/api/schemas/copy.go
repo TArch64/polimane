@@ -5,6 +5,7 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
@@ -16,9 +17,10 @@ func apiCopy(ctx *fiber.Ctx) error {
 
 	user := auth.GetSessionUser(ctx)
 
-	schema, err := repositoryschemas.Copy(ctx.Context(), &repositoryschemas.CopyOptions{
+	schema, err := repositoryschemas.Copy(&repositoryschemas.CopyOptions{
+		Ctx:      ctx.Context(),
 		User:     user,
-		SchemaID: schemaId,
+		SchemaID: model.NewID(model.PKSchemaPrefix, schemaId),
 	})
 
 	if err != nil {

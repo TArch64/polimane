@@ -9,13 +9,30 @@ import (
 	awsdynamodb "polimane/backend/services/dynamodb"
 )
 
-func ById(ctx context.Context, user *model.User, id string) (*model.Schema, error) {
+type ByIDOptions struct {
+	Ctx        context.Context
+	User       *model.User
+	ID         model.ID
+	Attributes []string
+}
+
+func ByID(options *ByIDOptions) (*model.Schema, error) {
+	var err error
+	if err = options.User.CheckSchemaAccess(options.ID); err != nil {
+		return nil, err
+	}
+
 	var schema model.Schema
 
-	err := awsdynamodb.Table().
-		Get("PK", user.ID).
-		Range("SK", dynamo.Equal, model.NewID(model.SKSchema, id)).
-		One(ctx, &schema)
+	query := awsdynamodb.Table().
+		Get("PK", options.ID).
+		Range("SK", dynamo.Equal, model.SKSchema)
 
+	if len(options.Attributes) > 0 {
+		options.Attributes = append([]string{"PK", "SK"}, options.Attributes...)
+		query = query.Project(options.Attributes...)
+	}
+
+	err = query.One(options.Ctx, &schema)
 	return &schema, err
 }
