@@ -5,5 +5,5 @@ package db
 import "gorm.io/gorm/logger"
 
 func newLogger() logger.Interface {
-	return nil
+	return logger.Discard
 }
