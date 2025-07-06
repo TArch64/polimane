@@ -7,12 +7,13 @@ import (
 	"strings"
 
 	"polimane/backend/model"
+	"polimane/backend/model/modelbase"
 )
 
 type CopyOptions struct {
 	Ctx      context.Context
 	User     *model.User
-	SchemaID model.ID
+	SchemaID modelbase.ID
 }
 
 var nameCopyCounter = regexp.MustCompile(`\((\d+)\)$`)
@@ -29,9 +30,9 @@ func makeCopyName(originalName string) string {
 
 func Copy(options *CopyOptions) (*model.Schema, error) {
 	original, err := ByID(&ByIDOptions{
-		Ctx:  options.Ctx,
-		ID:   options.SchemaID,
-		User: options.User,
+		Ctx:      options.Ctx,
+		SchemaID: options.SchemaID,
+		User:     options.User,
 	})
 
 	if err != nil {

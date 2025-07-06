@@ -4,28 +4,27 @@ import (
 	"context"
 
 	"polimane/backend/model"
-	awsdynamodb "polimane/backend/services/dynamodb"
+	"polimane/backend/model/modelbase"
+	repositoryuserschemas "polimane/backend/repository/userschemas"
+	"polimane/backend/services/db"
 )
 
-func Update(ctx context.Context, user *model.User, id model.ID, updates model.Updates) (err error) {
-	if err = user.CheckSchemaAccess(id); err != nil {
-		return err
-	}
+type UpdateOptions struct {
+	Ctx      context.Context
+	User     *model.User
+	SchemaID modelbase.ID
+	Updates  *model.Schema
+}
 
-	schema, err := ByID(&ByIDOptions{
-		Ctx:        ctx,
-		ID:         id,
-		User:       user,
-		Attributes: make([]string, 0),
-	})
-
+func Update(options *UpdateOptions) (err error) {
+	err = repositoryuserschemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
 	if err != nil {
 		return err
 	}
 
-	update := awsdynamodb.Table().
-		Update("PK", schema.PK).
-		Range("SK", schema.SK)
-
-	return updates.Apply(update).Run(ctx)
+	return db.Client().
+		WithContext(options.Ctx).
+		Model(&model.Schema{Identifiable: options.SchemaID.Model()}).
+		Updates(options.Updates).
+		Error
 }

@@ -7,6 +7,7 @@ import (
 
 	"polimane/backend/env"
 	"polimane/backend/model"
+	"polimane/backend/model/modelbase"
 )
 
 func newTokenExpiresAt() time.Time {
@@ -15,7 +16,7 @@ func newTokenExpiresAt() time.Time {
 
 type tokenClaims struct {
 	jwt.RegisteredClaims
-	UserID model.ID `json:"userId"`
+	UserID modelbase.ID `json:"userId"`
 }
 
 func newAuthToken(user *model.User, expiresAt time.Time) (string, error) {
@@ -23,7 +24,7 @@ func newAuthToken(user *model.User, expiresAt time.Time) (string, error) {
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expiresAt),
 		},
-		UserID: user.PK,
+		UserID: user.ID,
 	})
 
 	return token.SignedString([]byte(env.Env().SecretKey))

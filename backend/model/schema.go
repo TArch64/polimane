@@ -1,30 +1,43 @@
 package model
 
-import "encoding/json"
+import (
+	. "gorm.io/datatypes"
 
-const PKSchemaPrefix = "SCHEMA"
-const SKSchema = "#SCHEMA"
+	"polimane/backend/model/modelbase"
+)
 
-type SchemaContent []interface{}
+const (
+	SchemaPaletteSize = 9
+
+	SchemaPatternSquare  = "square"
+	SchemaPatternDiamond = "diamond"
+)
 
 type Schema struct {
-	*Base
-	UserIDs []PrimaryKey  `json:"userIds" dynamo:"UserIDs,set"`
-	Name    string        `json:"name" dynamo:"Name"`
-	Palette []string      `json:"palette" dynamo:"Palette"`
-	Content SchemaContent `json:"content" dynamo:"Content"`
+	*modelbase.Identifiable
+	*modelbase.Timestamps
+	Name    string        `gorm:"not null;index;size:255" json:"name"`
+	Palette SchemaPalette `gorm:"not null;type:json" json:"palette,omitempty"`
+	Content SchemaContent `gorm:"not null;type:json" json:"content,omitempty"`
+	Users   []User        `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
 }
 
-func (s *Schema) MarshalJSON() ([]byte, error) {
-	return json.Marshal(struct {
-		ID      string        `json:"id"`
-		Name    string        `json:"name"`
-		Palette []string      `json:"palette,omitempty"`
-		Content SchemaContent `json:"content,omitempty"`
-	}{
-		ID:      s.PK.Value(),
-		Name:    s.Name,
-		Palette: s.Palette,
-		Content: s.Content,
-	})
+type SchemaPalette = JSONSlice[string]
+type SchemaContent = JSONSlice[*SchemaPattern]
+
+type SchemaPattern struct {
+	ID      string       `json:"id"`
+	Name    string       `json:"name"`
+	Type    string       `json:"type"`
+	Content []*SchemaRow `json:"content"`
+}
+
+type SchemaRow struct {
+	ID      string       `json:"id"`
+	Content []SchemaBead `json:"content"`
+}
+
+type SchemaBead struct {
+	ID    string `json:"id"`
+	Color string `json:"color"`
 }

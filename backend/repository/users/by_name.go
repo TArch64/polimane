@@ -4,16 +4,11 @@ import (
 	"context"
 
 	"polimane/backend/model"
-	awsdynamodb "polimane/backend/services/dynamodb"
+	"polimane/backend/services/db"
 )
 
 func ByName(ctx context.Context, username string) (*model.User, error) {
-	var user model.User
-
-	err := awsdynamodb.Table().
-		Get("SK", model.NewKey(model.SKUserPrefix, username)).
-		Index(model.IndexUserName).
-		One(ctx, &user)
-
+	user := model.User{Name: username}
+	err := db.Client().WithContext(ctx).Where(&user).Take(&user).Error
 	return &user, err
 }

@@ -3,47 +3,39 @@ package repositoryschemas
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"polimane/backend/model"
-	repositoryusers "polimane/backend/repository/users"
-	awsdynamodb "polimane/backend/services/dynamodb"
+	"polimane/backend/model/modelbase"
+	repositoryuserschemas "polimane/backend/repository/userschemas"
+	"polimane/backend/services/db"
 	"polimane/backend/signal"
 )
 
-func Delete(ctx context.Context, user *model.User, id model.ID) (err error) {
-	if err = user.CheckSchemaAccess(id); err != nil {
+type DeleteOptions struct {
+	Ctx      context.Context
+	User     *model.User
+	SchemaID modelbase.ID
+}
+
+func Delete(options *DeleteOptions) (err error) {
+	err = repositoryuserschemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+	if err != nil {
 		return err
 	}
 
-	schema, err := ByID(&ByIDOptions{
-		Ctx:        ctx,
-		ID:         id,
-		User:       user,
-		Attributes: []string{"UserIDs"},
+	err = db.Client().WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
+		if err = tx.Delete(&model.Schema{}, options.SchemaID).Error; err != nil {
+			return err
+		}
+
+		return repositoryuserschemas.DeleteTx(tx, options.User.ID, options.SchemaID)
 	})
 
 	if err != nil {
 		return err
 	}
 
-	del := awsdynamodb.Table().
-		Delete("PK", id).
-		Range("SK", model.SKSchema)
-
-	userUpdates := model.NewUpdates().
-		Delete("SchemaIDs", schema.PrimaryKey().String())
-
-	tx := awsdynamodb.WriteTX().
-		Delete(del)
-
-	for _, userID := range schema.UserIDs {
-		tx.Update(repositoryusers.UpdateTx(userID, userUpdates))
-	}
-
-	if err = tx.Run(ctx); err != nil {
-		return model.ConditionErrToNotFound(err)
-	}
-
-	user.DeleteSchemaID(id)
-	signal.InvalidateAuthCache.Emit(ctx, user.PK)
+	signal.InvalidateAuthCache.Emit(options.Ctx, options.User.ID)
 	return nil
 }

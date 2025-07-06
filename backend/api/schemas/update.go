@@ -1,10 +1,7 @@
 package schemas
 
 import (
-	"errors"
-
 	"github.com/gofiber/fiber/v2"
-	"github.com/guregu/dynamo/v2"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
@@ -18,47 +15,55 @@ type updateBody struct {
 	Content model.SchemaContent `json:"content" validate:"omitempty,dive,required"`
 }
 
-func collectUpdates(body *updateBody) model.Updates {
-	updates := model.NewUpdates()
+func collectUpdates(body *updateBody) *model.Schema {
+	changed := false
+	updates := &model.Schema{}
 
 	if len(body.Name) > 0 {
-		updates = updates.Set("Name", body.Name)
+		changed = true
+		updates.Name = body.Name
 	}
 
 	if body.Content != nil {
-		updates = updates.Set("Content", body.Content)
+		changed = true
+		updates.Content = body.Content
 	}
 
-	if len(body.Palette) == repositoryschemas.PaletteSize {
-		updates = updates.Set("Palette", body.Palette)
+	if body.Palette != nil {
+		changed = true
+		updates.Palette = body.Palette
 	}
 
-	return updates
+	if changed {
+		return updates
+	}
+
+	return nil
 }
 
 func apiUpdate(ctx *fiber.Ctx) error {
-	schemaId, err := base.GetRequiredParam(ctx, "schemaId")
+	schemaId, err := base.GetParamID(ctx, "schemaId")
 	if err != nil {
 		return err
 	}
 
 	var body updateBody
-	err = base.ParseBody(ctx, &body)
-	if err != nil {
+	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
 	updates := collectUpdates(&body)
-	if len(updates) == 0 {
+	if updates == nil {
 		return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
 	}
 
-	user := auth.GetSessionUser(ctx)
+	err = repositoryschemas.Update(&repositoryschemas.UpdateOptions{
+		Ctx:      ctx.Context(),
+		User:     auth.GetSessionUser(ctx),
+		SchemaID: schemaId,
+		Updates:  updates,
+	})
 
-	err = repositoryschemas.Update(ctx.Context(), user, model.NewID(model.PKSchemaPrefix, schemaId), updates)
-	if errors.Is(err, dynamo.ErrNotFound) {
-		return base.NotFoundErr
-	}
 	if err != nil {
 		return err
 	}

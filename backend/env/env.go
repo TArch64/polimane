@@ -5,11 +5,14 @@ import "polimane/backend/base"
 type Environment struct {
 	SecretKey string `env:"BACKEND_SECRET_KEY,required=true"`
 	AppDomain string `env:"BACKEND_APP_DOMAIN,required=true"`
-	AWSAppArn string `env:"BACKEND_AWS_APP_ARN"`
 
 	DefaultUser struct {
 		User     string `env:"BACKEND_DEFAULT_USER,required=true"`
 		Password string `env:"BACKEND_DEFAULT_PASSWORD,required=true"`
+	}
+
+	Database struct {
+		URL string `env:"BACKEND_DATABASE_URL,required=true"`
 	}
 
 	Sentry struct {

@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/guregu/dynamo/v2"
+	"gorm.io/gorm"
 
 	"polimane/backend/api/base"
 	repositoryusers "polimane/backend/repository/users"
@@ -26,7 +26,7 @@ func apiLogin(ctx *fiber.Ctx) error {
 	}
 
 	user, err := repositoryusers.ByName(ctx.Context(), body.Username)
-	if errors.Is(err, dynamo.ErrNotFound) {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return invalidCredentialsErr
 	}
 	if err != nil {

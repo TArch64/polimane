@@ -1,29 +1,25 @@
 package schemas
 
 import (
-	"errors"
-
 	"github.com/gofiber/fiber/v2"
-	"github.com/guregu/dynamo/v2"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
-	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
 func apiDelete(ctx *fiber.Ctx) error {
-	schemaId, err := base.GetRequiredParam(ctx, "schemaId")
+	schemaId, err := base.GetParamID(ctx, "schemaId")
 	if err != nil {
 		return err
 	}
 
-	user := auth.GetSessionUser(ctx)
+	err = repositoryschemas.Delete(&repositoryschemas.DeleteOptions{
+		Ctx:      ctx.Context(),
+		User:     auth.GetSessionUser(ctx),
+		SchemaID: schemaId,
+	})
 
-	err = repositoryschemas.Delete(ctx.Context(), user, model.NewID(model.PKSchemaPrefix, schemaId))
-	if errors.Is(err, dynamo.ErrNotFound) {
-		return base.NotFoundErr
-	}
 	if err != nil {
 		return err
 	}

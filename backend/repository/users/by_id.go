@@ -3,19 +3,13 @@ package repositoryusers
 import (
 	"context"
 
-	"github.com/guregu/dynamo/v2"
-
 	"polimane/backend/model"
-	awsdynamodb "polimane/backend/services/dynamodb"
+	"polimane/backend/model/modelbase"
+	"polimane/backend/services/db"
 )
 
-func ByID(ctx context.Context, id model.ID) (*model.User, error) {
+func ByID(ctx context.Context, id modelbase.ID) (*model.User, error) {
 	var user model.User
-
-	err := awsdynamodb.Table().
-		Get("PK", id).
-		Range("SK", dynamo.BeginsWith, model.SKUserPrefix).
-		One(ctx, &user)
-
+	err := db.Client().WithContext(ctx).Take(&user, id).Error
 	return &user, err
 }

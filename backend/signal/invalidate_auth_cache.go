@@ -3,7 +3,7 @@ package signal
 import (
 	"github.com/maniartech/signals"
 
-	"polimane/backend/model"
+	"polimane/backend/model/modelbase"
 )
 
-var InvalidateAuthCache = signals.New[model.ID]()
+var InvalidateAuthCache = signals.New[modelbase.ID]()

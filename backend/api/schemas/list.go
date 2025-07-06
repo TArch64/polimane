@@ -9,11 +9,9 @@ import (
 )
 
 func apiList(ctx *fiber.Ctx) error {
-	user := auth.GetSessionUser(ctx)
-
 	schemas, err := repositoryschemas.ByUser(&repositoryschemas.ByUserOptions{
 		Ctx:        ctx.Context(),
-		User:       user,
+		User:       auth.GetSessionUser(ctx),
 		Attributes: []string{"Name"},
 	})
 

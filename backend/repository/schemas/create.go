@@ -3,9 +3,11 @@ package repositoryschemas
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"polimane/backend/model"
-	repositoryusers "polimane/backend/repository/users"
-	awsdynamodb "polimane/backend/services/dynamodb"
+	repositoryuserschemas "polimane/backend/repository/userschemas"
+	"polimane/backend/services/db"
 	"polimane/backend/signal"
 )
 
@@ -13,43 +15,37 @@ type CreateOptions struct {
 	Ctx     context.Context
 	User    *model.User
 	Name    string
-	Palette []string
+	Palette model.SchemaPalette
 	Content model.SchemaContent
 }
 
-const PaletteSize = 9
-
-func Create(options *CreateOptions) (*model.Schema, error) {
-	if len(options.Palette) == 0 {
-		options.Palette = make([]string, PaletteSize)
+func Create(options *CreateOptions) (schema *model.Schema, err error) {
+	if options.Palette == nil {
+		options.Palette = make(model.SchemaPalette, model.SchemaPaletteSize)
 	}
 
 	if options.Content == nil {
 		options.Content = make(model.SchemaContent, 0)
 	}
 
-	schema := &model.Schema{
-		Base: &model.Base{
-			PK: model.RandomID(model.PKSchemaPrefix),
-			SK: model.SKSchema,
-		},
-		UserIDs: []model.PrimaryKey{options.User.PrimaryKey()},
-		Name:    options.Name,
-		Palette: options.Palette,
-		Content: options.Content,
-	}
+	err = db.Client().WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
+		schema = &model.Schema{
+			Name:    options.Name,
+			Palette: options.Palette,
+			Content: options.Content,
+		}
 
-	userUpdates := model.NewUpdates().Add("SchemaIDs", schema.PrimaryKey().String())
+		if err = tx.Create(schema).Error; err != nil {
+			return err
+		}
 
-	tx := awsdynamodb.WriteTX().
-		Put(awsdynamodb.Table().Put(schema)).
-		Update(repositoryusers.UpdateTx(options.User.PrimaryKey(), userUpdates))
+		return repositoryuserschemas.CreateTx(tx, options.User.ID, schema.ID)
+	})
 
-	if err := tx.Run(options.Ctx); err != nil {
+	if err != nil {
 		return nil, err
 	}
 
-	options.User.AddSchemaID(schema.PrimaryKey())
-	signal.InvalidateAuthCache.Emit(options.Ctx, options.User.PK)
+	signal.InvalidateAuthCache.Emit(options.Ctx, options.User.ID)
 	return schema, nil
 }
