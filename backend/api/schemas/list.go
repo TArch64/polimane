@@ -12,7 +12,7 @@ func apiList(ctx *fiber.Ctx) error {
 	schemas, err := repositoryschemas.ByUser(&repositoryschemas.ByUserOptions{
 		Ctx:    ctx.Context(),
 		User:   auth.GetSessionUser(ctx),
-		Select: []string{"Name"},
+		Select: []string{"id", "name"},
 	})
 
 	if err != nil {
