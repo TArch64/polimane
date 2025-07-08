@@ -4,13 +4,13 @@ import { Point } from '@/models';
 import type { IContextMenuAction, MaybeContextMenuAction } from './ContextMenuModel';
 import { ContextMenuPlugin } from './ContextMenuPlugin';
 
-export interface IContextMenuOptions {
+export interface IContextMenuViewOptions {
   el: MaybeRefOrGetter<HTMLElement>;
   title: MaybeRefOrGetter<string>;
   actions: MaybeRefOrGetter<MaybeContextMenuAction[]>;
 }
 
-export function useContextMenu(options: IContextMenuOptions) {
+export function useContextMenu(options: IContextMenuViewOptions) {
   const plugin = ContextMenuPlugin.inject();
 
   useEventListener(options.el, 'contextmenu', (event) => {

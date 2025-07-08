@@ -40,11 +40,11 @@ export function useObjectParent<P extends ISchemaWithContent>(objectRef: MaybeRe
 }
 
 export function getObjectPath(object: ISchemaObject): string[] {
-  const path: string[] = [object.id];
+  const path: string[] = [object.id as string];
   let parent = getObjectParent(object);
 
   while (parent) {
-    path.unshift(parent.id);
+    path.unshift(parent.id as string);
     parent = getObjectParent(parent);
   }
 

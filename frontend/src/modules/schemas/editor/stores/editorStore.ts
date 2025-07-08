@@ -17,7 +17,7 @@ export const useEditorStore = defineStore('schemas/editor', () => {
     await httpClient.patch<HttpBody, UpdateSchemaRequest>(['/schemas', schema.value.id], patch);
   });
 
-  async function loadSchema(id: string): Promise<void> {
+  async function loadSchema(id: number): Promise<void> {
     schema.value = await httpClient.get(['/schemas', id]);
     schema.value.content ??= [];
     setSchemaRelations(schema.value);
