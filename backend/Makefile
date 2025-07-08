@@ -1,4 +1,4 @@
-.PHONY: dev db_migration_new db_migration_blank db_migrate prod
+.PHONY: dev db_migration_new db_migration_blank db_rehash_migrations db_migrate prod
 
 ldflags = '-linkmode external -extldflags "-static -Wl,-unresolved-symbols=ignore-all"'
 
@@ -7,14 +7,17 @@ dev:
 	CC="musl-gcc" \
 	gow -e=go,mod run -tags "dev" -ldflags $(ldflags) main_dev.go
 
-db_migration_new:
+db_new_migration:
 	atlas migrate diff $(name) --env dev
 
-db_migration_blank:
+db_blank_migration:
 	atlas migrate new $(name) --env dev
 
+db_rehash_migrations:
+	atlas migrate hash --env dev
+
 db_migrate:
-	atlas migrate apply --env dev --url $(BACKEND_DATABASE_URL)
+	atlas migrate apply --env dev
 
 prod:
 	GOOS=linux \

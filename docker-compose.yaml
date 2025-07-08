@@ -44,9 +44,7 @@ services:
 
   db:
     <<: *common
-    image: postgres:17-alpine
-    environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
+    build: ./ci/dev/postgres
     ports:
     - "5432:5432"
     volumes:

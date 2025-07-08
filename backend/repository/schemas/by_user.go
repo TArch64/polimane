@@ -18,7 +18,7 @@ func ByUser(options *ByUserOptions) ([]*model.Schema, error) {
 
 	query := db.Client().
 		WithContext(options.Ctx).
-		Joins("JOIN user_schemas ON user_schemas.user_id = ?", options.User.ID)
+		Joins("JOIN user_schemas ON user_schemas.schema_id = schemas.id AND user_schemas.user_id = ?", options.User.ID)
 
 	if len(options.Select) > 0 {
 		query = query.Select(options.Select)

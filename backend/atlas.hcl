@@ -30,7 +30,8 @@ data "template_dir" "migrations" {
 
 env "dev" {
   src = data.external_schema.gorm.url
-  dev = getenv("BACKEND_DATABASE_URL")
+  dev = "postgres://postgres:postgres@db:5432/atlas?sslmode=disable"
+  url = getenv("BACKEND_DATABASE_URL")
 
   migration {
     dir = data.template_dir.migrations.url
