@@ -1,6 +1,7 @@
 .PHONY: dev db_migration_new db_migration_blank db_rehash_migrations db_migrate prod
 
 ldflags = '-linkmode external -extldflags "-static -Wl,-unresolved-symbols=ignore-all"'
+env ?= dev
 
 dev:
 	CGO_ENABLED=1 \
@@ -8,16 +9,16 @@ dev:
 	gow -e=go,mod run -tags "dev" -ldflags $(ldflags) main_dev.go
 
 db_new_migration:
-	atlas migrate diff $(name) --env dev
+	atlas migrate diff $(name) --env $(env)
 
 db_blank_migration:
-	atlas migrate new $(name) --env dev
+	atlas migrate new $(name) --env $(env)
 
 db_rehash_migrations:
-	atlas migrate hash --env dev
+	atlas migrate hash --env $(env)
 
 db_migrate:
-	atlas migrate apply --env dev
+	atlas migrate apply --env $(env)
 
 prod:
 	GOOS=linux \

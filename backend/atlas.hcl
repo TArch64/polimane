@@ -43,3 +43,18 @@ env "dev" {
     }
   }
 }
+
+env "prod" {
+  src = data.external_schema.gorm.url
+  url = getenv("BACKEND_DATABASE_URL")
+
+  migration {
+    dir = data.template_dir.migrations.url
+  }
+
+  format {
+    migrate {
+      diff = "{{ sql . \"  \" }}"
+    }
+  }
+}

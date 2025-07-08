@@ -1,3 +1,7 @@
+locals {
+  migrations_hash = filesha1("${local.lambda_sources_dir}/migrations/atlas.sum")
+}
+
 data "bitwarden_secret" "backend_default_user" {
   key = "backend_default_user"
 }
@@ -12,6 +16,14 @@ data "bitwarden_secret" "backend_secret_key" {
 
 data "bitwarden_secret" "backend_sentry_dsn" {
   key = "backend_sentry_dsn"
+}
+
+data "bitwarden_secret" "backend_database_url" {
+  key = "backend_database_url"
+}
+
+data "bitwarden_secret" "backend_database_cert" {
+  key = "backend_database_cert"
 }
 
 locals {
@@ -33,13 +45,15 @@ resource "aws_lambda_function" "lambda" {
 
   environment {
     variables = {
-      BACKEND_APP_DOMAIN     = local.domain
-      BACKEND_SENTRY_RELEASE = local.lambda_sources_hash,
+      BACKEND_APP_DOMAIN        = local.domain
+      BACKEND_SENTRY_RELEASE    = local.lambda_sources_hash,
       BACKEND_BITWARDEN_TOKEN      = var.bitwarden_token
       BACKEND_DEFAULT_USER_SID     = data.bitwarden_secret.backend_default_user.id
       BACKEND_DEFAULT_PASSWORD_SID = data.bitwarden_secret.backend_default_password.id
       BACKEND_SECRET_KEY_SID       = data.bitwarden_secret.backend_secret_key.id
-      BACKEND_SENTRY_DSN_SID       = data.bitwarden_secret.backend_sentry_dsn.id
+      BACKEND_SENTRY_DSN_SID    = data.bitwarden_secret.backend_sentry_dsn.id,
+      BACKEND_DATABASE_URL_SID  = data.bitwarden_secret.backend_database_url.id,
+      BACKEND_DATABASE_CERT_SID = data.bitwarden_secret.backend_database_cert.id,
     }
   }
 
@@ -53,3 +67,24 @@ resource "aws_cloudwatch_log_group" "lambda_logs" {
   retention_in_days = 1
   tags              = local.aws_common_tags
 }
+
+resource "null_resource" "lambda_migrations" {
+  triggers = { sources_hash = local.webapp_sources_hash }
+  depends_on = [aws_lambda_function.lambda]
+
+  provisioner "local-exec" {
+    command = "bash ${path.module}/job/run.sh"
+
+    environment = {
+      JOB_ID        = local.migrations_hash
+      BUILD_IMAGE   = "polimane-prod-backend-migrations"
+      BUILD_DOCKERFILE = abspath("${path.root}/job/backend.Dockerfile")
+      BUILD_CONTEXT = local.lambda_sources_dir
+
+      BUILD_SECRET = jsonencode(["BACKEND_DATABASE_URL", "BACKEND_DATABASE_CERT"])
+      BACKEND_DATABASE_URL  = data.bitwarden_secret.backend_database_url.value
+      BACKEND_DATABASE_CERT = data.bitwarden_secret.backend_database_cert.value
+    }
+  }
+}
+

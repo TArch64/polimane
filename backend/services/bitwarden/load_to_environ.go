@@ -10,14 +10,10 @@ func LoadToEnviron(names []string) error {
 		idNameMap[ids[i]] = name
 	}
 
-	res, err := client.Secrets().GetByIDS(ids)
-	if err != nil {
-		return err
-	}
+	secrets, err := Load(ids)
 
-	for _, secret := range res.Data {
-		err = os.Setenv(idNameMap[secret.ID], secret.Value)
-		if err != nil {
+	for sid, secret := range secrets {
+		if err = os.Setenv(idNameMap[sid], secret); err != nil {
 			return err
 		}
 	}
