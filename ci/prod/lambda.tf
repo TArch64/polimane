@@ -41,23 +41,30 @@ resource "aws_cloudwatch_log_group" "lambda_logs" {
   tags              = local.aws_common_tags
 }
 
-# resource "null_resource" "lambda_migrations" {
-#   triggers = { sources_hash = local.webapp_sources_hash }
-#   depends_on = [aws_lambda_function.lambda]
-#
-#   provisioner "local-exec" {
-#     command = "bash ${path.module}/job/run.sh"
-#
-#     environment = {
-#       JOB_ID        = local.migrations_hash
-#       BUILD_IMAGE   = "polimane-prod-backend-migrations"
-#       BUILD_DOCKERFILE = abspath("${path.root}/job/backend.Dockerfile")
-#       BUILD_CONTEXT = local.lambda_sources_dir
-#
-#       BUILD_SECRET = jsonencode(["BACKEND_DATABASE_URL", "BACKEND_DATABASE_CERT"])
-#       BACKEND_DATABASE_URL  = bitwarden_secret.backend_database_url.value
-#       BACKEND_DATABASE_CERT = bitwarden_secret.backend_database_cert.value
-#     }
-#   }
-# }
+resource "null_resource" "lambda_migrations" {
+  triggers = { sources_hash = local.webapp_sources_hash }
+  depends_on = [aws_lambda_function.lambda]
+
+  provisioner "local-exec" {
+    command = "bash ${path.module}/job/run.sh"
+
+    environment = {
+      JOB_ID        = local.migrations_hash
+      BUILD_IMAGE   = "polimane-prod-backend-migrations"
+      BUILD_DOCKERFILE = abspath("${path.root}/job/backend.Dockerfile")
+      BUILD_CONTEXT = local.lambda_sources_dir
+
+      BUILD_SECRET = jsonencode([
+        "BACKEND_DATABASE_URL",
+        "BACKEND_DATABASE_CERT",
+        "BACKEND_DEFAULT_USER",
+        "BACKEND_DEFAULT_PASSWORD"
+      ])
+      BACKEND_DATABASE_URL     = bitwarden_secret.backend_database_url.value
+      BACKEND_DATABASE_CERT    = bitwarden_secret.backend_database_cert.value
+      BACKEND_DEFAULT_USER     = data.bitwarden_secret.backend_default_user.value
+      BACKEND_DEFAULT_PASSWORD = data.bitwarden_secret.backend_default_password.value
+    }
+  }
+}
 

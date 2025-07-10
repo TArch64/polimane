@@ -6,7 +6,7 @@ BUILD_ARGS=$(echo "$BUILD_ARGS" | jq -r '. // [] | map("--build-arg " + .) | joi
 BUILD_SECRET=$(echo "$BUILD_SECRET" | jq -r '. // [] | map("--secret id=" + .) | join(" ")')
 
 cleanup() {
-  docker container rm -f $BUILD_ID || true
+  docker container rm -f "build-$BUILD_ID" || true
 }
 
 trap cleanup EXIT INT TERM

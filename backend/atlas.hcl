@@ -50,6 +50,7 @@ env "prod" {
 
   migration {
     dir = data.template_dir.migrations.url
+    lock_timeout = "5m"
   }
 
   format {
