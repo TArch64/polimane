@@ -1,41 +1,13 @@
 package model
 
-import "encoding/json"
-
-const PKUser = "USER"
-const SKUser = "USERNAME"
-const IndexUserName = "UserNameIndex"
+import (
+	"polimane/backend/model/modelbase"
+)
 
 type User struct {
-	*Base
-	PasswordHash string `dynamo:"PasswordHash"`
-}
-
-type NewUserOptions struct {
-	Username     string
-	PasswordHash string
-}
-
-func NewUser(options *NewUserOptions) *User {
-	return &User{
-		Base: &Base{
-			ID: RandomID(PKUser),
-			SK: NewKey(SKUser, options.Username),
-		},
-		PasswordHash: options.PasswordHash,
-	}
-}
-
-func (u *User) Username() string {
-	return u.SK.Value()
-}
-
-func (u *User) MarshalJSON() ([]byte, error) {
-	return json.Marshal(struct {
-		ID       string `json:"id"`
-		Username string `json:"username"`
-	}{
-		ID:       u.ID.Value(),
-		Username: u.Username(),
-	})
+	*modelbase.Identifiable
+	*modelbase.Timestamps
+	Name         string    `gorm:"not null;uniqueIndex;size:255" json:"name"`
+	PasswordHash string    `gorm:"not null;type:text" json:"-"`
+	Schemas      []*Schema `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade;" json:"-"`
 }

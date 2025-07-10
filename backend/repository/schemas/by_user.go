@@ -3,24 +3,27 @@ package repositoryschemas
 import (
 	"context"
 
-	"github.com/guregu/dynamo/v2"
-
 	"polimane/backend/model"
-	awsdynamodb "polimane/backend/services/dynamodb"
+	"polimane/backend/services/db"
 )
 
-func ByUser(ctx context.Context, user *model.User, attributes []string) ([]*model.Schema, error) {
+type ByUserOptions struct {
+	Ctx    context.Context
+	User   *model.User
+	Select []string
+}
+
+func ByUser(options *ByUserOptions) ([]*model.Schema, error) {
 	var schemas []*model.Schema
 
-	query := awsdynamodb.Table().
-		Get("PK", user.ID).
-		Range("SK", dynamo.BeginsWith, model.SKSchema)
+	query := db.Client().
+		WithContext(options.Ctx).
+		Joins("JOIN user_schemas ON user_schemas.schema_id = schemas.id AND user_schemas.user_id = ?", options.User.ID)
 
-	if len(attributes) > 0 {
-		attributes = append([]string{"PK", "SK"}, attributes...)
-		query = query.Project(attributes...)
+	if len(options.Select) > 0 {
+		query = query.Select(options.Select)
 	}
 
-	err := query.All(ctx, &schemas)
+	err := query.Find(&schemas).Error
 	return schemas, err
 }

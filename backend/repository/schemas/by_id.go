@@ -3,19 +3,34 @@ package repositoryschemas
 import (
 	"context"
 
-	"github.com/guregu/dynamo/v2"
-
 	"polimane/backend/model"
-	awsdynamodb "polimane/backend/services/dynamodb"
+	"polimane/backend/model/modelbase"
+	repositoryuserschemas "polimane/backend/repository/userschemas"
+	"polimane/backend/services/db"
 )
 
-func ById(ctx context.Context, user *model.User, id string) (*model.Schema, error) {
+type ByIDOptions struct {
+	Ctx      context.Context
+	User     *model.User
+	SchemaID modelbase.ID
+	Select   []string
+}
+
+func ByID(options *ByIDOptions) (*model.Schema, error) {
+	var err error
+
+	err = repositoryuserschemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+	if err != nil {
+		return nil, err
+	}
+
 	var schema model.Schema
+	query := db.Client().WithContext(options.Ctx)
 
-	err := awsdynamodb.Table().
-		Get("PK", user.ID).
-		Range("SK", dynamo.Equal, model.NewID(model.SKSchema, id)).
-		One(ctx, &schema)
+	if len(options.Select) > 0 {
+		query = query.Select(options.Select)
+	}
 
+	err = query.Take(&schema, options.SchemaID).Error
 	return &schema, err
 }

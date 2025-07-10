@@ -3,7 +3,7 @@ import type { HttpMiddleware, HttpMiddlewareExecutor } from './HttpMiddlewareExe
 
 export type HttpBody = object;
 export type HttpParams = Record<string, string | number>;
-export type PathItem = string;
+export type PathItem = string | number;
 export type Path = PathItem[] | PathItem;
 
 export interface IHttpClientOptions {

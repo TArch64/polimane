@@ -4,12 +4,15 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+
+	"polimane/backend/model/modelbase"
 )
 
-func GetRequiredParam(ctx *fiber.Ctx, name string) (string, error) {
-	value := ctx.Params(name)
-	if len(value) == 0 {
-		return "", NewReasonedError(fiber.StatusBadRequest, fmt.Sprintf("MissingRequiredParam[%s]", name))
+func GetParamID(ctx *fiber.Ctx, name string) (modelbase.ID, error) {
+	id, err := modelbase.StringToID(ctx.Params(name))
+	if err != nil {
+		return modelbase.ID{}, NewReasonedError(fiber.StatusBadRequest, fmt.Sprintf("MissingRequiredParam[%s]", name))
 	}
-	return value, nil
+
+	return id, nil
 }

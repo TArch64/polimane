@@ -1,10 +1,10 @@
 package base
 
 import (
-	"database/sql"
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 type errorResponse struct {
@@ -14,7 +14,7 @@ type errorResponse struct {
 }
 
 func getErrorStatus(err error) int {
-	if errors.Is(err, sql.ErrNoRows) {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return fiber.StatusNotFound
 	}
 

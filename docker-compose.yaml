@@ -3,12 +3,12 @@ x-common: &common
   env_file: .env
   tty: true
   stdin_open: true
+  stop_grace_period: 1s
 
 services:
   nginx:
     <<: *common
     image: nginx:1.27-alpine
-    stop_grace_period: 1s
     volumes:
     - ./ci/dev/nginx/nginx.conf:/etc/nginx/nginx.conf
     - ./ci/dev/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
@@ -36,26 +36,24 @@ services:
       context: .
       dockerfile: ./ci/dev/backend/Dockerfile
     command: make dev
-    stop_grace_period: 1s
     volumes:
     - ./backend:/app
     - gomod_cache:/go/pkg/mod
     depends_on:
-    - dynamodb
+    - db
 
-  dynamodb:
+  db:
     <<: *common
-    image: "amazon/dynamodb-local:2.6.0"
-    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
-    user: root
-    working_dir: /home/dynamodblocal
+    build: ./ci/dev/postgres
+    ports:
+    - "5432:5432"
     volumes:
-    - dynamodb_data:/home/dynamodblocal/data
+    - postgres_data:/var/lib/postgresql/data
 
 volumes:
   bun_cache:
     driver: local
   gomod_cache:
     driver: local
-  dynamodb_data:
+  postgres_data:
     driver: local

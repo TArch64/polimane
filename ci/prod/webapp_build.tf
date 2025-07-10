@@ -1,11 +1,3 @@
-data "bitwarden_secret" "frontend_sentry_dsn" {
-  key = "frontend_sentry_dsn"
-}
-
-data "bitwarden_secret" "frontend_sentry_auth_token" {
-  key = "frontend_sentry_auth_token"
-}
-
 locals {
   webapp_sources_dir = abspath("${path.root}/../../frontend")
   webapp_build_dir = abspath("${path.root}/tmp/webapp")

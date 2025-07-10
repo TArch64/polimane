@@ -9,15 +9,14 @@ import (
 )
 
 func apiCopy(ctx *fiber.Ctx) error {
-	schemaId, err := base.GetRequiredParam(ctx, "schemaId")
+	schemaId, err := base.GetParamID(ctx, "schemaId")
 	if err != nil {
 		return err
 	}
 
-	user := auth.GetSessionUser(ctx)
-
-	schema, err := repositoryschemas.Copy(ctx.Context(), &repositoryschemas.CopyOptions{
-		User:     user,
+	schema, err := repositoryschemas.Copy(&repositoryschemas.CopyOptions{
+		Ctx:      ctx.Context(),
+		User:     auth.GetSessionUser(ctx),
 		SchemaID: schemaId,
 	})
 

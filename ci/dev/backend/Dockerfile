@@ -9,3 +9,4 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN go install github.com/mitranim/gow@latest
+RUN curl -sSf https://atlasgo.sh | sh

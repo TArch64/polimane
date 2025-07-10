@@ -2,26 +2,40 @@ package repositoryschemas
 
 import (
 	"context"
-	"errors"
 
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/guregu/dynamo/v2"
+	"gorm.io/gorm"
 
 	"polimane/backend/model"
-	awsdynamodb "polimane/backend/services/dynamodb"
+	"polimane/backend/model/modelbase"
+	repositoryuserschemas "polimane/backend/repository/userschemas"
+	"polimane/backend/services/db"
+	"polimane/backend/signal"
 )
 
-func Delete(ctx context.Context, user *model.User, id string) error {
-	err := awsdynamodb.Table().
-		Delete("PK", user.ID).
-		Range("SK", model.NewID(model.SKSchema, id)).
-		If(model.IfKeyExists).
-		Run(ctx)
+type DeleteOptions struct {
+	Ctx      context.Context
+	User     *model.User
+	SchemaID modelbase.ID
+}
 
-	var checkFailedErr *types.ConditionalCheckFailedException
-	if errors.As(err, &checkFailedErr) {
-		return dynamo.ErrNotFound
+func Delete(options *DeleteOptions) (err error) {
+	err = repositoryuserschemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+	if err != nil {
+		return err
 	}
 
-	return err
+	err = db.Client().WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
+		if err = tx.Delete(&model.Schema{}, options.SchemaID).Error; err != nil {
+			return err
+		}
+
+		return repositoryuserschemas.DeleteTx(tx, options.User.ID, options.SchemaID)
+	})
+
+	if err != nil {
+		return err
+	}
+
+	signal.InvalidateAuthCache.Emit(options.Ctx, options.User.ID)
+	return nil
 }

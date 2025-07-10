@@ -2,31 +2,33 @@ package repositoryschemas
 
 import (
 	"context"
-	"errors"
-
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/guregu/dynamo/v2"
 
 	"polimane/backend/model"
-	awsdynamodb "polimane/backend/services/dynamodb"
+	"polimane/backend/model/modelbase"
+	repositoryuserschemas "polimane/backend/repository/userschemas"
+	"polimane/backend/services/db"
 )
 
-func Update(ctx context.Context, user *model.User, id string, patch awsdynamodb.UpdateMap) error {
-	query := awsdynamodb.Table().
-		Update("PK", user.ID).
-		Range("SK", model.NewID(model.SKSchema, id)).
-		If(model.IfKeyExists)
+type UpdateOptions struct {
+	Ctx      context.Context
+	User     *model.User
+	SchemaID modelbase.ID
+	Updates  *model.Schema
+}
 
-	for key, value := range patch {
-		query = query.Set(key, value)
+func Update(options *UpdateOptions) (err error) {
+	err = repositoryuserschemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+	if err != nil {
+		return err
 	}
 
-	err := query.Run(ctx)
-
-	var checkFailedErr *types.ConditionalCheckFailedException
-	if errors.As(err, &checkFailedErr) {
-		return dynamo.ErrNotFound
-	}
-
-	return err
+	return db.Client().
+		WithContext(options.Ctx).
+		Model(&model.Schema{
+			Identifiable: &modelbase.Identifiable{
+				ID: options.SchemaID,
+			},
+		}).
+		Updates(options.Updates).
+		Error
 }

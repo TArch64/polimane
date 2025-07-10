@@ -7,14 +7,16 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/guregu/dynamo/v2"
 	"github.com/kittipat1413/go-common/framework/cache"
 	"github.com/kittipat1413/go-common/framework/cache/localcache"
+	"gorm.io/gorm"
 
 	"polimane/backend/api/base"
 	"polimane/backend/env"
 	"polimane/backend/model"
+	"polimane/backend/model/modelbase"
 	repositoryusers "polimane/backend/repository/users"
+	"polimane/backend/signal"
 )
 
 var unauthorizedErr = base.NewReasonedError(fiber.StatusUnauthorized, "Unauthorized")
@@ -31,7 +33,12 @@ func NewMiddleware() fiber.Handler {
 		),
 	}
 
+	signal.InvalidateAuthCache.AddListener(m.invalidateCache)
 	return m.Handler
+}
+
+func (m *middleware) invalidateCache(ctx context.Context, userID modelbase.ID) {
+	_ = m.cache.Invalidate(ctx, userID.String())
 }
 
 func (m *middleware) Handler(ctx *fiber.Ctx) error {
@@ -74,9 +81,9 @@ func (m *middleware) parseToken(token string) (*tokenClaims, error) {
 
 func (m *middleware) getUser(ctx context.Context, claims *tokenClaims) (*model.User, error) {
 	return m.cache.Get(ctx, claims.UserID.String(), func() (*model.User, *time.Duration, error) {
-		user, err := repositoryusers.ByPK(ctx, claims.UserID)
+		user, err := repositoryusers.ByID(ctx, claims.UserID)
 
-		if errors.Is(err, dynamo.ErrNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil, unauthorizedErr
 		}
 		if err != nil {

@@ -1,10 +1,7 @@
 package schemas
 
 import (
-	"errors"
-
 	"github.com/gofiber/fiber/v2"
-	"github.com/guregu/dynamo/v2"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
@@ -12,17 +9,17 @@ import (
 )
 
 func apiById(ctx *fiber.Ctx) error {
-	schemaId, err := base.GetRequiredParam(ctx, "schemaId")
+	schemaId, err := base.GetParamID(ctx, "schemaId")
 	if err != nil {
 		return err
 	}
 
-	user := auth.GetSessionUser(ctx)
+	schema, err := repositoryschemas.ByID(&repositoryschemas.ByIDOptions{
+		Ctx:      ctx.Context(),
+		User:     auth.GetSessionUser(ctx),
+		SchemaID: schemaId,
+	})
 
-	schema, err := repositoryschemas.ById(ctx.Context(), user, schemaId)
-	if errors.Is(err, dynamo.ErrNotFound) {
-		return base.NotFoundErr
-	}
 	if err != nil {
 		return err
 	}
