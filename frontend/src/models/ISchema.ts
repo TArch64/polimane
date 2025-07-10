@@ -1,7 +1,7 @@
 import type { ISchemaPattern } from './ISchemaPattern';
 
 export interface ISchema {
-  id: number;
+  id: string;
   name: string;
   palette: string[];
   content: ISchemaPattern[];

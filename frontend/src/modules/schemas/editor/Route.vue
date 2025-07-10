@@ -23,7 +23,7 @@ import {
 import { EditorCanvas, EditorEmpty, EditorHeader, EditorPalette } from './components';
 
 defineProps<{
-  schemaId: number;
+  schemaId: string;
 }>();
 
 defineOptions({

@@ -1,3 +1,3 @@
 export interface ISchemaObject {
-  id: number | string;
+  id: string;
 }
