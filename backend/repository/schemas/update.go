@@ -24,7 +24,11 @@ func Update(options *UpdateOptions) (err error) {
 
 	return db.Client().
 		WithContext(options.Ctx).
-		Model(&model.Schema{Identifiable: options.SchemaID.Model()}).
+		Model(&model.Schema{
+			Identifiable: &modelbase.Identifiable{
+				ID: options.SchemaID,
+			},
+		}).
 		Updates(options.Updates).
 		Error
 }

@@ -6,6 +6,6 @@ import (
 
 type UserSchema struct {
 	*modelbase.Timestamps
-	UserID   modelbase.ID `gorm:"type:serial;primaryKey;autoIncrement:false" json:"userId"`
-	SchemaID modelbase.ID `gorm:"type:serial;primaryKey;autoIncrement:false" json:"schemaId"`
+	UserID   modelbase.ID `gorm:"type:uuid;primaryKey" json:"userId"`
+	SchemaID modelbase.ID `gorm:"type:uuid;primaryKey" json:"schemaId"`
 }

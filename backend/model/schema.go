@@ -1,7 +1,7 @@
 package model
 
 import (
-	. "gorm.io/datatypes"
+	"gorm.io/datatypes"
 
 	"polimane/backend/model/modelbase"
 )
@@ -22,8 +22,8 @@ type Schema struct {
 	Users   []User        `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
 }
 
-type SchemaPalette = JSONSlice[string]
-type SchemaContent = JSONSlice[*SchemaPattern]
+type SchemaPalette = datatypes.JSONSlice[string]
+type SchemaContent = datatypes.JSONSlice[*SchemaPattern]
 
 type SchemaPattern struct {
 	ID      string       `json:"id"`

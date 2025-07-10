@@ -1,17 +1,17 @@
 package modelbase
 
-import "strconv"
+import (
+	"github.com/jackc/pgx/v5/pgtype"
+)
 
-type ID uint64
+type ID = pgtype.UUID
 
-func (i ID) Model() *Identifiable {
-	return &Identifiable{ID: i}
-}
-
-func (i ID) String() string {
-	return strconv.Itoa(int(i))
+func StringToID(str string) (ID, error) {
+	id := pgtype.UUID{}
+	err := id.Scan(str)
+	return id, err
 }
 
 type Identifiable struct {
-	ID ID `gorm:"type:serial;primaryKey" json:"id"`
+	ID ID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
 }

@@ -1,7 +1,7 @@
 -- Create "schemas" table
 CREATE TABLE "public"."schemas"
 (
-    "id"         serial                 NOT NULL,
+    "id"         uuid                   NOT NULL DEFAULT gen_random_uuid(),
     "created_at" timestamptz            NOT NULL,
     "updated_at" timestamptz            NOT NULL,
     "name"       character varying(255) NOT NULL,
@@ -14,7 +14,7 @@ CREATE INDEX "idx_schemas_name" ON "public"."schemas" ("name");
 -- Create "users" table
 CREATE TABLE "public"."users"
 (
-    "id"            serial                 NOT NULL,
+    "id"            uuid                   NOT NULL DEFAULT gen_random_uuid(),
     "created_at"    timestamptz            NOT NULL,
     "updated_at"    timestamptz            NOT NULL,
     "name"          character varying(255) NOT NULL,
@@ -28,8 +28,8 @@ CREATE TABLE "public"."user_schemas"
 (
     "created_at" timestamptz NOT NULL,
     "updated_at" timestamptz NOT NULL,
-    "user_id"    serial      NOT NULL,
-    "schema_id"  serial      NOT NULL,
+    "user_id"    uuid        NOT NULL,
+    "schema_id"  uuid        NOT NULL,
     PRIMARY KEY ("user_id", "schema_id"),
     CONSTRAINT "fk_user_schemas_schema" FOREIGN KEY ("schema_id") REFERENCES "public"."schemas" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
     CONSTRAINT "fk_user_schemas_user" FOREIGN KEY ("user_id") REFERENCES "public"."users" ("id") ON UPDATE NO ACTION ON DELETE CASCADE

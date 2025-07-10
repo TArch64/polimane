@@ -9,11 +9,10 @@ import (
 )
 
 func GetParamID(ctx *fiber.Ctx, name string) (modelbase.ID, error) {
-	value, err := ctx.ParamsInt(name)
-
+	id, err := modelbase.StringToID(ctx.Params(name))
 	if err != nil {
-		return 0, NewReasonedError(fiber.StatusBadRequest, fmt.Sprintf("MissingRequiredParam[%s]", name))
+		return modelbase.ID{}, NewReasonedError(fiber.StatusBadRequest, fmt.Sprintf("MissingRequiredParam[%s]", name))
 	}
 
-	return modelbase.ID(value), nil
+	return id, nil
 }
