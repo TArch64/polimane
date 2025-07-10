@@ -11,6 +11,9 @@ func LoadToEnviron(names []string) error {
 	}
 
 	secrets, err := Load(ids)
+	if err != nil {
+		return err
+	}
 
 	for sid, secret := range secrets {
 		if err = os.Setenv(idNameMap[sid], secret); err != nil {
