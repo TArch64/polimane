@@ -33,7 +33,6 @@
     "npm-run-all2": "^8.0.4",
     "nprogress": "^0.2.0",
     "pinia": "^3.0.3",
-    "postcss-nesting": "^13.0.2",
     "rambda": "^10.3.0",
     "typescript": "^5.8.3",
     "ulid": "^3.0.1",
