@@ -1,58 +1,35 @@
-data "aws_dynamodb_table" "database" {
-  depends_on = [aws_lambda_function.lambda]
-  name = local.app_name
-}
+resource "cockroach_cluster" "app" {
+  name              = local.app_name
+  cloud_provider    = "AWS"
+  plan              = "BASIC"
+  delete_protection = true
 
-resource "aws_backup_vault" "vault" {
-  name = local.app_name
-  tags = local.aws_common_tags
-}
+  regions = [
+    { name = "eu-central-1" }
+  ]
 
-resource "aws_backup_plan" "vault" {
-  name = aws_backup_vault.vault.name
-  tags = local.aws_common_tags
-
-  rule {
-    rule_name         = "every-day"
-    target_vault_name = aws_backup_vault.vault.name
-    schedule          = "cron(0 4 * * ? *)"
-
-    lifecycle {
-      delete_after = 3
+  serverless = {
+    usage_limits = {
+      request_unit_limit = 30000000
+      storage_mib_limit  = 10240
     }
   }
 }
 
-data "aws_iam_policy_document" "backup" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type = "Service"
-      identifiers = ["backup.amazonaws.com"]
-    }
-
-    actions = ["sts:AssumeRole"]
-  }
+resource "cockroach_sql_user" "app" {
+  cluster_id = cockroach_cluster.app.id
+  name       = local.app_name
+  password   = data.bitwarden_secret.backend_database_password.value
 }
 
-resource "aws_iam_role" "backup_role" {
-  name               = "polimane-prod-backup-role"
-  assume_role_policy = data.aws_iam_policy_document.backup.json
+data "cockroach_cluster_cert" "ca_cert" {
+  id = cockroach_cluster.app.id
 }
 
-resource "aws_iam_role_policy_attachment" "database_backup_role" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
-  role       = aws_iam_role.backup_role.name
-}
-
-resource "aws_backup_selection" "database" {
-  name         = "database"
-  iam_role_arn = aws_iam_role.backup_role.arn
-  plan_id      = aws_backup_plan.vault.id
-  resources = [data.aws_dynamodb_table.database.arn]
-
-  lifecycle {
-    ignore_changes = [resources]
-  }
+data "cockroach_connection_string" "app" {
+  id       = cockroach_cluster.app.id
+  sql_user = cockroach_sql_user.app.name
+  password = cockroach_sql_user.app.password
+  database = "defaultdb"
+  os       = "LINUX"
 }

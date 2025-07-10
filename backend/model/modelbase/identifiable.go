@@ -2,7 +2,7 @@ package modelbase
 
 import "strconv"
 
-type ID uint
+type ID uint64
 
 func (i ID) Model() *Identifiable {
 	return &Identifiable{ID: i}

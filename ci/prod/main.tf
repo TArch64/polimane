@@ -17,6 +17,11 @@ terraform {
       version = "5.6.0"
     }
 
+    cockroach = {
+      source  = "cockroachdb/cockroach"
+      version = "1.12.2"
+    }
+
     tls = {
       source  = "hashicorp/tls"
       version = "4.1.0"
@@ -60,12 +65,12 @@ provider "aws" {
   }
 }
 
-data "bitwarden_secret" "cloudflare_api_token" {
-  key = "cloudflare_api_token"
-}
-
 provider "cloudflare" {
   api_token = data.bitwarden_secret.cloudflare_api_token.value
+}
+
+provider "cockroach" {
+  apikey = data.bitwarden_secret.cockroach_api_key.value
 }
 
 locals {
