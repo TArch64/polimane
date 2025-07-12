@@ -6,13 +6,12 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/kittipat1413/go-common/framework/cache"
 	"github.com/kittipat1413/go-common/framework/cache/localcache"
+	"github.com/workos/workos-go/v4/pkg/usermanagement"
 	"gorm.io/gorm"
 
 	"polimane/backend/api/base"
-	"polimane/backend/env"
 	"polimane/backend/model"
 	"polimane/backend/model/modelbase"
 	repositoryusers "polimane/backend/repository/users"
@@ -42,17 +41,23 @@ func (m *middleware) invalidateCache(ctx context.Context, userID modelbase.ID) {
 }
 
 func (m *middleware) Handler(ctx *fiber.Ctx) error {
-	token, err := m.getToken(ctx)
-	if err != nil {
+	accessToken := ctx.Get("Authorization")
+	refreshToken := ctx.Get("X-Refresh-Token")
+	if accessToken == "" || refreshToken == "" {
 		return unauthorizedErr
 	}
 
-	claims, err := m.parseToken(token)
+	workosUser, err := m.authWithAccessToken(ctx.Context(), accessToken)
 	if err != nil {
 		return err
 	}
 
-	user, err := m.getUser(ctx.Context(), claims)
+	userID, err := modelbase.StringToID(workosUser.ExternalID)
+	if err != nil {
+		return err
+	}
+
+	user, err := m.getUser(ctx.Context(), userID)
 	if err != nil {
 		return err
 	}
@@ -61,27 +66,14 @@ func (m *middleware) Handler(ctx *fiber.Ctx) error {
 	return ctx.Next()
 }
 
-func (m *middleware) getToken(ctx *fiber.Ctx) (string, error) {
-	tokens := ctx.GetReqHeaders()["Authorization"]
-	if len(tokens) == 0 || len(tokens[0]) == 0 {
-		return "", unauthorizedErr
-	}
-	return tokens[0], nil
+func (m *middleware) authWithAccessToken(ctx context.Context, accessToken string) (*usermanagement.User, error) {
+	//jwksURL := fmt.Sprintf("https://api.workos.com/sso/jwks/%s", env.Instance.WorkOS.ClientID)
+	return nil, nil
 }
 
-func (m *middleware) parseToken(token string) (*tokenClaims, error) {
-	claims := &tokenClaims{}
-
-	_, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(env.Env().SecretKey), nil
-	})
-
-	return claims, err
-}
-
-func (m *middleware) getUser(ctx context.Context, claims *tokenClaims) (*model.User, error) {
-	return m.cache.Get(ctx, claims.UserID.String(), func() (*model.User, *time.Duration, error) {
-		user, err := repositoryusers.ByID(ctx, claims.UserID)
+func (m *middleware) getUser(ctx context.Context, id modelbase.ID) (*model.User, error) {
+	return m.cache.Get(ctx, id.String(), func() (*model.User, *time.Duration, error) {
+		user, err := repositoryusers.ByID(ctx, id)
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil, unauthorizedErr

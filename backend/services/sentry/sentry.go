@@ -10,7 +10,7 @@ import (
 )
 
 func Init() (fiber.Handler, error) {
-	config := env.Env().Sentry
+	config := env.Instance.Sentry
 	if len(config.Dsn) == 0 {
 		return nil, nil
 	}

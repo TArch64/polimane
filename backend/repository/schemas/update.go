@@ -22,7 +22,7 @@ func Update(options *UpdateOptions) (err error) {
 		return err
 	}
 
-	return db.Client().
+	return db.Instance.
 		WithContext(options.Ctx).
 		Model(&model.Schema{
 			Identifiable: &modelbase.Identifiable{

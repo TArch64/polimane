@@ -19,6 +19,7 @@ resource "aws_lambda_function" "lambda" {
   environment {
     variables = {
       BACKEND_APP_DOMAIN        = local.domain
+      BACKEND_APP_PROTOCOL      = "https"
       BACKEND_SENTRY_RELEASE    = local.lambda_sources_hash,
       BACKEND_BITWARDEN_TOKEN      = var.bitwarden_token
       BACKEND_DEFAULT_USER_SID     = data.bitwarden_secret.backend_default_user.id

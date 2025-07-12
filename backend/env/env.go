@@ -1,10 +1,15 @@
 package env
 
-import "polimane/backend/base"
+import (
+	"net/url"
+
+	"polimane/backend/base"
+)
 
 type Environment struct {
-	SecretKey string `env:"BACKEND_SECRET_KEY,required=true"`
-	AppDomain string `env:"BACKEND_APP_DOMAIN,required=true"`
+	SecretKey   string `env:"BACKEND_SECRET_KEY,required=true"`
+	AppDomain   string `env:"BACKEND_APP_DOMAIN,required=true"`
+	AppProtocol string `env:"BACKEND_APP_PROTOCOL,required=true"`
 
 	Database struct {
 		URL string `env:"BACKEND_DATABASE_URL,required=true"`
@@ -14,15 +19,30 @@ type Environment struct {
 		Dsn     string `env:"BACKEND_SENTRY_DSN"`
 		Release string `env:"BACKEND_SENTRY_RELEASE"`
 	}
+
+	WorkOS struct {
+		ClientID string `env:"WORKOS_CLIENT_ID,required=true"`
+		ApiKey   string `env:"WORKOS_API_KEY,required=true"`
+	}
 }
 
-var environment *Environment
+func (e *Environment) AppURL() *url.URL {
+	return &url.URL{
+		Scheme: e.AppProtocol,
+		Host:   e.AppDomain,
+	}
+}
+
+func (e *Environment) ApiURL() *url.URL {
+	return &url.URL{
+		Scheme: e.AppProtocol,
+		Host:   "api." + e.AppDomain,
+	}
+}
+
+var Instance *Environment
 
 func Init() error {
-	environment = &Environment{}
+	Instance = &Environment{}
 	return base.TagError("env.load", loadEnvs())
-}
-
-func Env() *Environment {
-	return environment
 }

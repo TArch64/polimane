@@ -25,7 +25,7 @@ func ByID(options *ByIDOptions) (*model.Schema, error) {
 	}
 
 	var schema model.Schema
-	query := db.Client().WithContext(options.Ctx)
+	query := db.Instance.WithContext(options.Ctx)
 
 	if len(options.Select) > 0 {
 		query = query.Select(options.Select)

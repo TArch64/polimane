@@ -52,6 +52,6 @@ func loadEnvs() error {
 		return base.TagError("env.load.bitwarden.certs", err)
 	}
 
-	_, err = env.UnmarshalFromEnviron(environment)
+	_, err = env.UnmarshalFromEnviron(Instance)
 	return err
 }

@@ -3,6 +3,8 @@ package app
 import (
 	"github.com/gofiber/fiber/v2"
 
+	"polimane/backend/services/workos"
+
 	"polimane/backend/api"
 	"polimane/backend/env"
 	"polimane/backend/services/db"
@@ -23,5 +25,6 @@ func New(config *Config) (*fiber.App, error) {
 		return nil, err
 	}
 
+	workos.Init()
 	return api.New(config.ApiOptions)
 }
