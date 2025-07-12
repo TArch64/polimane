@@ -1,5 +1,6 @@
 import './style/main.css';
 
+import './polyfills';
 import { createApp, h, ref, shallowRef } from 'vue';
 import { createPinia } from 'pinia';
 import VueKonva from 'vue-konva';
