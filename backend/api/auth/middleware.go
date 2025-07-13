@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/kittipat1413/go-common/framework/cache"
 	"github.com/kittipat1413/go-common/framework/cache/localcache"
+	"github.com/workos/workos-go/v4/pkg/usermanagement"
 	"gorm.io/gorm"
 
 	"polimane/backend/api/base"
@@ -16,6 +16,7 @@ import (
 	"polimane/backend/model"
 	"polimane/backend/model/modelbase"
 	repositoryusers "polimane/backend/repository/users"
+	"polimane/backend/services/workos"
 	"polimane/backend/signal"
 )
 
@@ -42,46 +43,57 @@ func (m *middleware) invalidateCache(ctx context.Context, userID modelbase.ID) {
 }
 
 func (m *middleware) Handler(ctx *fiber.Ctx) error {
-	token, err := m.getToken(ctx)
-	if err != nil {
+	accessToken := ctx.Get("Authorization")
+	refreshToken := ctx.Get("X-Refresh-Token")
+	if accessToken == "" || refreshToken == "" {
 		return unauthorizedErr
 	}
 
-	claims, err := m.parseToken(token)
+	workosUser, err := workos.AuthenticateWithAccessToken(ctx.Context(), accessToken)
+	if errors.Is(err, workos.AccessTokenExpired) {
+		workosUser, err = m.refreshToken(ctx, refreshToken)
+	}
 	if err != nil {
 		return err
 	}
 
-	user, err := m.getUser(ctx.Context(), claims)
+	userID, err := modelbase.StringToID(workosUser.ExternalID)
 	if err != nil {
 		return err
 	}
 
-	setSessionUser(ctx, user)
+	user, err := m.getUser(ctx.Context(), userID)
+	if err != nil {
+		return err
+	}
+
+	setSession(ctx, &UserSession{
+		User:       user,
+		WorkosUser: workosUser,
+	})
+
 	return ctx.Next()
 }
 
-func (m *middleware) getToken(ctx *fiber.Ctx) (string, error) {
-	tokens := ctx.GetReqHeaders()["Authorization"]
-	if len(tokens) == 0 || len(tokens[0]) == 0 {
-		return "", unauthorizedErr
-	}
-	return tokens[0], nil
-}
-
-func (m *middleware) parseToken(token string) (*tokenClaims, error) {
-	claims := &tokenClaims{}
-
-	_, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(env.Env().SecretKey), nil
+func (m *middleware) refreshToken(ctx *fiber.Ctx, token string) (*usermanagement.User, error) {
+	res, err := workos.UserManagement.AuthenticateWithRefreshToken(ctx.Context(), usermanagement.AuthenticateWithRefreshTokenOpts{
+		ClientID:     env.Instance.WorkOS.ClientID,
+		RefreshToken: token,
+		UserAgent:    ctx.Get("User-Agent"),
 	})
 
-	return claims, err
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.Set("X-New-Refresh-Token", res.RefreshToken)
+	ctx.Set("X-New-Access-Token", res.AccessToken)
+	return workos.AuthenticateWithAccessToken(ctx.Context(), res.AccessToken)
 }
 
-func (m *middleware) getUser(ctx context.Context, claims *tokenClaims) (*model.User, error) {
-	return m.cache.Get(ctx, claims.UserID.String(), func() (*model.User, *time.Duration, error) {
-		user, err := repositoryusers.ByID(ctx, claims.UserID)
+func (m *middleware) getUser(ctx context.Context, id modelbase.ID) (*model.User, error) {
+	return m.cache.Get(ctx, id.String(), func() (*model.User, *time.Duration, error) {
+		user, err := repositoryusers.ByID(ctx, id)
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil, unauthorizedErr

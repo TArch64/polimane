@@ -24,7 +24,7 @@ func Delete(options *DeleteOptions) (err error) {
 		return err
 	}
 
-	err = db.Client().WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
+	err = db.Instance.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
 		if err = tx.Delete(&model.Schema{}, options.SchemaID).Error; err != nil {
 			return err
 		}

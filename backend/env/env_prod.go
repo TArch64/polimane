@@ -35,6 +35,8 @@ func loadEnvs() error {
 		"BACKEND_SECRET_KEY",
 		"BACKEND_SENTRY_DSN",
 		"BACKEND_DATABASE_URL",
+		"BACKEND_WORKOS_CLIENT_ID",
+		"BACKEND_WORKOS_API_KEY",
 	})
 
 	if err != nil {
@@ -52,6 +54,6 @@ func loadEnvs() error {
 		return base.TagError("env.load.bitwarden.certs", err)
 	}
 
-	_, err = env.UnmarshalFromEnviron(environment)
+	_, err = env.UnmarshalFromEnviron(Instance)
 	return err
 }

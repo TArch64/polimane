@@ -7,5 +7,5 @@ import (
 )
 
 func apiCurrent(ctx *fiber.Ctx) error {
-	return ctx.JSON(auth.GetSessionUser(ctx))
+	return ctx.JSON(auth.GetSession(ctx))
 }

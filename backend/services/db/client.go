@@ -8,18 +8,14 @@ import (
 	"polimane/backend/env"
 )
 
-var client *gorm.DB
+var Instance *gorm.DB
 
 func Init() (err error) {
-	dialect := postgres.Open(env.Env().Database.URL)
+	dialect := postgres.Open(env.Instance.Database.URL)
 
-	client, err = gorm.Open(dialect, &gorm.Config{
+	Instance, err = gorm.Open(dialect, &gorm.Config{
 		Logger: newLogger(),
 	})
 
 	return base.TagError("db.open", err)
-}
-
-func Client() *gorm.DB {
-	return client
 }

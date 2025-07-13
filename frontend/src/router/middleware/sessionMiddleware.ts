@@ -4,7 +4,7 @@ import { useSessionStore } from '@/stores';
 export const sessionMiddleware: NavigationGuard = async (to, _, next) => {
   const sessionStore = useSessionStore();
 
-  if (to.name === 'welcome') {
+  if (to.name === 'auth' || to.name === 'authComplete') {
     return next();
   }
 
@@ -17,7 +17,7 @@ export const sessionMiddleware: NavigationGuard = async (to, _, next) => {
   }
 
   return next({
-    name: 'welcome',
+    name: 'auth',
     query: { 'return-to': to.fullPath },
   });
 };

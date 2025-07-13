@@ -9,7 +9,14 @@ export interface IHttpResponseErrorInterceptor {
   interceptResponseError(error: HttpError): MaybePromise<void>;
 }
 
-export type HttpMiddleware = IHttpBeforeRequestInterceptor | IHttpResponseErrorInterceptor;
+export interface IHttpResponseSuccessInterceptor {
+  interceptResponseSuccess(response: Response): MaybePromise<void>;
+}
+
+export type HttpMiddleware
+  = IHttpBeforeRequestInterceptor
+    | IHttpResponseErrorInterceptor
+    | IHttpResponseSuccessInterceptor;
 
 export class HttpMiddlewareExecutor {
   private readonly middlewares: HttpMiddleware[] = [];
@@ -31,6 +38,14 @@ export class HttpMiddlewareExecutor {
 
     for (const middleware of middlewares) {
       await middleware.interceptResponseError(error);
+    }
+  }
+
+  async callResponseSuccessInterceptor(response: Response): Promise<void> {
+    const middlewares = this.middlewares.filter((m): m is IHttpResponseSuccessInterceptor => 'interceptResponseSuccess' in m);
+
+    for (const middleware of middlewares) {
+      await middleware.interceptResponseSuccess(response);
     }
   }
 }

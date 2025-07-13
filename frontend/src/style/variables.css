@@ -1,7 +1,7 @@
 :root {
-  --color-white: #fff;
-  --color-black: rgba(0, 0, 0, 0.9);
-  --color-danger: #e7000b;
+  --color-white: #FFF;
+  --color-black: #1A1A1A;
+  --color-danger: #E7000B;
   --color-primary: var(--color-black);
 
   --color-divider: color-mix(in srgb, var(--color-black), var(--color-white) 90%);

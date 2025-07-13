@@ -28,7 +28,7 @@ func Create(options *CreateOptions) (schema *model.Schema, err error) {
 		options.Content = make(model.SchemaContent, 0)
 	}
 
-	err = db.Client().WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
+	err = db.Instance.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
 		schema = &model.Schema{
 			Name:    options.Name,
 			Palette: options.Palette,

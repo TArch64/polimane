@@ -6,6 +6,7 @@ import (
 	"polimane/backend/api"
 	"polimane/backend/env"
 	"polimane/backend/services/db"
+	"polimane/backend/services/workos"
 )
 
 type Config struct {
@@ -23,5 +24,6 @@ func New(config *Config) (*fiber.App, error) {
 		return nil, err
 	}
 
+	workos.Init()
 	return api.New(config.ApiOptions)
 }

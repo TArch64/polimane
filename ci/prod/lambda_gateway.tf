@@ -8,7 +8,16 @@ resource "aws_apigatewayv2_api" "lambda_api" {
   cors_configuration {
     allow_origins = ["https://${local.domain}"]
     allow_methods = ["*"]
-    allow_headers = ["Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With", "X-CSRF-Token", "Cookie"]
+    allow_headers = [
+      "Origin",
+      "Content-Type",
+      "Accept",
+      "Authorization",
+      "X-Refresh-Token",
+      "X-Requested-With",
+      "X-CSRF-Token",
+      "Cookie"
+    ]
     allow_credentials = true
     expose_headers = ["*"]
   }

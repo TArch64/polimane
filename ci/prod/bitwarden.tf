@@ -63,3 +63,13 @@ resource "bitwarden_secret" "backend_database_url" {
   organization_id = data.bitwarden_project.app.organization_id
   value = sensitive("${data.cockroach_connection_string.app.connection_string}&sslrootcert=/tmp/postgres/ca-cert.pem")
 }
+
+data "bitwarden_secret" "backend_workos_client_id" {
+  key             = "backend_workos_client_id"
+  organization_id = data.bitwarden_project.app.organization_id
+}
+
+data "bitwarden_secret" "backend_workos_api_key" {
+  key             = "backend_workos_api_key"
+  organization_id = data.bitwarden_project.app.organization_id
+}

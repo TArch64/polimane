@@ -13,7 +13,7 @@ import (
 func HasAccess(ctx context.Context, userID, schemaID modelbase.ID) error {
 	var exists bool
 
-	err := db.Client().
+	err := db.Instance.
 		WithContext(ctx).
 		Model(&model.UserSchema{}).
 		Select("1 AS exists").

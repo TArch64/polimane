@@ -7,6 +7,20 @@
     </h1>
 
     <div class="home-top-bar__actions">
+      <Dropdown>
+        <template #activator="{ activatorStyle, open }">
+          <Button icon :style="activatorStyle" @click="open">
+            <PersonFillIcon />
+          </Button>
+        </template>
+
+        <DropdownAction
+          title="Log out"
+          :icon="LogOutIcon"
+          @click="sessionStore.logout"
+        />
+      </Dropdown>
+
       <Button
         variant="primary"
         @click="createSchemaModal.open()"
@@ -22,11 +36,15 @@
 <script setup lang="ts">
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
-import { LogoIcon, PlusIcon } from '@/components/icon';
+import { LogoIcon, LogOutIcon, PersonFillIcon, PlusIcon } from '@/components/icon';
+import { Dropdown, DropdownAction } from '@/components/dropdown';
+import { useSessionStore } from '@/stores';
 import { useSchemasStore } from '../stores';
 import { HomeCreateSchemaModal } from './schemas';
 
 const schemasStore = useSchemasStore();
+const sessionStore = useSessionStore();
+
 const createSchemaModal = useModal(HomeCreateSchemaModal);
 </script>
 
@@ -53,7 +71,7 @@ const createSchemaModal = useModal(HomeCreateSchemaModal);
     margin-left: auto;
     margin-right: 2px;
     display: flex;
-    gap: 8px;
+    gap: 12px;
     align-items: center;
   }
 

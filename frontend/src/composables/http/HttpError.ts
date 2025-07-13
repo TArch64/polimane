@@ -12,6 +12,8 @@ export class HttpError extends Error {
     return new HttpError(body);
   }
 
+  meta: Record<string, unknown> = {};
+
   constructor(
     readonly response: unknown,
   ) {

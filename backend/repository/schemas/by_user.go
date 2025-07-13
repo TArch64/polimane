@@ -16,7 +16,7 @@ type ByUserOptions struct {
 func ByUser(options *ByUserOptions) ([]*model.Schema, error) {
 	var schemas []*model.Schema
 
-	query := db.Client().
+	query := db.Instance.
 		WithContext(options.Ctx).
 		Joins("JOIN user_schemas ON user_schemas.schema_id = schemas.id AND user_schemas.user_id = ?", options.User.ID)
 

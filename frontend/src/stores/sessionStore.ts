@@ -1,29 +1,18 @@
 import { defineStore } from 'pinia';
 import { computed, type Ref, ref } from 'vue';
 import type { IUser } from '@/models';
-import { useAuthToken, useHttpClient } from '@/composables';
+import { useAccessToken, useHttpClient, useRefreshAccessToken } from '@/composables';
 
-export interface ILoginInput {
-  username: string;
-  password: string;
-}
-
-interface ILoginResponse {
-  user: IUser;
-  token: string;
+interface ILogoutResponse {
+  url: string;
 }
 
 export const useSessionStore = defineStore('session', () => {
   const httpClient = useHttpClient();
   const user = ref<IUser | null>(null);
-  const authToken = useAuthToken();
+  const accessToken = useAccessToken();
+  const refreshAccessToken = useRefreshAccessToken();
   const isLoggedIn = computed(() => !!user.value);
-
-  async function login(input: ILoginInput): Promise<void> {
-    const response = await httpClient.post<ILoginResponse, ILoginInput>('/auth/login', input);
-    user.value = response.user;
-    authToken.value = response.token;
-  }
 
   async function refresh(): Promise<void> {
     try {
@@ -34,10 +23,24 @@ export const useSessionStore = defineStore('session', () => {
     }
   }
 
+  function setTokens(access: string, refresh: string): void {
+    accessToken.value = access;
+    refreshAccessToken.value = refresh;
+  }
+
+  async function logout(): Promise<void> {
+    const { url } = await httpClient.get<ILogoutResponse>(['/auth/logout']);
+    accessToken.value = undefined;
+    refreshAccessToken.value = undefined;
+    window.open(url);
+    window.location.reload();
+  }
+
   return {
     user: user as Ref<IUser>,
     isLoggedIn,
-    login,
     refresh,
+    setTokens,
+    logout,
   };
 });
