@@ -17,8 +17,6 @@ db_blank_migration:
 db_rehash_migrations:
 	atlas migrate hash --env $(env)
 
-#
-
 db_migrate:
 	@make execute_with_retry cmd="atlas migrate apply --env $(env)" on_error="unexpected transaction status idle" interval=2
 
