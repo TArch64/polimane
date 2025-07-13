@@ -37,15 +37,6 @@ export function useAuthPopup(options: IAuthPopupOptions): IAuthPopup {
     }, { signal: abortController.signal });
   }
 
-  function isCompleteWindow(): boolean {
-    try {
-      return !!authWindow?.location.pathname;
-    } catch {
-      // ignore cross-origin errors
-      return false;
-    }
-  }
-
   async function cleanup(): Promise<void> {
     while (true) {
       await wait(100);
