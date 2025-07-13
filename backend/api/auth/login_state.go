@@ -1,32 +1,33 @@
 package auth
 
 import (
-	"github.com/golang-jwt/jwt/v5"
-
-	"polimane/backend/env"
+	"encoding/base64"
+	"encoding/json"
 )
 
-type loginStateClaims struct {
-	jwt.RegisteredClaims
+type loginState struct {
 	ReturnTo string `json:"returnTo"`
 }
 
 func newLoginState(query *loginQueryParams) (string, error) {
-	claims := &loginStateClaims{
-		RegisteredClaims: jwt.RegisteredClaims{},
-		ReturnTo:         query.ReturnTo,
+	state := &loginState{ReturnTo: query.ReturnTo}
+
+	bytes, err := json.Marshal(state)
+	if err != nil {
+		return "", err
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(env.Instance.SecretKey))
+	token := base64.StdEncoding.EncodeToString(bytes)
+	return token, nil
 }
 
-func parseLoginState(state string) (*loginStateClaims, error) {
-	var claims loginStateClaims
+func parseLoginState(stateStr string) (*loginState, error) {
+	bytes, err := base64.StdEncoding.DecodeString(stateStr)
+	if err != nil {
+		return nil, err
+	}
 
-	_, err := jwt.ParseWithClaims(state, &claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(env.Instance.SecretKey), nil
-	})
-
-	return &claims, err
+	var state loginState
+	err = json.Unmarshal(bytes, &state)
+	return &state, err
 }

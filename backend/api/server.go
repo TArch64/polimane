@@ -57,13 +57,15 @@ func New(options *Options) (*fiber.App, error) {
 
 	base.InitValidator()
 
-	group := app.Group("/api")
-	auth.Group(group)
+	router := app.Group("/api")
 
-	group.Use(auth.NewMiddleware())
-	users.Group(group)
-	schemas.Group(group)
-	ping.Group(group)
+	auth.PublicGroup(router)
+
+	router.Use(auth.NewMiddleware())
+	auth.Group(router)
+	users.Group(router)
+	schemas.Group(router)
+	ping.Group(router)
 
 	app.Use(func(c *fiber.Ctx) error {
 		log.Println("Unhandled route:", c.Path())
