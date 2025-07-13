@@ -10,8 +10,7 @@ import (
 )
 
 type loginCompleteQuery struct {
-	Code  string `query:"code"`
-	State string `query:"state"`
+	Code string `query:"code"`
 }
 
 func apiLoginComplete(ctx *fiber.Ctx) error {
@@ -45,12 +44,7 @@ func apiLoginComplete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	state, err := parseLoginState(query.State)
-	if err != nil {
-		return err
-	}
-
-	redirectUrl := env.Instance.AppURL().JoinPath(state.ReturnTo)
+	redirectUrl := env.Instance.AppURL().JoinPath("auth/complete")
 	redirectQuery := redirectUrl.Query()
 	redirectQuery.Set("access-token", data.AccessToken)
 	redirectQuery.Set("refresh-token", data.RefreshToken)

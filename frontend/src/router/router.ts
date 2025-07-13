@@ -3,7 +3,7 @@ import { nextTick } from 'vue';
 import { sessionMiddleware } from '@/router/middleware';
 import { homeRoute } from '@/modules/home';
 import { schemasRoute } from '@/modules/schemas';
-import { authRoute } from '@/modules/auth/route';
+import { authRoute } from '@/modules/auth';
 
 const routes = [
   authRoute,

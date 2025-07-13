@@ -1,9 +1,10 @@
-import { defineRoute, type InferViewRouteInfo } from '@/router/define';
+import { defineRoute, type InferWrapperRouteInfo } from '@/router/define';
+import { authLoginRoute, type AuthLoginRouteInfo } from './login';
+import { authCompleteRoute, type AuthCompleteRouteInfo } from './complete';
 
 export const authRoute = defineRoute({
-  name: 'auth',
   path: '/auth',
-  component: () => import('./Route.vue'),
+  children: [authLoginRoute, authCompleteRoute],
 });
 
-export type AuthRouteInfo = InferViewRouteInfo<typeof authRoute>;
+export type AuthRouteInfo = InferWrapperRouteInfo<typeof authRoute, AuthLoginRouteInfo & AuthCompleteRouteInfo>;
