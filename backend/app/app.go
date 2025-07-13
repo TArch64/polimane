@@ -3,11 +3,10 @@ package app
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"polimane/backend/services/workos"
-
 	"polimane/backend/api"
 	"polimane/backend/env"
 	"polimane/backend/services/db"
+	"polimane/backend/services/workos"
 )
 
 type Config struct {
