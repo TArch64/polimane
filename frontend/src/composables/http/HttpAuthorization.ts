@@ -1,15 +1,19 @@
 import type { RemovableRef } from '@vueuse/core';
 import { type LocationQueryRaw, type RouteMap, type Router, useRouter } from 'vue-router';
+import type { MaybePromise } from '@/types';
 import type {
   HttpMiddleware,
   IHttpBeforeRequestInterceptor,
   IHttpResponseErrorInterceptor,
+  IHttpResponseSuccessInterceptor,
 } from './HttpMiddlewareExecutor';
 import { useAccessToken, useRefreshAccessToken } from './useAccessToken';
 import { HttpError } from './HttpError';
 import { HttpErrorReason } from './HttpErrorReason';
 
-export class HttpAuthorization implements IHttpBeforeRequestInterceptor, IHttpResponseErrorInterceptor {
+export class HttpAuthorization implements IHttpBeforeRequestInterceptor,
+  IHttpResponseErrorInterceptor,
+  IHttpResponseSuccessInterceptor {
   static use(): HttpMiddleware {
     return new HttpAuthorization(
       useRouter(),
@@ -33,6 +37,14 @@ export class HttpAuthorization implements IHttpBeforeRequestInterceptor, IHttpRe
     if (this.refreshToken.value) {
       request.headers.set('X-Refresh-Token', this.refreshToken.value);
     }
+  }
+
+  interceptResponseSuccess(response: Response): MaybePromise<void> {
+    const refreshToken = response.headers.get('X-New-Refresh-Token');
+    if (refreshToken) this.accessToken.value = refreshToken;
+
+    const accessToken = response.headers.get('X-New-Access-Token');
+    if (accessToken) this.accessToken.value = accessToken;
   }
 
   async interceptResponseError(error: HttpError): Promise<void> {

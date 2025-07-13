@@ -106,6 +106,7 @@ export class HttpClient {
       return this.handleError(response, config);
     }
 
+    await this.middlewareExecutor.callResponseSuccessInterceptor(response);
     return response.json();
   }
 
