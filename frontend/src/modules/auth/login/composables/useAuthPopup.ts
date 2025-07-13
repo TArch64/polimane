@@ -59,7 +59,6 @@ export function useAuthPopup(options: IAuthPopupOptions): IAuthPopup {
 
   onUnmounted(() => {
     abortController.abort();
-    authChannel.close();
   });
 
   return { open };
