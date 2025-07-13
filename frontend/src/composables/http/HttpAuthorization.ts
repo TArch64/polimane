@@ -41,7 +41,7 @@ export class HttpAuthorization implements IHttpBeforeRequestInterceptor,
 
   interceptResponseSuccess(response: Response): MaybePromise<void> {
     const refreshToken = response.headers.get('X-New-Refresh-Token');
-    if (refreshToken) this.accessToken.value = refreshToken;
+    if (refreshToken) this.refreshToken.value = refreshToken;
 
     const accessToken = response.headers.get('X-New-Access-Token');
     if (accessToken) this.accessToken.value = accessToken;
