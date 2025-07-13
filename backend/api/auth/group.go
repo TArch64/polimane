@@ -6,6 +6,7 @@ const groupPrefix = "auth"
 
 func Group(group fiber.Router) {
 	group = group.Group(groupPrefix)
+	group.Get("logout", apiLogout)
 }
 
 func PublicGroup(group fiber.Router) {

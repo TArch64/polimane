@@ -45,5 +45,14 @@ func AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*userman
 		User: userID,
 	})
 
-	return &user, err
+	if err != nil {
+		return nil, err
+	}
+
+	var sessionID string
+	if err = token.Get("sid", &sessionID); err == nil {
+		user.Metadata["SessionID"] = sessionID
+	}
+
+	return &user, nil
 }

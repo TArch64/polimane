@@ -67,7 +67,11 @@ func (m *middleware) Handler(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	setSessionUser(ctx, user)
+	setSession(ctx, &UserSession{
+		User:       user,
+		WorkosUser: workosUser,
+	})
+
 	return ctx.Next()
 }
 
