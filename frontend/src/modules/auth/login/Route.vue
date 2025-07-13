@@ -1,5 +1,13 @@
 <template>
   <div class="auth">
+    <h1>
+      Welcome
+    </h1>
+
+    <p class="auth__description">
+      To process your login, please click the button below to open the authentication popup
+    </p>
+
     <Button variant="primary" @click="popup.open">
       Log In
     </Button>
@@ -35,7 +43,14 @@ const popup = useAuthPopup({
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     gap: 12px;
+  }
+
+  .auth__description {
+    max-width: 400px;
+    text-align: center;
+    text-wrap: balance;
   }
 }
 </style>
