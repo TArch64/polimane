@@ -32,7 +32,8 @@ export const useSessionStore = defineStore('session', () => {
     const { url } = await httpClient.get<ILogoutResponse>(['/auth/logout']);
     accessToken.value = undefined;
     refreshAccessToken.value = undefined;
-    window.location.assign(url);
+    window.open(url);
+    window.location.reload();
   }
 
   return {
