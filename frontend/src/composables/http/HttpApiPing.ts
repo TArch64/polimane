@@ -27,9 +27,7 @@ export class HttpApiPing implements IHttpBeforeRequestInterceptor {
     if (!this.token.value) return;
 
     try {
-      await this.http.get(['/ping'], {}, {
-        meta: { skipUnauthorizedHandling: true },
-      });
+      await this.http.get(['/ping']);
     } catch (error) {
       console.error(error);
     }

@@ -4,16 +4,20 @@ import { useSessionStore } from '@/stores';
 export const sessionMiddleware: NavigationGuard = async (to, _, next) => {
   const sessionStore = useSessionStore();
 
-  if (to.query['access-token'] && to.query['refresh-token']) {
-    sessionStore.setTokens(
-      to.query['access-token'] as string,
-      to.query['refresh-token'] as string,
-    );
+  if (to.name === 'auth') {
+    return next();
   }
 
   if (!sessionStore.isLoggedIn) {
     await sessionStore.refresh();
   }
 
-  sessionStore.isLoggedIn ? next() : next(false);
+  if (sessionStore.isLoggedIn) {
+    return next();
+  }
+
+  return next({
+    name: 'auth',
+    query: { 'return-to': to.fullPath },
+  });
 };

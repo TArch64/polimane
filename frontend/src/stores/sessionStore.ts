@@ -12,9 +12,7 @@ export const useSessionStore = defineStore('session', () => {
 
   async function refresh(): Promise<void> {
     try {
-      user.value = await httpClient.get<IUser>('/users/current', {}, {
-        meta: { skipUnauthorizedHandling: true },
-      });
+      user.value = await httpClient.get<IUser>('/users/current');
     } catch (error) {
       user.value = null;
       console.error(error);

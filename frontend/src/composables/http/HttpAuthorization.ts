@@ -1,6 +1,5 @@
 import type { RemovableRef } from '@vueuse/core';
 import { type LocationQueryRaw, type RouteMap, type Router, useRouter } from 'vue-router';
-import { openLoginUrl } from '@/router/server';
 import type {
   HttpMiddleware,
   IHttpBeforeRequestInterceptor,
@@ -12,7 +11,11 @@ import { HttpErrorReason } from './HttpErrorReason';
 
 export class HttpAuthorization implements IHttpBeforeRequestInterceptor, IHttpResponseErrorInterceptor {
   static use(): HttpMiddleware {
-    return new HttpAuthorization(useRouter(), useAccessToken(), useRefreshAccessToken());
+    return new HttpAuthorization(
+      useRouter(),
+      useAccessToken(),
+      useRefreshAccessToken(),
+    );
   }
 
   constructor(
@@ -34,10 +37,10 @@ export class HttpAuthorization implements IHttpBeforeRequestInterceptor, IHttpRe
 
   async interceptResponseError(error: HttpError): Promise<void> {
     switch (error.reason) {
-      case HttpErrorReason.UNAUTHORIZED: {
-        if (error.meta.skipUnauthorizedHandling) return;
-        return this.handleUnauthorized();
-      }
+      case HttpErrorReason.UNAUTHORIZED:
+        this.accessToken.value = undefined;
+        this.refreshToken.value = undefined;
+        return this.redirect('auth');
       case HttpErrorReason.NOT_FOUND:
         return this.redirect('home');
     }
@@ -45,10 +48,5 @@ export class HttpAuthorization implements IHttpBeforeRequestInterceptor, IHttpRe
 
   private async redirect<N extends keyof RouteMap>(name: N, query?: LocationQueryRaw): Promise<void> {
     await this.router.push({ name, query });
-  }
-
-  private async handleUnauthorized(): Promise<void> {
-    this.accessToken.value = undefined;
-    await openLoginUrl(this.router.currentRoute.value.fullPath);
   }
 }
