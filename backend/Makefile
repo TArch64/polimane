@@ -17,8 +17,16 @@ db_blank_migration:
 db_rehash_migrations:
 	atlas migrate hash --env $(env)
 
+#
+
 db_migrate:
-	atlas migrate apply --env $(env)
+	@make execute_with_retry cmd="atlas migrate apply --env $(env)" on_error="unexpected transaction status idle" interval=2
+
+execute_with_retry:
+	@while ! $(cmd) 2>&1 | grep -v "$(on_error)" > /dev/null; do \
+		echo "Retrying..."; \
+		sleep $(interval); \
+	done
 
 prod:
 	GOOS=linux \
