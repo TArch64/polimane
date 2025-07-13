@@ -26,10 +26,15 @@ export const useSessionStore = defineStore('session', () => {
     refreshAccessToken.value = refresh;
   }
 
+  async function logout(): Promise<void> {
+
+  }
+
   return {
     user: user as Ref<IUser>,
     isLoggedIn,
     refresh,
     setTokens,
+    logout,
   };
 });
