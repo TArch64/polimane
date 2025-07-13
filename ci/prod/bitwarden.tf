@@ -13,16 +13,6 @@ data "bitwarden_secret" "cockroach_api_key" {
   organization_id = data.bitwarden_project.app.organization_id
 }
 
-data "bitwarden_secret" "backend_default_user" {
-  key             = "backend_default_user"
-  organization_id = data.bitwarden_project.app.organization_id
-}
-
-data "bitwarden_secret" "backend_default_password" {
-  key             = "backend_default_password"
-  organization_id = data.bitwarden_project.app.organization_id
-}
-
 data "bitwarden_secret" "backend_secret_key" {
   key             = "backend_secret_key"
   organization_id = data.bitwarden_project.app.organization_id

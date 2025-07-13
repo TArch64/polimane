@@ -10,22 +10,8 @@ data "external_schema" "gorm" {
   ]
 }
 
-variable "default_user" {
-  type    = string
-  default = getenv("BACKEND_DEFAULT_USER")
-}
-
-variable "default_password" {
-  type    = string
-  default = getenv("BACKEND_DEFAULT_PASSWORD")
-}
-
 data "template_dir" "migrations" {
   path = "migrations"
-  vars = {
-    default_user = var.default_user
-    default_password = var.default_password
-  }
 }
 
 env "dev" {
