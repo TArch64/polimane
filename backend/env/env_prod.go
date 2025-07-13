@@ -35,6 +35,8 @@ func loadEnvs() error {
 		"BACKEND_SECRET_KEY",
 		"BACKEND_SENTRY_DSN",
 		"BACKEND_DATABASE_URL",
+		"BACKEND_WORKOS_CLIENT_ID",
+		"BACKEND_WORKOS_API_KEY",
 	})
 
 	if err != nil {

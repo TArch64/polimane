@@ -21,8 +21,8 @@ type Environment struct {
 	}
 
 	WorkOS struct {
-		ClientID string `env:"WORKOS_CLIENT_ID,required=true"`
-		ApiKey   string `env:"WORKOS_API_KEY,required=true"`
+		ClientID string `env:"BACKEND_WORKOS_CLIENT_ID,required=true"`
+		ApiKey   string `env:"BACKEND_WORKOS_API_KEY,required=true"`
 	}
 }
 
