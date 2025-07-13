@@ -11,7 +11,14 @@ export interface IHttpClientOptions {
   middlewareExecutor: HttpMiddlewareExecutor;
 }
 
-interface IRequestConfig<P extends HttpParams, B extends HttpBody> {
+export interface IHttpRequestConfig {
+  meta?: Record<string, unknown>;
+}
+
+interface IRequestConfig<
+  P extends HttpParams = HttpParams,
+  B extends HttpBody = HttpBody,
+> extends IHttpRequestConfig {
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
   path: Path;
   params?: P;
@@ -27,35 +34,55 @@ export class HttpClient {
     this.middlewareExecutor = options.middlewareExecutor;
   }
 
-  get<R extends HttpBody, P extends HttpParams = HttpParams>(path: Path, params: P = {} as P): Promise<R> {
+  get<R extends HttpBody, P extends HttpParams = HttpParams>(
+    path: Path,
+    params: P = {} as P,
+    config: IHttpRequestConfig = {},
+  ): Promise<R> {
     return this.request({
       method: 'GET',
       path,
       params,
+      ...config,
     });
   }
 
-  delete<R extends HttpBody, P extends HttpParams = HttpParams>(path: Path, params: P = {} as P): Promise<R> {
+  delete<R extends HttpBody, P extends HttpParams = HttpParams>(
+    path: Path,
+    params: P = {} as P,
+    config: IHttpRequestConfig = {},
+  ): Promise<R> {
     return this.request({
       method: 'DELETE',
       path,
       params,
+      ...config,
     });
   }
 
-  post<R extends HttpBody, B extends HttpBody>(path: Path, body: B): Promise<R> {
+  post<R extends HttpBody, B extends HttpBody>(
+    path: Path,
+    body: B,
+    config: IHttpRequestConfig = {},
+  ): Promise<R> {
     return this.request({
       method: 'POST',
       path,
       body,
+      ...config,
     });
   }
 
-  patch<R extends HttpBody, B extends HttpBody>(path: Path, body: B): Promise<R> {
+  patch<R extends HttpBody, B extends HttpBody>(
+    path: Path,
+    body: B,
+    config: IHttpRequestConfig = {},
+  ): Promise<R> {
     return this.request({
       method: 'PATCH',
       path,
       body,
+      ...config,
     });
   }
 
@@ -76,13 +103,13 @@ export class HttpClient {
     const response = await fetch(request);
 
     if (!response.ok) {
-      return this.handleError(response);
+      return this.handleError(response, config);
     }
 
     return response.json();
   }
 
-  private buildUrl<P extends HttpParams>(config: IRequestConfig<P, HttpBody>): URL {
+  private buildUrl(config: IRequestConfig): URL {
     const path = [config.path].flat().join('/');
     const url = new URL(this.baseUrl + path);
 
@@ -93,8 +120,9 @@ export class HttpClient {
     return url;
   }
 
-  private async handleError(response: Response): Promise<never> {
+  private async handleError(response: Response, config: IRequestConfig): Promise<never> {
     const error = await HttpError.fromResponse(response);
+    error.meta = config.meta ?? {};
     await this.middlewareExecutor.callResponseErrorInterceptor(error);
     throw error;
   }

@@ -8,13 +8,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/kittipat1413/go-common/framework/cache"
 	"github.com/kittipat1413/go-common/framework/cache/localcache"
-	"github.com/workos/workos-go/v4/pkg/usermanagement"
 	"gorm.io/gorm"
 
 	"polimane/backend/api/base"
 	"polimane/backend/model"
 	"polimane/backend/model/modelbase"
 	repositoryusers "polimane/backend/repository/users"
+	"polimane/backend/services/workos"
 	"polimane/backend/signal"
 )
 
@@ -47,7 +47,7 @@ func (m *middleware) Handler(ctx *fiber.Ctx) error {
 		return unauthorizedErr
 	}
 
-	workosUser, err := m.authWithAccessToken(ctx.Context(), accessToken)
+	workosUser, err := workos.AuthenticateWithRefreshToken(ctx.Context(), accessToken)
 	if err != nil {
 		return err
 	}
@@ -64,11 +64,6 @@ func (m *middleware) Handler(ctx *fiber.Ctx) error {
 
 	setSessionUser(ctx, user)
 	return ctx.Next()
-}
-
-func (m *middleware) authWithAccessToken(ctx context.Context, accessToken string) (*usermanagement.User, error) {
-	//jwksURL := fmt.Sprintf("https://api.workos.com/sso/jwks/%s", env.Instance.WorkOS.ClientID)
-	return nil, nil
 }
 
 func (m *middleware) getUser(ctx context.Context, id modelbase.ID) (*model.User, error) {

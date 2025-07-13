@@ -2,11 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { nextTick } from 'vue';
 import { sessionMiddleware } from '@/router/middleware';
 import { homeRoute } from '@/modules/home';
-import { welcomeRoute } from '@/modules/welcome';
 import { schemasRoute } from '@/modules/schemas';
 
 const routes = [
-  welcomeRoute,
   homeRoute,
   schemasRoute,
 ];

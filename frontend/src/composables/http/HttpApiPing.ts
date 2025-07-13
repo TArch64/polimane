@@ -1,11 +1,11 @@
 import type { RemovableRef } from '@vueuse/core';
-import { useAuthToken } from '@/composables';
+import { useAccessToken } from '@/composables';
 import type { HttpClient } from './HttpClient';
 import type { HttpMiddleware, IHttpBeforeRequestInterceptor } from './HttpMiddlewareExecutor';
 
 export class HttpApiPing implements IHttpBeforeRequestInterceptor {
   static use(http: HttpClient): HttpMiddleware {
-    return new HttpApiPing(http, useAuthToken());
+    return new HttpApiPing(http, useAccessToken());
   }
 
   private timeoutId: TimeoutId | null = null;
@@ -27,7 +27,9 @@ export class HttpApiPing implements IHttpBeforeRequestInterceptor {
     if (!this.token.value) return;
 
     try {
-      await this.http.get(['/ping']);
+      await this.http.get(['/ping'], {}, {
+        meta: { skipUnauthorizedHandling: true },
+      });
     } catch (error) {
       console.error(error);
     }

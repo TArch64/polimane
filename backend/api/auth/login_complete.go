@@ -51,5 +51,9 @@ func apiLoginComplete(ctx *fiber.Ctx) error {
 	}
 
 	redirectUrl := env.Instance.AppURL().JoinPath(state.ReturnTo)
+	redirectQuery := redirectUrl.Query()
+	redirectQuery.Set("access-token", data.AccessToken)
+	redirectQuery.Set("refresh-token", data.RefreshToken)
+	redirectUrl.RawQuery = redirectQuery.Encode()
 	return ctx.Redirect(redirectUrl.String())
 }
