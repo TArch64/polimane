@@ -10,6 +10,7 @@
       :config
       ref="stageRef"
       @wheel="onWheel"
+      @mousemove="cursorStore.handleMouseMove"
       @mousedown="cursorStore.handleMouseDown"
       @mouseup="cursorStore.handleMouseUp"
       @layout="setRendered"
@@ -68,7 +69,10 @@ watch(stageRef, async (stage) => {
   window.__KONVA_STAGE_REF__.value = stage;
 
   if (stage) {
-    stage.content.querySelector<HTMLElement>('canvas')!.tabIndex = 0;
+    const canvas = stage.content.querySelector('canvas')!;
+
+    canvas.tabIndex = 0;
+    canvas.focus();
     stage.on('layout', setRendered);
   }
 });

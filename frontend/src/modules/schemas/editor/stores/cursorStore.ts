@@ -1,10 +1,20 @@
 import Konva from 'konva';
 import { computed, readonly, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { useDebounceFn } from '@vueuse/core';
 
 export const useCursorStore = defineStore('schemas/editor/cursor', () => {
   const isPainting = ref(false);
   const isDragging = ref(false);
+
+  const handleMouseMove = useDebounceFn((event: Konva.KonvaEventObject<MouseEvent>) => {
+    const stage = event.currentTarget.getStage();
+    const canvas = stage?.content.querySelector<HTMLCanvasElement>('canvas');
+
+    if (canvas && canvas !== document.activeElement) {
+      canvas.focus();
+    }
+  }, 33);
 
   function handleKeyDown(event: KeyboardEvent): boolean {
     if (event.metaKey) {
@@ -31,6 +41,7 @@ export const useCursorStore = defineStore('schemas/editor/cursor', () => {
   }
 
   return {
+    handleMouseMove,
     handleKeyDown,
     handleKeyUp,
     handleMouseDown,

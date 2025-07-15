@@ -4,3 +4,4 @@ export * from './rowsStore';
 export * from './beadsStore';
 export * from './paletteStore';
 export * from './cursorStore';
+export * from './draggingStore';

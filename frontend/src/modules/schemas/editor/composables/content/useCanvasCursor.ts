@@ -1,15 +1,16 @@
-import { computed, type Ref, watch } from 'vue';
 import Konva from 'konva';
-import { useCursorStore } from '@/modules/schemas/editor/stores';
+import { computed, type Ref, watch } from 'vue';
+import { useCursorStore, useDraggingStore } from '../../stores';
 
-type Cursor = 'default' | 'crosshair' | 'grab';
+type Cursor = 'default' | 'crosshair' | 'grab' | 'grabbing';
 
 export function useCanvasCursor(stage: Ref<Konva.Stage>) {
   const cursorStore = useCursorStore();
+  const draggingStore = useDraggingStore();
 
   const cursor = computed((): Cursor => {
     if (cursorStore.isDragging) {
-      return 'grab';
+      return draggingStore.draggingObject ? 'grabbing' : 'grab';
     }
     if (cursorStore.isPainting) {
       return 'crosshair';
