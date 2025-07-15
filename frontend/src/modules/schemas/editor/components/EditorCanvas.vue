@@ -28,6 +28,7 @@ import Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import {
   provideNodeContextMenu,
+  useCanvasCursor,
   useCanvasNavigation,
   useCanvasZoom,
   useNodeRef,
@@ -79,6 +80,7 @@ const layerConfig: Konva.LayerConfig = {
 provideNodeContextMenu(stageRef);
 const canvasZoom = useCanvasZoom();
 const canvasNavigation = useCanvasNavigation();
+useCanvasCursor(stageRef);
 
 function onWheel(event: KonvaEventObject<WheelEvent, Konva.Stage>): void {
   event.evt.preventDefault();
