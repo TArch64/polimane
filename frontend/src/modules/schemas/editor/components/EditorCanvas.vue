@@ -4,6 +4,7 @@
     class="editor-canvas"
     @contextmenu.prevent
     @keydown="onKeydown"
+    @keyup="cursorStore.handleKeyUp"
   >
     <KonvaStage
       :config
@@ -89,6 +90,10 @@ function onWheel(event: KonvaEventObject<WheelEvent, Konva.Stage>): void {
 }
 
 function onKeydown(event: KeyboardEvent) {
+  if (cursorStore.handleKeyDown(event)) {
+    return;
+  }
+
   if (!event.metaKey || event.key.toLowerCase() !== 'z') {
     return;
   }

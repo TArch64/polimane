@@ -1,9 +1,25 @@
 import Konva from 'konva';
-import { readonly, ref } from 'vue';
+import { computed, readonly, ref } from 'vue';
 import { defineStore } from 'pinia';
 
 export const useCursorStore = defineStore('schemas/editor/cursor', () => {
   const isPainting = ref(false);
+  const isDragging = ref(false);
+
+  function handleKeyDown(event: KeyboardEvent): boolean {
+    if (event.metaKey) {
+      isDragging.value = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  function handleKeyUp(event: KeyboardEvent) {
+    if (!event.metaKey) {
+      isDragging.value = false;
+    }
+  }
 
   function handleMouseDown(event: Konva.KonvaEventObject<MouseEvent>) {
     if (event.evt.buttons > 1) return;
@@ -15,8 +31,11 @@ export const useCursorStore = defineStore('schemas/editor/cursor', () => {
   }
 
   return {
+    handleKeyDown,
+    handleKeyUp,
     handleMouseDown,
     handleMouseUp,
-    isPainting: readonly(isPainting),
+    isPainting: computed(() => isPainting.value && !isDragging.value),
+    isDragging: readonly(isDragging),
   };
 });
