@@ -8,6 +8,7 @@ export interface IContextMenuViewOptions {
   el: MaybeRefOrGetter<HTMLElement>;
   title: MaybeRefOrGetter<string>;
   actions: MaybeRefOrGetter<MaybeContextMenuAction[]>;
+  control?: boolean;
 }
 
 export function useContextMenu(options: IContextMenuViewOptions) {
@@ -24,7 +25,7 @@ export function useContextMenu(options: IContextMenuViewOptions) {
       }),
 
       title: toValue(options.title),
-
+      control: options.control,
       actions: toValue(options.actions).filter((action): action is IContextMenuAction => !!action),
     });
 

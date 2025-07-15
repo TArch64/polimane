@@ -39,6 +39,7 @@ const deleteConfirm = useConfirm({
 useContextMenu({
   el: cardRef,
   title: props.schema.name,
+  control: false,
 
   actions: [
     {
