@@ -44,6 +44,8 @@ export const useEditorStore = defineStore('schemas/editor', () => {
     loadSchema,
     deleteSchema,
     hasUnsavedChanges: toRef(saveDispatcher, 'hasUnsavedChanges'),
+    isSaving: toRef(saveDispatcher, 'isSaving'),
+    save: saveDispatcher.flush,
     undo: history.undo,
     canUndo: toRef(history, 'canUndo'),
     redo: history.redo,
