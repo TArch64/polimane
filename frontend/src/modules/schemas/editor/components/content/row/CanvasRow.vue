@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import Konva from 'konva';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { ISchemaRow } from '@/models';
 import {
   type MaybeNodeConfig,
@@ -43,7 +43,7 @@ const cursorStore = useCursorStore();
 
 const rootRef = useNodeRef<Konva.Group>();
 const dragTranslation = ref(0);
-const isDragging = computed(() => dragTranslation.value !== 0);
+const isDragging = ref(false);
 
 const rootConfig = computed((): Partial<Konva.GroupConfig> => ({
   offsetY: -dragTranslation.value,
@@ -59,13 +59,15 @@ useNodeContextMenu({
 
 const backgroundConfig = useNodeConfigs<Konva.RectConfig>([
   useNodeFiller(contentRef, {
-    padding: computed(() => isDragging.value ? { horizontal: 4, vertical: 4 } : {}),
+    padding: computed(() => isDragging.value ? 2 : 0),
   }),
   {
     fill: '#F8F8F8',
     stroke: '#1A1A1A',
     strokeWidth: 0,
     cornerRadius: 2,
+    offsetY: 0,
+    offsetX: 0,
   },
   computed((): MaybeNodeConfig<Konva.RectConfig> => isDragging.value && {
     strokeWidth: 2,
@@ -74,22 +76,21 @@ const backgroundConfig = useNodeConfigs<Konva.RectConfig>([
   }),
 ]);
 
-function onDragEnd(): void {
-  rootRef.value.zIndex(undefined);
-  rootRef.value.parent?.listening(true);
-}
-
 function onMouseDown() {
   if (cursorStore.isDragging) {
-    const parent = rootRef.value.parent!;
-    parent.listening(false);
-    rootRef.value.zIndex(parent.children.length - 1);
+    isDragging.value = true;
 
     draggingStore.capture({
       object: props.row,
       dragTranslation,
-      onCleanUp: onDragEnd,
+      onCleanUp: () => isDragging.value = false,
     });
   }
 }
+
+watch(isDragging, (isDragging: boolean) => {
+  const parent = rootRef.value.parent!;
+  parent.listening(!isDragging);
+  rootRef.value.zIndex(isDragging ? parent.children.length - 1 : undefined);
+});
 </script>
