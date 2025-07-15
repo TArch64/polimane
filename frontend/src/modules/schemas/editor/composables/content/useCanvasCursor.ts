@@ -1,14 +1,14 @@
 import { computed, type Ref, watch } from 'vue';
 import Konva from 'konva';
-import { usePaletteStore } from '@/modules/schemas/editor/stores';
+import { useCursorStore } from '@/modules/schemas/editor/stores';
 
 type Cursor = 'default' | 'crosshair';
 
 export function useCanvasCursor(stage: Ref<Konva.Stage>) {
-  const paletteStore = usePaletteStore();
+  const cursorStore = useCursorStore();
 
   const cursor = computed((): Cursor => {
-    if (paletteStore.isPainting) {
+    if (cursorStore.isPainting) {
       return 'crosshair';
     }
     return 'default';

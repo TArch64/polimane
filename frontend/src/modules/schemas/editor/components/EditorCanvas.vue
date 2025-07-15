@@ -9,8 +9,8 @@
       :config
       ref="stageRef"
       @wheel="onWheel"
-      @mousedown="togglePainting"
-      @mouseup="togglePainting"
+      @mousedown="cursorStore.handleMouseDown"
+      @mouseup="cursorStore.handleMouseUp"
       @layout="setRendered"
       v-if="isReady"
     >
@@ -33,11 +33,11 @@ import {
   useCanvasZoom,
   useNodeRef,
 } from '../composables';
-import { useEditorStore, usePaletteStore } from '../stores';
+import { useCursorStore, useEditorStore } from '../stores';
 import { CanvasContent, type IGroupLayoutEvent } from './content';
 
 const editorStore = useEditorStore();
-const paletteStore = usePaletteStore();
+const cursorStore = useCursorStore();
 
 const wrapperRef = ref<HTMLElement | null>(null);
 const wrapperSize = useElementSize(wrapperRef);
@@ -95,11 +95,6 @@ function onKeydown(event: KeyboardEvent) {
 
   event.preventDefault();
   event.shiftKey ? editorStore.redo() : editorStore.undo();
-}
-
-function togglePainting(event: Konva.KonvaEventObject<MouseEvent>) {
-  if (event.evt.buttons > 1) return;
-  paletteStore.setPainting(event.evt.buttons === 1);
 }
 </script>
 

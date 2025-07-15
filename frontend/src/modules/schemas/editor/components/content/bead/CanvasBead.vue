@@ -11,14 +11,14 @@ import Konva from 'konva';
 import { computed } from 'vue';
 import type { ISchemaBead, ISchemaRow } from '@/models';
 import { useNodeConfigs } from '@/modules/schemas/editor/composables';
-import { useBeadsStore, usePaletteStore } from '@/modules/schemas/editor/stores';
+import { useBeadsStore, useCursorStore } from '@/modules/schemas/editor/stores';
 
 const props = defineProps<{
   row: ISchemaRow;
   bead: ISchemaBead;
 }>();
 
-const paletteStore = usePaletteStore();
+const cursorStore = useCursorStore();
 const beadsStore = useBeadsStore(() => props.row);
 
 const config = useNodeConfigs<Konva.RectConfig>([
@@ -33,7 +33,7 @@ const config = useNodeConfigs<Konva.RectConfig>([
 ]);
 
 function onMouseMove() {
-  if (paletteStore.isPainting) {
+  if (cursorStore.isPainting) {
     beadsStore.paint(props.bead);
   }
 }
