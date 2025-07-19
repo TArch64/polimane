@@ -13,8 +13,8 @@ export interface IContextMenuAction extends IContextMenuItem {
 }
 
 export class ContextActionModel extends ContextItemModel implements IContextMenuAction {
-  danger: boolean;
-  onAction: ContextMenuOnAction;
+  readonly danger: boolean;
+  readonly onAction: ContextMenuOnAction;
 
   constructor(def: IContextMenuAction) {
     super(def);

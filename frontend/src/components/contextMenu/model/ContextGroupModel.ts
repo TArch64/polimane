@@ -6,7 +6,7 @@ export interface IContextMenuGroup extends IContextMenuItem {
 }
 
 export class ContextGroupModel extends ContextItemModel implements IContextMenuGroup {
-  actions: ContextActionModel[];
+  readonly actions: ContextActionModel[];
 
   constructor(def: IContextMenuGroup) {
     super({
