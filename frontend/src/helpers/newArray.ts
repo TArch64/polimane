@@ -1,3 +1,3 @@
-export function newArray<I>(size: number, filler: (index: number) => I): I[] {
-  return new Array(size).fill(0).map((_, index) => filler(index));
+export function newArray<I>(length: number, filler: (index: number) => I): I[] {
+  return Array.from({ length }, (_, index) => filler(index));
 }
