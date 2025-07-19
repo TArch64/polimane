@@ -2,6 +2,8 @@ FROM debian:bullseye
 
 WORKDIR /app
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl build-essential ca-certificates && \
     rm -rf /var/lib/apt/lists/*
