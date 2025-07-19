@@ -14,7 +14,7 @@ import Konva from 'konva';
 import type { IKonvaNodeHolder, KonvaGroup } from 'vue-konva';
 import { useDebounceFn } from '@vueuse/core';
 import type { InferComponentProps, MaybeArray } from '@/types';
-import { useNodeRef } from '@/modules/schemas/editor/composables';
+import { useNodeListener, useNodeRef } from '@/modules/schemas/editor/composables';
 import { NodeRect } from '@/models';
 import { getClientRect } from '@/modules/schemas/editor/helpers';
 
@@ -169,6 +169,8 @@ export const GroupRenderer = defineComponent({
       await updateSize();
     }
 
+    useNodeListener(groupRef, 'layoutUpdate', updateSize);
+
     ctx.expose({
       getNode: () => groupRef.value,
     });
@@ -194,5 +196,6 @@ export const GroupRenderer = defineComponent({
 declare module 'konva/lib/Node' {
   export interface NodeEventMap {
     layout: IGroupLayoutEvent;
+    layoutUpdate: null;
   }
 }

@@ -6,12 +6,13 @@ import {
   ArrowDownwardIcon,
   ArrowUpwardIcon,
   ExpandIcon,
+  MoveIcon,
   PlusIcon,
   TrashIcon,
 } from '@/components/icon';
 import { useConfirm } from '@/components/confirm';
 import { useRouteTransition } from '@/composables';
-import { RowAddModal } from '@/modules/schemas/editor/components/modals';
+import { RowAddModal, RowResizeModal } from '@/modules/schemas/editor/components/modals';
 import { useModal } from '@/components/modal';
 import { useRowsStore } from '../stores';
 import { useObjectParent } from '../models';
@@ -27,6 +28,7 @@ export function useRowContextMenuActions(rowRef: MaybeRefOrGetter<ISchemaRow>): 
   const rowIndex = computed(() => rowsStore.rows.indexOf(row.value));
 
   const addModal = useModal(RowAddModal);
+  const resizeModal = useModal(RowResizeModal);
 
   function addRow(after: boolean): void {
     const index = rowsStore.rows.indexOf(row.value);
@@ -63,7 +65,7 @@ export function useRowContextMenuActions(rowRef: MaybeRefOrGetter<ISchemaRow>): 
 
     {
       title: 'Перемістити Рядок',
-      icon: ExpandIcon,
+      icon: MoveIcon,
 
       actions: [
         {
@@ -83,17 +85,21 @@ export function useRowContextMenuActions(rowRef: MaybeRefOrGetter<ISchemaRow>): 
     },
 
     {
+      title: 'Змінити Розмір',
+      icon: ExpandIcon,
+      onAction: () => void resizeModal.open({ row: row.value }),
+    },
+
+    {
       title: 'Видалити Рядок',
       icon: TrashIcon,
       danger: true,
 
-      onAction: async (event) => {
-        if (await deleteConfirm.ask({ virtualTarget: event.menuRect })) {
-          routeTransition.start(async () => {
-            rowsStore.deleteRow(row.value);
-            await nextTick();
-          });
-        }
+      onAction: () => {
+        routeTransition.start(async () => {
+          rowsStore.deleteRow(row.value);
+          await nextTick();
+        });
       },
     },
   ]);

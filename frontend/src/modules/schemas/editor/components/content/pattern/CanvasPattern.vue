@@ -79,7 +79,7 @@ const borderConfig = useNodeConfigs<Konva.RectConfig>([
 
     padding: {
       horizontal: 12,
-      vertical: 20,
+      vertical: 10,
     },
   }),
 ]);

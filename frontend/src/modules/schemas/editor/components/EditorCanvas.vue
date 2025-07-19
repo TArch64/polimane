@@ -29,6 +29,7 @@ import type { KonvaEventObject } from 'konva/lib/Node';
 import {
   provideNodeContextMenu,
   useCanvasNavigation,
+  useCanvasStage,
   useCanvasZoom,
   useNodeRef,
 } from '../composables';
@@ -55,16 +56,14 @@ const setRendered = useDebounceFn(async (event: Konva.KonvaEventObject<IGroupLay
   });
 }, 100);
 
-const stageRef = useNodeRef<Konva.Stage>();
+const stageRef = useNodeRef<Konva.Stage>(useCanvasStage());
 
 const config = computed(() => ({
   width: wrapperSize.width.value,
   height: wrapperSize.height.value,
 }));
 
-watch(stageRef, async (stage) => {
-  window.__KONVA_STAGE_REF__.value = stage;
-
+watch(stageRef, (stage) => {
   if (stage) {
     stage.content.querySelector<HTMLElement>('canvas')!.tabIndex = 0;
     stage.on('layout', setRendered);

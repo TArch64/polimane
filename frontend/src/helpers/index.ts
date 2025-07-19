@@ -8,3 +8,4 @@ export * from './waiter';
 export * from './fetchMapValue';
 export * from './destroyStore';
 export * from './compressor';
+export * from './newArray';

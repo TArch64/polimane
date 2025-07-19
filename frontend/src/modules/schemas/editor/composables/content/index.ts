@@ -1,5 +1,6 @@
 export * from './useCanvasZoom';
 export * from './useCanvasNavigation';
+export * from './useCanvasStage';
 export * from './useNodeCentering';
 export * from './useNodeConfigs';
 export * from './useNodeTween';
@@ -9,3 +10,4 @@ export * from './useNodeParent';
 export * from './useNodeContextMenu';
 export * from './useNodeFiller';
 export * from './useNodeCursor';
+export * from './useNodeListener';

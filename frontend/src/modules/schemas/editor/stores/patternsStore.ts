@@ -8,11 +8,7 @@ import { useEditorStore } from './editorStore';
 
 export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
   const editorStore = useEditorStore();
-
-  const patterns = Collection.fromParent(editorStore.schema, {
-    onAdded: (parent, object) => setObjectParent(parent, object),
-  });
-
+  const patterns = Collection.fromParent(editorStore.schema);
   const hasPatterns = computed(() => !!patterns.size);
 
   function createPattern(type: PatternType) {

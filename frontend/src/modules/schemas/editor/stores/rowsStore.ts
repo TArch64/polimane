@@ -1,8 +1,7 @@
 import { type MaybeRefOrGetter, toValue } from 'vue';
 import { Collection, type ISchemaBead, type ISchemaPattern, type ISchemaRow } from '@/models';
-import { newId } from '@/helpers';
+import { newArray, newId } from '@/helpers';
 import { DynamicStore } from '@/stores';
-import { setObjectParent } from '../models';
 
 export interface INewSquareRowOptions {
   rows: number;
@@ -18,10 +17,7 @@ const rowsDynamicStore = new DynamicStore({
 
   setup(patternRef: MaybeRefOrGetter<ISchemaPattern>) {
     const pattern = toValue(patternRef);
-
-    const rows = Collection.fromParent(pattern, {
-      onAdded: (parent, object) => setObjectParent(parent, object),
-    });
+    const rows = Collection.fromParent(pattern);
 
     const createBead = (): ISchemaBead => ({
       id: newId(),
@@ -30,13 +26,11 @@ const rowsDynamicStore = new DynamicStore({
 
     const createRow = (size: number): ISchemaRow => ({
       id: newId(),
-      content: new Array(size).fill(0).map(createBead),
+      content: newArray(size, createBead),
     });
 
     function addSquareRow(options: INewSquareRowOptions) {
-      const newRows = new Array(options.rows)
-        .fill(0)
-        .map(() => createRow(options.size));
+      const newRows = newArray(options.rows, () => createRow(options.size));
 
       rows.insert(newRows, {
         toIndex: options.toIndex,
@@ -58,7 +52,13 @@ const rowsDynamicStore = new DynamicStore({
       rows.move(row, newIndex);
     }
 
-    return { rows, addSquareRow, deleteRow, moveRow };
+    function resizeRow(row: ISchemaRow, newSize: number): void {
+      const newBeadsCount = newSize - row.content.length;
+      const newBeads = newArray(newBeadsCount, createBead);
+      rows.update(row, { content: [...row.content, ...newBeads] });
+    }
+
+    return { rows, addSquareRow, deleteRow, moveRow, resizeRow };
   },
 });
 
