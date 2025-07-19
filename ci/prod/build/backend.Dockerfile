@@ -4,12 +4,17 @@ WORKDIR /app
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends zip musl-tools build-essential && \
-    rm -rf /var/lib/apt/lists/*
+RUN --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/lib/apt \
+    apt-get update && \
+    apt-get install -y --no-install-recommends zip musl-tools build-essential
 
 COPY go.mod go.sum ./
-RUN go mod download
+
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod download
 
 COPY . /app
-RUN make prod out_dir=/app/dist
+
+RUN --mount=type=cache,target=/go/pkg/mod \
+    make prod out_dir=/app/dist

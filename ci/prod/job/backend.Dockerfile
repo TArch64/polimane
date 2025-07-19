@@ -4,9 +4,10 @@ WORKDIR /app
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl build-essential ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+RUN --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/lib/apt \
+    apt-get update && \
+    apt-get install -y --no-install-recommends curl build-essential ca-certificates
 
 RUN curl -sSfL https://atlasgo.sh | sh
 
