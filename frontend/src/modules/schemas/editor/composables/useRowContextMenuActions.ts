@@ -95,13 +95,11 @@ export function useRowContextMenuActions(rowRef: MaybeRefOrGetter<ISchemaRow>): 
       icon: TrashIcon,
       danger: true,
 
-      onAction: async (event) => {
-        if (await deleteConfirm.ask({ virtualTarget: event.menuRect })) {
-          routeTransition.start(async () => {
-            rowsStore.deleteRow(row.value);
-            await nextTick();
-          });
-        }
+      onAction: () => {
+        routeTransition.start(async () => {
+          rowsStore.deleteRow(row.value);
+          await nextTick();
+        });
       },
     },
   ]);

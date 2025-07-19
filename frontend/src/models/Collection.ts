@@ -1,10 +1,7 @@
 import { toRaw } from 'vue';
+import { setObjectParent } from '@/modules/schemas/editor/models';
 import type { ISchemaObject } from './ISchemaObject';
 import type { InferSchemaContent, ISchemaWithContent } from './ISchemaWithContent';
-
-export interface ICollectionOptions<P extends ISchemaWithContent, O extends ISchemaObject> {
-  onAdded?: (parent: P, object: O) => void;
-}
 
 export interface ICollectionInsertOptions {
   toIndex?: number;
@@ -16,22 +13,19 @@ export class Collection<P extends ISchemaWithContent, O extends ISchemaObject = 
   static fromParent<
     P extends ISchemaWithContent,
     O extends ISchemaObject = InferSchemaContent<P>,
-  >(parent: P, options?: ICollectionOptions<P, O>): Collection<P, O> {
+  >(parent: P): Collection<P, O> {
     const cached = Collection.cache.get(toRaw(parent));
 
     if (cached) {
       return cached as unknown as Collection<P, O>;
     }
 
-    const collection = new Collection<P, O>(parent, options);
+    const collection = new Collection<P, O>(parent);
     Collection.cache.set(toRaw(parent), collection as unknown as Collection<ISchemaWithContent>);
     return collection;
   }
 
-  private constructor(
-    private readonly parent: P,
-    private readonly options: ICollectionOptions<P, O> = {},
-  ) {
+  private constructor(private readonly parent: P) {
   }
 
   get values(): O[] {
@@ -57,10 +51,8 @@ export class Collection<P extends ISchemaWithContent, O extends ISchemaObject = 
     const toIndex = options.toIndex ?? -1;
     toIndex === -1 ? this.values.push(...list) : this.values.splice(toIndex, 0, ...list);
 
-    if (this.options.onAdded) {
-      for (const item of list) {
-        this.options.onAdded(this.parent, item);
-      }
+    for (const item of list) {
+      this.setItemParent(item);
     }
 
     return singleOrList;
@@ -81,6 +73,12 @@ export class Collection<P extends ISchemaWithContent, O extends ISchemaObject = 
 
   update(item: O, patch: Partial<Omit<O, 'id'>>): void {
     const index = this.indexOf(item);
-    this.values.splice(index, 1, { ...item, ...patch });
+    const newItem: O = { ...item, ...patch };
+    this.setItemParent(newItem);
+    this.values.splice(index, 1, newItem);
+  }
+
+  private setItemParent(item: O): void {
+    setObjectParent(this.parent, item);
   }
 }

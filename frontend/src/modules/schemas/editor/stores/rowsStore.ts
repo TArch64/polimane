@@ -2,7 +2,6 @@ import { type MaybeRefOrGetter, toValue } from 'vue';
 import { Collection, type ISchemaBead, type ISchemaPattern, type ISchemaRow } from '@/models';
 import { newArray, newId } from '@/helpers';
 import { DynamicStore } from '@/stores';
-import { setObjectParent } from '../models';
 
 export interface INewSquareRowOptions {
   rows: number;
@@ -18,10 +17,7 @@ const rowsDynamicStore = new DynamicStore({
 
   setup(patternRef: MaybeRefOrGetter<ISchemaPattern>) {
     const pattern = toValue(patternRef);
-
-    const rows = Collection.fromParent(pattern, {
-      onAdded: (parent, object) => setObjectParent(parent, object),
-    });
+    const rows = Collection.fromParent(pattern);
 
     const createBead = (): ISchemaBead => ({
       id: newId(),

@@ -33,12 +33,18 @@ const rendered: Record<number, boolean> = {};
 async function onLayout(event: IGroupLayoutEvent): Promise<void> {
   const waiter = createWaiter();
   const nodeRects = event.nodes.map(getClientRect);
+  const totalGap = (event.nodes.length - 1) * props.gap;
   let next = 0;
+
+  const parentRect = getClientRect(groupRef.value!).with({
+    width: Math.max(...nodeRects.map((rect) => rect.width)) + totalGap,
+    height: Math.max(...nodeRects.map((rect) => rect.height)) + totalGap,
+  });
 
   for (const [index, child] of event.nodes.entries()) {
     const update = props.update({
       next,
-      parentRect: getClientRect(groupRef.value!),
+      parentRect,
       childRect: nodeRects[index]!,
     });
 
@@ -64,7 +70,7 @@ async function onLayout(event: IGroupLayoutEvent): Promise<void> {
       });
     }
 
-    next += update.next;
+    next += update.next + props.gap;
   }
 
   if (!groupRef.value!.listening()) {

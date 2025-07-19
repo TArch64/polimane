@@ -24,7 +24,7 @@ export function useNodeFiller(sourceRef: KonvaNodeRef, options: INodeFillerOptio
   }));
 
   return computed(() => ({
-    width: Math.max(sourceRect.value.width, minSize.value.width) + padding.horizontal,
-    height: Math.max(sourceRect.value.height, minSize.value.height) + padding.vertical,
+    width: Math.max(sourceRect.value.width, minSize.value.width) + padding.horizontal * 2,
+    height: Math.max(sourceRect.value.height, minSize.value.height) + padding.vertical * 2,
   }));
 }

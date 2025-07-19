@@ -1,5 +1,5 @@
 <template>
-  <GroupRenderer ref="rootRef">
+  <GroupRenderer :config="rootConfig" ref="rootRef">
     <KonvaRect :config="backgroundConfig" />
 
     <CanvasStackH ref="contentRef" :gap="1">
@@ -15,6 +15,7 @@
 
 <script setup lang="ts">
 import Konva from 'konva';
+import { computed } from 'vue';
 import type { ISchemaRow } from '@/models';
 import {
   useNodeContextMenu,
@@ -31,6 +32,8 @@ const props = defineProps<{
 }>();
 
 const rootRef = useNodeRef<Konva.Group>();
+const rootConfig = computed((): Partial<Konva.GroupConfig> => ({ id: props.row.id }));
+
 const contentRef = useNodeRef<Konva.Group>();
 
 useNodeContextMenu({

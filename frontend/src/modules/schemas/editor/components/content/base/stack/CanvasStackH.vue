@@ -55,7 +55,7 @@ function getAlignValue(parentRect: NodeRect, childRect: NodeRect): number {
 }
 
 const update: StackUpdateFn<'x'> = (payload) => ({
-  next: payload.childRect.width + props.gap,
+  next: payload.childRect.width,
   property: 'x',
 
   extra: {

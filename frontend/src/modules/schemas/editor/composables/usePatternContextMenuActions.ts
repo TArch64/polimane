@@ -91,13 +91,11 @@ export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<ISchem
       title: 'Видалити Паттерн',
       icon: TrashIcon,
 
-      onAction: async (event) => {
-        if (await deleteConfirm.ask({ virtualTarget: event.menuRect })) {
-          routeTransition.start(async () => {
-            patternsStore.deletePattern(pattern.value);
-            await nextTick();
-          });
-        }
+      onAction: () => {
+        routeTransition.start(async () => {
+          patternsStore.deletePattern(pattern.value);
+          await nextTick();
+        });
       },
     },
   ]);

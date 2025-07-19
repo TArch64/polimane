@@ -1,7 +1,6 @@
 import { type MaybeRefOrGetter, toValue } from 'vue';
 import { Collection, type ISchemaBead, type ISchemaRow } from '@/models';
 import { DynamicStore } from '@/stores';
-import { setObjectParent } from '../models';
 import { usePaletteStore } from './paletteStore';
 
 const beadsDynamicStore = new DynamicStore({
@@ -13,10 +12,7 @@ const beadsDynamicStore = new DynamicStore({
   setup(rowRef: MaybeRefOrGetter<ISchemaRow>) {
     const row = toValue(rowRef);
     const paletteStore = usePaletteStore();
-
-    const beads = Collection.fromParent(row, {
-      onAdded: (parent, object) => setObjectParent(parent, object),
-    });
+    const beads = Collection.fromParent(row);
 
     function paint(bead: ISchemaBead): void {
       bead.color = paletteStore.activeColor;
