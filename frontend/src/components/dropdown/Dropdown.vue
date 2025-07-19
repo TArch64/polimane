@@ -37,7 +37,14 @@ const menuStyles = computed(() => ({
   positionAnchor: anchorName,
 }));
 
+const offsetX = ref(0);
 let closeController: AbortController | null = null;
+
+function getOffsetX(): number {
+  const menuRect = menuRef.value!.getBoundingClientRect();
+  const offset = window.innerWidth - menuRect.right - 8;
+  return offset > 0 ? 0 : offset;
+}
 
 function open() {
   if (isOpened.value) {
@@ -47,7 +54,10 @@ function open() {
   routeTransition.start(async () => {
     isOpened.value = true;
     await nextTick();
+
     menuRef.value!.showPopover();
+    offsetX.value = getOffsetX();
+    await nextTick();
   });
 
   waitClickComplete().then(() => {
@@ -62,6 +72,7 @@ function close(): void {
 
   routeTransition.start(async () => {
     isOpened.value = false;
+    offsetX.value = 0;
     await nextTick();
   });
 }
@@ -71,6 +82,7 @@ function close(): void {
 @layer components {
   .dropdown {
     position-area: bottom center;
+    translate: v-bind("offsetX + 'px'");
     margin-top: 4px;
   }
 }

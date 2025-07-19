@@ -32,6 +32,7 @@ const cardBinding = makeBinding(RouterLink, () => ({
 
 const deleteConfirm = useConfirm({
   danger: true,
+  control: false,
   message: 'Ви впевнені, що хочете видалити цю схему?',
   acceptButton: 'Видалити',
 });
@@ -39,6 +40,7 @@ const deleteConfirm = useConfirm({
 useContextMenu({
   el: cardRef,
   title: props.schema.name,
+  control: false,
 
   actions: [
     {

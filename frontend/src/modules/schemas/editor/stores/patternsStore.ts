@@ -31,5 +31,16 @@ export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
     patterns.delete(pattern);
   }
 
-  return { patterns, hasPatterns, createPattern, deletePattern };
+  function movePattern(pattern: ISchemaPattern, shift: number): void {
+    const index = patterns.indexOf(pattern);
+    const newIndex = index + shift;
+
+    if (newIndex < 0 || newIndex === patterns.size) {
+      return;
+    }
+
+    patterns.move(pattern, newIndex);
+  }
+
+  return { patterns, hasPatterns, createPattern, deletePattern, movePattern };
 });

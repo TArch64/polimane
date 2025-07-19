@@ -7,6 +7,7 @@ const SAVE_TIMEOUT = 2000;
 
 export interface IEditorSaveDispatcher {
   hasUnsavedChanges: boolean;
+  isSaving: boolean;
   enable: () => void;
   disable: () => void;
   flush: () => Promise<void>;
@@ -21,12 +22,19 @@ export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSave
   let stopWatch: VoidFunction | null = null;
   const unsavedChanges = ref<Partial<ISchema> | null>(null);
   const hasUnsavedChanges = computed(() => !!unsavedChanges.value);
+  const isSaving = ref(false);
 
   async function dispatchSave(): Promise<void> {
     saveTimeout = null;
+
     if (unsavedChanges.value) {
-      await onSave(unsavedChanges.value);
-      unsavedChanges.value = null;
+      try {
+        isSaving.value = true;
+        await onSave(unsavedChanges.value);
+        unsavedChanges.value = null;
+      } finally {
+        isSaving.value = false;
+      }
     }
   }
 
@@ -78,6 +86,7 @@ export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSave
 
   return reactive({
     hasUnsavedChanges,
+    isSaving,
     enable,
     disable,
     flush,

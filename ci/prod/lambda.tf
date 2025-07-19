@@ -22,8 +22,6 @@ resource "aws_lambda_function" "lambda" {
       BACKEND_APP_PROTOCOL         = "https"
       BACKEND_SENTRY_RELEASE       = local.lambda_sources_hash,
       BACKEND_BITWARDEN_TOKEN      = var.bitwarden_token
-      BACKEND_DEFAULT_USER_SID     = data.bitwarden_secret.backend_default_user.id
-      BACKEND_DEFAULT_PASSWORD_SID = data.bitwarden_secret.backend_default_password.id
       BACKEND_SECRET_KEY_SID       = data.bitwarden_secret.backend_secret_key.id
       BACKEND_SENTRY_DSN_SID       = data.bitwarden_secret.backend_sentry_dsn.id,
       BACKEND_DATABASE_URL_SID     = bitwarden_secret.backend_database_url.id,
@@ -57,16 +55,9 @@ resource "null_resource" "lambda_migrations" {
       BUILD_DOCKERFILE = abspath("${path.root}/job/backend.Dockerfile")
       BUILD_CONTEXT = local.lambda_sources_dir
 
-      BUILD_SECRET = jsonencode([
-        "BACKEND_DATABASE_URL",
-        "BACKEND_DATABASE_CERT",
-        "BACKEND_DEFAULT_USER",
-        "BACKEND_DEFAULT_PASSWORD"
-      ])
+      BUILD_SECRET = jsonencode(["BACKEND_DATABASE_URL", "BACKEND_DATABASE_CERT"])
       BACKEND_DATABASE_URL     = bitwarden_secret.backend_database_url.value
       BACKEND_DATABASE_CERT    = bitwarden_secret.backend_database_cert.value
-      BACKEND_DEFAULT_USER     = data.bitwarden_secret.backend_default_user.value
-      BACKEND_DEFAULT_PASSWORD = data.bitwarden_secret.backend_default_password.value
     }
   }
 }

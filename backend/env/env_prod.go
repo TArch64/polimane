@@ -30,8 +30,6 @@ func loadEnvs() error {
 	}
 
 	err = bitwarden.LoadToEnviron([]string{
-		"BACKEND_DEFAULT_USER",
-		"BACKEND_DEFAULT_PASSWORD",
 		"BACKEND_SECRET_KEY",
 		"BACKEND_SENTRY_DSN",
 		"BACKEND_DATABASE_URL",

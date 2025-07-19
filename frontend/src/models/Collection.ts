@@ -74,4 +74,9 @@ export class Collection<P extends ISchemaWithContent, O extends ISchemaObject = 
   indexOf(item: O): number {
     return this.values.findIndex((i) => i.id === item.id);
   }
+
+  move(item: O, toIndex: number): void {
+    this.values.splice(this.indexOf(item), 1);
+    this.values.splice(toIndex, 0, item);
+  }
 }

@@ -5,6 +5,10 @@
       Едітор
     </Button>
 
+    <Button icon :disabled="isSaveDisabled" @click="editorStore.save">
+      <SavingIcon />
+    </Button>
+
     <Button icon :disabled="!editorStore.canUndo" @click="editorStore.undo">
       <CornerUpLeftIcon />
     </Button>
@@ -42,13 +46,18 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { computed } from 'vue';
 import { Button } from '@/components/button';
 import {
   ArrowBackIcon,
+  CheckmarkCircleIcon,
   CornerUpLeftIcon,
   CornerUpRightIcon,
   EditIcon,
+  type IconComponent,
+  LoaderIcon,
   MoreHorizontalIcon,
+  SaveIcon,
   TrashIcon,
 } from '@/components/icon';
 import { useAsyncAction } from '@/composables';
@@ -65,8 +74,23 @@ const editorStore = useEditorStore();
 
 const renameModal = useModal(SchemaRenameModal);
 
+const SavingIcon = computed((): IconComponent => {
+  if (editorStore.isSaving) {
+    return LoaderIcon;
+  }
+  if (editorStore.hasUnsavedChanges) {
+    return SaveIcon;
+  }
+  return CheckmarkCircleIcon;
+});
+
+const isSaveDisabled = computed(() => {
+  return !editorStore.hasUnsavedChanges || editorStore.isSaving;
+});
+
 const deleteConfirm = useConfirm({
   danger: true,
+  control: false,
   message: 'Ви впевнені, що хочете видалити цю схему?',
   acceptButton: 'Видалити',
 });
@@ -85,7 +109,6 @@ const deleteSchema = useAsyncAction(async () => {
     position: fixed;
     top: 8px;
     left: 8px;
-    width: 250px;
     z-index: 10;
     display: flex;
     align-items: center;
@@ -95,7 +118,7 @@ const deleteSchema = useAsyncAction(async () => {
 
   .editor-header-back {
     gap: 8px;
-    margin-right: auto;
+    margin-right: 40px;
   }
 }
 </style>

@@ -39,5 +39,7 @@ useNodeContextMenu({
   actions: useRowContextMenuActions(() => props.row),
 });
 
-const backgroundConfig = useNodeFiller(contentRef);
+const backgroundConfig = useNodeFiller(contentRef, {
+  padding: { vertical: 0.5 },
+});
 </script>

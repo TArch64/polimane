@@ -5,6 +5,7 @@ export interface IConfirmOptions {
   id: string;
   message: string;
   danger?: boolean;
+  control?: boolean;
   declineButton?: string;
   acceptButton?: string;
 }
@@ -22,6 +23,7 @@ export class Confirm {
   readonly id;
   readonly message;
   readonly danger;
+  readonly control;
   readonly declineButton;
   readonly acceptButton;
 
@@ -34,6 +36,7 @@ export class Confirm {
     this.id = options.id;
     this.message = options.message;
     this.danger = options.danger ?? false;
+    this.control = options.control ?? true;
     this.declineButton = options.declineButton ?? 'Відмінити';
     this.acceptButton = options.acceptButton ?? 'Підтвердити';
 

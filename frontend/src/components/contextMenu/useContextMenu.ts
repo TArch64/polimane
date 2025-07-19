@@ -1,13 +1,14 @@
 import { type MaybeRefOrGetter, toValue } from 'vue';
 import { useEventListener } from '@vueuse/core';
 import { Point } from '@/models';
-import type { IContextMenuAction, MaybeContextMenuAction } from './ContextMenuModel';
+import type { ContextMenuItem, MaybeContextMenuAction } from './model';
 import { ContextMenuPlugin } from './ContextMenuPlugin';
 
 export interface IContextMenuViewOptions {
   el: MaybeRefOrGetter<HTMLElement>;
   title: MaybeRefOrGetter<string>;
   actions: MaybeRefOrGetter<MaybeContextMenuAction[]>;
+  control?: boolean;
 }
 
 export function useContextMenu(options: IContextMenuViewOptions) {
@@ -24,10 +25,8 @@ export function useContextMenu(options: IContextMenuViewOptions) {
       }),
 
       title: toValue(options.title),
-
-      actions: toValue(options.actions).filter((action): action is IContextMenuAction => !!action),
+      control: options.control,
+      actions: toValue(options.actions).filter((action): action is ContextMenuItem => !!action),
     });
-
-    addEventListener('click', () => plugin.hide(), { once: true, capture: true });
   });
 }

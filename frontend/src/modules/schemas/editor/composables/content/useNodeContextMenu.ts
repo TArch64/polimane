@@ -10,8 +10,8 @@ import {
 } from 'vue';
 import Konva from 'konva';
 import {
+  type ContextMenuItem,
   ContextMenuPlugin,
-  type IContextMenuAction,
   type MaybeContextMenuAction,
 } from '@/components/contextMenu';
 import { Point } from '@/models';
@@ -60,15 +60,13 @@ export function provideNodeContextMenu(stage: Ref<Konva.Stage>): void {
     plugin.show({
       control: false,
       title: toValue(options.title),
-      actions: toValue(options.actions).filter((action): action is IContextMenuAction => !!action),
+      actions: toValue(options.actions).filter((action): action is ContextMenuItem => !!action),
 
       position: new Point({
         x: event.evt.clientX,
         y: event.evt.clientY,
       }),
     });
-
-    addEventListener('click', () => plugin.hide(), { once: true, capture: true });
   });
 }
 
