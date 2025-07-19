@@ -24,6 +24,7 @@ export function useRowContextMenuActions(rowRef: MaybeRefOrGetter<ISchemaRow>): 
   const rowsStore = useRowsStore(pattern);
   const routeTransition = useRouteTransition();
   const title = useRowTitle(row);
+  const rowIndex = computed(() => rowsStore.rows.indexOf(row.value));
 
   const addModal = useModal(RowAddModal);
 
@@ -63,19 +64,20 @@ export function useRowContextMenuActions(rowRef: MaybeRefOrGetter<ISchemaRow>): 
     {
       title: 'Перемістити Рядок',
       icon: ExpandIcon,
+      disabled: rowIndex.value === 0 && rowIndex.value === rowsStore.rows.size - 1,
 
       actions: [
         {
           title: 'Вверх',
           icon: ArrowUpwardIcon,
-          disabled: rowsStore.rows.indexOf(row.value) === 0,
+          disabled: rowIndex.value === 0,
           onAction: () => rowsStore.moveRow(row.value, -1),
         },
 
         {
           title: 'Вниз',
           icon: ArrowDownwardIcon,
-          disabled: rowsStore.rows.indexOf(row.value) === rowsStore.rows.size - 1,
+          disabled: rowIndex.value === rowsStore.rows.size - 1,
           onAction: () => rowsStore.moveRow(row.value, 1),
         },
       ],

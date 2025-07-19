@@ -1,10 +1,11 @@
-import { type MaybeRefOrGetter, nextTick } from 'vue';
+import { computed, type MaybeRefOrGetter, nextTick, type Ref } from 'vue';
 import { toRef } from '@vueuse/core';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import {
   ArrowDownwardIcon,
   ArrowUpwardIcon,
   EditIcon,
+  ExpandIcon,
   PlusIcon,
   TrashIcon,
 } from '@/components/icon';
@@ -15,11 +16,12 @@ import { useConfirm } from '@/components/confirm';
 import { PatternRenameModal, usePatternAddModal } from '../components/modals';
 import { usePatternsStore } from '../stores';
 
-export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<ISchemaPattern>): MaybeContextMenuAction[] {
+export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<ISchemaPattern>): Ref<MaybeContextMenuAction[]> {
   const pattern = toRef(patternRef);
 
   const routeTransition = useRouteTransition();
   const patternsStore = usePatternsStore();
+  const patternIndex = computed(() => patternsStore.patterns.indexOf(pattern.value));
 
   const renameModal = useModal<typeof PatternRenameModal, void>(PatternRenameModal);
   const addModal = usePatternAddModal();
@@ -37,7 +39,7 @@ export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<ISchem
     addModal.open({ toIndex });
   }
 
-  return [
+  return computed(() => [
     {
       title: 'Переназвати Паттерн',
       icon: EditIcon,
@@ -64,6 +66,28 @@ export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<ISchem
     },
 
     {
+      title: 'Перемістити Паттерн',
+      icon: ExpandIcon,
+      disabled: patternIndex.value === 0 && patternIndex.value === patternsStore.patterns.size - 1,
+
+      actions: [
+        {
+          title: 'Вверх',
+          icon: ArrowUpwardIcon,
+          disabled: patternIndex.value === 0,
+          onAction: () => patternsStore.movePattern(pattern.value, -1),
+        },
+
+        {
+          title: 'Вниз',
+          icon: ArrowDownwardIcon,
+          disabled: patternIndex.value === patternsStore.patterns.size - 1,
+          onAction: () => patternsStore.movePattern(pattern.value, 1),
+        },
+      ],
+    },
+
+    {
       danger: true,
       title: 'Видалити Паттерн',
       icon: TrashIcon,
@@ -77,5 +101,5 @@ export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<ISchem
         }
       },
     },
-  ];
+  ]);
 }
