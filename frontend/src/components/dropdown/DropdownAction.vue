@@ -1,5 +1,5 @@
 <template>
-  <Button :danger class="dropdown-action">
+  <Button :danger :disabled class="dropdown-action">
     <Component class="dropdown-action__icon" :is="icon" />
 
     {{ title }}
@@ -14,8 +14,10 @@ withDefaults(defineProps<{
   icon: Component;
   title: string;
   danger?: boolean;
+  disabled?: boolean;
 }>(), {
   danger: false,
+  disabled: false,
 });
 </script>
 

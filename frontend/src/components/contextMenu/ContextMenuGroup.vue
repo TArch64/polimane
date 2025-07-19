@@ -15,6 +15,7 @@
     :title="item.title"
     :icon="item.icon"
     :danger="item.danger"
+    :disabled="item.disabled"
     @click="$emit('action', item)"
   />
 </template>
@@ -46,7 +47,6 @@ defineEmits<{
     border-bottom-width: 4px;
     margin: 0 -4px;
     padding: 0 4px 4px;
-    view-transition-name: --context-menu-group-title;
   }
 
   .context-menu-group__title {

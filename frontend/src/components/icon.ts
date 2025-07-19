@@ -40,5 +40,6 @@ export const LogOutIcon = makeIcon(() => import('~icons/eva/log-out-outline'));
 export const SaveIcon = makeIcon(() => import('~icons/eva/save-outline'));
 export const CheckmarkCircleIcon = makeIcon(() => import('~icons/eva/checkmark-circle-outline'));
 export const LoaderIcon = makeIcon(() => import('~icons/eva/loader-outline'));
+export const ExpandIcon = makeIcon(() => import('~icons/eva/move-outline'));
 
 export const PersonFillIcon = makeIcon(() => import('~icons/eva/person-fill'));

@@ -1,8 +1,14 @@
 import { toRef } from '@vueuse/core';
-import { type MaybeRefOrGetter, nextTick } from 'vue';
+import { computed, type MaybeRefOrGetter, nextTick, type Ref } from 'vue';
 import type { ISchemaPattern, ISchemaRow } from '@/models';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
-import { ArrowDownwardIcon, ArrowUpwardIcon, PlusIcon, TrashIcon } from '@/components/icon';
+import {
+  ArrowDownwardIcon,
+  ArrowUpwardIcon,
+  ExpandIcon,
+  PlusIcon,
+  TrashIcon,
+} from '@/components/icon';
 import { useConfirm } from '@/components/confirm';
 import { useRouteTransition } from '@/composables';
 import { RowAddModal } from '@/modules/schemas/editor/components/modals';
@@ -11,7 +17,7 @@ import { useRowsStore } from '../stores';
 import { useObjectParent } from '../models';
 import { useRowTitle } from './useRowTitle';
 
-export function useRowContextMenuActions(rowRef: MaybeRefOrGetter<ISchemaRow>): MaybeContextMenuAction[] {
+export function useRowContextMenuActions(rowRef: MaybeRefOrGetter<ISchemaRow>): Ref<MaybeContextMenuAction[]> {
   const row = toRef(rowRef);
   const pattern = useObjectParent<ISchemaPattern>(rowRef);
 
@@ -34,22 +40,43 @@ export function useRowContextMenuActions(rowRef: MaybeRefOrGetter<ISchemaRow>): 
     acceptButton: 'Видалити',
   });
 
-  return [
+  return computed((): MaybeContextMenuAction[] => [
     {
       title: 'Додати Рядок',
       icon: PlusIcon,
 
       actions: [
         {
-          title: 'Додати Зверху',
+          title: 'Зверху',
           icon: ArrowUpwardIcon,
           onAction: () => addRow(false),
         },
 
         {
-          title: 'Додати Знизу',
+          title: 'Знизу',
           icon: ArrowDownwardIcon,
           onAction: () => addRow(true),
+        },
+      ],
+    },
+
+    {
+      title: 'Перемістити Рядок',
+      icon: ExpandIcon,
+
+      actions: [
+        {
+          title: 'Вверх',
+          icon: ArrowUpwardIcon,
+          disabled: rowsStore.rows.indexOf(row.value) === 0,
+          onAction: () => rowsStore.moveRow(row.value, -1),
+        },
+
+        {
+          title: 'Вниз',
+          icon: ArrowDownwardIcon,
+          disabled: rowsStore.rows.indexOf(row.value) === rowsStore.rows.size - 1,
+          onAction: () => rowsStore.moveRow(row.value, 1),
         },
       ],
     },
@@ -68,5 +95,5 @@ export function useRowContextMenuActions(rowRef: MaybeRefOrGetter<ISchemaRow>): 
         }
       },
     },
-  ];
+  ]);
 }

@@ -8,6 +8,7 @@
       :title="item.title"
       :icon="item.icon"
       :danger="item.danger"
+      :disabled="item.disabled"
       @click="$emit('action', item)"
       v-if="isContextMenuAction(item)"
     />
@@ -15,8 +16,9 @@
     <DropdownAction
       :title="item.title"
       :icon="item.icon"
+      :disabled="item.disabled"
       data-context-menu-group
-      @click.stop="openGroup($event, item)"
+      @click.stop="$emit('open-group', item)"
       v-else
     />
   </template>
@@ -36,22 +38,18 @@ defineProps<{
   menu: ContextMenuModel;
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
   'action': [action: ContextActionModel];
   'open-group': [group: ContextGroupModel];
 }>();
-
-function openGroup(event: Event, group: ContextGroupModel): void {
-  const target = event.target as HTMLElement;
-  target.style.viewTransitionName = `--context-menu-group-title`;
-  emit('open-group', group);
-}
 </script>
 
 <style scoped>
 @layer components {
   .context-menu__title {
     border-bottom: var(--divider);
+    margin: 0 -4px;
+    padding: 8px 4px 10px 12px;
   }
 }
 </style>

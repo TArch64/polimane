@@ -17,9 +17,6 @@ defineSlots<{
   .dropdown__title {
     font-size: var(--font-sm);
     font-weight: 570;
-    padding-top: 8px;
-    padding-bottom: 10px;
-    padding-left: 12px;
   }
 }
 </style>
