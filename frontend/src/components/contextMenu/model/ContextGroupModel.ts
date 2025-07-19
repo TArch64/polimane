@@ -9,10 +9,8 @@ export class ContextGroupModel extends ContextItemModel implements IContextMenuG
   readonly actions: ContextActionModel[];
 
   constructor(def: IContextMenuGroup) {
-    super({
-      ...def,
-      disabled: def.disabled || def.actions.every((action) => action.disabled),
-    });
+    const disabled = def.disabled ?? def.actions.every((action) => action.disabled);
+    super({ ...def, disabled });
 
     this.actions = def.actions.map((action) => new ContextActionModel(action));
   }
