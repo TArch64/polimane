@@ -1,31 +1,10 @@
 import { shallowReactive } from 'vue';
-import type { IconComponent } from '@/components/icon';
 import { NodeRect, Point } from '@/models';
-import { newId } from '@/helpers';
-
-export interface IContextMenuEvent {
-  menuRect: NodeRect;
-}
-
-export type ContextMenuOnAction = (event: IContextMenuEvent) => void | Promise<void>;
-
-interface IContextMenuItem {
-  id: string;
-  title: string;
-  icon: IconComponent;
-}
-
-export interface IContextMenuAction extends IContextMenuItem {
-  danger?: boolean;
-  onAction: ContextMenuOnAction;
-}
+import { ContextActionModel, type IContextMenuAction } from './ContextActionModel';
+import { ContextGroupModel, type IContextMenuGroup } from './ContextGroupModel';
 
 export function isContextMenuAction(item: ContextMenuItem): item is IContextMenuAction {
   return (item as IContextMenuAction).onAction !== undefined;
-}
-
-export interface IContextMenuGroup extends IContextMenuItem {
-  actions: IContextMenuAction[];
 }
 
 export function isContextMenuGroup(item: ContextMenuItem): item is IContextMenuGroup {
@@ -33,20 +12,20 @@ export function isContextMenuGroup(item: ContextMenuItem): item is IContextMenuG
 }
 
 export type ContextMenuItem = IContextMenuAction | IContextMenuGroup;
-export type ContextMenuItemDefinition = Omit<ContextMenuItem, 'id'>;
-export type MaybeContextMenuAction = ContextMenuItemDefinition | null | undefined | false;
+export type ContextMenuItemModel = ContextActionModel | ContextGroupModel;
+export type MaybeContextMenuAction = ContextMenuItem | null | undefined | false;
 
 export interface IContextMenuOptions {
   id: string;
   title: string;
   position: Point;
   control?: boolean;
-  actions: ContextMenuItemDefinition[];
+  actions: ContextMenuItem[];
 }
 
 interface IState {
   menuRect?: NodeRect;
-  openedGroup?: IContextMenuGroup;
+  openedGroup?: ContextGroupModel;
 }
 
 export class ContextMenuModel {
@@ -64,10 +43,11 @@ export class ContextMenuModel {
     this.position = options.position;
     this.control = options.control ?? true;
 
-    this.actions = options.actions.map((def) => ({
-      ...def,
-      id: newId(),
-    }) as ContextMenuItem);
+    this.actions = options.actions.map((item): ContextMenuItemModel => {
+      return isContextMenuAction(item)
+        ? new ContextActionModel(item)
+        : new ContextGroupModel(item);
+    });
   }
 
   get menuRect(): NodeRect | undefined {
@@ -86,15 +66,15 @@ export class ContextMenuModel {
     return `--${this.htmlId}`;
   }
 
-  get openedGroup(): IContextMenuGroup | undefined {
+  get openedGroup(): ContextGroupModel | undefined {
     return this.state.openedGroup;
   }
 
-  executeAction(action: IContextMenuAction): void {
+  executeAction(action: ContextActionModel): void {
     action.onAction({ menuRect: this.menuRect! });
   }
 
-  openGroup(group: IContextMenuGroup): void {
+  openGroup(group: ContextGroupModel): void {
     this.state.openedGroup = group;
   }
 

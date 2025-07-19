@@ -10,7 +10,7 @@ import {
 } from 'vue';
 import Konva from 'konva';
 import {
-  type ContextMenuItemDefinition,
+  type ContextMenuItem,
   ContextMenuPlugin,
   type MaybeContextMenuAction,
 } from '@/components/contextMenu';
@@ -60,7 +60,7 @@ export function provideNodeContextMenu(stage: Ref<Konva.Stage>): void {
     plugin.show({
       control: false,
       title: toValue(options.title),
-      actions: toValue(options.actions).filter((action): action is ContextMenuItemDefinition => !!action),
+      actions: toValue(options.actions).filter((action): action is ContextMenuItem => !!action),
 
       position: new Point({
         x: event.evt.clientX,

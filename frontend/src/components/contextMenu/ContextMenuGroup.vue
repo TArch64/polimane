@@ -20,23 +20,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import { DropdownAction } from '../dropdown';
 import { Button } from '../button';
 import { ArrowBackIcon } from '../icon';
-import type { IContextMenuAction, IContextMenuGroup } from './ContextMenuModel';
+import type { ContextGroupModel, IContextMenuAction } from './model';
 import ContextMenuTitle from './ContextMenuTitle.vue';
 
-const props = defineProps<{
-  group: IContextMenuGroup;
+defineProps<{
+  group: ContextGroupModel;
 }>();
 
 defineEmits<{
   'action': [action: IContextMenuAction];
   'close-group': [];
 }>();
-
-const titleViewTransitionName = computed(() => `--context-menu-group-title-${props.group.id}`);
 </script>
 
 <style scoped>
@@ -49,7 +46,7 @@ const titleViewTransitionName = computed(() => `--context-menu-group-title-${pro
     border-bottom-width: 4px;
     margin: 0 -4px;
     padding: 0 4px 4px;
-    view-transition-name: v-bind("titleViewTransitionName");
+    view-transition-name: --context-menu-group-title;
   }
 
   .context-menu-group__title {

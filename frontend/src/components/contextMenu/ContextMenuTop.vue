@@ -25,11 +25,11 @@
 <script setup lang="ts">
 import { DropdownAction } from '../dropdown';
 import {
+  ContextActionModel,
+  ContextGroupModel,
   ContextMenuModel,
-  type IContextMenuAction,
-  type IContextMenuGroup,
   isContextMenuAction,
-} from './ContextMenuModel';
+} from './model';
 import ContextMenuTitle from './ContextMenuTitle.vue';
 
 defineProps<{
@@ -37,13 +37,13 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-  'action': [action: IContextMenuAction];
-  'open-group': [group: IContextMenuGroup];
+  'action': [action: ContextActionModel];
+  'open-group': [group: ContextGroupModel];
 }>();
 
-function openGroup(event: Event, group: IContextMenuGroup): void {
+function openGroup(event: Event, group: ContextGroupModel): void {
   const target = event.target as HTMLElement;
-  target.style.viewTransitionName = `--context-menu-group-title-${group.id}`;
+  target.style.viewTransitionName = `--context-menu-group-title`;
   emit('open-group', group);
 }
 </script>

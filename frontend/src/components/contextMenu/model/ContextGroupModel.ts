@@ -1,0 +1,15 @@
+import { ContextActionModel, type IContextMenuAction } from './ContextActionModel';
+import { ContextItemModel, type IContextMenuItem } from './ContextItemModel';
+
+export interface IContextMenuGroup extends IContextMenuItem {
+  actions: IContextMenuAction[];
+}
+
+export class ContextGroupModel extends ContextItemModel implements IContextMenuGroup {
+  actions: ContextActionModel[];
+
+  constructor(def: IContextMenuGroup) {
+    super(def);
+    this.actions = def.actions.map((action) => new ContextActionModel(action));
+  }
+}

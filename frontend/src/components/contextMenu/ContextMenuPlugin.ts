@@ -1,6 +1,6 @@
 import { type FunctionPlugin, inject, type InjectionKey, shallowRef } from 'vue';
 import { newId } from '@/helpers';
-import { ContextMenuModel, type IContextMenuOptions } from './ContextMenuModel';
+import { ContextMenuModel, type IContextMenuOptions } from './model';
 
 const PROVIDER = Symbol('ContextMenuPlugin') as InjectionKey<ContextMenuPlugin>;
 

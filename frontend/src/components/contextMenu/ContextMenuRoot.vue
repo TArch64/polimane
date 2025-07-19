@@ -10,7 +10,7 @@ import { type FunctionalComponent, h, nextTick, shallowRef, watch } from 'vue';
 import { useRouteTransition } from '@/composables';
 import ContextMenu from './ContextMenu.vue';
 import { ContextMenuPlugin } from './ContextMenuPlugin';
-import { ContextMenuModel } from './ContextMenuModel';
+import { ContextMenuModel } from './model';
 
 const plugin = ContextMenuPlugin.inject();
 const routeTransition = useRouteTransition();

@@ -28,7 +28,7 @@ import { onClickOutside } from '@vueuse/core';
 import { NodeRect } from '@/models';
 import { useDomRef, useRouteTransition } from '@/composables';
 import { DropdownMenu } from '../dropdown';
-import type { ContextMenuModel, IContextMenuAction, IContextMenuGroup } from './ContextMenuModel';
+import type { ContextActionModel, ContextGroupModel, ContextMenuModel } from './model';
 import ContextMenuTop from './ContextMenuTop.vue';
 import ContextMenuGroup from './ContextMenuGroup.vue';
 
@@ -62,12 +62,12 @@ onMounted(() => {
   props.menu.setMenuRect(rect);
 });
 
-function executeAction(action: IContextMenuAction): void {
+function executeAction(action: ContextActionModel): void {
   emit('close');
   props.menu.executeAction(action);
 }
 
-function openGroup(group: IContextMenuGroup): void {
+function openGroup(group: ContextGroupModel): void {
   routeTransition.start(() => {
     props.menu.openGroup(group);
     return nextTick();
