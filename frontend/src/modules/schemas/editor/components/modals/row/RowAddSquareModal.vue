@@ -21,6 +21,7 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
+import { useLocalStorage } from '@vueuse/core';
 import type { ISchemaPattern } from '@/models';
 import { Modal, useActiveModal } from '@/components/modal';
 import { NumberField } from '@/components/form';
@@ -36,12 +37,16 @@ const props = withDefaults(defineProps<{
 const modal = useActiveModal();
 const rowsStore = useRowsStore(() => props.pattern);
 
-const form = reactive({
+const lastForm = useLocalStorage('schema-editor-row-add-square-form', {
   rows: 4,
   size: 50,
 });
 
+const form = reactive({ ...lastForm.value });
+
 function save() {
+  lastForm.value = { ...form };
+
   rowsStore.addSquareRow({
     ...form,
     toIndex: props.toIndex,
