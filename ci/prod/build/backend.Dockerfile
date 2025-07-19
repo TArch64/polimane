@@ -2,6 +2,8 @@ FROM golang:1.24-bullseye
 
 WORKDIR /app
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends zip musl-tools build-essential && \
     rm -rf /var/lib/apt/lists/*
