@@ -9,7 +9,11 @@ export class ContextGroupModel extends ContextItemModel implements IContextMenuG
   actions: ContextActionModel[];
 
   constructor(def: IContextMenuGroup) {
-    super(def);
+    super({
+      ...def,
+      disabled: def.disabled || def.actions.every((action) => action.disabled),
+    });
+
     this.actions = def.actions.map((action) => new ContextActionModel(action));
   }
 }

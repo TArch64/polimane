@@ -64,7 +64,6 @@ export function useRowContextMenuActions(rowRef: MaybeRefOrGetter<ISchemaRow>): 
     {
       title: 'Перемістити Рядок',
       icon: ExpandIcon,
-      disabled: rowIndex.value === 0 && rowIndex.value === rowsStore.rows.size - 1,
 
       actions: [
         {

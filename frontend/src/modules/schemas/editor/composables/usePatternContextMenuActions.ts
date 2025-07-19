@@ -68,7 +68,6 @@ export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<ISchem
     {
       title: 'Перемістити Паттерн',
       icon: ExpandIcon,
-      disabled: patternIndex.value === 0 && patternIndex.value === patternsStore.patterns.size - 1,
 
       actions: [
         {
