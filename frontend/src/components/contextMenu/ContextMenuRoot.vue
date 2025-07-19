@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body" :key="activeMenu.id" v-if="activeMenu">
     <VirtualTarget :menu="activeMenu" v-if="activeMenu.menuRect" />
-    <ContextMenu :menu="activeMenu" />
+    <ContextMenu :menu="activeMenu" @close="plugin.hide()" />
   </Teleport>
 </template>
 

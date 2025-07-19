@@ -4,15 +4,13 @@
     class="editor-canvas"
     @contextmenu.prevent
     @keydown="onKeydown"
-    @keyup="cursorStore.handleKeyUp"
   >
     <KonvaStage
       :config
       ref="stageRef"
       @wheel="onWheel"
-      @mousemove="cursorStore.handleMouseMove"
-      @mousedown="cursorStore.handleMouseDown"
-      @mouseup="cursorStore.handleMouseUp"
+      @mousedown="togglePainting"
+      @mouseup="togglePainting"
       @layout="setRendered"
       v-if="isReady"
     >
@@ -30,16 +28,15 @@ import Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import {
   provideNodeContextMenu,
-  useCanvasCursor,
   useCanvasNavigation,
   useCanvasZoom,
   useNodeRef,
 } from '../composables';
-import { useCursorStore, useEditorStore } from '../stores';
+import { useEditorStore, usePaletteStore } from '../stores';
 import { CanvasContent, type IGroupLayoutEvent } from './content';
 
 const editorStore = useEditorStore();
-const cursorStore = useCursorStore();
+const paletteStore = usePaletteStore();
 
 const wrapperRef = ref<HTMLElement | null>(null);
 const wrapperSize = useElementSize(wrapperRef);
@@ -69,10 +66,7 @@ watch(stageRef, async (stage) => {
   window.__KONVA_STAGE_REF__.value = stage;
 
   if (stage) {
-    const canvas = stage.content.querySelector('canvas')!;
-
-    canvas.tabIndex = 0;
-    canvas.focus();
+    stage.content.querySelector<HTMLElement>('canvas')!.tabIndex = 0;
     stage.on('layout', setRendered);
   }
 });
@@ -85,7 +79,6 @@ const layerConfig: Konva.LayerConfig = {
 provideNodeContextMenu(stageRef);
 const canvasZoom = useCanvasZoom();
 const canvasNavigation = useCanvasNavigation();
-useCanvasCursor(stageRef);
 
 function onWheel(event: KonvaEventObject<WheelEvent, Konva.Stage>): void {
   event.evt.preventDefault();
@@ -94,16 +87,17 @@ function onWheel(event: KonvaEventObject<WheelEvent, Konva.Stage>): void {
 }
 
 function onKeydown(event: KeyboardEvent) {
-  if (cursorStore.handleKeyDown(event)) {
-    return;
-  }
-
   if (!event.metaKey || event.key.toLowerCase() !== 'z') {
     return;
   }
 
   event.preventDefault();
   event.shiftKey ? editorStore.redo() : editorStore.undo();
+}
+
+function togglePainting(event: Konva.KonvaEventObject<MouseEvent>) {
+  if (event.evt.buttons > 1) return;
+  paletteStore.setPainting(event.evt.buttons === 1);
 }
 </script>
 

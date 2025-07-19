@@ -19,10 +19,15 @@ export const usePaletteStore = defineStore('schemas/editor/palette', () => {
     return activeToolId.value === 'eraser' ? '' : palette.value[activeToolId.value] || '';
   });
 
+  const isPainting = ref(false);
+  const setPainting = (value: boolean) => isPainting.value = value;
+
   return {
     palette,
     activeColor,
     activeToolId,
     activateTool,
+    isPainting,
+    setPainting,
   };
 });

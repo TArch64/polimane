@@ -1,6 +1,7 @@
 import { shallowReactive } from 'vue';
 import type { IconComponent } from '@/components/icon';
 import { NodeRect, Point } from '@/models';
+import { newId } from '@/helpers';
 
 export interface IContextMenuEvent {
   menuRect: NodeRect;
@@ -8,25 +9,44 @@ export interface IContextMenuEvent {
 
 export type ContextMenuOnAction = (event: IContextMenuEvent) => void | Promise<void>;
 
-export interface IContextMenuAction {
+interface IContextMenuItem {
+  id: string;
   title: string;
   icon: IconComponent;
+}
+
+export interface IContextMenuAction extends IContextMenuItem {
   danger?: boolean;
   onAction: ContextMenuOnAction;
 }
 
-export type MaybeContextMenuAction = IContextMenuAction | null | undefined | false;
+export function isContextMenuAction(item: ContextMenuItem): item is IContextMenuAction {
+  return (item as IContextMenuAction).onAction !== undefined;
+}
+
+export interface IContextMenuGroup extends IContextMenuItem {
+  actions: IContextMenuAction[];
+}
+
+export function isContextMenuGroup(item: ContextMenuItem): item is IContextMenuGroup {
+  return (item as IContextMenuGroup).actions !== undefined;
+}
+
+export type ContextMenuItem = IContextMenuAction | IContextMenuGroup;
+export type ContextMenuItemDefinition = Omit<ContextMenuItem, 'id'>;
+export type MaybeContextMenuAction = ContextMenuItemDefinition | null | undefined | false;
 
 export interface IContextMenuOptions {
   id: string;
   title: string;
   position: Point;
   control?: boolean;
-  actions: IContextMenuAction[];
+  actions: ContextMenuItemDefinition[];
 }
 
 interface IState {
   menuRect?: NodeRect;
+  openedGroup?: IContextMenuGroup;
 }
 
 export class ContextMenuModel {
@@ -43,14 +63,18 @@ export class ContextMenuModel {
     this.title = options.title;
     this.position = options.position;
     this.control = options.control ?? true;
-    this.actions = options.actions;
+
+    this.actions = options.actions.map((def) => ({
+      ...def,
+      id: newId(),
+    }) as ContextMenuItem);
   }
 
   get menuRect(): NodeRect | undefined {
     return this.state.menuRect;
   }
 
-  set menuRect(rect: NodeRect | undefined) {
+  setMenuRect(rect: NodeRect | undefined) {
     this.state.menuRect = rect;
   }
 
@@ -62,7 +86,19 @@ export class ContextMenuModel {
     return `--${this.htmlId}`;
   }
 
+  get openedGroup(): IContextMenuGroup | undefined {
+    return this.state.openedGroup;
+  }
+
   executeAction(action: IContextMenuAction): void {
     action.onAction({ menuRect: this.menuRect! });
+  }
+
+  openGroup(group: IContextMenuGroup): void {
+    this.state.openedGroup = group;
+  }
+
+  closeGroup(): void {
+    this.state.openedGroup = undefined;
   }
 }

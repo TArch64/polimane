@@ -6,32 +6,41 @@
     :control="menu.control"
     :class="classes"
   >
-    <h1 class="dropdown__title">
-      {{ menu.title }}
-    </h1>
+    <ContextMenuGroup
+      v-if="menu.openedGroup"
+      :group="menu.openedGroup"
+      @action="executeAction"
+      @close-group="closeGroup"
+    />
 
-    <DropdownAction
-      v-for="(action, index) of menu.actions"
-      :key="`${action.title} ${index}`"
-      :title="action.title"
-      :icon="action.icon"
-      :danger="action.danger"
-      @click="menu.executeAction(action)"
+    <ContextMenuTop
+      :menu
+      @action="executeAction"
+      @open-group="openGroup"
+      v-else
     />
   </DropdownMenu>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, nextTick, onMounted } from 'vue';
+import { onClickOutside } from '@vueuse/core';
 import { NodeRect } from '@/models';
-import { useDomRef } from '@/composables';
-import { DropdownAction, DropdownMenu } from '../dropdown';
-import type { ContextMenuModel } from './ContextMenuModel';
+import { useDomRef, useRouteTransition } from '@/composables';
+import { DropdownMenu } from '../dropdown';
+import type { ContextMenuModel, IContextMenuAction, IContextMenuGroup } from './ContextMenuModel';
+import ContextMenuTop from './ContextMenuTop.vue';
+import ContextMenuGroup from './ContextMenuGroup.vue';
 
 const props = defineProps<{
   menu: ContextMenuModel;
 }>();
 
+const emit = defineEmits<{
+  close: [];
+}>();
+
+const routeTransition = useRouteTransition();
 const menuRef = useDomRef();
 
 const classes = computed(() => ({
@@ -50,9 +59,29 @@ onMounted(() => {
     rect = rect.with({ y: window.innerHeight - rect.height });
   }
 
-  // eslint-disable-next-line vue/no-mutating-props
-  props.menu.menuRect = rect;
+  props.menu.setMenuRect(rect);
 });
+
+function executeAction(action: IContextMenuAction): void {
+  emit('close');
+  props.menu.executeAction(action);
+}
+
+function openGroup(group: IContextMenuGroup): void {
+  routeTransition.start(() => {
+    props.menu.openGroup(group);
+    return nextTick();
+  });
+}
+
+function closeGroup(): void {
+  routeTransition.start(() => {
+    props.menu.closeGroup();
+    return nextTick();
+  });
+}
+
+onClickOutside(menuRef, () => emit('close'));
 </script>
 
 <style scoped>
@@ -60,6 +89,7 @@ onMounted(() => {
   .dropdown {
     z-index: 9999;
     margin: 4px 0 0;
+    min-width: 200px;
 
     &:not(.dropdown--initial) {
       position-anchor: v-bind("menu.anchorVar");
@@ -70,15 +100,6 @@ onMounted(() => {
   .dropdown--initial {
     top: v-bind("menu.position.y + 'px'");
     left: v-bind("menu.position.x + 'px'");
-  }
-
-  .dropdown__title {
-    font-size: var(--font-sm);
-    font-weight: 570;
-    border-bottom: var(--divider);
-    padding-top: 8px;
-    padding-bottom: 10px;
-    padding-left: 12px;
   }
 }
 </style>

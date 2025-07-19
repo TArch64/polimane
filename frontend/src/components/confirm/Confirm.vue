@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { type FunctionalComponent, h, onMounted, ref } from 'vue';
+import { computed, type FunctionalComponent, h, onMounted, ref } from 'vue';
 import { onBackdropClick } from '@/composables';
 import { Button, type ButtonVariant } from '../button';
 import type { Confirm } from './Confirm';
@@ -54,6 +54,10 @@ const dialogRef = ref<HTMLDialogElement>(null!);
 const decline = () => props.model.complete(false);
 const accept = () => props.model.complete(true);
 
+const backgroundColor = computed(() => {
+  return props.model.control ? 'var(--color-background-2)' : 'var(--color-background-1)';
+});
+
 onMounted(() => dialogRef.value.showPopover());
 onBackdropClick(dialogRef, decline);
 </script>
@@ -67,7 +71,7 @@ onBackdropClick(dialogRef, decline);
     width: 300px;
     padding: 12px;
     overflow-y: auto;
-    background-color: var(--color-background-2);
+    background-color: v-bind("backgroundColor");
     border: var(--divider);
     border-radius: var(--rounded-md);
     box-shadow: var(--box-shadow);

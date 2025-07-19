@@ -1,6 +1,5 @@
 export * from './useCanvasZoom';
 export * from './useCanvasNavigation';
-export * from './useCanvasCursor';
 export * from './useNodeCentering';
 export * from './useNodeConfigs';
 export * from './useNodeTween';

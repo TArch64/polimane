@@ -16,8 +16,6 @@ import { destroyStore, lazyDestroyStore } from '@/helpers';
 import {
   disposeBeadsStores,
   disposeRowsStores,
-  useCursorStore,
-  useDraggingStore,
   useEditorStore,
   usePaletteStore,
   usePatternsStore,
@@ -40,8 +38,6 @@ defineOptions({
     disposeBeadsStores();
     disposeRowsStores();
     lazyDestroyStore(usePaletteStore);
-    lazyDestroyStore(useDraggingStore);
-    lazyDestroyStore(useCursorStore);
     next();
   },
 });

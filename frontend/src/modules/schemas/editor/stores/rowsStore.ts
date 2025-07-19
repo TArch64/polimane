@@ -47,7 +47,18 @@ const rowsDynamicStore = new DynamicStore({
       rows.delete(row);
     }
 
-    return { rows, addSquareRow, deleteRow };
+    function moveRow(row: ISchemaRow, shift: number): void {
+      const index = rows.indexOf(row);
+      const newIndex = index + shift;
+
+      if (newIndex < 0 || newIndex === rows.size) {
+        return;
+      }
+
+      rows.move(row, newIndex);
+    }
+
+    return { rows, addSquareRow, deleteRow, moveRow };
   },
 });
 

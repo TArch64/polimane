@@ -1,7 +1,13 @@
 import { type MaybeRefOrGetter, nextTick } from 'vue';
 import { toRef } from '@vueuse/core';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
-import { ArrowDownwardIcon, ArrowUpwardIcon, EditIcon, TrashIcon } from '@/components/icon';
+import {
+  ArrowDownwardIcon,
+  ArrowUpwardIcon,
+  EditIcon,
+  PlusIcon,
+  TrashIcon,
+} from '@/components/icon';
 import { useModal } from '@/components/modal';
 import type { ISchemaPattern } from '@/models';
 import { useRouteTransition } from '@/composables';
@@ -15,11 +21,12 @@ export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<ISchem
   const routeTransition = useRouteTransition();
   const patternsStore = usePatternsStore();
 
-  const renameModal = useModal(PatternRenameModal);
+  const renameModal = useModal<typeof PatternRenameModal, void>(PatternRenameModal);
   const addModal = usePatternAddModal();
 
   const deleteConfirm = useConfirm({
     danger: true,
+    control: false,
     message: 'Ви впевнені, що хочете видалити цей паттерн?',
     acceptButton: 'Видалити',
   });
@@ -38,15 +45,22 @@ export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<ISchem
     },
 
     {
-      title: 'Додати Зверху',
-      icon: ArrowUpwardIcon,
-      onAction: () => addPattern(false),
-    },
+      title: 'Додати Паттерн',
+      icon: PlusIcon,
 
-    {
-      title: 'Додати Знизу',
-      icon: ArrowDownwardIcon,
-      onAction: () => addPattern(true),
+      actions: [
+        {
+          title: 'Додати Зверху',
+          icon: ArrowUpwardIcon,
+          onAction: () => addPattern(false),
+        },
+
+        {
+          title: 'Додати Знизу',
+          icon: ArrowDownwardIcon,
+          onAction: () => addPattern(true),
+        },
+      ],
     },
 
     {

@@ -1,7 +1,7 @@
 import { type MaybeRefOrGetter, toValue } from 'vue';
 import { useEventListener } from '@vueuse/core';
 import { Point } from '@/models';
-import type { IContextMenuAction, MaybeContextMenuAction } from './ContextMenuModel';
+import type { ContextMenuItemDefinition, MaybeContextMenuAction } from './ContextMenuModel';
 import { ContextMenuPlugin } from './ContextMenuPlugin';
 
 export interface IContextMenuViewOptions {
@@ -26,9 +26,7 @@ export function useContextMenu(options: IContextMenuViewOptions) {
 
       title: toValue(options.title),
       control: options.control,
-      actions: toValue(options.actions).filter((action): action is IContextMenuAction => !!action),
+      actions: toValue(options.actions).filter((action): action is ContextMenuItemDefinition => !!action),
     });
-
-    addEventListener('click', () => plugin.hide(), { once: true, capture: true });
   });
 }
