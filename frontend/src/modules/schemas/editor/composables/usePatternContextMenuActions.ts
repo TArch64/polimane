@@ -5,7 +5,7 @@ import {
   ArrowDownwardIcon,
   ArrowUpwardIcon,
   EditIcon,
-  ExpandIcon,
+  MoveIcon,
   PlusIcon,
   TrashIcon,
 } from '@/components/icon';
@@ -67,7 +67,7 @@ export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<ISchem
 
     {
       title: 'Перемістити Паттерн',
-      icon: ExpandIcon,
+      icon: MoveIcon,
 
       actions: [
         {

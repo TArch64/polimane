@@ -67,8 +67,7 @@ export class Collection<P extends ISchemaWithContent, O extends ISchemaObject = 
   }
 
   delete(item: O): void {
-    const index = this.values.findIndex((i) => i.id === item.id);
-    this.values.splice(index, 1);
+    this.values.splice(this.indexOf(item), 1);
   }
 
   indexOf(item: O): number {
@@ -78,5 +77,10 @@ export class Collection<P extends ISchemaWithContent, O extends ISchemaObject = 
   move(item: O, toIndex: number): void {
     this.values.splice(this.indexOf(item), 1);
     this.values.splice(toIndex, 0, item);
+  }
+
+  update(item: O, patch: Partial<Omit<O, 'id'>>): void {
+    const index = this.indexOf(item);
+    this.values.splice(index, 1, { ...item, ...patch });
   }
 }

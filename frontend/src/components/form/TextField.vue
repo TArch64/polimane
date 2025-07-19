@@ -11,6 +11,7 @@
         :required
         ref="inputRef"
         class="text-field__input"
+        @blur="onBlur"
         v-bind="inputAttrs"
         v-model="model"
       >
@@ -39,7 +40,7 @@ const model = defineModel<string>({
   required: true,
 
   set: (value) => {
-    if (props.required && !value) {
+    if (isDirty.value) {
       inputRef.value.reportValidity();
     }
     return value;
@@ -47,8 +48,14 @@ const model = defineModel<string>({
 });
 
 const inputRef = ref<HTMLInputElement>(null!);
+const isDirty = ref(false);
 
 const containerClasses = computed(() => `text-field__container--variant-${props.variant}`);
+
+function onBlur() {
+  isDirty.value = true;
+  inputRef.value.reportValidity();
+}
 </script>
 
 <style scoped>
