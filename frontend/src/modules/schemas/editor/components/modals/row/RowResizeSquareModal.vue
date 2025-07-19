@@ -1,5 +1,5 @@
 <template>
-  <Modal title="Змінити Ширину Рядка" save-button="Додати" @save="save">
+  <Modal title="Змінити Ширину Рядка" save-button="Змінити" @save="save">
     <NumberField
       label
       required
