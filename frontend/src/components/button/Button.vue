@@ -5,6 +5,12 @@
     :class="classes"
     :disabled="disabled ? 'disabled' : undefined"
   >
+    <Component
+      class="button__prepend-icon"
+      :is="prependIcon"
+      v-if="prependIcon"
+    />
+
     <slot />
   </ButtonRoot>
 </template>
@@ -12,6 +18,7 @@
 <script setup lang="ts">
 import { computed, type Slot } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
+import type { IconComponent } from '../icon';
 import ButtonRoot from './ButtonRoot.vue';
 import type { ButtonSize } from './ButtonSize';
 import type { ButtonVariant } from './ButtonVariant';
@@ -21,6 +28,7 @@ const props = withDefaults(defineProps<{
   icon?: boolean;
   size?: ButtonSize;
   variant?: ButtonVariant;
+  prependIcon?: IconComponent;
   danger?: boolean;
   disabled?: boolean;
 }>(), {
@@ -53,6 +61,10 @@ const classes = computed(() => [
     align-items: center;
     justify-content: center;
     cursor: pointer;
+  }
+
+  .button__prepend-icon {
+    margin-right: 4px;
   }
 
   .button--md {

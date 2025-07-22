@@ -12,8 +12,8 @@ export interface IAppViewRoute extends IAppRoute {
 }
 
 export interface IAppWrapperRoute extends IAppRoute {
-  name?: string;
   children: Array<IAppViewRoute | IAppWrapperRoute | IAppRedirectRoute>;
+  component?: () => Promise<{ default: Component }>;
 }
 
 export interface IAppRedirectRoute extends IAppRoute {

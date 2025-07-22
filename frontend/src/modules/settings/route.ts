@@ -8,8 +8,8 @@ import { settingsProfileRoute, type SettingsProfileRouteInfo } from './profile';
 const notFoundRoute = defineRedirectRoute('', settingsProfileRoute.name);
 
 export const settingsRoute = defineWrapperRoute({
-  name: 'settings',
   path: '/settings',
+  component: () => import('./Route.vue'),
 
   children: [
     settingsProfileRoute,

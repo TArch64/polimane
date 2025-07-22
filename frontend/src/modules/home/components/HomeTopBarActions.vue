@@ -2,10 +2,10 @@
   <Button
     variant="primary"
     class="home-top-bar__create-schema"
+    :prepend-icon="PlusIcon"
     @click="createSchemaModal.open()"
     v-if="schemasStore.hasSchemas"
   >
-    <PlusIcon class="home-top-bar__create-icon" />
     Нова Схема
   </Button>
 
@@ -15,12 +15,6 @@
         <PersonFillIcon />
       </Button>
     </template>
-
-    <DropdownAction
-      title="Profile"
-      :icon="SettingsIcon"
-      :to="settingsProfileRoute"
-    />
 
     <DropdownAction
       title="Log out"
@@ -55,10 +49,6 @@ const createSchemaModal = useModal(HomeCreateSchemaModal);
 @layer page {
   .home-top-bar__create-schema {
     margin-right: 12px;
-  }
-
-  .home-top-bar__create-icon {
-    margin-right: 4px;
   }
 }
 </style>

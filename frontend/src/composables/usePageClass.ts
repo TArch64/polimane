@@ -1,4 +1,4 @@
-import { type MaybeRefOrGetter, onUnmounted, watch } from 'vue';
+import { type MaybeRefOrGetter, onBeforeUnmount, watch } from 'vue';
 import { toRef } from '@vueuse/core';
 
 export function usePageClass(classNameRef: MaybeRefOrGetter<string>) {
@@ -10,7 +10,7 @@ export function usePageClass(classNameRef: MaybeRefOrGetter<string>) {
     if (oldClassName) targetEl.classList.remove(oldClassName);
   }, { immediate: true });
 
-  onUnmounted(() => {
+  onBeforeUnmount(() => {
     if (className.value) {
       targetEl.classList.remove(className.value);
     }

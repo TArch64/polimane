@@ -1,7 +1,11 @@
 <template>
   <Card as="header" class="editor-header">
-    <Button icon class="editor-header-back" :to="{ name: 'home' }">
-      <ArrowBackIcon />
+    <Button
+      icon
+      class="editor-header-back"
+      :to="{ name: 'home' }"
+      :prepend-icon="ArrowBackIcon"
+    >
       Едітор
     </Button>
 
@@ -117,7 +121,6 @@ const deleteSchema = useAsyncAction(async () => {
   }
 
   .editor-header-back {
-    gap: 8px;
     margin-right: 40px;
   }
 }

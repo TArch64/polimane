@@ -1,5 +1,5 @@
 <template>
-  <CommonLayoutTopBar>
+  <CommonLayoutTopBar :title>
     <slot name="top-bar-actions" />
   </CommonLayoutTopBar>
 
@@ -10,6 +10,10 @@
 import type { Slot } from 'vue';
 import { usePageClass } from '@/composables';
 import CommonLayoutTopBar from './CommonLayoutTopBar.vue';
+
+defineProps<{
+  title?: string;
+}>();
 
 defineSlots<{
   'default': Slot;

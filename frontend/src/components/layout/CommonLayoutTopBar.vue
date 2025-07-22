@@ -1,10 +1,21 @@
 <template>
   <header class="common-layout-top-bar">
-    <LogoIcon size="28" />
+    <template v-if="isHomeRoute">
+      <LogoIcon size="28" />
 
-    <h1 class="common-layout-top-bar__title">
-      Polimane
-    </h1>
+      <h1 class="common-layout-top-bar__title">
+        Polimane
+      </h1>
+    </template>
+
+    <Button
+      :to="homeRoute"
+      :prepend-icon="ArrowBackIcon"
+      class="common-layout-top-bar__back-button"
+      v-else
+    >
+      {{ title }}
+    </Button>
 
     <div class="common-layout-top-bar__actions">
       <slot />
@@ -14,11 +25,21 @@
 
 <script setup lang="ts">
 import type { Slot } from 'vue';
-import { LogoIcon } from '@/components/icon';
+import { type RouteLocationRaw, useRoute } from 'vue-router';
+import { ArrowBackIcon, LogoIcon } from '../icon';
+import { Button } from '../button';
+
+defineProps<{
+  title?: string;
+}>();
 
 defineSlots<{
   default: Slot;
 }>();
+
+const route = useRoute();
+const homeRoute: RouteLocationRaw = { name: 'home' };
+const isHomeRoute = route.name === homeRoute.name;
 </script>
 
 <style scoped>
@@ -38,6 +59,11 @@ defineSlots<{
     margin-left: 8px;
     font-size: 20px;
     font-weight: 500;
+  }
+
+  .common-layout-top-bar__back-button {
+    font-size: 16px;
+    font-weight: 450;
   }
 
   .common-layout-top-bar__actions {
