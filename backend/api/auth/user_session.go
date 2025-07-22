@@ -13,10 +13,6 @@ type UserSession struct {
 	SessionID  string
 }
 
-func (u *UserSession) GetSID() string {
-	return u.WorkosUser.Metadata["SessionID"]
-}
-
 var sessionKey UserSession
 
 func setSession(ctx *fiber.Ctx, session *UserSession) {
