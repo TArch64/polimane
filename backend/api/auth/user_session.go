@@ -10,10 +10,7 @@ import (
 type UserSession struct {
 	User       *model.User
 	WorkosUser *usermanagement.User
-}
-
-func (u *UserSession) GetSID() string {
-	return u.WorkosUser.Metadata["SessionID"]
+	SessionID  string
 }
 
 var sessionKey UserSession
@@ -31,5 +28,5 @@ func GetSessionUser(ctx *fiber.Ctx) *model.User {
 }
 
 func GetSessionID(ctx *fiber.Ctx) string {
-	return GetSession(ctx).GetSID()
+	return GetSession(ctx).SessionID
 }

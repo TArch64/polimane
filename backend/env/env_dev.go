@@ -2,9 +2,15 @@
 
 package env
 
-import "github.com/Netflix/go-env"
+import (
+	"github.com/Netflix/go-env"
 
-func loadEnvs() error {
-	_, err := env.UnmarshalFromEnviron(Instance)
+	"polimane/backend/services/bitwarden"
+)
+
+const IsDev = true
+
+func loadEnvs(instance *Environment, _ *bitwarden.Client) error {
+	_, err := env.UnmarshalFromEnviron(instance)
 	return err
 }

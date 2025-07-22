@@ -1,4 +1,4 @@
-package repositoryschemas
+package schemas
 
 import (
 	"context"
@@ -7,9 +7,6 @@ import (
 
 	"polimane/backend/model"
 	"polimane/backend/model/modelbase"
-	repositoryuserschemas "polimane/backend/repository/userschemas"
-	"polimane/backend/services/db"
-	"polimane/backend/signal"
 )
 
 type DeleteOptions struct {
@@ -18,24 +15,24 @@ type DeleteOptions struct {
 	SchemaID modelbase.ID
 }
 
-func Delete(options *DeleteOptions) (err error) {
-	err = repositoryuserschemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+func (c *Client) Delete(options *DeleteOptions) (err error) {
+	err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
 	if err != nil {
 		return err
 	}
 
-	err = db.Instance.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
+	err = c.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
 		if err = tx.Delete(&model.Schema{}, options.SchemaID).Error; err != nil {
 			return err
 		}
 
-		return repositoryuserschemas.DeleteTx(tx, options.User.ID, options.SchemaID)
+		return c.userSchemas.DeleteTx(tx, options.User.ID, options.SchemaID)
 	})
 
 	if err != nil {
 		return err
 	}
 
-	signal.InvalidateAuthCache.Emit(options.Ctx, options.User.ID)
+	c.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
 	return nil
 }

@@ -1,4 +1,4 @@
-package repositoryschemas
+package schemas
 
 import (
 	"context"
@@ -28,8 +28,8 @@ func makeCopyName(originalName string) string {
 	return strings.ReplaceAll(originalName, counterMatch[0], " ("+counterStr+")")
 }
 
-func Copy(options *CopyOptions) (*model.Schema, error) {
-	original, err := ByID(&ByIDOptions{
+func (c *Client) Copy(options *CopyOptions) (*model.Schema, error) {
+	original, err := c.ByID(&ByIDOptions{
 		Ctx:      options.Ctx,
 		SchemaID: options.SchemaID,
 		User:     options.User,
@@ -39,7 +39,7 @@ func Copy(options *CopyOptions) (*model.Schema, error) {
 		return nil, err
 	}
 
-	return Create(&CreateOptions{
+	return c.Create(&CreateOptions{
 		Ctx:     options.Ctx,
 		User:    options.User,
 		Name:    makeCopyName(original.Name),

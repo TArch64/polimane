@@ -1,4 +1,4 @@
-package repositoryschemas
+package schemas
 
 import (
 	"context"
@@ -6,9 +6,6 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
-	repositoryuserschemas "polimane/backend/repository/userschemas"
-	"polimane/backend/services/db"
-	"polimane/backend/signal"
 )
 
 type CreateOptions struct {
@@ -19,7 +16,7 @@ type CreateOptions struct {
 	Content model.SchemaContent
 }
 
-func Create(options *CreateOptions) (schema *model.Schema, err error) {
+func (c *Client) Create(options *CreateOptions) (schema *model.Schema, err error) {
 	if options.Palette == nil {
 		options.Palette = make(model.SchemaPalette, model.SchemaPaletteSize)
 	}
@@ -28,7 +25,7 @@ func Create(options *CreateOptions) (schema *model.Schema, err error) {
 		options.Content = make(model.SchemaContent, 0)
 	}
 
-	err = db.Instance.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
+	err = c.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
 		schema = &model.Schema{
 			Name:    options.Name,
 			Palette: options.Palette,
@@ -39,13 +36,13 @@ func Create(options *CreateOptions) (schema *model.Schema, err error) {
 			return err
 		}
 
-		return repositoryuserschemas.CreateTx(tx, options.User.ID, schema.ID)
+		return c.userSchemas.CreateTx(tx, options.User.ID, schema.ID)
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	signal.InvalidateAuthCache.Emit(options.Ctx, options.User.ID)
+	c.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
 	return schema, nil
 }

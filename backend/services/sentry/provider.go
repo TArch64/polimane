@@ -9,10 +9,14 @@ import (
 	"polimane/backend/env"
 )
 
-func Init() (fiber.Handler, error) {
-	config := env.Instance.Sentry
+type Container struct {
+	Handler fiber.Handler
+}
+
+func Provider(environment *env.Environment) (*Container, error) {
+	config := environment.Sentry
 	if len(config.Dsn) == 0 {
-		return nil, nil
+		return &Container{Handler: nil}, nil
 	}
 
 	err := sentry.Init(sentry.ClientOptions{
@@ -30,5 +34,5 @@ func Init() (fiber.Handler, error) {
 		WaitForDelivery: true,
 	})
 
-	return sentryHandler, nil
+	return &Container{Handler: sentryHandler}, nil
 }

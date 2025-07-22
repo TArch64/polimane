@@ -12,14 +12,14 @@ type createBody struct {
 	Name string `json:"name" validate:"required"`
 }
 
-func apiCreate(ctx *fiber.Ctx) error {
+func (c *Controller) apiCreate(ctx *fiber.Ctx) error {
 	var body createBody
 	err := base.ParseBody(ctx, &body)
 	if err != nil {
 		return err
 	}
 
-	schema, err := repositoryschemas.Create(&repositoryschemas.CreateOptions{
+	schema, err := c.schemas.Create(&repositoryschemas.CreateOptions{
 		Ctx:  ctx.Context(),
 		User: auth.GetSessionUser(ctx),
 		Name: body.Name,

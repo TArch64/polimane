@@ -8,8 +8,8 @@ import (
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
-func apiList(ctx *fiber.Ctx) error {
-	schemas, err := repositoryschemas.ByUser(&repositoryschemas.ByUserOptions{
+func (c *Controller) apiList(ctx *fiber.Ctx) error {
+	schemas, err := c.schemas.ByUser(&repositoryschemas.ByUserOptions{
 		Ctx:    ctx.Context(),
 		User:   auth.GetSessionUser(ctx),
 		Select: []string{"id", "name"},

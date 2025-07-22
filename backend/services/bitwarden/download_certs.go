@@ -10,7 +10,7 @@ type DownloadingCert struct {
 	Dest string
 }
 
-func DownloadCerts(certs []*DownloadingCert) error {
+func (c *Client) DownloadCerts(certs []*DownloadingCert) error {
 	sids := make([]string, len(certs))
 	idCertMap := make(map[string]*DownloadingCert)
 	for i, cert := range certs {
@@ -18,7 +18,7 @@ func DownloadCerts(certs []*DownloadingCert) error {
 		idCertMap[sids[i]] = cert
 	}
 
-	secrets, err := Load(sids)
+	secrets, err := c.Load(sids)
 	if err != nil {
 		return err
 	}

@@ -4,6 +4,7 @@ import (
 	"net/url"
 
 	"polimane/backend/base"
+	"polimane/backend/services/bitwarden"
 )
 
 type Environment struct {
@@ -40,9 +41,11 @@ func (e *Environment) ApiURL() *url.URL {
 	}
 }
 
-var Instance *Environment
+func Provider(bitwardenClient *bitwarden.Client) (*Environment, error) {
+	instance := &Environment{}
+	if err := loadEnvs(instance, bitwardenClient); err != nil {
+		return nil, base.TagError("env.load", err)
+	}
 
-func Init() error {
-	Instance = &Environment{}
-	return base.TagError("env.load", loadEnvs())
+	return instance, nil
 }

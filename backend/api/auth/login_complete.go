@@ -3,25 +3,21 @@ package auth
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
-
-	"polimane/backend/env"
-	repositoryusers "polimane/backend/repository/users"
-	"polimane/backend/services/workos"
 )
 
 type loginCompleteQuery struct {
 	Code string `query:"code"`
 }
 
-func apiLoginComplete(ctx *fiber.Ctx) error {
+func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error {
 	var query loginCompleteQuery
 	if err := ctx.QueryParser(&query); err != nil {
 		return err
 	}
 
 	reqCtx := ctx.Context()
-	data, err := workos.UserManagement.AuthenticateWithCode(reqCtx, usermanagement.AuthenticateWithCodeOpts{
-		ClientID:  env.Instance.WorkOS.ClientID,
+	data, err := c.workosClient.UserManagement.AuthenticateWithCode(reqCtx, usermanagement.AuthenticateWithCodeOpts{
+		ClientID:  c.env.WorkOS.ClientID,
 		Code:      query.Code,
 		UserAgent: ctx.Get("User-Agent"),
 	})
@@ -30,12 +26,12 @@ func apiLoginComplete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := repositoryusers.CreateIfNeeded(reqCtx, data.User.ID)
+	user, err := c.users.CreateIfNeeded(reqCtx, data.User.ID)
 	if err != nil {
 		return err
 	}
 
-	_, err = workos.UserManagement.UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
+	_, err = c.workosClient.UserManagement.UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
 		User:       data.User.ID,
 		ExternalID: user.ID.String(),
 	})
@@ -44,7 +40,7 @@ func apiLoginComplete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	redirectUrl := env.Instance.AppURL().JoinPath("auth/complete")
+	redirectUrl := c.env.AppURL().JoinPath("auth/complete")
 	redirectQuery := redirectUrl.Query()
 	redirectQuery.Set("access-token", data.AccessToken)
 	redirectQuery.Set("refresh-token", data.RefreshToken)
