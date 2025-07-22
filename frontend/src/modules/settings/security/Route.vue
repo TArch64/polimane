@@ -1,5 +1,5 @@
 <template>
   <p>
-    profile
+    security
   </p>
 </template>

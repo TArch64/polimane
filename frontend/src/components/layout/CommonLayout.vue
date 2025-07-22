@@ -3,20 +3,34 @@
     <slot name="top-bar-actions" />
   </CommonLayoutTopBar>
 
-  <slot />
+  <div class="common-layout__row" v-if="slots.submenu">
+    <CommonLayoutSubmenu class="common-layout__submenu">
+      <slot name="submenu" />
+    </CommonLayoutSubmenu>
+
+    <main class="common-layout__main--aside-menu">
+      <slot />
+    </main>
+  </div>
+
+  <main v-else>
+    <slot />
+  </main>
 </template>
 
 <script setup lang="ts">
 import type { Slot } from 'vue';
 import { usePageClass } from '@/composables';
 import CommonLayoutTopBar from './CommonLayoutTopBar.vue';
+import CommonLayoutSubmenu from './CommonLayoutSubmenu.vue';
 
 defineProps<{
   title?: string;
 }>();
 
-defineSlots<{
+const slots = defineSlots<{
   'default': Slot;
+  'submenu'?: Slot;
   'top-bar-actions'?: Slot;
 }>();
 
@@ -27,6 +41,23 @@ usePageClass('app--common-layout');
 @layer components {
   :global(.app--common-layout) {
     background-color: var(--color-background-2);
+  }
+
+  .common-layout__row {
+    display: flex;
+  }
+
+  .common-layout__submenu {
+    flex-shrink: 0;
+    width: 250px;
+    margin: 20px;
+    position: sticky;
+    top: 20px;
+  }
+
+  .common-layout__main--aside-menu {
+    flex-grow: 1;
+    padding: 20px;
   }
 }
 </style>

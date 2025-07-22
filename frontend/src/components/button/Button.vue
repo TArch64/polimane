@@ -98,7 +98,8 @@ const classes = computed(() => [
     transition: background-color 0.15s ease-out;
     will-change: background-color;
 
-    &:hover:not([disabled]) {
+    &:hover:not([disabled]),
+    &.router-link-exact-active:not([disabled]) {
       background-color: var(--button-hover-background);
     }
 
@@ -121,6 +122,7 @@ const classes = computed(() => [
     --button-background: transparent;
     --button-hover-background: color-mix(in srgb, var(--button-base-color), transparent 90%);
     --button-disabled-background: transparent;
+
     --button-foreground: var(--button-base-color);
     --button-disabled-foreground: color-mix(in srgb, var(--button-base-color), transparent 70%);
   }
