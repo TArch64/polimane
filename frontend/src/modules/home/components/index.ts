@@ -1,2 +1,2 @@
-export { default as HomeTopBar } from './HomeTopBar.vue';
+export { default as HomeTopBarActions } from './HomeTopBarActions.vue';
 export * from './schemas';

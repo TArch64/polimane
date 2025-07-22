@@ -4,3 +4,4 @@ export * from './http';
 export * from './useDomRef';
 export * from './onBackdropClick';
 export * from './useRouteTransition';
+export * from './usePageClass';
