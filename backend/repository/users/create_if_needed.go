@@ -1,16 +1,15 @@
-package repositoryusers
+package users
 
 import (
 	"context"
 
 	"polimane/backend/model"
-	"polimane/backend/services/db"
 )
 
-func CreateIfNeeded(ctx context.Context, workosID string) (*model.User, error) {
+func (c *Client) CreateIfNeeded(ctx context.Context, workosID string) (*model.User, error) {
 	user := &model.User{WorkosID: workosID}
 
-	err := db.Instance.
+	err := c.db.
 		WithContext(ctx).
 		Where(*user).
 		Attrs(*user).

@@ -1,4 +1,4 @@
-package repositoryuserschemas
+package userschemas
 
 import (
 	"gorm.io/gorm"
@@ -7,7 +7,7 @@ import (
 	"polimane/backend/model/modelbase"
 )
 
-func DeleteTx(tx *gorm.DB, userID, schemaID modelbase.ID) error {
+func (c *Client) DeleteTx(tx *gorm.DB, userID, schemaID modelbase.ID) error {
 	return tx.
 		Where("user_id = ? AND schema_id = ?", userID, schemaID).
 		Delete(&model.UserSchema{}).

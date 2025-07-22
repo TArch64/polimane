@@ -8,13 +8,13 @@ import (
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
-func apiById(ctx *fiber.Ctx) error {
+func (c *Controller) apiById(ctx *fiber.Ctx) error {
 	schemaId, err := base.GetParamID(ctx, "schemaId")
 	if err != nil {
 		return err
 	}
 
-	schema, err := repositoryschemas.ByID(&repositoryschemas.ByIDOptions{
+	schema, err := c.schemas.ByID(&repositoryschemas.ByIDOptions{
 		Ctx:      ctx.Context(),
 		User:     auth.GetSessionUser(ctx),
 		SchemaID: schemaId,

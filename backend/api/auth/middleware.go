@@ -22,37 +22,67 @@ import (
 
 var unauthorizedErr = base.NewReasonedError(fiber.StatusUnauthorized, "Unauthorized")
 
-type middleware struct {
-	cache cache.Cache[*model.User]
+type Middleware struct {
+	userCache       cache.Cache[*model.User]
+	workosUserCache cache.Cache[*usermanagement.User]
+	workosClient    *workos.Client
+	env             *env.Environment
+	users           *repositoryusers.Client
 }
 
-func NewMiddleware() fiber.Handler {
-	m := &middleware{
-		cache: localcache.New[*model.User](
-			localcache.WithDefaultExpiration(10*time.Minute),
-			localcache.WithCleanupInterval(5*time.Minute),
-		),
+func MiddlewareProvider(
+	signals *signal.Container,
+	environment *env.Environment,
+	workosClient *workos.Client,
+	users *repositoryusers.Client,
+) *Middleware {
+	cacheOptions := []localcache.Option{
+		localcache.WithDefaultExpiration(10 * time.Minute),
+		localcache.WithCleanupInterval(5 * time.Minute),
 	}
 
-	signal.InvalidateAuthCache.AddListener(m.invalidateCache)
-	return m.Handler
+	middleware := &Middleware{
+		userCache:       localcache.New[*model.User](cacheOptions...),
+		workosUserCache: localcache.New[*usermanagement.User](cacheOptions...),
+		env:             environment,
+		workosClient:    workosClient,
+		users:           users,
+	}
+
+	signals.InvalidateUserCache.AddListener(middleware.invalidateUserCache)
+	signals.InvalidateAuthCache.AddListener(middleware.invalidateAuthCache)
+	return middleware
 }
 
-func (m *middleware) invalidateCache(ctx context.Context, userID modelbase.ID) {
-	_ = m.cache.Invalidate(ctx, userID.String())
+func (m *Middleware) invalidateUserCache(ctx context.Context, userID modelbase.ID) {
+	_ = m.userCache.Invalidate(ctx, userID.String())
 }
 
-func (m *middleware) Handler(ctx *fiber.Ctx) error {
+func (m *Middleware) invalidateAuthCache(ctx context.Context, sessionID string) {
+	workosUser, _ := m.workosUserCache.Get(ctx, sessionID, nil)
+
+	if workosUser != nil {
+		_ = m.workosUserCache.Invalidate(ctx, sessionID)
+		_ = m.userCache.Invalidate(ctx, workosUser.ExternalID)
+	}
+}
+
+func (m *Middleware) Handler(ctx *fiber.Ctx) error {
 	accessToken := ctx.Get("Authorization")
 	refreshToken := ctx.Get("X-Refresh-Token")
 	if accessToken == "" || refreshToken == "" {
-		return unauthorizedErr
+		return m.newUnauthorizedErr(errors.New("missing access or refresh token"))
 	}
 
-	workosUser, err := workos.AuthenticateWithAccessToken(ctx.Context(), accessToken)
+	accessTokenClaims, err := m.workosClient.AuthenticateWithAccessToken(ctx.Context(), accessToken)
 	if errors.Is(err, workos.AccessTokenExpired) {
-		workosUser, err = m.refreshToken(ctx, refreshToken)
+		accessTokenClaims, err = m.refreshToken(ctx, refreshToken)
 	}
+	if err != nil {
+		return err
+	}
+
+	workosUser, err := m.getWorkosUser(ctx.Context(), accessTokenClaims)
 	if err != nil {
 		return err
 	}
@@ -70,14 +100,15 @@ func (m *middleware) Handler(ctx *fiber.Ctx) error {
 	setSession(ctx, &UserSession{
 		User:       user,
 		WorkosUser: workosUser,
+		SessionID:  accessTokenClaims.SessionID,
 	})
 
 	return ctx.Next()
 }
 
-func (m *middleware) refreshToken(ctx *fiber.Ctx, token string) (*usermanagement.User, error) {
-	res, err := workos.UserManagement.AuthenticateWithRefreshToken(ctx.Context(), usermanagement.AuthenticateWithRefreshTokenOpts{
-		ClientID:     env.Instance.WorkOS.ClientID,
+func (m *Middleware) refreshToken(ctx *fiber.Ctx, token string) (*workos.AccessTokenClaims, error) {
+	res, err := m.workosClient.UserManagement.AuthenticateWithRefreshToken(ctx.Context(), usermanagement.AuthenticateWithRefreshTokenOpts{
+		ClientID:     m.env.WorkOS.ClientID,
 		RefreshToken: token,
 		UserAgent:    ctx.Get("User-Agent"),
 	})
@@ -88,15 +119,31 @@ func (m *middleware) refreshToken(ctx *fiber.Ctx, token string) (*usermanagement
 
 	ctx.Set("X-New-Refresh-Token", res.RefreshToken)
 	ctx.Set("X-New-Access-Token", res.AccessToken)
-	return workos.AuthenticateWithAccessToken(ctx.Context(), res.AccessToken)
+	return m.workosClient.AuthenticateWithAccessToken(ctx.Context(), res.AccessToken)
 }
 
-func (m *middleware) getUser(ctx context.Context, id modelbase.ID) (*model.User, error) {
-	return m.cache.Get(ctx, id.String(), func() (*model.User, *time.Duration, error) {
-		user, err := repositoryusers.ByID(ctx, id)
+func (m *Middleware) getWorkosUser(ctx context.Context, accessTokenClaims *workos.AccessTokenClaims) (*usermanagement.User, error) {
+	return m.workosUserCache.Get(ctx, accessTokenClaims.UserID, func() (*usermanagement.User, *time.Duration, error) {
+		user, err := m.workosClient.UserManagement.GetUser(ctx, usermanagement.GetUserOpts{
+			User: accessTokenClaims.UserID,
+		})
+
+		if err != nil {
+			return nil, nil, err
+		}
+
+		return &user, nil, nil
+	})
+}
+
+func (m *Middleware) getUser(ctx context.Context, id modelbase.ID) (*model.User, error) {
+	return m.userCache.Get(ctx, id.String(), func() (*model.User, *time.Duration, error) {
+		user, err := m.users.ByID(ctx, id)
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil, unauthorizedErr
+			return nil, nil, m.newUnauthorizedErr(err, base.CustomErrorData{
+				"userId": id.String(),
+			})
 		}
 		if err != nil {
 			return nil, nil, err
@@ -104,4 +151,13 @@ func (m *middleware) getUser(ctx context.Context, id modelbase.ID) (*model.User,
 
 		return user, nil, nil
 	})
+}
+
+func (m *Middleware) newUnauthorizedErr(err error, extra ...base.CustomErrorData) error {
+	if env.IsDev {
+		extra = append(extra, base.CustomErrorData{"internalError": err.Error()})
+		return unauthorizedErr.AddCustomData(extra...)
+	}
+
+	return unauthorizedErr
 }

@@ -41,7 +41,7 @@ func collectUpdates(body *updateBody) *model.Schema {
 	return nil
 }
 
-func apiUpdate(ctx *fiber.Ctx) error {
+func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
 	schemaId, err := base.GetParamID(ctx, "schemaId")
 	if err != nil {
 		return err
@@ -57,7 +57,7 @@ func apiUpdate(ctx *fiber.Ctx) error {
 		return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
 	}
 
-	err = repositoryschemas.Update(&repositoryschemas.UpdateOptions{
+	err = c.schemas.Update(&repositoryschemas.UpdateOptions{
 		Ctx:      ctx.Context(),
 		User:     auth.GetSessionUser(ctx),
 		SchemaID: schemaId,

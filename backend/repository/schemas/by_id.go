@@ -1,12 +1,10 @@
-package repositoryschemas
+package schemas
 
 import (
 	"context"
 
 	"polimane/backend/model"
 	"polimane/backend/model/modelbase"
-	repositoryuserschemas "polimane/backend/repository/userschemas"
-	"polimane/backend/services/db"
 )
 
 type ByIDOptions struct {
@@ -16,16 +14,16 @@ type ByIDOptions struct {
 	Select   []string
 }
 
-func ByID(options *ByIDOptions) (*model.Schema, error) {
+func (c *Client) ByID(options *ByIDOptions) (*model.Schema, error) {
 	var err error
 
-	err = repositoryuserschemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+	err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
 	if err != nil {
 		return nil, err
 	}
 
 	var schema model.Schema
-	query := db.Instance.WithContext(options.Ctx)
+	query := c.db.WithContext(options.Ctx)
 
 	if len(options.Select) > 0 {
 		query = query.Select(options.Select)

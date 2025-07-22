@@ -1,10 +1,9 @@
-package repositoryschemas
+package schemas
 
 import (
 	"context"
 
 	"polimane/backend/model"
-	"polimane/backend/services/db"
 )
 
 type ByUserOptions struct {
@@ -13,10 +12,10 @@ type ByUserOptions struct {
 	Select []string
 }
 
-func ByUser(options *ByUserOptions) ([]*model.Schema, error) {
+func (c *Client) ByUser(options *ByUserOptions) ([]*model.Schema, error) {
 	var schemas []*model.Schema
 
-	query := db.Instance.
+	query := c.db.
 		WithContext(options.Ctx).
 		Joins("JOIN user_schemas ON user_schemas.schema_id = schemas.id AND user_schemas.user_id = ?", options.User.ID)
 

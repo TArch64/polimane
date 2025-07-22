@@ -2,7 +2,7 @@ package bitwarden
 
 import "os"
 
-func LoadToEnviron(names []string) error {
+func (c *Client) LoadToEnviron(names []string) error {
 	ids := make([]string, len(names))
 	idNameMap := make(map[string]string)
 	for i, name := range names {
@@ -10,7 +10,7 @@ func LoadToEnviron(names []string) error {
 		idNameMap[ids[i]] = name
 	}
 
-	secrets, err := Load(ids)
+	secrets, err := c.Load(ids)
 	if err != nil {
 		return err
 	}

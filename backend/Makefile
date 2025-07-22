@@ -6,7 +6,7 @@ env ?= dev
 dev:
 	CGO_ENABLED=1 \
 	CC="musl-gcc" \
-	gow -e=go,mod run -tags "dev" -ldflags $(ldflags) main_dev.go
+	gow -e=go,mod run -tags "dev" -ldflags $(ldflags) main.go
 
 db_new_migration:
 	atlas migrate diff $(name) --env $(env)
@@ -31,6 +31,6 @@ prod:
 	GOARCH=arm64 \
 	CGO_ENABLED=1 \
 	CC="musl-gcc" \
-	go build -tags "prod" -o "$(out_dir)/bootstrap" -ldflags $(ldflags) main_prod.go
+	go build -tags "prod" -o "$(out_dir)/bootstrap" -ldflags $(ldflags) main.go
 	zip -j "$(out_dir)/bootstrap.zip" "$(out_dir)/bootstrap"
 	rm "$(out_dir)/bootstrap"

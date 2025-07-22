@@ -1,10 +1,9 @@
 //go:build !dev
 
-package main
+package api
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -13,26 +12,19 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
-
-	"polimane/backend/api"
-	"polimane/backend/app"
 )
 
-func main() {
-	instance, err := app.New(&app.Config{
-		ApiOptions: &api.Options{
-			Protocol: "https",
-			Configure: func(config *fiber.Config) {
-				config.DisableStartupMessage = true
-			},
+func OptionsProvider() *Options {
+	return &Options{
+		Protocol: "https",
+		Configure: func(config *fiber.Config) {
+			config.DisableStartupMessage = true
 		},
-	})
-
-	if err != nil {
-		log.Panic(err)
 	}
+}
 
-	handler := adaptor.FiberApp(instance)
+func Start(app *fiber.App) error {
+	handler := adaptor.FiberApp(app)
 
 	lambda.Start(func(ctx context.Context, req events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) {
 		url := req.RawPath
@@ -64,4 +56,6 @@ func main() {
 			Body:       recorder.Body.String(),
 		}, nil
 	})
+
+	return nil
 }

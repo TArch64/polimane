@@ -4,10 +4,19 @@ import (
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
 
 	"polimane/backend/env"
+	"polimane/backend/services/jwk"
 )
 
-var UserManagement *usermanagement.Client
+type Client struct {
+	UserManagement *usermanagement.Client
+	env            *env.Environment
+	jwk            jwk.Interface
+}
 
-func Init() {
-	UserManagement = usermanagement.NewClient(env.Instance.WorkOS.ApiKey)
+func Provider(environment *env.Environment, jwk jwk.Interface) *Client {
+	return &Client{
+		UserManagement: usermanagement.NewClient(environment.WorkOS.ApiKey),
+		env:            environment,
+		jwk:            jwk,
+	}
 }

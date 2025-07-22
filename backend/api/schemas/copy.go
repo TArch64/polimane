@@ -8,13 +8,13 @@ import (
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
-func apiCopy(ctx *fiber.Ctx) error {
+func (c *Controller) apiCopy(ctx *fiber.Ctx) error {
 	schemaId, err := base.GetParamID(ctx, "schemaId")
 	if err != nil {
 		return err
 	}
 
-	schema, err := repositoryschemas.Copy(&repositoryschemas.CopyOptions{
+	schema, err := c.schemas.Copy(&repositoryschemas.CopyOptions{
 		Ctx:      ctx.Context(),
 		User:     auth.GetSessionUser(ctx),
 		SchemaID: schemaId,

@@ -1,12 +1,10 @@
-package repositoryschemas
+package schemas
 
 import (
 	"context"
 
 	"polimane/backend/model"
 	"polimane/backend/model/modelbase"
-	repositoryuserschemas "polimane/backend/repository/userschemas"
-	"polimane/backend/services/db"
 )
 
 type UpdateOptions struct {
@@ -16,13 +14,13 @@ type UpdateOptions struct {
 	Updates  *model.Schema
 }
 
-func Update(options *UpdateOptions) (err error) {
-	err = repositoryuserschemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+func (c *Client) Update(options *UpdateOptions) (err error) {
+	err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
 	if err != nil {
 		return err
 	}
 
-	return db.Instance.
+	return c.db.
 		WithContext(options.Ctx).
 		Model(&model.Schema{
 			Identifiable: &modelbase.Identifiable{

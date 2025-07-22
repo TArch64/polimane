@@ -3,33 +3,16 @@
 package env
 
 import (
-	"sync"
-
 	"github.com/Netflix/go-env"
 
 	"polimane/backend/base"
 	"polimane/backend/services/bitwarden"
 )
 
-var loadEnvMutex = sync.Mutex{}
-var loaded = false
+const IsDev = false
 
-func loadEnvs() error {
-	loadEnvMutex.Lock()
-	defer loadEnvMutex.Unlock()
-
-	if loaded {
-		return nil
-	}
-
-	loaded = true
-
-	err := bitwarden.Init()
-	if err != nil {
-		return err
-	}
-
-	err = bitwarden.LoadToEnviron([]string{
+func loadEnvs(instance *Environment, bitwardenClient *bitwarden.Client) error {
+	err := bitwardenClient.LoadToEnviron([]string{
 		"BACKEND_SECRET_KEY",
 		"BACKEND_SENTRY_DSN",
 		"BACKEND_DATABASE_URL",
@@ -41,7 +24,7 @@ func loadEnvs() error {
 		return base.TagError("env.load.bitwarden.envs", err)
 	}
 
-	err = bitwarden.DownloadCerts([]*bitwarden.DownloadingCert{
+	err = bitwardenClient.DownloadCerts([]*bitwarden.DownloadingCert{
 		{
 			SID:  "BACKEND_DATABASE_CERT_SID",
 			Dest: "/tmp/postgres/ca-cert.pem",
@@ -52,6 +35,6 @@ func loadEnvs() error {
 		return base.TagError("env.load.bitwarden.certs", err)
 	}
 
-	_, err = env.UnmarshalFromEnviron(Instance)
+	_, err = env.UnmarshalFromEnviron(instance)
 	return err
 }

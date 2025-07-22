@@ -1,4 +1,4 @@
-package repositoryuserschemas
+package userschemas
 
 import (
 	"gorm.io/gorm"
@@ -7,7 +7,7 @@ import (
 	"polimane/backend/model/modelbase"
 )
 
-func CreateTx(tx *gorm.DB, userID, schemaID modelbase.ID) error {
+func (c *Client) CreateTx(tx *gorm.DB, userID, schemaID modelbase.ID) error {
 	userSchema := &model.UserSchema{
 		UserID:   userID,
 		SchemaID: schemaID,

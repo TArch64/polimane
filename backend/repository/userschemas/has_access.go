@@ -1,4 +1,4 @@
-package repositoryuserschemas
+package userschemas
 
 import (
 	"context"
@@ -7,13 +7,12 @@ import (
 
 	"polimane/backend/model"
 	"polimane/backend/model/modelbase"
-	"polimane/backend/services/db"
 )
 
-func HasAccess(ctx context.Context, userID, schemaID modelbase.ID) error {
+func (c *Client) HasAccess(ctx context.Context, userID, schemaID modelbase.ID) error {
 	var exists bool
 
-	err := db.Instance.
+	err := c.db.
 		WithContext(ctx).
 		Model(&model.UserSchema{}).
 		Select("1 AS exists").

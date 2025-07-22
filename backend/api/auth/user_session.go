@@ -10,6 +10,7 @@ import (
 type UserSession struct {
 	User       *model.User
 	WorkosUser *usermanagement.User
+	SessionID  string
 }
 
 func (u *UserSession) GetSID() string {
@@ -31,5 +32,5 @@ func GetSessionUser(ctx *fiber.Ctx) *model.User {
 }
 
 func GetSessionID(ctx *fiber.Ctx) string {
-	return GetSession(ctx).GetSID()
+	return GetSession(ctx).SessionID
 }

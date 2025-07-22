@@ -8,13 +8,13 @@ import (
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
-func apiDelete(ctx *fiber.Ctx) error {
+func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 	schemaId, err := base.GetParamID(ctx, "schemaId")
 	if err != nil {
 		return err
 	}
 
-	err = repositoryschemas.Delete(&repositoryschemas.DeleteOptions{
+	err = c.schemas.Delete(&repositoryschemas.DeleteOptions{
 		Ctx:      ctx.Context(),
 		User:     auth.GetSessionUser(ctx),
 		SchemaID: schemaId,

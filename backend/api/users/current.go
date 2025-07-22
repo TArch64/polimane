@@ -6,6 +6,6 @@ import (
 	"polimane/backend/api/auth"
 )
 
-func apiCurrent(ctx *fiber.Ctx) error {
+func (c *Controller) apiCurrent(ctx *fiber.Ctx) error {
 	return ctx.JSON(auth.GetSession(ctx))
 }
