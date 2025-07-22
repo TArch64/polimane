@@ -84,6 +84,7 @@ function close(): void {
     position-area: bottom center;
     translate: v-bind("offsetX + 'px'");
     margin-top: 4px;
+    min-width: 150px;
   }
 }
 </style>

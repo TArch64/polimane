@@ -1,6 +1,6 @@
-import { defineRoute, type InferViewRouteInfo } from '@/router/define';
+import { defineViewRoute, type InferViewRouteInfo } from '@/router/define';
 
-export const schemaEditorRoute = defineRoute({
+export const schemaEditorRoute = defineViewRoute({
   name: 'schema-editor',
   path: 'editor',
   component: () => import('./Route.vue'),

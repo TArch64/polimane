@@ -1,6 +1,6 @@
 import type { Component } from 'vue';
 import type { RouteParamValueRaw, RouteRecordInfo } from 'vue-router';
-import type { InferComponentProps } from '@/types';
+import type { InferComponentProps, SafeAny } from '@/types';
 
 export interface IAppRoute {
   path: string;
@@ -12,15 +12,24 @@ export interface IAppViewRoute extends IAppRoute {
 }
 
 export interface IAppWrapperRoute extends IAppRoute {
-  children: AppRoute[];
+  name?: string;
+  children: Array<IAppViewRoute | IAppWrapperRoute | IAppRedirectRoute>;
 }
 
-export type AppRoute = IAppViewRoute | IAppWrapperRoute;
+export interface IAppRedirectRoute extends IAppRoute {
+  redirect: SafeAny;
+}
 
-export function defineRoute<const R extends IAppViewRoute>(route: R): R;
-export function defineRoute<const R extends IAppWrapperRoute>(route: R): R;
-export function defineRoute<const R extends AppRoute>(route: R): R {
+export function defineViewRoute<const R extends IAppViewRoute>(route: R): R {
   return { ...route, props: true };
+}
+
+export function defineWrapperRoute<const R extends IAppWrapperRoute>(route: R): R {
+  return { ...route, props: true };
+}
+
+export function defineRedirectRoute(path: string, redirect: string): IAppRedirectRoute {
+  return { path, redirect: { name: redirect } };
 }
 
 type InferRouteProps<P> = {

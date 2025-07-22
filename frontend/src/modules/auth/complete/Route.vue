@@ -9,7 +9,7 @@ import { authChannel, AuthChannelComplete } from '../channel';
 
 const sessionStore = useSessionStore();
 
-const route = useRoute('authComplete');
+const route = useRoute('auth-complete');
 const accessToken = route.query['access-token'] as string;
 const refreshToken = route.query['refresh-token'] as string;
 

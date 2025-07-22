@@ -3,6 +3,7 @@
     :to
     class="button"
     :class="classes"
+    :disabled="disabled ? 'disabled' : undefined"
   >
     <slot />
   </ButtonRoot>
@@ -21,6 +22,7 @@ const props = withDefaults(defineProps<{
   size?: ButtonSize;
   variant?: ButtonVariant;
   danger?: boolean;
+  disabled?: boolean;
 }>(), {
   icon: false,
   danger: false,

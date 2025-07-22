@@ -7,6 +7,16 @@
     </h1>
 
     <div class="home-top-bar__actions">
+      <Button
+        variant="primary"
+        class="home-top-bar__create-schema"
+        @click="createSchemaModal.open()"
+        v-if="schemasStore.hasSchemas"
+      >
+        <PlusIcon class="home-top-bar__create-icon" />
+        Нова Схема
+      </Button>
+
       <Dropdown>
         <template #activator="{ activatorStyle, open }">
           <Button icon :style="activatorStyle" @click="open">
@@ -15,28 +25,30 @@
         </template>
 
         <DropdownAction
+          title="Profile"
+          :icon="SettingsIcon"
+          :to="settingsProfileRoute"
+        />
+
+        <DropdownAction
           title="Log out"
           :icon="LogOutIcon"
           @click="sessionStore.logout"
         />
       </Dropdown>
 
-      <Button
-        variant="primary"
-        @click="createSchemaModal.open()"
-        v-if="schemasStore.hasSchemas"
-      >
-        <PlusIcon class="home-top-bar__create-icon" />
-        Нова Схема
+      <Button icon :to="settingsProfileRoute">
+        <SettingsIcon />
       </Button>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
+import type { RouteLocationRaw } from 'vue-router';
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
-import { LogoIcon, LogOutIcon, PersonFillIcon, PlusIcon } from '@/components/icon';
+import { LogoIcon, LogOutIcon, PersonFillIcon, PlusIcon, SettingsIcon } from '@/components/icon';
 import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { useSessionStore } from '@/stores';
 import { useSchemasStore } from '../stores';
@@ -45,6 +57,7 @@ import { HomeCreateSchemaModal } from './schemas';
 const schemasStore = useSchemasStore();
 const sessionStore = useSessionStore();
 
+const settingsProfileRoute: RouteLocationRaw = { name: 'settings-profile' };
 const createSchemaModal = useModal(HomeCreateSchemaModal);
 </script>
 
@@ -71,8 +84,12 @@ const createSchemaModal = useModal(HomeCreateSchemaModal);
     margin-left: auto;
     margin-right: 2px;
     display: flex;
-    gap: 12px;
+    gap: 8px;
     align-items: center;
+  }
+
+  .home-top-bar__create-schema {
+    margin-right: 12px;
   }
 
   .home-top-bar__create-icon {

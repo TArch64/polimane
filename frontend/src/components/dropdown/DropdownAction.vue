@@ -1,5 +1,5 @@
 <template>
-  <Button :danger :disabled class="dropdown-action">
+  <Button :to :danger :disabled class="dropdown-action">
     <Component class="dropdown-action__icon" :is="icon" />
 
     {{ title }}
@@ -8,6 +8,7 @@
 
 <script setup lang="ts">
 import type { Component } from 'vue';
+import type { RouteLocationRaw } from 'vue-router';
 import { Button } from '@/components/button';
 
 withDefaults(defineProps<{
@@ -15,6 +16,7 @@ withDefaults(defineProps<{
   title: string;
   danger?: boolean;
   disabled?: boolean;
+  to?: RouteLocationRaw;
 }>(), {
   danger: false,
   disabled: false,
