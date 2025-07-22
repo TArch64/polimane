@@ -2,7 +2,13 @@
 
 package api
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 func OptionsProvider() *Options {
 	return &Options{
@@ -14,9 +20,13 @@ func OptionsProvider() *Options {
 }
 
 func Start(app *fiber.App) error {
-	defer func(app *fiber.App) {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		<-c
 		_ = app.Shutdown()
-	}(app)
+	}()
 
 	return app.Listen(":3000")
 }
