@@ -14,23 +14,23 @@ var (
 )
 
 type Client struct {
-	bitwarden sdk.BitwardenClientInterface
+	api sdk.BitwardenClientInterface
 }
 
 func Provider() (*Client, error) {
-	client, err := sdk.NewBitwardenClient(&apiUrl, &identityUrl)
+	accessToken := os.Getenv("BACKEND_BITWARDEN_TOKEN")
+	if accessToken == "" {
+		return nil, nil
+	}
+
+	api, err := sdk.NewBitwardenClient(&apiUrl, &identityUrl)
 	if err != nil {
 		return nil, base.TagError("bitwarden.client", err)
 	}
 
-	accessToken := os.Getenv("BACKEND_BITWARDEN_TOKEN")
-	if accessToken == "" {
-		return &Client{bitwarden: nil}, nil
-	}
-
-	if err = client.AccessTokenLogin(accessToken, nil); err != nil {
+	if err = api.AccessTokenLogin(accessToken, nil); err != nil {
 		return nil, base.TagError("bitwarden.auth", err)
 	}
 
-	return &Client{bitwarden: client}, nil
+	return &Client{api: api}, nil
 }

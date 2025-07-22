@@ -1,7 +1,7 @@
 package bitwarden
 
 func (c *Client) Load(sids []string) (map[string]string, error) {
-	res, err := c.bitwarden.Secrets().GetByIDS(sids)
+	res, err := c.api.Secrets().GetByIDS(sids)
 	if err != nil {
 		return nil, err
 	}
