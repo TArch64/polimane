@@ -5,7 +5,17 @@
     class="card"
     :class="classes"
   >
+    <header v-if="title">
+      <h2 class="card__title">
+        {{ title }}
+      </h2>
+    </header>
+
     <slot />
+
+    <footer class="card__footer" v-if="$slots.footer">
+      <slot name="footer" />
+    </footer>
   </Component>
 </template>
 
@@ -19,10 +29,12 @@ const props = withDefaults(defineProps<{
   binding?: AnyBinding;
   interactable?: boolean;
   variant?: 'main' | 'control';
+  title?: string;
 }>(), {
   as: 'div',
   interactable: false,
   variant: 'main',
+  title: '',
 
   binding: (props): AnyBinding => ({
     is: props.as ?? 'div',
@@ -32,6 +44,7 @@ const props = withDefaults(defineProps<{
 
 defineSlots<{
   default: Slot;
+  footer?: Slot;
 }>();
 
 const classes = computed(() => [
@@ -68,6 +81,19 @@ const classes = computed(() => [
     &:focus-within {
       border-color: var(--color-hover-divider);
     }
+  }
+
+  .card__title {
+    font-size: var(--font-md);
+    padding: 4px 0;
+    margin-bottom: 4px;
+  }
+
+  .card__footer {
+    display: flex;
+    gap: 8px;
+    padding: 4px 0;
+    margin-top: 4px;
   }
 }
 </style>

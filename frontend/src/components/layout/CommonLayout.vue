@@ -45,6 +45,7 @@ usePageClass('app--common-layout');
 
   .common-layout__row {
     display: flex;
+    align-items: flex-start;
   }
 
   .common-layout__submenu {

@@ -11,6 +11,7 @@ type currentUser struct {
 	ID                modelbase.ID `json:"id"`
 	FirstName         string       `json:"firstName"`
 	LastName          string       `json:"lastName"`
+	Username          string       `json:"username"`
 	Email             string       `json:"email"`
 	EmailVerified     bool         `json:"isEmailVerified"`
 	ProfilePictureURL string       `json:"profilePictureUrl"`
