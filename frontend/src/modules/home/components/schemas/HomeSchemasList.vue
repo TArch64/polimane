@@ -24,10 +24,7 @@ const schemasStore = useSchemasStore();
     grid-template-columns: repeat(4, 1fr);
     align-content: start;
     gap: 20px;
-    width: 100%;
-    max-width: 1024px;
     padding: 12px;
-    margin: 0 auto;
   }
 }
 </style>

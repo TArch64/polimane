@@ -2,10 +2,10 @@
   <Card :title :binding class="form-card">
     <slot />
 
-    <template #footer>
+    <template #footer v-if="hasChanges">
       <div class="form-card__spacer" />
 
-      <Button @click="$emit('reset')" v-if="hasChanges">
+      <Button @click="$emit('reset')">
         Відмінити
       </Button>
 
@@ -25,7 +25,7 @@ import Form from './Form.vue';
 
 defineProps<{
   title?: string;
-  hasChanges?: boolean;
+  hasChanges: boolean;
 }>();
 
 const emit = defineEmits<{
