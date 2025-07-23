@@ -3,18 +3,28 @@ package users
 import (
 	"github.com/gofiber/fiber/v2"
 
+	"polimane/backend/signal"
+
 	"polimane/backend/api/base"
+	"polimane/backend/services/workos"
 )
 
-type Controller struct{}
+type Controller struct {
+	workosClient *workos.Client
+	signals      *signal.Container
+}
 
-func Provider() base.Controller {
-	return &Controller{}
+func Provider(workosClient *workos.Client, signals *signal.Container) base.Controller {
+	return &Controller{
+		workosClient: workosClient,
+		signals:      signals,
+	}
 }
 
 func (c *Controller) Public(_ fiber.Router) {}
 
 func (c *Controller) Private(group fiber.Router) {
-	group = group.Group("users")
-	group.Get("current", c.apiCurrent)
+	group = group.Group("users/current")
+	group.Get("", c.apiGet)
+	group.Patch("", c.apiUpdate)
 }

@@ -1,4 +1,4 @@
-import { reactive, ref, watch } from 'vue';
+import { type MaybeRefOrGetter, reactive, ref, toValue, watch } from 'vue';
 
 export interface IFormData<D extends object> {
   data: D;
@@ -6,16 +6,16 @@ export interface IFormData<D extends object> {
   reset: () => void;
 }
 
-export function useFormData<D extends object>(initial: D): IFormData<D> {
+export function useFormData<D extends object>(initial: MaybeRefOrGetter<D>): IFormData<D> {
   const hasChanges = ref(false);
-  const data = ref<D>({ ...initial });
+  const data = ref<D>({ ...toValue(initial) });
 
   watch(data, () => {
     hasChanges.value = true;
   }, { deep: true });
 
   function reset(): void {
-    data.value = { ...initial };
+    data.value = { ...toValue(initial) };
     hasChanges.value = false;
   }
 

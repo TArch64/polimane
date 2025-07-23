@@ -1,5 +1,5 @@
 <template>
-  <Card :title :as="Form" class="form-card">
+  <Card :title :binding class="form-card">
     <slot />
 
     <template #footer>
@@ -18,6 +18,7 @@
 
 <script setup lang="ts">
 import type { Slot } from 'vue';
+import { makeBinding } from '@/components/binding';
 import { Card } from '../card';
 import { Button } from '../button';
 import Form from './Form.vue';
@@ -27,7 +28,7 @@ defineProps<{
   hasChanges?: boolean;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   submit: [];
   reset: [];
 }>();
@@ -35,6 +36,10 @@ defineEmits<{
 defineSlots<{
   default: Slot;
 }>();
+
+const binding = makeBinding(Form, () => ({
+  onSubmit: () => emit('submit'),
+}));
 </script>
 
 <style scoped>

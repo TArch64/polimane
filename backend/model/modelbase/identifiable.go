@@ -12,6 +12,14 @@ func StringToID(str string) (ID, error) {
 	return id, err
 }
 
+func MustStringToID(str string) ID {
+	id, err := StringToID(str)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 type Identifiable struct {
 	ID ID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
 }

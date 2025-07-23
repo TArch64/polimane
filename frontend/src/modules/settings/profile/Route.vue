@@ -3,32 +3,50 @@
     title="Загальна інформація"
     :has-changes="form.hasChanges"
     @reset="form.reset"
+    @submit="save"
   >
-    <TextField
-      required
-      placeholder="Імʼя"
-      v-model="form.data.firstName"
-    />
+    <div class="row">
+      <TextField
+        required
+        placeholder="Імʼя"
+        class="row__column"
+        v-model="form.data.firstName"
+      />
 
-    <TextField
-      required
-      placeholder="Прізвище"
-      v-model="form.data.lastName"
-    />
-
-    <TextField
-      required
-      placeholder="Нікнейм"
-      v-model="form.data.username"
-    />
+      <TextField
+        required
+        placeholder="Прізвище"
+        class="row__column"
+        v-model="form.data.lastName"
+      />
+    </div>
   </FormCard>
 </template>
 
 <script setup lang="ts">
 import { FormCard, TextField, useFormData } from '@/components/form';
-import { useSessionStore } from '@/stores';
+import { useAsyncAction } from '@/composables';
+import { useProfileStore } from './stores';
 
-const sessionStore = useSessionStore();
+const profileStore = useProfileStore();
 
-const form = useFormData(sessionStore.user);
+const form = useFormData(() => profileStore.user);
+
+const save = useAsyncAction(async () => {
+  await profileStore.update(form.data);
+  form.reset();
+});
 </script>
+
+<style scoped>
+@layer page {
+  .row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .row__column {
+    flex: 1;
+  }
+}
+</style>

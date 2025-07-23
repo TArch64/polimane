@@ -36,8 +36,13 @@ export const useSessionStore = defineStore('session', () => {
     window.location.reload();
   }
 
+  function updateUser(newUser: Partial<IUser>): void {
+    user.value = { ...user.value!, ...newUser };
+  }
+
   return {
     user: user as Ref<IUser>,
+    updateUser,
     isLoggedIn,
     refresh,
     setTokens,
