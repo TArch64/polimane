@@ -11,7 +11,9 @@
       </Button>
     </template>
 
-    <RouterView />
+    <div class="settings">
+      <RouterView />
+    </div>
   </CommonLayout>
 </template>
 
@@ -40,3 +42,13 @@ const routes: ISettingsRoute[] = [
   },
 ];
 </script>
+
+<style scoped>
+@layer page {
+  .settings {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+</style>

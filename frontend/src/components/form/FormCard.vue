@@ -42,7 +42,6 @@ const binding = makeBinding(Form, () => ({
 }));
 
 const footerTransition: Partial<ICardFooterTransition> = {
-  // duration: 2000,
   shift: -8,
 };
 </script>

@@ -102,6 +102,7 @@ const classes = computed(() => [
     gap: 8px;
     padding: 4px 0;
     margin-top: 4px;
+    will-change: height, padding, margin, opacity;
   }
 }
 </style>
