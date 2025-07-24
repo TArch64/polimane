@@ -13,9 +13,11 @@
 
     <slot />
 
-    <footer class="card__footer" v-if="$slots.footer">
-      <slot name="footer" />
-    </footer>
+    <VerticalSlideTransition v-bind="footerTransition">
+      <footer class="card__footer" v-if="$slots.footer">
+        <slot name="footer" />
+      </footer>
+    </VerticalSlideTransition>
   </Component>
 </template>
 
@@ -23,6 +25,8 @@
 import { computed, type Slot } from 'vue';
 import type { ComponentAs } from '@/types';
 import type { AnyBinding } from '../binding';
+import { VerticalSlideTransition } from '../transition';
+import type { ICardFooterTransition } from './ICardFooterTransition';
 
 const props = withDefaults(defineProps<{
   as?: ComponentAs;
@@ -30,11 +34,17 @@ const props = withDefaults(defineProps<{
   interactable?: boolean;
   variant?: 'main' | 'control';
   title?: string;
+  footerTransition?: Partial<ICardFooterTransition>;
 }>(), {
   as: 'div',
   interactable: false,
   variant: 'main',
   title: '',
+
+  footerTransition: () => ({
+    duration: 300,
+    shift: 0,
+  }),
 
   binding: (props): AnyBinding => ({
     is: props.as ?? 'div',
@@ -49,9 +59,7 @@ defineSlots<{
 
 const classes = computed(() => [
   `card--variant-${props.variant}`,
-  {
-    'card--interactable': props.interactable,
-  },
+  { 'card--interactable': props.interactable },
 ]);
 </script>
 

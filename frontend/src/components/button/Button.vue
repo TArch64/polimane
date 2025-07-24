@@ -71,6 +71,7 @@ const classes = computed(() => [
     font-size: var(--font-sm);
     line-height: 18px;
     padding: 6px 12px;
+    min-height: 30px;
 
     &.button--icon {
       padding: 6px;

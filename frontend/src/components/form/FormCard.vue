@@ -1,5 +1,5 @@
 <template>
-  <Card :title :binding class="form-card">
+  <Card :title :binding :footerTransition class="form-card">
     <slot />
 
     <template #footer v-if="hasChanges">
@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import type { Slot } from 'vue';
 import { makeBinding } from '@/components/binding';
-import { Card } from '../card';
+import { Card, type ICardFooterTransition } from '../card';
 import { Button } from '../button';
 import Form from './Form.vue';
 
@@ -40,6 +40,11 @@ defineSlots<{
 const binding = makeBinding(Form, () => ({
   onSubmit: () => emit('submit'),
 }));
+
+const footerTransition: Partial<ICardFooterTransition> = {
+  // duration: 2000,
+  shift: -8,
+};
 </script>
 
 <style scoped>

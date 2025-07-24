@@ -1,4 +1,4 @@
-import { type MaybeRefOrGetter, reactive, ref, toValue, watch } from 'vue';
+import { type MaybeRefOrGetter, nextTick, reactive, ref, toValue, watch } from 'vue';
 
 export interface IFormData<D extends object> {
   data: D;
@@ -16,7 +16,7 @@ export function useFormData<D extends object>(initial: MaybeRefOrGetter<D>): IFo
 
   function reset(): void {
     data.value = { ...toValue(initial) };
-    hasChanges.value = false;
+    nextTick(() => hasChanges.value = false);
   }
 
   return reactive({
