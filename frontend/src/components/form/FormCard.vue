@@ -2,15 +2,15 @@
   <Card :title :binding :footerTransition class="form-card">
     <slot />
 
-    <template #footer v-if="hasChanges">
+    <template #footer v-if="hasChanges || submitPersistent">
       <div class="form-card__spacer" />
 
-      <Button @click="$emit('reset')">
+      <Button @click="$emit('reset')" v-if="cancelable">
         Відмінити
       </Button>
 
       <Button type="submit" variant="primary">
-        Зберегти
+        {{ submitText }}
       </Button>
     </template>
   </Card>
@@ -23,10 +23,18 @@ import { Card, type ICardFooterTransition } from '../card';
 import { Button } from '../button';
 import Form from './Form.vue';
 
-defineProps<{
+withDefaults(defineProps<{
   title?: string;
   hasChanges: boolean;
-}>();
+  submitText?: string;
+  submitPersistent?: boolean;
+  cancelable?: boolean;
+}>(), {
+  title: '',
+  submitText: 'Зберегти',
+  submitPersistent: false,
+  cancelable: true,
+});
 
 const emit = defineEmits<{
   submit: [];

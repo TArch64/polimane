@@ -1,25 +1,17 @@
 <template>
-  <FormCard
-    title="Електронна Пошта"
-    :has-changes="form.hasChanges"
-    @reset="form.reset"
-  >
-    <TextField
-      label
-      required
-      placeholder="Електронна Пошта"
-      v-model="form.data.email"
-    />
-  </FormCard>
+  <FormEmailEdit v-if="isEdit" />
+  <FormEmailVerify v-else />
 </template>
 
 <script setup lang="ts">
-import { FormCard, TextField, useFormData } from '@/components/form';
+import { computed } from 'vue';
 import { useProfileStore } from '../stores';
+import FormEmailEdit from './FormEmailEdit.vue';
+import FormEmailVerify from './FormEmailVerify.vue';
 
 const profileStore = useProfileStore();
 
-const form = useFormData({
-  email: profileStore.user.email,
+const isEdit = computed(() => {
+  return profileStore.isChangeVerifyingEmail || profileStore.user.isEmailVerified;
 });
 </script>

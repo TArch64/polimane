@@ -3,10 +3,9 @@ package users
 import (
 	"github.com/gofiber/fiber/v2"
 
-	"polimane/backend/signal"
-
 	"polimane/backend/api/base"
 	"polimane/backend/services/workos"
+	"polimane/backend/signal"
 )
 
 type Controller struct {
@@ -27,4 +26,7 @@ func (c *Controller) Private(group fiber.Router) {
 	group = group.Group("users/current")
 	group.Get("", c.apiGet)
 	group.Patch("", c.apiUpdate)
+
+	group.Post("email/verify", c.apiEmailVerify)
+	group.Post("email/verify/retry", c.apiEmailVerifyRetry)
 }

@@ -50,7 +50,7 @@ const model = defineModel<V>({ required: true });
     gap: 8px;
 
     &:has(input:disabled) {
-      color: var(--color-text-2);
+        color: var(--color-text-3);
     }
   }
 

@@ -9,6 +9,7 @@
       <TextField
         label
         required
+        variant="control"
         placeholder="Імʼя"
         class="row__column"
         v-model="form.data.firstName"
@@ -17,6 +18,7 @@
       <TextField
         label
         required
+        variant="control"
         placeholder="Прізвище"
         class="row__column"
         v-model="form.data.lastName"

@@ -12,6 +12,10 @@ export class HttpError extends Error {
     return new HttpError(body);
   }
 
+  static isError(error: unknown): error is HttpError {
+    return error instanceof HttpError;
+  }
+
   meta: Record<string, unknown> = {};
 
   constructor(

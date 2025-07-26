@@ -44,7 +44,7 @@ defineSlots<{
 
 const classes = computed(() => [
   props.icon && 'button--icon',
-  props.size && `button--${props.size}`,
+  props.size && props.variant !== 'inline' && `button--${props.size}`,
   props.variant && `button--${props.variant}`,
   props.danger && 'button--danger',
 ]);
@@ -65,6 +65,18 @@ const classes = computed(() => [
 
   .button__prepend-icon {
     margin-right: 4px;
+  }
+
+  .button--icon {
+    aspect-ratio: 1;
+  }
+
+  .button--sm {
+    min-height: 24px;
+
+    &.button--icon {
+      padding: 4px;
+    }
   }
 
   .button--md {
@@ -126,6 +138,18 @@ const classes = computed(() => [
 
     --button-foreground: var(--button-base-color);
     --button-disabled-foreground: color-mix(in srgb, var(--button-base-color), transparent 70%);
+  }
+
+  .button--inline {
+    color: inherit;
+    font-size: inherit;
+    display: inline-flex;
+    text-decoration: underline;
+    --button-disabled-foreground: color-mix(in srgb, currentColor, transparent 70%);
+
+    &:hover:not([disabled]) {
+      text-decoration: none;
+    }
   }
 }
 </style>
