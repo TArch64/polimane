@@ -132,6 +132,11 @@ watch(customErrorModel, (error) => {
 
   .text-field__append {
     flex-shrink: 0;
+
+    &:has(button) {
+      margin-top: -1px;
+      margin-bottom: -1px;
+    }
   }
 }
 </style>
