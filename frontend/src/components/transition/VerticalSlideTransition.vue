@@ -28,6 +28,11 @@ defineSlots<{
     padding: 0 !important;
     margin: v-bind("shift + 'px'") 0 0 !important;
     opacity: 0 !important;
+
+    :deep(.vertical-slice-transition__item) {
+      scale: 0.7;
+      translate: calc(0px - v-bind("shift + 'px'"));
+    }
   }
 
   .vertical-slice-transition--enter-active,
@@ -42,6 +47,11 @@ defineSlots<{
     var(--duration) padding ease-out,
     var(--duration) margin ease-out,
     var(--duration-2) opacity ease-out;
+
+    :deep(.vertical-slice-transition__item) {
+      transition: var(--duration) scale ease-out, var(--duration) translate ease-out;
+      transform-origin: center center;
+    }
   }
 
   .vertical-slice-transition--enter-active {

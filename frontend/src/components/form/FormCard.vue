@@ -5,11 +5,11 @@
     <template #footer v-if="hasChanges || submitPersistent">
       <div class="form-card__spacer" />
 
-      <Button @click="$emit('reset')" v-if="cancelable">
+      <Button class="vertical-slice-transition__item" @click="$emit('reset')" v-if="cancelable">
         Відмінити
       </Button>
 
-      <Button type="submit" variant="primary">
+      <Button class="vertical-slice-transition__item" type="submit" variant="primary">
         {{ submitText }}
       </Button>
     </template>
@@ -50,6 +50,7 @@ const binding = makeBinding(Form, () => ({
 }));
 
 const footerTransition: Partial<ICardFooterTransition> = {
+  duration: 350,
   shift: -8,
 };
 </script>
