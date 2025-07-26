@@ -44,5 +44,7 @@ export const MoveIcon = makeIcon(() => import('~icons/eva/move-outline'));
 export const ExpandIcon = makeIcon(() => import('~icons/eva/expand-outline'));
 export const UnlockIcon = makeIcon(() => import('~icons/eva/unlock-outline'));
 export const RepeatIcon = makeIcon(() => import('~icons/eva/repeat-outline'));
+export const EyeIcon = makeIcon(() => import('~icons/eva/eye-outline'));
+export const EyeOffIcon = makeIcon(() => import('~icons/eva/eye-off-outline'));
 
 export const PersonFillIcon = makeIcon(() => import('~icons/eva/person-fill'));

@@ -16,7 +16,7 @@
         v-model="model"
       >
 
-      <span class="text-field__append" @click.stop v-if="slots.append">
+      <span class="text-field__append" @click.stop.prevent v-if="slots.append">
         <slot name="append" />
       </span>
     </span>
@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type InputHTMLAttributes, ref, type Slot } from 'vue';
+import { computed, type InputHTMLAttributes, ref, type Slot, watch } from 'vue';
 
 const props = withDefaults(defineProps<{
   placeholder: string;
@@ -45,12 +45,15 @@ const model = defineModel<string>({
 
   set: (value) => {
     if (isDirty.value) {
-      inputRef.value.validity.customError
-        ? inputRef.value.setCustomValidity('')
-        : inputRef.value.reportValidity();
+      inputRef.value.reportValidity();
     }
     return value;
   },
+});
+
+const customErrorModel = defineModel<string>('customError', {
+  required: false,
+  default: '',
 });
 
 const slots = defineSlots<{
@@ -67,12 +70,13 @@ function onBlur() {
   inputRef.value.reportValidity();
 }
 
-function setError(message: string) {
-  inputRef.value.setCustomValidity(message);
-  inputRef.value.reportValidity();
-}
+watch(customErrorModel, (error) => {
+  inputRef.value.setCustomValidity(error);
 
-defineExpose({ setError });
+  if (error && isDirty.value) {
+    inputRef.value.reportValidity();
+  }
+});
 </script>
 
 <style scoped>
