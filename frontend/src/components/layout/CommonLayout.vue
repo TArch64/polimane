@@ -65,6 +65,7 @@ usePageClass('app--common-layout');
   .common-layout__main--aside-menu {
     flex-grow: 1;
     padding: 20px;
+    min-width: 0;
   }
 }
 </style>

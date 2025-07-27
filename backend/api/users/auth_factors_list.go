@@ -7,6 +7,11 @@ import (
 	"polimane/backend/api/auth"
 )
 
+type authFactorListItem struct {
+	Id        string `json:"id"`
+	CreatedAt string `json:"createdAt"`
+}
+
 func (c *Controller) apiListAuthFactors(ctx *fiber.Ctx) error {
 	user := auth.GetSessionUser(ctx)
 
@@ -18,5 +23,13 @@ func (c *Controller) apiListAuthFactors(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.JSON(factors.Data)
+	response := make([]authFactorListItem, len(factors.Data))
+	for i, factor := range factors.Data {
+		response[i] = authFactorListItem{
+			Id:        factor.ID,
+			CreatedAt: factor.CreatedAt,
+		}
+	}
+
+	return ctx.JSON(response)
 }

@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type FunctionalComponent, h, onMounted, ref } from 'vue';
+import { computed, type FunctionalComponent, h, nextTick, onMounted, ref } from 'vue';
 import { onBackdropClick } from '@/composables';
 import { Button, type ButtonVariant } from '../button';
 import type { Confirm } from './Confirm';
@@ -58,7 +58,20 @@ const backgroundColor = computed(() => {
   return props.model.control ? 'var(--color-background-2)' : 'var(--color-background-1)';
 });
 
-onMounted(() => dialogRef.value.showPopover());
+const offsetX = ref(0);
+
+function getOffsetX(): number {
+  const menuRect = dialogRef.value.getBoundingClientRect();
+  const offset = window.innerWidth - menuRect.right - 8;
+  return offset > 0 ? 0 : offset;
+}
+
+onMounted(async () => {
+  dialogRef.value.showPopover();
+  offsetX.value = getOffsetX();
+  await nextTick();
+});
+
 onBackdropClick(dialogRef, decline);
 </script>
 
@@ -67,6 +80,7 @@ onBackdropClick(dialogRef, decline);
   .confirm {
     position-anchor: v-bind("model.anchorVar");
     position-area: bottom center;
+    translate: v-bind("offsetX + 'px'");
     margin-top: 4px;
     width: 300px;
     padding: 12px;

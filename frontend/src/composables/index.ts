@@ -5,3 +5,4 @@ export * from './useDomRef';
 export * from './onBackdropClick';
 export * from './useRouteTransition';
 export * from './usePageClass';
+export * from './useDateFormatter';
