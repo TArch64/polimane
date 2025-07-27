@@ -31,4 +31,6 @@ func (c *Controller) Private(group fiber.Router) {
 	group.Post("email/verify/retry", c.apiEmailVerifyRetry)
 
 	group.Post("password/reset", c.apiPasswordReset)
+
+	group.Get("auth-factors", c.apiListAuthFactors)
 }
