@@ -29,4 +29,6 @@ func (c *Controller) Private(group fiber.Router) {
 
 	group.Post("email/verify", c.apiEmailVerify)
 	group.Post("email/verify/retry", c.apiEmailVerifyRetry)
+
+	group.Post("password/reset", c.apiPasswordReset)
 }

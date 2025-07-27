@@ -1,5 +1,7 @@
 <template>
-  <p>
-    security
-  </p>
+  <ResetPasswordCard />
 </template>
+
+<script setup lang="ts">
+import { ResetPasswordCard } from './components';
+</script>

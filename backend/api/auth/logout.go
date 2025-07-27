@@ -6,8 +6,10 @@ import (
 )
 
 func (c *Controller) apiLogout(ctx *fiber.Ctx) error {
+	session := GetSession(ctx)
+
 	url, err := c.workosClient.UserManagement.GetLogoutURL(usermanagement.GetLogoutURLOpts{
-		SessionID: GetSessionID(ctx),
+		SessionID: session.ID,
 		ReturnTo:  c.env.AppURL().JoinPath("auth").String(),
 	})
 
@@ -15,7 +17,7 @@ func (c *Controller) apiLogout(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	c.signals.InvalidateAuthCache.Emit(ctx.Context(), GetSessionID(ctx))
+	c.signals.InvalidateAuthCache.Emit(ctx.Context(), session.ID)
 
 	return ctx.JSON(fiber.Map{
 		"url": url.String(),

@@ -1,8 +1,8 @@
 <template>
-  <FormGeneral />
-  <FormEmail />
+  <GeneralForm />
+  <EmailCard />
 </template>
 
 <script setup lang="ts">
-import { FormEmail, FormGeneral } from './components';
+import { EmailCard, GeneralForm } from './components';
 </script>

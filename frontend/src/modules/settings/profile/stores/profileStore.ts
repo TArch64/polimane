@@ -18,7 +18,7 @@ export const useProfileStore = defineStore('settings/profile', () => {
   const activateChangeVerifyingEmail = () => isChangeVerifyingEmail.value = true;
 
   async function update(data: ProfileUpdate) {
-    await http.patch<HttpBody, ProfileUpdate>(['/users/current'], data);
+    await http.patch<HttpBody, ProfileUpdate>('/users/current', data);
 
     sessionStore.updateUser({
       ...data,
@@ -29,11 +29,11 @@ export const useProfileStore = defineStore('settings/profile', () => {
   }
 
   async function retryEmailVerification() {
-    await http.post(['/users/current/email/verify/retry'], {});
+    await http.post('/users/current/email/verify/retry', {});
   }
 
   async function verifyEmail(code: string) {
-    await http.post<HttpBody, IVerifyEmailBody>(['/users/current/email/verify'], {
+    await http.post<HttpBody, IVerifyEmailBody>('/users/current/email/verify', {
       code,
     });
 

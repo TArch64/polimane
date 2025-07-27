@@ -8,9 +8,9 @@ import (
 )
 
 type UserSession struct {
+	ID         string
 	User       *model.User
 	WorkosUser *usermanagement.User
-	SessionID  string
 }
 
 var sessionKey UserSession
@@ -27,6 +27,10 @@ func GetSessionUser(ctx *fiber.Ctx) *model.User {
 	return GetSession(ctx).User
 }
 
+func GetSessionWorkosUser(ctx *fiber.Ctx) *usermanagement.User {
+	return GetSession(ctx).WorkosUser
+}
+
 func GetSessionID(ctx *fiber.Ctx) string {
-	return GetSession(ctx).SessionID
+	return GetSession(ctx).ID
 }

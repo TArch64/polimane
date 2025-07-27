@@ -16,7 +16,7 @@
         v-model="model"
       >
 
-      <span class="text-field__append" @click.stop v-if="slots.append">
+      <span class="text-field__append" @click.stop.prevent v-if="slots.append">
         <slot name="append" />
       </span>
     </span>
@@ -128,11 +128,6 @@ defineExpose({ setError });
 
   .text-field__append {
     flex-shrink: 0;
-
-    &:has(button) {
-      margin-top: -1px;
-      margin-bottom: -1px;
-    }
   }
 }
 </style>

@@ -1,13 +1,13 @@
 <template>
-  <FormEmailEdit v-if="isEdit" />
-  <FormEmailVerify v-else />
+  <EmailEditForm v-if="isEdit" />
+  <EmailVerifyForm v-else />
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useProfileStore } from '../stores';
-import FormEmailEdit from './FormEmailEdit.vue';
-import FormEmailVerify from './FormEmailVerify.vue';
+import EmailEditForm from './EmailEditForm.vue';
+import EmailVerifyForm from './EmailVerifyForm.vue';
 
 const profileStore = useProfileStore();
 

@@ -67,10 +67,6 @@ const classes = computed(() => [
     margin-right: 4px;
   }
 
-  .button--icon {
-    aspect-ratio: 1;
-  }
-
   .button--sm {
     min-height: 24px;
 

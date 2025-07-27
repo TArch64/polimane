@@ -29,7 +29,7 @@ export const useSessionStore = defineStore('session', () => {
   }
 
   async function logout(): Promise<void> {
-    const { url } = await httpClient.get<ILogoutResponse>(['/auth/logout']);
+    const { url } = await httpClient.get<ILogoutResponse>('/auth/logout');
     accessToken.value = undefined;
     refreshAccessToken.value = undefined;
     window.open(url);

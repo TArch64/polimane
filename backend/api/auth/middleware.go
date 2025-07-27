@@ -105,7 +105,7 @@ func (m *Middleware) Handler(ctx *fiber.Ctx) error {
 	setSession(ctx, &UserSession{
 		User:       user,
 		WorkosUser: workosUser,
-		SessionID:  accessTokenClaims.SessionID,
+		ID:         accessTokenClaims.SessionID,
 	})
 
 	return ctx.Next()
