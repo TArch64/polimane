@@ -1,10 +1,11 @@
 <template>
   <ResetPasswordCard />
+  <AuthFactorsCard />
 </template>
 
 <script setup lang="ts">
 import { definePreload } from '@/router/define';
-import { ResetPasswordCard } from './components';
+import { AuthFactorsCard, ResetPasswordCard } from './components';
 import { useAuthFactorsStore } from './stores';
 
 defineOptions({

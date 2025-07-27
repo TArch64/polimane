@@ -46,7 +46,7 @@ import { RepeatIcon } from '@/components/icon';
 import { HttpError, HttpErrorReason, useAsyncAction, useRouteTransition } from '@/composables';
 import { Button } from '@/components/button';
 import { wait } from '@/helpers';
-import { useProfileStore } from '../stores';
+import { useProfileStore } from '../../stores';
 
 const routeTransition = useRouteTransition();
 const profileStore = useProfileStore();

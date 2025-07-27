@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useProfileStore } from '../stores';
+import { useProfileStore } from '../../stores';
 import EmailEditForm from './EmailEditForm.vue';
 import EmailVerifyForm from './EmailVerifyForm.vue';
 

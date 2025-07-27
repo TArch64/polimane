@@ -93,6 +93,7 @@ const classes = computed(() => [
 
   .card__title {
     font-size: var(--font-md);
+    font-weight: 500;
     padding: 4px 0;
     margin-bottom: 4px;
   }

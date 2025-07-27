@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { FormCard, TextField, useFormData } from '@/components/form';
 import { useAsyncAction } from '@/composables';
-import { useProfileStore } from '../stores';
+import { useProfileStore } from '../../stores';
 
 const profileStore = useProfileStore();
 

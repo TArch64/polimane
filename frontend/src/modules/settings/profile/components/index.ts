@@ -1,2 +1,2 @@
 export { default as GeneralForm } from './GeneralForm.vue';
-export { default as EmailCard } from './EmailCard.vue';
+export * from './email';
