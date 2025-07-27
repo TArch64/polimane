@@ -3,7 +3,6 @@ package workos
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/lestrrat-go/jwx/v3/jwt"
@@ -19,8 +18,12 @@ type AccessTokenClaims struct {
 }
 
 func (c *Client) AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*AccessTokenClaims, error) {
-	jwksURL := fmt.Sprintf("https://api.workos.com/sso/jwks/%s", c.env.WorkOS.ClientID)
-	keySet, err := c.jwk.Fetch(ctx, jwksURL)
+	jwksURL, err := c.UserManagement.GetJWKSURL(c.env.WorkOS.ClientID)
+	if err != nil {
+		return nil, err
+	}
+
+	keySet, err := c.jwk.Fetch(ctx, jwksURL.String())
 	if err != nil {
 		return nil, err
 	}
