@@ -15,7 +15,6 @@
       ref="codeFieldRef"
       placeholder="Код Верифікації"
       v-model="form.data.code"
-      v-model:custom-error="codeFieldError"
     >
       <template #append>
         <Button icon size="sm" :disabled="retryVerification.isActive" @click="retryVerification">
@@ -40,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, toRef, watch } from 'vue';
+import { nextTick, ref } from 'vue';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import { FormCard, TextField, useFormData } from '@/components/form';
 import { RepeatIcon } from '@/components/icon';
@@ -53,7 +52,6 @@ const routeTransition = useRouteTransition();
 const profileStore = useProfileStore();
 
 const codeFieldRef = ref<ComponentExposed<typeof TextField>>(null!);
-const codeFieldError = ref('');
 
 const form = useFormData({
   code: '',
@@ -77,14 +75,8 @@ const verify = useAsyncAction(async () => {
     form.reset();
   } catch (error) {
     if (HttpError.isError(error) && error.reason === HttpErrorReason.CODE_EXPIRED) {
-      codeFieldError.value = 'Час життя коду верифікації закінчився';
+      codeFieldRef.value.setError('Час життя коду верифікації закінчився');
     }
-  }
-});
-
-watch(toRef(form.data.code), () => {
-  if (codeFieldError.value) {
-    codeFieldError.value = '';
   }
 });
 </script>

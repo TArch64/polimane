@@ -1,7 +1,5 @@
 <template>
-  <FormPassword />
+  <p>
+    security
+  </p>
 </template>
-
-<script lang="ts" setup>
-import { FormPassword } from './components';
-</script>
