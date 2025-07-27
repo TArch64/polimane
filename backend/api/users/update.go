@@ -18,7 +18,7 @@ type updateBody struct {
 
 func (c *Controller) apiUpdate(ctx *fiber.Ctx) (err error) {
 	var body updateBody
-	if err = ctx.BodyParser(&body); err != nil {
+	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 

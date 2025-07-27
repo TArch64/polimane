@@ -1,6 +1,10 @@
 <template>
   <div class="auth-factors-empty">
-    <Button variant="primary" @click="addModal.open()">
+    <Button
+      variant="primary"
+      :disabled="createAuthFactor.isActive"
+      @click="createAuthFactor"
+    >
       Увімкнути
     </Button>
   </div>
@@ -8,10 +12,9 @@
 
 <script setup lang="ts">
 import { Button } from '@/components/button';
-import { useModal } from '@/components/modal';
-import AuthFactorAddModal from './AuthFactorAddModal.vue';
+import { useCreateAuthFactor } from '../../composables';
 
-const addModal = useModal(AuthFactorAddModal);
+const createAuthFactor = useCreateAuthFactor();
 </script>
 
 <style scoped>

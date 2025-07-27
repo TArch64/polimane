@@ -1,7 +1,7 @@
 import { type AsyncComponentLoader, defineAsyncComponent, type FunctionalComponent, h } from 'vue';
 
 export interface IIconProps {
-  size?: number | string;
+  size?: number | string | 'inline';
 }
 
 export type IconComponent = FunctionalComponent<IIconProps>;
@@ -9,18 +9,28 @@ export type IconComponent = FunctionalComponent<IIconProps>;
 const makeIcon = (loader: AsyncComponentLoader): IconComponent => {
   const asyncComponent = defineAsyncComponent(loader);
 
-  return (props) => h('span', {
-    style: {
-      display: 'flex',
-      width: `${props.size ?? 20}px`,
-      height: `${props.size ?? 20}px`,
-    },
-  }, [
-    h(asyncComponent, {
-      width: '100%',
-      height: '100%',
-    }),
-  ]);
+  function makeSize(size?: number | string) {
+    if (!size) return '20px';
+    if (size === 'inline') return '1em';
+    return `${size}px`;
+  }
+
+  return (props) => {
+    const size = makeSize(props.size);
+
+    return h('span', {
+      style: {
+        display: props.size === 'inline' ? 'inline-flex' : 'flex',
+        width: size,
+        height: size,
+      },
+    }, [
+      h(asyncComponent, {
+        width: '100%',
+        height: '100%',
+      }),
+    ]);
+  };
 };
 
 export const SettingsIcon = makeIcon(() => import('~icons/eva/settings-outline'));
@@ -39,6 +49,7 @@ export const CornerUpRightIcon = makeIcon(() => import('~icons/eva/corner-up-rig
 export const LogOutIcon = makeIcon(() => import('~icons/eva/log-out-outline'));
 export const SaveIcon = makeIcon(() => import('~icons/eva/save-outline'));
 export const CheckmarkCircleIcon = makeIcon(() => import('~icons/eva/checkmark-circle-outline'));
+export const CheckmarkIcon = makeIcon(() => import('~icons/eva/checkmark-outline'));
 export const LoaderIcon = makeIcon(() => import('~icons/eva/loader-outline'));
 export const MoveIcon = makeIcon(() => import('~icons/eva/move-outline'));
 export const ExpandIcon = makeIcon(() => import('~icons/eva/expand-outline'));

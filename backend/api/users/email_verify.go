@@ -3,14 +3,13 @@ package users
 import (
 	"errors"
 
-	"polimane/backend/services/workos"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
 	"github.com/workos/workos-go/v4/pkg/workos_errors"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/services/workos"
 )
 
 var (
@@ -23,7 +22,7 @@ type bodyEmailVerify struct {
 
 func (c *Controller) apiEmailVerify(ctx *fiber.Ctx) (err error) {
 	var body bodyEmailVerify
-	if err = ctx.BodyParser(&body); err != nil {
+	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
