@@ -42,5 +42,5 @@ func (c *Controller) Public(group fiber.Router) {
 
 func (c *Controller) Private(group fiber.Router) {
 	group = group.Group(groupPrefix)
-	group.Get("logout", c.apiLogout)
+	group.Post("logout", c.apiLogout)
 }

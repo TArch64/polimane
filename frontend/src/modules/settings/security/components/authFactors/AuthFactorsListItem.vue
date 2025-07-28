@@ -16,11 +16,15 @@
 <script setup lang="ts">
 import { computed, nextTick } from 'vue';
 import { CardListItem } from '@/components/card';
-import { useAsyncAction, useDateFormatter, useRouteTransition } from '@/composables';
+import {
+  useAsyncAction,
+  useDateFormatter,
+  useProgressBar,
+  useRouteTransition,
+} from '@/composables';
 import { Button } from '@/components/button';
 import { TrashIcon } from '@/components/icon';
 import { useConfirm } from '@/components/confirm';
-import { useProgressBar } from '@/composables/useProgressBar';
 import type { IAuthFactor } from '../../models';
 import { useAuthFactorsStore } from '../../stores';
 

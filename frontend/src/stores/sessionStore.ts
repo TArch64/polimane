@@ -3,10 +3,6 @@ import { computed, type Ref, ref } from 'vue';
 import type { IUser } from '@/models';
 import { useAccessToken, useHttpClient, useRefreshAccessToken } from '@/composables';
 
-interface ILogoutResponse {
-  url: string;
-}
-
 export const useSessionStore = defineStore('session', () => {
   const httpClient = useHttpClient();
   const user = ref<IUser | null>(null);
@@ -29,10 +25,9 @@ export const useSessionStore = defineStore('session', () => {
   }
 
   async function logout(): Promise<void> {
-    const { url } = await httpClient.get<ILogoutResponse>('/auth/logout');
+    await httpClient.post('/auth/logout', {});
     accessToken.value = undefined;
     refreshAccessToken.value = undefined;
-    window.open(url);
     window.location.reload();
   }
 

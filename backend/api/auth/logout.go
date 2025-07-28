@@ -3,14 +3,15 @@ package auth
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
+
+	"polimane/backend/api/base"
 )
 
 func (c *Controller) apiLogout(ctx *fiber.Ctx) error {
 	session := GetSession(ctx)
 
-	url, err := c.workosClient.UserManagement.GetLogoutURL(usermanagement.GetLogoutURLOpts{
+	err := c.workosClient.UserManagement.RevokeSession(ctx.Context(), usermanagement.RevokeSessionOpts{
 		SessionID: session.ID,
-		ReturnTo:  c.env.AppURL().JoinPath("auth").String(),
 	})
 
 	if err != nil {
@@ -19,7 +20,5 @@ func (c *Controller) apiLogout(ctx *fiber.Ctx) error {
 
 	c.signals.InvalidateAuthCache.Emit(ctx.Context(), session.ID)
 
-	return ctx.JSON(fiber.Map{
-		"url": url.String(),
-	})
+	return base.NewSuccessResponse(ctx)
 }

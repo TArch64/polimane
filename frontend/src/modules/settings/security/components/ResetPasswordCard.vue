@@ -15,8 +15,7 @@
 import { useRouter } from 'vue-router';
 import { Card } from '@/components/card';
 import { Button } from '@/components/button';
-import { useAsyncAction } from '@/composables';
-import { useProgressBar } from '@/composables/useProgressBar';
+import { useAsyncAction, useProgressBar } from '@/composables';
 import { useSecurityStore } from '../stores';
 
 const router = useRouter();

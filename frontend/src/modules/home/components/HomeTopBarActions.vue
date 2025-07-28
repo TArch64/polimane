@@ -35,6 +35,7 @@ import { useModal } from '@/components/modal';
 import { LogOutIcon, PersonFillIcon, PlusIcon, SettingsIcon } from '@/components/icon';
 import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { useSessionStore } from '@/stores';
+import { useAsyncAction, useProgressBar } from '@/composables';
 import { useSchemasStore } from '../stores';
 import { HomeCreateSchemaModal } from './schemas';
 
@@ -43,6 +44,9 @@ const sessionStore = useSessionStore();
 
 const settingsProfileRoute: RouteLocationRaw = { name: 'settings-profile' };
 const createSchemaModal = useModal(HomeCreateSchemaModal);
+
+const logout = useAsyncAction(sessionStore.logout);
+useProgressBar(logout);
 </script>
 
 <style scoped>

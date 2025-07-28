@@ -50,8 +50,7 @@ import { nextTick, reactive } from 'vue';
 import { Modal, ModalWidth, useActiveModal } from '@/components/modal';
 import { CopyBadge } from '@/components/badge';
 import { TextField } from '@/components/form';
-import { useAsyncAction } from '@/composables';
-import { useProgressBar } from '@/composables/useProgressBar';
+import { useAsyncAction, useProgressBar } from '@/composables';
 import type { IAuthFactorInit } from '../../models';
 import { useAuthFactorsStore } from '../../stores';
 

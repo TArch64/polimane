@@ -64,13 +64,12 @@ import {
   SaveIcon,
   TrashIcon,
 } from '@/components/icon';
-import { useAsyncAction } from '@/composables';
+import { useAsyncAction, useProgressBar } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
-import { useProgressBar } from '@/composables/useProgressBar';
 import { useEditorStore } from '../stores';
 import { SchemaRenameModal } from './modals';
 
