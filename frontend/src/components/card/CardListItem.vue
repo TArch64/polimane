@@ -32,7 +32,7 @@ const slots = defineSlots<{
     align-items: center;
     min-width: 0;
 
-    &:not(:last-child) {
+    &:not(:last-of-type) {
       border-bottom: var(--divider)
     }
   }
