@@ -8,7 +8,7 @@ export function useCreateAuthFactor() {
   const authFactorsStore = useAuthFactorsStore();
 
   return useAsyncAction(async () => {
-    const init = await authFactorsStore.initNew();
+    const init = await authFactorsStore.initNewFactor();
     await addModal.open({ init });
   });
 }

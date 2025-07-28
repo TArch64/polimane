@@ -14,17 +14,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, nextTick } from 'vue';
 import { CardListItem } from '@/components/card';
-import { useAsyncAction, useDateFormatter } from '@/composables';
+import { useAsyncAction, useDateFormatter, useRouteTransition } from '@/composables';
 import { Button } from '@/components/button';
 import { TrashIcon } from '@/components/icon';
 import { useConfirm } from '@/components/confirm';
 import type { IAuthFactor } from '../../models';
+import { useAuthFactorsStore } from '../../stores';
 
 const props = defineProps<{
   factor: IAuthFactor;
 }>();
+
+const authFactorsStore = useAuthFactorsStore();
+const routeTransition = useRouteTransition();
 
 const createdAt = useDateFormatter(() => props.factor.createdAt);
 const title = computed(() => `TOTP доданий ${createdAt.value}`);
@@ -40,5 +44,8 @@ const deleteFactor = useAsyncAction(async () => {
   if (!await deleteConfirm.ask()) {
     return;
   }
+
+  await authFactorsStore.deleteFactor(props.factor);
+  routeTransition.start(() => nextTick());
 });
 </script>

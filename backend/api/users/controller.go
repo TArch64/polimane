@@ -8,6 +8,8 @@ import (
 	"polimane/backend/signal"
 )
 
+const factorIdParam = "factorId"
+
 type Controller struct {
 	workosClient *workos.Client
 	signals      *signal.Container
@@ -23,16 +25,22 @@ func Provider(workosClient *workos.Client, signals *signal.Container) base.Contr
 func (c *Controller) Public(_ fiber.Router) {}
 
 func (c *Controller) Private(group fiber.Router) {
-	group = group.Group("users/current")
-	group.Get("", c.apiGet)
-	group.Patch("", c.apiUpdate)
+	base.WithGroup(group, "users/current", func(group fiber.Router) {
+		group.Get("", c.apiGet)
+		group.Patch("", c.apiUpdate)
 
-	group.Post("email/verify", c.apiEmailVerify)
-	group.Post("email/verify/retry", c.apiEmailVerifyRetry)
+		base.WithGroup(group, "email/verify", func(group fiber.Router) {
+			group.Post("", c.apiEmailVerify)
+			group.Post("retry", c.apiEmailVerifyRetry)
+		})
 
-	group.Post("password/reset", c.apiPasswordReset)
+		group.Post("password/reset", c.apiPasswordReset)
 
-	group.Get("auth-factors", c.apiListAuthFactors)
-	group.Post("auth-factors", c.apiAuthFactorCreate)
-	group.Post("auth-factors/init", c.apiAuthFactorsInit)
+		base.WithGroup(group, "auth-factors", func(group fiber.Router) {
+			group.Get("", c.apiListAuthFactors)
+			group.Post("", c.apiAuthFactorCreate)
+			group.Post("init", c.apiAuthFactorsInit)
+			group.Delete(":"+factorIdParam, c.apiAuthFactorDelete)
+		})
+	})
 }

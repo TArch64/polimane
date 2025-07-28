@@ -42,7 +42,7 @@ func collectUpdates(body *updateBody) *model.Schema {
 }
 
 func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
-	schemaId, err := base.GetParamID(ctx, "schemaId")
+	schemaId, err := base.GetParamID(ctx, schemaIdParam)
 	if err != nil {
 		return err
 	}

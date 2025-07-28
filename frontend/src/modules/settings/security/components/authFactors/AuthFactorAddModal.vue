@@ -65,10 +65,10 @@ const form = reactive({
 });
 
 const create = useAsyncAction(async () => {
-  const factor = await authFactorsStore.create(props.init.challengeId, form.code);
+  const factor = await authFactorsStore.createFactor(props.init.challengeId, form.code);
 
   modal.close(null, () => {
-    authFactorsStore.add(factor);
+    authFactorsStore.addFactor(factor);
     return nextTick();
   });
 });

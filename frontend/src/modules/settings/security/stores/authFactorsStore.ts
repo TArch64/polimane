@@ -16,20 +16,25 @@ export const useAuthFactorsStore = defineStore('settings/auth-factors', () => {
     list.value = await http.get<IAuthFactor[]>('/users/current/auth-factors');
   }
 
-  async function initNew(): Promise<IAuthFactorInit> {
+  async function initNewFactor(): Promise<IAuthFactorInit> {
     return http.post('/users/current/auth-factors/init', {});
   }
 
-  function create(challengeId: string, code: string): Promise<IAuthFactor> {
+  function createFactor(challengeId: string, code: string): Promise<IAuthFactor> {
     return http.post<IAuthFactor, ICreateAuthFactorBody>('/users/current/auth-factors', {
       challengeId,
       code,
     });
   }
 
-  function add(factor: IAuthFactor): void {
+  function addFactor(factor: IAuthFactor): void {
     list.value.push(factor);
   }
 
-  return { list, load, initNew, create, add };
+  async function deleteFactor(deletingFactor: IAuthFactor): Promise<void> {
+    await http.delete(['/users/current/auth-factors', deletingFactor.id]);
+    list.value = list.value.filter((factor) => factor.id !== deletingFactor.id);
+  }
+
+  return { list, load, initNewFactor, createFactor, addFactor, deleteFactor };
 });
