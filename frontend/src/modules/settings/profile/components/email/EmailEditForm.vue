@@ -2,6 +2,7 @@
   <FormCard
     title="Електронна Пошта"
     :has-changes="form.hasChanges"
+    :loading="save.isActive"
     @reset="form.reset"
     @submit="save"
   >
@@ -22,9 +23,9 @@ import { useProfileStore } from '../../stores';
 
 const profileStore = useProfileStore();
 
-const form = useFormData({
+const form = useFormData(() => ({
   email: profileStore.user.email,
-});
+}));
 
 const save = useAsyncAction(async () => {
   await profileStore.update(form.data);

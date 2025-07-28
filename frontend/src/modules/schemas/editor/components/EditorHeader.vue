@@ -70,6 +70,7 @@ import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
+import { useProgressBar } from '@/composables/useProgressBar';
 import { useEditorStore } from '../stores';
 import { SchemaRenameModal } from './modals';
 
@@ -105,6 +106,8 @@ const deleteSchema = useAsyncAction(async () => {
     await router.push({ name: 'home' });
   }
 });
+
+useProgressBar(deleteSchema);
 </script>
 
 <style scoped>

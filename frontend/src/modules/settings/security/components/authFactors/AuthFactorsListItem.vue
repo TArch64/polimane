@@ -5,7 +5,7 @@
         icon
         danger
         :style="deleteConfirm.anchorStyle"
-        @click="deleteFactor"
+        @click="deleteIntent"
       >
         <TrashIcon />
       </Button>
@@ -20,6 +20,7 @@ import { useAsyncAction, useDateFormatter, useRouteTransition } from '@/composab
 import { Button } from '@/components/button';
 import { TrashIcon } from '@/components/icon';
 import { useConfirm } from '@/components/confirm';
+import { useProgressBar } from '@/composables/useProgressBar';
 import type { IAuthFactor } from '../../models';
 import { useAuthFactorsStore } from '../../stores';
 
@@ -41,11 +42,15 @@ const deleteConfirm = useConfirm({
 });
 
 const deleteFactor = useAsyncAction(async () => {
-  if (!await deleteConfirm.ask()) {
-    return;
-  }
-
   await authFactorsStore.deleteFactor(props.factor);
   routeTransition.start(() => nextTick());
 });
+
+useProgressBar(deleteFactor);
+
+async function deleteIntent() {
+  if (await deleteConfirm.ask()) {
+    await deleteFactor();
+  }
+}
 </script>

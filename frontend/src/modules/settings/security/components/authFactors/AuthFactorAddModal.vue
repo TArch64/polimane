@@ -1,8 +1,9 @@
 <template>
   <Modal
-    :width="ModalWidth.LG"
     title="Двохфакторна автентифікація"
     save-button="Увімкнути"
+    :width="ModalWidth.LG"
+    :loading="create.isActive"
     @save="create"
   >
     <p class="new-auth-factor__start">
@@ -50,6 +51,7 @@ import { Modal, ModalWidth, useActiveModal } from '@/components/modal';
 import { CopyBadge } from '@/components/badge';
 import { TextField } from '@/components/form';
 import { useAsyncAction } from '@/composables';
+import { useProgressBar } from '@/composables/useProgressBar';
 import type { IAuthFactorInit } from '../../models';
 import { useAuthFactorsStore } from '../../stores';
 
@@ -72,6 +74,8 @@ const create = useAsyncAction(async () => {
     return nextTick();
   });
 });
+
+useProgressBar(create);
 </script>
 
 <style scoped>

@@ -2,7 +2,7 @@
   <div class="auth-factors-empty">
     <Button
       variant="primary"
-      :disabled="createAuthFactor.isActive"
+      :loading="createAuthFactor.isActive"
       @click="createAuthFactor"
     >
       Увімкнути

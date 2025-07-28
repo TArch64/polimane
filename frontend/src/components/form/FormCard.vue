@@ -5,11 +5,21 @@
     <template #footer v-if="hasChanges || submitPersistent">
       <div class="form-card__spacer" />
 
-      <Button class="vertical-slice-transition__item" @click="$emit('reset')" v-if="cancelable">
+      <Button
+        class="vertical-slice-transition__item"
+        :disabled="loading"
+        @click="$emit('reset')"
+        v-if="cancelable"
+      >
         Відмінити
       </Button>
 
-      <Button class="vertical-slice-transition__item" type="submit" variant="primary">
+      <Button
+        :loading
+        type="submit"
+        variant="primary"
+        class="vertical-slice-transition__item"
+      >
         {{ submitText }}
       </Button>
     </template>
@@ -29,6 +39,7 @@ withDefaults(defineProps<{
   submitText?: string;
   submitPersistent?: boolean;
   cancelable?: boolean;
+  loading?: boolean;
 }>(), {
   title: '',
   submitText: 'Зберегти',

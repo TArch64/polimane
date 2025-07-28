@@ -5,6 +5,7 @@
     title="Електронна Пошта"
     submit-text="Підтвердити"
     :has-changes="form.hasChanges"
+    :loading="verify.isActive"
     @reset="form.reset"
     @submit="verify"
   >

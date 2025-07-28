@@ -11,7 +11,11 @@
       v-if="prependIcon"
     />
 
-    <slot />
+    <span>
+      <slot />
+    </span>
+
+    <ButtonLoading v-if="loading" />
   </ButtonRoot>
 </template>
 
@@ -22,6 +26,7 @@ import type { IconComponent } from '../icon';
 import ButtonRoot from './ButtonRoot.vue';
 import type { ButtonSize } from './ButtonSize';
 import type { ButtonVariant } from './ButtonVariant';
+import ButtonLoading from './ButtonLoading.vue';
 
 const props = withDefaults(defineProps<{
   to?: RouteLocationRaw;
@@ -31,6 +36,7 @@ const props = withDefaults(defineProps<{
   prependIcon?: IconComponent;
   danger?: boolean;
   disabled?: boolean;
+  loading?: boolean;
 }>(), {
   icon: false,
   danger: false,
@@ -47,6 +53,7 @@ const classes = computed(() => [
   props.size && props.variant !== 'inline' && `button--${props.size}`,
   props.variant && `button--${props.variant}`,
   props.danger && 'button--danger',
+  props.loading && 'button--loading',
 ]);
 </script>
 
@@ -61,6 +68,7 @@ const classes = computed(() => [
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    position: relative;
   }
 
   .button__prepend-icon {
@@ -107,12 +115,11 @@ const classes = computed(() => [
     transition: background-color 0.15s ease-out;
     will-change: background-color;
 
-    &:hover:not([disabled]),
-    &.router-link-exact-active:not([disabled]) {
+    &:where(:hover, .router-link-exact-active):not([disabled], .button--loading) {
       background-color: var(--button-hover-background);
     }
 
-    &[disabled] {
+    &:where([disabled], .button--loading) {
       background-color: var(--button-disabled-background);
       color: var(--button-disabled-foreground);
       cursor: default;
@@ -146,6 +153,10 @@ const classes = computed(() => [
     &:hover:not([disabled]) {
       text-decoration: none;
     }
+  }
+
+  .button--loading > *:not(.button-loading__dot) {
+    visibility: hidden;
   }
 }
 </style>

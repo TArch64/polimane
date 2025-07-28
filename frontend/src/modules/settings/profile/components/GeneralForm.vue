@@ -2,6 +2,7 @@
   <FormCard
     title="Загальна інформація"
     :has-changes="form.hasChanges"
+    :loading="save.isActive"
     @reset="form.reset"
     @submit="save"
   >
@@ -34,7 +35,10 @@ import { useProfileStore } from '../stores';
 
 const profileStore = useProfileStore();
 
-const form = useFormData(() => profileStore.user);
+const form = useFormData(() => ({
+  firstName: profileStore.user.firstName,
+  lastName: profileStore.user.lastName,
+}));
 
 const save = useAsyncAction(async () => {
   await profileStore.update(form.data);

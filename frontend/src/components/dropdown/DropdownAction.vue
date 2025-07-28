@@ -1,18 +1,22 @@
 <template>
-  <Button :to :danger :disabled class="dropdown-action">
-    <Component class="dropdown-action__icon" :is="icon" />
-
+  <Button
+    :to
+    :danger
+    :disabled
+    :prepend-icon="icon"
+    class="dropdown-action"
+  >
     {{ title }}
   </Button>
 </template>
 
 <script setup lang="ts">
-import type { Component } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
 import { Button } from '@/components/button';
+import type { IconComponent } from '@/components/icon';
 
 withDefaults(defineProps<{
-  icon: Component;
+  icon: IconComponent;
   title: string;
   danger?: boolean;
   disabled?: boolean;
@@ -29,11 +33,6 @@ withDefaults(defineProps<{
     display: flex;
     align-items: center;
     justify-content: flex-start;
-  }
-
-  .dropdown-action__icon {
-    flex-shrink: 0;
-    margin-right: 8px;
   }
 }
 </style>

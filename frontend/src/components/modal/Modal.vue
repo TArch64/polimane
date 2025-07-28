@@ -17,7 +17,7 @@
         </main>
 
         <footer class="modal__footer">
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" :loading>
             {{ saveButton }}
           </Button>
         </footer>
@@ -40,6 +40,7 @@ withDefaults(defineProps<{
   title: string;
   width?: number;
   saveButton?: string;
+  loading?: boolean;
 }>(), {
   width: ModalWidth.MD,
   saveButton: 'Зберегти',

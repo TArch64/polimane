@@ -2,6 +2,7 @@
   <Modal
     title="Створення Схеми"
     save-button="Створити"
+    :loading="create.isActive"
     @save="create"
   >
     <TextField
