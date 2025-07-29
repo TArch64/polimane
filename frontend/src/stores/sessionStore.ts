@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, type Ref, ref } from 'vue';
+import { computed, nextTick, type Ref, ref } from 'vue';
 import type { IUser } from '@/models';
 import { useAccessToken, useHttpClient, useRefreshAccessToken } from '@/composables';
 
@@ -28,6 +28,7 @@ export const useSessionStore = defineStore('session', () => {
     await httpClient.post('/auth/logout', {});
     accessToken.value = undefined;
     refreshAccessToken.value = undefined;
+    await nextTick();
     window.location.reload();
   }
 
