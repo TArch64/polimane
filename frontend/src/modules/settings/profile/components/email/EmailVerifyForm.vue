@@ -87,7 +87,7 @@ const verify = useAsyncAction(async () => {
   .profile-settings-verify-email__note {
     color: var(--color-text-2);
     font-size: 14px;
-    padding-left: 2px
+    padding-left: 2px;
   }
 
   .profile-settings-verify-email__change {
