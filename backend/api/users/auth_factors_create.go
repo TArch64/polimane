@@ -39,5 +39,9 @@ func (c *Controller) apiAuthFactorCreate(ctx *fiber.Ctx) (err error) {
 		FactorID: response.Challenge.FactorID,
 	})
 
+	if err != nil {
+		return err
+	}
+
 	return ctx.JSON(factor)
 }
