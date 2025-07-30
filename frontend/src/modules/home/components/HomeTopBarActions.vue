@@ -19,7 +19,7 @@
     <DropdownAction
       title="Log out"
       :icon="LogOutIcon"
-      @click="sessionStore.logout"
+      @click="logout"
     />
   </Dropdown>
 
