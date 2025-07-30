@@ -14,7 +14,7 @@
     <slot />
 
     <VerticalSlideTransition v-bind="footerTransition">
-      <footer class="card__footer" v-if="$slots.footer">
+      <footer class="card__footer" v-if="slots.footer">
         <slot name="footer" />
       </footer>
     </VerticalSlideTransition>
@@ -52,7 +52,7 @@ const props = withDefaults(defineProps<{
   }),
 });
 
-defineSlots<{
+const slots = defineSlots<{
   default: Slot;
   footer?: Slot;
 }>();
