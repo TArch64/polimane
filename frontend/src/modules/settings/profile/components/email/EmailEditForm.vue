@@ -9,6 +9,7 @@
     <TextField
       label
       required
+      type="email"
       variant="control"
       placeholder="Електронна Пошта"
       v-model="form.data.email"

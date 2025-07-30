@@ -30,7 +30,7 @@ const props = withDefaults(defineProps<{
   placeholder: string;
   label?: boolean;
   required?: boolean;
-  type?: 'text' | 'password' | 'number';
+  type?: 'text' | 'password' | 'number' | 'email';
   variant?: 'main' | 'control';
   inputAttrs?: InputHTMLAttributes;
 }>(), {
