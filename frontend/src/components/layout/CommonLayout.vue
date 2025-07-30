@@ -3,7 +3,7 @@
     <slot name="top-bar-actions" />
   </CommonLayoutTopBar>
 
-  <div class="common-layout__row common_layout__content" v-if="slots.submenu">
+  <div class="common-layout__row common-layout__content" v-if="slots.submenu">
     <CommonLayoutSubmenu class="common-layout__submenu">
       <slot name="submenu" />
     </CommonLayoutSubmenu>
@@ -13,7 +13,7 @@
     </main>
   </div>
 
-  <main class="common-layout__main common_layout__content" v-else>
+  <main class="common-layout__main common-layout__content" v-else>
     <slot />
   </main>
 </template>
@@ -43,7 +43,7 @@ usePageClass('app--common-layout');
     background-color: var(--color-background-2);
   }
 
-  .common_layout__content {
+  .common-layout__content {
     margin: 0 auto;
     width: 100%;
     max-width: 1024px;
