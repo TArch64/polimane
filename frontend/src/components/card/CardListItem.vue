@@ -18,7 +18,6 @@ defineProps<{
 }>();
 
 const slots = defineSlots<{
-  default: Slot;
   actions?: Slot;
 }>();
 </script>

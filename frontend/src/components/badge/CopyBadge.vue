@@ -11,7 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Slot } from 'vue';
 import { useAsyncAction } from '@/composables';
 import { wait } from '@/helpers';
 import { makeBinding } from '../binding';
@@ -20,10 +19,6 @@ import Badge from './Badge.vue';
 
 const props = defineProps<{
   text: string;
-}>();
-
-defineSlots<{
-  default: Slot;
 }>();
 
 const copy = useAsyncAction(async () => {
