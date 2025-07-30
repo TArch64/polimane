@@ -54,17 +54,17 @@ func Provider(
 
 	base.InitValidator()
 
-	router := app.Group("/api")
+	base.WithGroup(app, "/api", func(group fiber.Router) {
+		for _, controller := range controllers {
+			controller.Public(group)
+		}
 
-	for _, controller := range controllers {
-		controller.Public(router)
-	}
+		group.Use(authMiddleware.Handler)
 
-	router.Use(authMiddleware.Handler)
-
-	for _, controller := range controllers {
-		controller.Private(router)
-	}
+		for _, controller := range controllers {
+			controller.Private(group)
+		}
+	})
 
 	app.Use(func(c *fiber.Ctx) error {
 		log.Println("Unhandled route:", c.Path())

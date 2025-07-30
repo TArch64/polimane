@@ -9,7 +9,7 @@ import (
 )
 
 func (c *Controller) apiById(ctx *fiber.Ctx) error {
-	schemaId, err := base.GetParamID(ctx, "schemaId")
+	schemaId, err := base.GetParamID(ctx, schemaIdParam)
 	if err != nil {
 		return err
 	}

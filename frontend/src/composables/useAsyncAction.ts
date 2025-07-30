@@ -3,9 +3,13 @@ import type { SafeAny } from '@/types';
 
 export type AsyncFn = (...args: SafeAny[]) => Promise<void>;
 
-export type AsyncAction<F extends AsyncFn> = F & {
+export type AsyncAction<F extends AsyncFn = AsyncFn> = F & {
   isActive: boolean;
 };
+
+export function isAsyncAction(fn: unknown): fn is AsyncAction {
+  return typeof (fn as AsyncAction).isActive === 'boolean';
+}
 
 export function useAsyncAction<F extends AsyncFn>(fn: F): AsyncAction<F> {
   const isActive = ref(false);

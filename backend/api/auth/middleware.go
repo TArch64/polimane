@@ -50,21 +50,26 @@ func MiddlewareProvider(
 	}
 
 	signals.InvalidateUserCache.AddListener(middleware.invalidateUserCache)
+	signals.InvalidateWorkosUserCache.AddListener(middleware.invalidateWorkosUserCache)
 	signals.InvalidateAuthCache.AddListener(middleware.invalidateAuthCache)
 	return middleware
-}
-
-func (m *Middleware) invalidateUserCache(ctx context.Context, userID modelbase.ID) {
-	_ = m.userCache.Invalidate(ctx, userID.String())
 }
 
 func (m *Middleware) invalidateAuthCache(ctx context.Context, sessionID string) {
 	workosUser, _ := m.workosUserCache.Get(ctx, sessionID, nil)
 
 	if workosUser != nil {
-		_ = m.workosUserCache.Invalidate(ctx, sessionID)
-		_ = m.userCache.Invalidate(ctx, workosUser.ExternalID)
+		m.invalidateWorkosUserCache(ctx, workosUser.ID)
+		m.invalidateUserCache(ctx, modelbase.MustStringToID(workosUser.ExternalID))
 	}
+}
+
+func (m *Middleware) invalidateUserCache(ctx context.Context, userID modelbase.ID) {
+	_ = m.userCache.Invalidate(ctx, userID.String())
+}
+
+func (m *Middleware) invalidateWorkosUserCache(ctx context.Context, userID string) {
+	_ = m.workosUserCache.Invalidate(ctx, userID)
 }
 
 func (m *Middleware) Handler(ctx *fiber.Ctx) error {
@@ -100,7 +105,7 @@ func (m *Middleware) Handler(ctx *fiber.Ctx) error {
 	setSession(ctx, &UserSession{
 		User:       user,
 		WorkosUser: workosUser,
-		SessionID:  accessTokenClaims.SessionID,
+		ID:         accessTokenClaims.SessionID,
 	})
 
 	return ctx.Next()

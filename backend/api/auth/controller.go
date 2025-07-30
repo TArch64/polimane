@@ -34,12 +34,13 @@ func Provider(
 }
 
 func (c *Controller) Public(group fiber.Router) {
-	group = group.Group(groupPrefix)
-	group.Get("login", c.apiLogin)
-	group.Get("login/complete", c.apiLoginComplete)
+	base.WithGroup(group, groupPrefix+"/login", func(group fiber.Router) {
+		group.Get("", c.apiLogin)
+		group.Get("complete", c.apiLoginComplete)
+	})
 }
 
 func (c *Controller) Private(group fiber.Router) {
 	group = group.Group(groupPrefix)
-	group.Get("logout", c.apiLogout)
+	group.Post("logout", c.apiLogout)
 }

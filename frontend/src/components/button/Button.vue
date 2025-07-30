@@ -3,24 +3,40 @@
     :to
     class="button"
     :class="classes"
+    :disabled="disabled ? 'disabled' : undefined"
   >
-    <slot />
+    <Component
+      class="button__prepend-icon"
+      :is="prependIcon"
+      v-if="prependIcon"
+    />
+
+    <span>
+      <slot />
+    </span>
+
+    <ButtonLoading v-if="loading" />
   </ButtonRoot>
 </template>
 
 <script setup lang="ts">
 import { computed, type Slot } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
+import type { IconComponent } from '../icon';
 import ButtonRoot from './ButtonRoot.vue';
 import type { ButtonSize } from './ButtonSize';
 import type { ButtonVariant } from './ButtonVariant';
+import ButtonLoading from './ButtonLoading.vue';
 
 const props = withDefaults(defineProps<{
   to?: RouteLocationRaw;
   icon?: boolean;
   size?: ButtonSize;
   variant?: ButtonVariant;
+  prependIcon?: IconComponent;
   danger?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
 }>(), {
   icon: false,
   danger: false,
@@ -34,9 +50,10 @@ defineSlots<{
 
 const classes = computed(() => [
   props.icon && 'button--icon',
-  props.size && `button--${props.size}`,
+  props.size && props.variant !== 'inline' && `button--${props.size}`,
   props.variant && `button--${props.variant}`,
   props.danger && 'button--danger',
+  props.loading && 'button--loading',
 ]);
 </script>
 
@@ -51,12 +68,26 @@ const classes = computed(() => [
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    position: relative;
+  }
+
+  .button__prepend-icon {
+    margin-right: 4px;
+  }
+
+  .button--sm {
+    min-height: 24px;
+
+    &.button--icon {
+      padding: 4px;
+    }
   }
 
   .button--md {
     font-size: var(--font-sm);
     line-height: 18px;
     padding: 6px 12px;
+    min-height: 30px;
 
     &.button--icon {
       padding: 6px;
@@ -84,11 +115,11 @@ const classes = computed(() => [
     transition: background-color 0.15s ease-out;
     will-change: background-color;
 
-    &:hover:not([disabled]) {
+    &:where(:hover, .router-link-exact-active):not([disabled], .button--loading) {
       background-color: var(--button-hover-background);
     }
 
-    &[disabled] {
+    &:where([disabled], .button--loading) {
       background-color: var(--button-disabled-background);
       color: var(--button-disabled-foreground);
       cursor: default;
@@ -107,8 +138,25 @@ const classes = computed(() => [
     --button-background: transparent;
     --button-hover-background: color-mix(in srgb, var(--button-base-color), transparent 90%);
     --button-disabled-background: transparent;
+
     --button-foreground: var(--button-base-color);
     --button-disabled-foreground: color-mix(in srgb, var(--button-base-color), transparent 70%);
+  }
+
+  .button--inline {
+    color: inherit;
+    font-size: inherit;
+    display: inline-flex;
+    text-decoration: underline;
+    --button-disabled-foreground: color-mix(in srgb, currentColor, transparent 70%);
+
+    &:hover:not([disabled]) {
+      text-decoration: none;
+    }
+  }
+
+  .button--loading > *:not(.button-loading__dot) {
+    visibility: hidden;
   }
 }
 </style>

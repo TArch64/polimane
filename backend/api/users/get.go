@@ -16,7 +16,7 @@ type currentUser struct {
 	ProfilePictureURL string       `json:"profilePictureUrl"`
 }
 
-func (c *Controller) apiCurrent(ctx *fiber.Ctx) error {
+func (c *Controller) apiGet(ctx *fiber.Ctx) error {
 	session := auth.GetSession(ctx)
 
 	return ctx.JSON(currentUser{

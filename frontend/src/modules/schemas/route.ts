@@ -1,7 +1,7 @@
-import { defineRoute, type InferWrapperRouteInfo } from '@/router/define';
+import { defineWrapperRoute, type InferWrapperRouteInfo } from '@/router/define';
 import { schemaEditorRoute, type SchemaEditorRoute } from './editor';
 
-export const schemasRoute = defineRoute({
+export const schemasRoute = defineWrapperRoute({
   path: '/schemas/:schemaId',
   children: [schemaEditorRoute],
 });

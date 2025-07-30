@@ -1,12 +1,18 @@
 <template>
-  <HomeTopBar />
-  <HomeSchemasList v-if="schemasStore.hasSchemas" />
-  <HomeSchemasEmpty v-else />
+  <CommonLayout>
+    <template #top-bar-actions>
+      <HomeTopBarActions />
+    </template>
+
+    <HomeSchemasList v-if="schemasStore.hasSchemas" />
+    <HomeSchemasEmpty v-else />
+  </CommonLayout>
 </template>
 
 <script setup lang="ts">
 import { definePreload } from '@/router/define';
-import { HomeSchemasEmpty, HomeSchemasList, HomeTopBar } from './components';
+import { CommonLayout } from '@/components/layout';
+import { HomeSchemasEmpty, HomeSchemasList, HomeTopBarActions } from './components';
 import { useSchemasStore } from './stores';
 
 defineOptions({
@@ -18,11 +24,3 @@ defineOptions({
 
 const schemasStore = useSchemasStore();
 </script>
-
-<style>
-@layer page {
-  .app--home {
-    background-color: var(--color-background-2);
-  }
-}
-</style>

@@ -5,7 +5,19 @@
     class="card"
     :class="classes"
   >
+    <header v-if="title">
+      <h2 class="card__title">
+        {{ title }}
+      </h2>
+    </header>
+
     <slot />
+
+    <VerticalSlideTransition v-bind="footerTransition">
+      <footer class="card__footer" v-if="slots.footer">
+        <slot name="footer" />
+      </footer>
+    </VerticalSlideTransition>
   </Component>
 </template>
 
@@ -13,16 +25,26 @@
 import { computed, type Slot } from 'vue';
 import type { ComponentAs } from '@/types';
 import type { AnyBinding } from '../binding';
+import { VerticalSlideTransition } from '../transition';
+import type { ICardFooterTransition } from './ICardFooterTransition';
 
 const props = withDefaults(defineProps<{
   as?: ComponentAs;
   binding?: AnyBinding;
   interactable?: boolean;
   variant?: 'main' | 'control';
+  title?: string;
+  footerTransition?: Partial<ICardFooterTransition>;
 }>(), {
   as: 'div',
   interactable: false,
   variant: 'main',
+  title: '',
+
+  footerTransition: () => ({
+    duration: 300,
+    shift: 0,
+  }),
 
   binding: (props): AnyBinding => ({
     is: props.as ?? 'div',
@@ -30,15 +52,14 @@ const props = withDefaults(defineProps<{
   }),
 });
 
-defineSlots<{
+const slots = defineSlots<{
   default: Slot;
+  footer?: Slot;
 }>();
 
 const classes = computed(() => [
   `card--variant-${props.variant}`,
-  {
-    'card--interactable': props.interactable,
-  },
+  { 'card--interactable': props.interactable },
 ]);
 </script>
 
@@ -68,6 +89,21 @@ const classes = computed(() => [
     &:focus-within {
       border-color: var(--color-hover-divider);
     }
+  }
+
+  .card__title {
+    font-size: var(--font-md);
+    font-weight: 500;
+    padding: 4px 0;
+    margin-bottom: 4px;
+  }
+
+  .card__footer {
+    display: flex;
+    gap: 8px;
+    padding: 4px 0;
+    margin-top: 4px;
+    will-change: height, padding, margin, opacity;
   }
 }
 </style>

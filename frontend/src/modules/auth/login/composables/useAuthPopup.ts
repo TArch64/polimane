@@ -1,6 +1,7 @@
 import { onUnmounted } from 'vue';
 import { wait } from '@/helpers';
 import { authChannel, AuthChannelComplete } from '@/modules/auth/channel';
+import { useSessionStore } from '@/stores';
 import { useAuthStore } from '../stores';
 
 export interface IAuthPopupOptions {
@@ -13,6 +14,7 @@ export interface IAuthPopup {
 
 export function useAuthPopup(options: IAuthPopupOptions): IAuthPopup {
   const store = useAuthStore();
+  const sessionStore = useSessionStore();
   const abortController = new AbortController();
   let authWindow: Window | null = null;
 
@@ -31,7 +33,8 @@ export function useAuthPopup(options: IAuthPopupOptions): IAuthPopup {
     cleanup();
 
     authChannel.addEventListener('message', (event) => {
-      if (event.data === AuthChannelComplete) {
+      if (event.data.type === AuthChannelComplete) {
+        sessionStore.setTokens(event.data.accessToken, event.data.refreshToken);
         options.onSuccess();
       }
     }, { signal: abortController.signal });

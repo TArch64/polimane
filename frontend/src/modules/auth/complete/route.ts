@@ -1,7 +1,7 @@
-import { defineRoute, type InferViewRouteInfo } from '@/router/define';
+import { defineViewRoute, type InferViewRouteInfo } from '@/router/define';
 
-export const authCompleteRoute = defineRoute({
-  name: 'authComplete',
+export const authCompleteRoute = defineViewRoute({
+  name: 'auth-complete',
   path: 'complete',
   component: () => import('./Route.vue'),
 });

@@ -7,13 +7,15 @@ import (
 )
 
 type Container struct {
-	InvalidateUserCache signals.Signal[modelbase.ID]
-	InvalidateAuthCache signals.Signal[string]
+	InvalidateUserCache       signals.Signal[modelbase.ID]
+	InvalidateWorkosUserCache signals.Signal[string]
+	InvalidateAuthCache       signals.Signal[string]
 }
 
 func Provider() *Container {
 	return &Container{
-		InvalidateUserCache: signals.New[modelbase.ID](),
-		InvalidateAuthCache: signals.New[string](),
+		InvalidateUserCache:       signals.New[modelbase.ID](),
+		InvalidateWorkosUserCache: signals.New[string](),
+		InvalidateAuthCache:       signals.New[string](),
 	}
 }

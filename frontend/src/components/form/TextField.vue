@@ -15,18 +15,22 @@
         v-bind="inputAttrs"
         v-model="model"
       >
+
+      <span class="text-field__append" @click.stop.prevent v-if="slots.append">
+        <slot name="append" />
+      </span>
     </span>
   </label>
 </template>
 
 <script setup lang="ts">
-import { computed, type InputHTMLAttributes, ref } from 'vue';
+import { computed, type InputHTMLAttributes, ref, type Slot } from 'vue';
 
 const props = withDefaults(defineProps<{
   placeholder: string;
   label?: boolean;
   required?: boolean;
-  type?: 'text' | 'password' | 'number';
+  type?: 'text' | 'password' | 'number' | 'email';
   variant?: 'main' | 'control';
   inputAttrs?: InputHTMLAttributes;
 }>(), {
@@ -41,11 +45,17 @@ const model = defineModel<string>({
 
   set: (value) => {
     if (isDirty.value) {
-      inputRef.value.reportValidity();
+      inputRef.value.validity.customError
+        ? inputRef.value.setCustomValidity('')
+        : inputRef.value.reportValidity();
     }
     return value;
   },
 });
+
+const slots = defineSlots<{
+  append?: Slot;
+}>();
 
 const inputRef = ref<HTMLInputElement>(null!);
 const isDirty = ref(false);
@@ -56,6 +66,13 @@ function onBlur() {
   isDirty.value = true;
   inputRef.value.reportValidity();
 }
+
+function setError(message: string) {
+  inputRef.value.setCustomValidity(message);
+  inputRef.value.reportValidity();
+}
+
+defineExpose({ setError });
 </script>
 
 <style scoped>
@@ -79,7 +96,8 @@ function onBlur() {
     padding: 4px 8px;
     transition: border-color 0.15s ease-out;
     will-change: border-color;
-    display: block;
+    display: flex;
+    align-items: center;
     max-width: 100%;
 
     &:has(:focus:not(:user-invalid)) {
@@ -102,10 +120,14 @@ function onBlur() {
   .text-field__input {
     background-color: transparent;
     border: none;
-    width: 100%;
+    flex-grow: 1;
     outline: none;
     font-size: calc(var(--font-md) - 1px);
     line-height: 20px;
+  }
+
+  .text-field__append {
+    flex-shrink: 0;
   }
 }
 </style>

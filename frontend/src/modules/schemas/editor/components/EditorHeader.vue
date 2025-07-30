@@ -1,7 +1,11 @@
 <template>
   <Card as="header" class="editor-header">
-    <Button icon class="editor-header-back" :to="{ name: 'home' }">
-      <ArrowBackIcon />
+    <Button
+      icon
+      class="editor-header-back"
+      :to="{ name: 'home' }"
+      :prepend-icon="ArrowBackIcon"
+    >
       Едітор
     </Button>
 
@@ -60,7 +64,7 @@ import {
   SaveIcon,
   TrashIcon,
 } from '@/components/icon';
-import { useAsyncAction } from '@/composables';
+import { useAsyncAction, useProgressBar } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { mergeAnchorName } from '@/helpers';
@@ -101,6 +105,8 @@ const deleteSchema = useAsyncAction(async () => {
     await router.push({ name: 'home' });
   }
 });
+
+useProgressBar(deleteSchema);
 </script>
 
 <style scoped>
@@ -117,7 +123,6 @@ const deleteSchema = useAsyncAction(async () => {
   }
 
   .editor-header-back {
-    gap: 8px;
     margin-right: 40px;
   }
 }

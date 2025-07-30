@@ -1,6 +1,6 @@
-import { defineRoute, type InferViewRouteInfo } from '@/router/define';
+import { defineViewRoute, type InferViewRouteInfo } from '@/router/define';
 
-export const homeRoute = defineRoute({
+export const homeRoute = defineViewRoute({
   name: 'home',
   path: '/',
   component: () => import('./Route.vue'),

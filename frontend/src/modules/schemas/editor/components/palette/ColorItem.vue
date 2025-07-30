@@ -1,5 +1,6 @@
 <template>
   <Button
+    size="none"
     class="color-list__item"
     :class="classes"
     @click.stop="onClick"

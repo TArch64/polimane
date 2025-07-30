@@ -1,6 +1,6 @@
-import { defineRoute, type InferViewRouteInfo } from '@/router/define';
+import { defineViewRoute, type InferViewRouteInfo } from '@/router/define';
 
-export const authLoginRoute = defineRoute({
+export const authLoginRoute = defineViewRoute({
   name: 'auth',
   path: '',
   component: () => import('./Route.vue'),

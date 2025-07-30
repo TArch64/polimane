@@ -39,7 +39,7 @@ export default defineConfig({
 
       customCollections: {
         custom: {
-          logo: () => Bun.file('./src/assets/icons/logo.svg').text(),
+          logo: () => Bun.file('./src/assets/logo.svg').text(),
         },
       },
     }),

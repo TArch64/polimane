@@ -4,18 +4,18 @@
 
 <script lang="ts" setup>
 import { useRoute } from 'vue-router';
-import { useSessionStore } from '@/stores';
 import { authChannel, AuthChannelComplete } from '../channel';
 
-const sessionStore = useSessionStore();
-
-const route = useRoute('authComplete');
+const route = useRoute('auth-complete');
 const accessToken = route.query['access-token'] as string;
 const refreshToken = route.query['refresh-token'] as string;
 
 if (accessToken && refreshToken) {
-  sessionStore.setTokens(accessToken, refreshToken);
-  authChannel.postMessage(AuthChannelComplete);
+  authChannel.postMessage({
+    type: AuthChannelComplete,
+    accessToken,
+    refreshToken,
+  });
 }
 
 window.close();

@@ -1,11 +1,7 @@
 import { defineStore } from 'pinia';
-import { computed, type Ref, ref } from 'vue';
+import { computed, nextTick, type Ref, ref } from 'vue';
 import type { IUser } from '@/models';
 import { useAccessToken, useHttpClient, useRefreshAccessToken } from '@/composables';
-
-interface ILogoutResponse {
-  url: string;
-}
 
 export const useSessionStore = defineStore('session', () => {
   const httpClient = useHttpClient();
@@ -29,15 +25,20 @@ export const useSessionStore = defineStore('session', () => {
   }
 
   async function logout(): Promise<void> {
-    const { url } = await httpClient.get<ILogoutResponse>(['/auth/logout']);
+    await httpClient.post('/auth/logout', {});
     accessToken.value = undefined;
     refreshAccessToken.value = undefined;
-    window.open(url);
+    await nextTick();
     window.location.reload();
+  }
+
+  function updateUser(newUser: Partial<IUser>): void {
+    user.value = { ...user.value!, ...newUser };
   }
 
   return {
     user: user as Ref<IUser>,
+    updateUser,
     isLoggedIn,
     refresh,
     setTokens,
