@@ -1,11 +1,11 @@
 package bitwarden
 
 import (
-	"os"
-
 	"github.com/bitwarden/sdk-go"
 
 	"polimane/backend/base"
+	"polimane/backend/services/osenv"
+	"polimane/backend/services/osfs"
 )
 
 var (
@@ -15,10 +15,12 @@ var (
 
 type Client struct {
 	api sdk.BitwardenClientInterface
+	fs  osfs.FS
+	env osenv.Env
 }
 
-func Provider() (*Client, error) {
-	accessToken := os.Getenv("BACKEND_BITWARDEN_TOKEN")
+func Provider(fs osfs.FS, env osenv.Env) (*Client, error) {
+	accessToken := env.Getenv("BACKEND_BITWARDEN_TOKEN")
 	if accessToken == "" {
 		return nil, nil
 	}
@@ -32,5 +34,9 @@ func Provider() (*Client, error) {
 		return nil, base.TagError("bitwarden.auth", err)
 	}
 
-	return &Client{api: api}, nil
+	return &Client{
+		api: api,
+		fs:  fs,
+		env: env,
+	}, nil
 }

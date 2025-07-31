@@ -16,6 +16,8 @@ import (
 	"polimane/backend/services/bitwarden"
 	"polimane/backend/services/db"
 	"polimane/backend/services/jwk"
+	"polimane/backend/services/osenv"
+	"polimane/backend/services/osfs"
 	"polimane/backend/services/sentry"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
@@ -32,16 +34,25 @@ func Controller(f any) any {
 func main() {
 	fx.New(
 		fx.Provide(
+			// external
+			jwk.Provider,
+			osfs.Provider,
+			osenv.Provider,
+
+			// services
 			bitwarden.Provider,
 			env.Provider,
 			db.Provider,
-			jwk.Provider,
 			workos.Provider,
 			sentry.Provider,
 			signal.Provider,
+
+			// repositories
 			repositoryuserschemas.Provider,
 			repositoryusers.Provider,
 			repositoryschemas.Provider,
+
+			// api
 			auth.MiddlewareProvider,
 			Controller(ping.Provider),
 			Controller(auth.Provider),
