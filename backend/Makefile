@@ -1,4 +1,4 @@
-.PHONY: dev db_migration_new db_migration_blank db_rehash_migrations db_migrate prod
+.PHONY: dev db_migration_new db_migration_blank db_rehash_migrations db_migrate prod test
 
 ldflags = '-linkmode external -extldflags "-static -Wl,-unresolved-symbols=ignore-all"'
 env ?= dev
@@ -25,6 +25,9 @@ execute_with_retry:
 		echo "Retrying..."; \
 		sleep $(interval); \
 	done
+
+test:
+	go test ./...
 
 prod:
 	GOOS=linux \
