@@ -14,7 +14,7 @@ type UpdateOptions struct {
 	Updates  *model.Schema
 }
 
-func (c *Client) Update(options *UpdateOptions) (err error) {
+func (c *Impl) Update(options *UpdateOptions) (err error) {
 	err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
 	if err != nil {
 		return err

@@ -9,7 +9,7 @@ import (
 	"polimane/backend/model/modelbase"
 )
 
-func (c *Client) HasAccess(ctx context.Context, userID, schemaID modelbase.ID) error {
+func (c *Impl) HasAccess(ctx context.Context, userID, schemaID modelbase.ID) error {
 	var exists bool
 
 	err := c.db.

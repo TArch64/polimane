@@ -14,7 +14,7 @@ type ByIDOptions struct {
 	Select   []string
 }
 
-func (c *Client) ByID(options *ByIDOptions) (*model.Schema, error) {
+func (c *Impl) ByID(options *ByIDOptions) (*model.Schema, error) {
 	var err error
 
 	err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)

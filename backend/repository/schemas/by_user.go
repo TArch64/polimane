@@ -12,7 +12,7 @@ type ByUserOptions struct {
 	Select []string
 }
 
-func (c *Client) ByUser(options *ByUserOptions) ([]*model.Schema, error) {
+func (c *Impl) ByUser(options *ByUserOptions) ([]*model.Schema, error) {
 	var schemas []*model.Schema
 
 	query := c.db.

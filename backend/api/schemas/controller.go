@@ -10,10 +10,10 @@ import (
 const schemaIdParam = "schemaId"
 
 type Controller struct {
-	schemas *repositoryschemas.Client
+	schemas repositoryschemas.Client
 }
 
-func Provider(schemas *repositoryschemas.Client) base.Controller {
+func Provider(schemas repositoryschemas.Client) base.Controller {
 	return &Controller{
 		schemas: schemas,
 	}
