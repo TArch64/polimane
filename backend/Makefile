@@ -2,6 +2,7 @@
 
 ldflags = '-linkmode external -extldflags "-static -Wl,-unresolved-symbols=ignore-all"'
 env ?= dev
+test_pattern ?= ./...
 
 dev:
 	CGO_ENABLED=1 \
@@ -27,7 +28,9 @@ execute_with_retry:
 	done
 
 test:
-	go test ./...
+	CGO_ENABLED=1 \
+	CC="musl-gcc" \
+	go test -ldflags $(ldflags) $(test_pattern)
 
 prod:
 	GOOS=linux \
