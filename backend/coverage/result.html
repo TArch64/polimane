@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -188,11 +189,11 @@
 
             <option value="file45">polimane/backend/repository/schemas/update.go (75.0%)</option>
 
-            <option value="file46">polimane/backend/repository/users/by_id.go (0.0%)</option>
+            <option value="file46">polimane/backend/repository/users/by_id.go (100.0%)</option>
 
-            <option value="file47">polimane/backend/repository/users/client.go (0.0%)</option>
+            <option value="file47">polimane/backend/repository/users/client.go (100.0%)</option>
 
-            <option value="file48">polimane/backend/repository/users/create_if_needed.go (0.0%)</option>
+            <option value="file48">polimane/backend/repository/users/create_if_needed.go (100.0%)</option>
 
             <option value="file49">polimane/backend/repository/userschemas/client.go (0.0%)</option>
 
@@ -2229,14 +2230,14 @@ import (
         "polimane/backend/model/modelbase"
 )
 
-func (c *Impl) ByID(ctx context.Context, id modelbase.ID) (*model.User, error) <span class="cov0" title="0">{
+func (c *Impl) ByID(ctx context.Context, id modelbase.ID) (*model.User, error) <span class="cov10" title="3">{
         var user model.User
         err := c.db.WithContext(ctx).Take(&amp;user, id).Error
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov6" title="2">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return &amp;user, nil</span>
+        <span class="cov1" title="1">return &amp;user, nil</span>
 }
 </pre>
 
@@ -2262,7 +2263,7 @@ type Impl struct {
 
 var _ Client = (*Impl)(nil)
 
-func Provider(db *gorm.DB) Client <span class="cov0" title="0">{
+func Provider(db *gorm.DB) Client <span class="cov8" title="1">{
         return &amp;Impl{db: db}
 }</span>
 </pre>
@@ -2275,7 +2276,7 @@ import (
         "polimane/backend/model"
 )
 
-func (c *Impl) CreateIfNeeded(ctx context.Context, workosID string) (*model.User, error) <span class="cov0" title="0">{
+func (c *Impl) CreateIfNeeded(ctx context.Context, workosID string) (*model.User, error) <span class="cov10" title="4">{
         user := &amp;model.User{WorkosID: workosID}
 
         err := c.db.
