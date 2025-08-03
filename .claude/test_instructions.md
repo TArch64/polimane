@@ -1,37 +1,75 @@
-When writing tests for the code, please follow these guidelines:
+AI_TEST_GENERATION_INSTRUCTIONS:
 
-1. Ensure that each test is independent and can run in isolation.
-2. Ensure all tests works correctly and pass without errors.
-3. Use testify mock for mocking dependencies.
-4. Use sqlmock for mocking database interactions.
-5. Focus on writing unit tests that cover the functionality of the code instead of integration tests.
-6. Place tests in the same package as the code being tested with a `_test.go` suffix. Each file should contain tests for
-   functions in the corresponding file.
-7. To run tests use `docker compose run --rm backend make test` which accepts `test_pattern` as an argument to run
-   specific tests by file pattern.
-8. Place mock implementations in a separate file named `mocks_test.go` in the same package.
-9. You can reference `backend/coverage` to check coverage of previously generated tests.
+FRAMEWORKS_REQUIRED:
 
-## GORM Testing Best Practices:
+- testify/mock (import alias: tmock "github.com/stretchr/testify/mock")
+- sqlmock for database mocking
+- standard testing package
 
-10. When testing GORM operations, be aware that GORM may generate different SQL than expected:
-    - `Take()` operations use `LIMIT 1` parameter, so expect 2 arguments: `WithArgs(id, 1)`
-    - `FirstOrCreate()` operations first do a SELECT, then potentially INSERT in a transaction
-    - Some operations like `Updates()` are automatically wrapped in transactions by GORM
-    - Use actual SQL patterns from error logs rather than assumptions
+FILE_STRUCTURE:
 
-11. SQL Mock Expectations:
-    - Always escape regex special characters in SQL patterns (e.g., use `\*` for `*`, `\$` for `$`)
-    - GORM includes ORDER BY clauses in many queries even when not explicitly specified
-    - INSERT queries may have fewer arguments than expected - check actual error logs for exact patterns
-    - For transactions, expect `ExpectBegin()`, the query, then `ExpectCommit()` or `ExpectRollback()`
+- Tests: same package, {source_file}_test.go suffix
+- Mocks: mocks_test.go in same package
+- One test file per source file
 
-12. Error Handling in Tests:
-    - GORM's `Take()` and similar methods return empty structs even on errors, unlike some other methods that return nil
-    - When testing error conditions, check the actual behavior of the specific GORM method being tested
-    - Some errors may cause GORM to return non-nil results with error values
+EXECUTION_COMMAND: docker compose run --rm backend make test test_pattern="./path/..."
 
-13. Mock Setup:
-    - Use `tmock.Anything` (with alias) for dynamic values like timestamps and auto-generated IDs
-    - For testify mocks, use proper type assertions and nil checks in mock implementations
-    - Ensure setupTest functions properly initialize all dependencies (e.g., signal containers)
+MANDATORY_TEST_PATTERNS:
+
+1. setupTest() function returning (client, mock, cleanup)
+2. t.Run() for each test case
+3. defer cleanup() in each test
+4. assert.NoError(t, mock.ExpectationsWereMet()) in each test
+
+GORM_SQL_PATTERNS:
+Take(): SELECT \* FROM "table" WHERE "table"."id" = \$1 ORDER BY "table"."id" LIMIT \$2
+FirstOrCreate(): SELECT first, then BEGIN + INSERT + COMMIT in transaction
+Updates(): Automatic transaction wrapping required
+Create(): INSERT with transaction
+
+CRITICAL_SQL_MOCK_RULES:
+
+- Escape ALL regex chars: \* for *, \$ for $, \" for "
+- GORM adds ORDER BY clauses automatically
+- GORM adds LIMIT 1 for Take() operations
+- Transaction operations need ExpectBegin() + ExpectCommit()/ExpectRollback()
+- Use actual error log patterns, not assumptions
+
+GORM_ERROR_BEHAVIOR:
+
+- Take(), Find() return empty struct + error (NOT nil)
+- Test pattern: assert.Error(t, err) + assert.NotNil(t, result)
+- Check actual GORM method behavior in docs
+
+MOCK_IMPLEMENTATION_TEMPLATE:
+
+```
+func (m *MockClient) Method(ctx context.Context, param Type) (*Model, error) {
+    args := m.Called(ctx, param)
+    if args.Get(0) == nil {
+        return nil, args.Error(1)
+    }
+    return args.Get(0).(*Model), args.Error(1)
+}
+```
+
+REQUIRED_TEST_CASES:
+
+- success case
+- not_found/empty_result case
+- database_error case
+- invalid_input case (if applicable)
+
+DEPENDENCIES_INITIALIZATION:
+
+- Use Provider() functions for signal containers
+- Mock all external dependencies
+- Verify interface compliance with: var _ Interface = (*Implementation)(nil)
+
+DEBUG_PROCESS:
+
+1. Run test, capture exact error
+2. Extract actual SQL pattern from error
+3. Update mock expectation to match exact pattern
+4. Verify argument count matches GORM behavior
+5. Check transaction expectations if applicable
