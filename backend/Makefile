@@ -32,7 +32,6 @@ test:
 test_coverage:
 	$(cgoflags) go test -coverprofile=coverage/result.out -covermode=atomic -ldflags $(ldflags) ./...
 	go tool cover -html=coverage/result.out -o coverage/result.html
-	go tool cover -html=coverage/result.out -o coverage/result.html
 
 prod:
 	$(cgoflags) \

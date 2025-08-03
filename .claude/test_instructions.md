@@ -1,5 +1,10 @@
 AI_TEST_GENERATION_INSTRUCTIONS:
 
+AUTO_UPDATE_ENABLED: true
+INSTRUCTION: When implementing tests, automatically update this file with new learnings and patterns discovered during
+the testing process. Add new GORM behaviors, SQL patterns, error cases, and debugging techniques as they are
+encountered.
+
 FRAMEWORKS_REQUIRED:
 
 - testify/mock (import alias: tmock "github.com/stretchr/testify/mock")
@@ -25,14 +30,18 @@ GORM_SQL_PATTERNS:
 Take(): SELECT \* FROM "table" WHERE "table"."id" = \$1 ORDER BY "table"."id" LIMIT \$2
 FirstOrCreate(): SELECT first, then BEGIN + INSERT + COMMIT in transaction
 Updates(): Automatic transaction wrapping required
-Create(): INSERT with transaction
+Create(): Uses ExpectExec (not ExpectQuery), includes created_at/updated_at timestamps
+Delete(): Uses ExpectExec with WHERE clause, wrapped in transaction
 
 CRITICAL_SQL_MOCK_RULES:
 
-- Escape ALL regex chars: \* for *, \$ for $, \" for "
-- GORM adds ORDER BY clauses automatically
-- GORM adds LIMIT 1 for Take() operations
+- Use ExpectExec for INSERT/UPDATE/DELETE operations (not ExpectQuery)
+- Use ExpectQuery only for SELECT operations
+- GORM automatically adds created_at/updated_at to INSERT: use sqlmock.AnyArg() for timestamps
+- Single quotes in SQL patterns: "table_name" not \"table_name\"
+- Minimal escaping: only escape \$ for parameter placeholders
 - Transaction operations need ExpectBegin() + ExpectCommit()/ExpectRollback()
+- GORM wraps Create() and Delete() operations in transactions automatically
 - Use actual error log patterns, not assumptions
 
 GORM_ERROR_BEHAVIOR:
@@ -66,10 +75,43 @@ DEPENDENCIES_INITIALIZATION:
 - Mock all external dependencies
 - Verify interface compliance with: var _ Interface = (*Implementation)(nil)
 
+COMMON_PATTERNS:
+
+CREATE with timestamps:
+mock.ExpectBegin()
+mock.ExpectExec(`INSERT INTO "table_name"`).
+WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), userArg, schemaArg).
+WillReturnResult(sqlmock.NewResult(1, 1))
+mock.ExpectCommit()
+
+DELETE with WHERE:
+mock.ExpectBegin()
+mock.ExpectExec(`DELETE FROM "table_name" WHERE col1 = \$1 AND col2 = \$2`).
+WithArgs(arg1, arg2).
+WillReturnResult(sqlmock.NewResult(0, 1))
+mock.ExpectCommit()
+
+SELECT with context:
+mock.ExpectQuery(`SELECT ... FROM "table_name" WHERE col = \$1`).
+WithArgs(arg).
+WillReturnRows(sqlmock.NewRows([]string{"col"}).AddRow(value))
+
 DEBUG_PROCESS:
 
 1. Run test, capture exact error
-2. Extract actual SQL pattern from error
-3. Update mock expectation to match exact pattern
-4. Verify argument count matches GORM behavior
-5. Check transaction expectations if applicable
+2. Check if using correct Expect method (Exec vs Query)
+3. Extract actual SQL pattern from error log
+4. Update mock expectation to match exact pattern
+5. Verify argument count matches GORM behavior (include timestamps)
+6. Check transaction expectations if applicable
+7. AUTO-UPDATE: Add new patterns/learnings to this file immediately after resolving issues
+
+LEARNING_CATEGORIES_TO_UPDATE:
+
+- New GORM operation behaviors (FirstOrCreate, Updates, etc.)
+- SQL pattern variations (different table structures, complex WHERE clauses)
+- Transaction handling edge cases
+- Argument count mismatches and solutions
+- Error handling patterns specific to GORM methods
+- Mock setup requirements for different dependency types
+- Common pitfalls and their resolutions
