@@ -1,6 +1,8 @@
 package model
 
 import (
+	"time"
+
 	"gorm.io/datatypes"
 )
 
@@ -14,10 +16,11 @@ const (
 type Schema struct {
 	*Identifiable
 	*Timestamps
-	Name    string        `gorm:"not null;index;size:255" json:"name"`
-	Palette SchemaPalette `gorm:"not null;type:json" json:"palette,omitempty"`
-	Content SchemaContent `gorm:"not null;type:json" json:"content,omitempty"`
-	Users   []User        `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
+	Name           string        `gorm:"not null;index;size:255" json:"name"`
+	Palette        SchemaPalette `gorm:"not null;type:json" json:"palette,omitempty"`
+	Content        SchemaContent `gorm:"not null;type:json" json:"content,omitempty"`
+	ScreenshotedAt *time.Time    `json:"screenshotedAt"`
+	Users          []User        `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
 }
 
 type SchemaPalette = datatypes.JSONSlice[string]

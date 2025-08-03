@@ -62,8 +62,13 @@ usePageClass('app--common-layout');
     top: 20px;
   }
 
-  .common-layout__main--aside-menu {
+  .common-layout__main {
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .common-layout__main--aside-menu {
     padding: 20px;
     min-width: 0;
   }

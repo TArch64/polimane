@@ -1,6 +1,7 @@
 import { computed, reactive, type Ref, ref, watch, type WatchStopHandle } from 'vue';
+import { createEventHook, type EventHookOn } from '@vueuse/core';
 import type { ISchema } from '@/models';
-import { combineStopHandles } from '@/helpers';
+import { combineStopHandles, getObjectKeys } from '@/helpers';
 import type { SafeAny } from '@/types';
 
 const SAVE_TIMEOUT = 2000;
@@ -12,14 +13,24 @@ export interface IEditorSaveDispatcher {
   disable: () => void;
   flush: () => Promise<void>;
   abandon: () => void;
+  onSaved: EventHookOn<[schema: ISchema]>;
 }
 
 type EditorSaveCallback = (patch: Partial<ISchema>) => Promise<void>;
-type WatchableAttribute = keyof Omit<ISchema, 'id'>;
+
+const NON_WATCHABLE_ATTRIBUTES = ['id', 'createdAt', 'updatedAt', 'screenshotedAt'] as const;
+
+function isNonWatchableAttribute(attr: string): attr is NonWatchableAttribute {
+  return NON_WATCHABLE_ATTRIBUTES.includes(attr as NonWatchableAttribute);
+}
+
+type NonWatchableAttribute = (typeof NON_WATCHABLE_ATTRIBUTES)[number];
+type WatchableAttribute = keyof Omit<ISchema, NonWatchableAttribute>;
 
 export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSaveCallback): IEditorSaveDispatcher {
   let saveTimeout: TimeoutId | null = null;
   let stopWatch: VoidFunction | null = null;
+  const savedHook = createEventHook<[schema: ISchema]>();
   const unsavedChanges = ref<Partial<ISchema> | null>(null);
   const hasUnsavedChanges = computed(() => !!unsavedChanges.value);
   const isSaving = ref(false);
@@ -31,6 +42,7 @@ export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSave
       try {
         isSaving.value = true;
         await onSave(unsavedChanges.value);
+        await savedHook.trigger(schema.value);
         unsavedChanges.value = null;
       } finally {
         isSaving.value = false;
@@ -53,12 +65,12 @@ export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSave
   function enable(): void {
     const attrStopWatchers: WatchStopHandle[] = [];
 
-    for (const attr of Object.keys(schema.value)) {
-      if (attr === 'id') {
+    for (const attr of getObjectKeys(schema.value)) {
+      if (isNonWatchableAttribute(attr)) {
         continue;
       }
 
-      attrStopWatchers.push(watchSavableAttribute(attr as WatchableAttribute));
+      attrStopWatchers.push(watchSavableAttribute(attr));
     }
 
     stopWatch = combineStopHandles(...attrStopWatchers);
@@ -91,5 +103,6 @@ export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSave
     disable,
     flush,
     abandon,
+    onSaved: savedHook.on,
   });
 }

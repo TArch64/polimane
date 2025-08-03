@@ -1,5 +1,6 @@
 .PHONY: dev db_migration_new db_migration_blank db_rehash_migrations db_migrate prod
 
+MAKEFLAGS += --no-print-directory
 CGO_ENABLED=1
 CC="musl-gcc"
 ldflags = '-linkmode external -extldflags "-static -Wl,-unresolved-symbols=ignore-all"'
