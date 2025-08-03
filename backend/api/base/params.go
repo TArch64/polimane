@@ -3,9 +3,9 @@ package base
 import (
 	"fmt"
 
-	"github.com/gofiber/fiber/v2"
+	"polimane/backend/model"
 
-	"polimane/backend/model/modelbase"
+	"github.com/gofiber/fiber/v2"
 )
 
 func newMissingParamErr(name string) error {
@@ -20,15 +20,15 @@ func GetRequiredParam(ctx *fiber.Ctx, name string) (string, error) {
 	return value, nil
 }
 
-func GetParamID(ctx *fiber.Ctx, name string) (modelbase.ID, error) {
+func GetParamID(ctx *fiber.Ctx, name string) (model.ID, error) {
 	value, err := GetRequiredParam(ctx, name)
 	if err != nil {
-		return modelbase.ID{}, err
+		return model.ID{}, err
 	}
 
-	id, err := modelbase.StringToID(value)
+	id, err := model.StringToID(value)
 	if err != nil {
-		return modelbase.ID{}, newMissingParamErr(name)
+		return model.ID{}, newMissingParamErr(name)
 	}
 
 	return id, nil

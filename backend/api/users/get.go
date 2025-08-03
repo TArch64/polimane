@@ -4,16 +4,16 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"polimane/backend/api/auth"
-	"polimane/backend/model/modelbase"
+	"polimane/backend/model"
 )
 
 type currentUser struct {
-	ID                modelbase.ID `json:"id"`
-	FirstName         string       `json:"firstName"`
-	LastName          string       `json:"lastName"`
-	Email             string       `json:"email"`
-	EmailVerified     bool         `json:"isEmailVerified"`
-	ProfilePictureURL string       `json:"profilePictureUrl"`
+	ID                model.ID `json:"id"`
+	FirstName         string   `json:"firstName"`
+	LastName          string   `json:"lastName"`
+	Email             string   `json:"email"`
+	EmailVerified     bool     `json:"isEmailVerified"`
+	ProfilePictureURL string   `json:"profilePictureUrl"`
 }
 
 func (c *Controller) apiGet(ctx *fiber.Ctx) error {

@@ -2,8 +2,6 @@ package model
 
 import (
 	"gorm.io/datatypes"
-
-	"polimane/backend/model/modelbase"
 )
 
 const (
@@ -14,8 +12,8 @@ const (
 )
 
 type Schema struct {
-	*modelbase.Identifiable
-	*modelbase.Timestamps
+	*Identifiable
+	*Timestamps
 	Name    string        `gorm:"not null;index;size:255" json:"name"`
 	Palette SchemaPalette `gorm:"not null;type:json" json:"palette,omitempty"`
 	Content SchemaContent `gorm:"not null;type:json" json:"content,omitempty"`

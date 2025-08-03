@@ -6,10 +6,9 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
-	"polimane/backend/model/modelbase"
 )
 
-func (c *Client) HasAccess(ctx context.Context, userID, schemaID modelbase.ID) error {
+func (c *Client) HasAccess(ctx context.Context, userID, schemaID model.ID) error {
 	var exists bool
 
 	err := c.db.
