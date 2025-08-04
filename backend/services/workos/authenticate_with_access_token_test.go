@@ -53,7 +53,7 @@ func TestClient_AuthenticateWithAccessToken_ErrorCases(t *testing.T) {
 							ApiKey:   "test-api-key",
 						},
 					},
-					jwk: &jwk.Client{}, // Real JWK client
+					jwk: &jwk.Impl{}, // Real JWK client
 				}
 			},
 			expectedError: "", // Will fail due to real WorkOS client
@@ -74,7 +74,7 @@ func TestClient_AuthenticateWithAccessToken_ErrorCases(t *testing.T) {
 							ApiKey:   "test-api-key",
 						},
 					},
-					jwk: &jwk.Client{}, // Real JWK client
+					jwk: &jwk.Impl{}, // Real JWK client
 				}
 			},
 			expectedError: "", // Will fail due to real WorkOS client
@@ -95,7 +95,7 @@ func TestClient_AuthenticateWithAccessToken_ErrorCases(t *testing.T) {
 							ApiKey:   "test-api-key",
 						},
 					},
-					jwk: &jwk.Client{}, // Real JWK client
+					jwk: &jwk.Impl{}, // Real JWK client
 				}
 			},
 			expectedError: "", // Will fail due to real WorkOS client
@@ -165,7 +165,7 @@ func TestClient_AuthenticateWithAccessToken_Requirements(t *testing.T) {
 						ApiKey:   "test-api-key",
 					},
 				},
-				jwk: &jwk.Client{},
+				jwk: &jwk.Impl{},
 			},
 			expectPanic: true,
 		},
@@ -173,7 +173,7 @@ func TestClient_AuthenticateWithAccessToken_Requirements(t *testing.T) {
 			name: "client with nil environment",
 			client: &Client{
 				env: nil,
-				jwk: &jwk.Client{},
+				jwk: &jwk.Impl{},
 			},
 			expectPanic: true,
 		},

@@ -15,7 +15,7 @@ func TestProvider(t *testing.T) {
 	tests := []struct {
 		name         string
 		environment  *env.Environment
-		jwkInterface jwk.Interface
+		jwkInterface jwk.Client
 		expectNil    bool
 	}{
 		{
@@ -70,7 +70,7 @@ func TestProvider(t *testing.T) {
 }
 
 func TestClient_Initialization(t *testing.T) {
-	// Test that the Client struct has the expected fields
+	// Test that the Impl struct has the expected fields
 	environment := &env.Environment{
 		WorkOS: struct {
 			ClientID string `env:"BACKEND_WORKOS_CLIENT_ID,required=true"`
@@ -81,7 +81,7 @@ func TestClient_Initialization(t *testing.T) {
 		},
 	}
 
-	jwkInterface := (*jwk.Client)(nil) // Using nil jwk.Client pointer
+	jwkInterface := (*jwk.Impl)(nil) // Using nil jwk.Impl pointer
 
 	client := &Client{
 		UserManagement: usermanagement.DefaultClient,
@@ -123,7 +123,7 @@ func TestProvider_APIKeyConfiguration(t *testing.T) {
 }
 
 func TestClient_FieldTypes(t *testing.T) {
-	// Test that Client struct fields have the expected types
+	// Test that Impl struct fields have the expected types
 	client := &Client{}
 
 	// Test that we can assign the expected types

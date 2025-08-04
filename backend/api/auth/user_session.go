@@ -26,11 +26,3 @@ func GetSession(ctx *fiber.Ctx) *UserSession {
 func GetSessionUser(ctx *fiber.Ctx) *model.User {
 	return GetSession(ctx).User
 }
-
-func GetSessionWorkosUser(ctx *fiber.Ctx) *usermanagement.User {
-	return GetSession(ctx).WorkosUser
-}
-
-func GetSessionID(ctx *fiber.Ctx) string {
-	return GetSession(ctx).ID
-}
