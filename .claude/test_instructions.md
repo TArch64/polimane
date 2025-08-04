@@ -123,3 +123,11 @@ LEARNING_CATEGORIES_TO_UPDATE:
 - Error handling patterns specific to GORM methods
 - Mock setup requirements for different dependency types
 - Common pitfalls and their resolutions
+
+TESTING_SCOPE_PRINCIPLES:
+
+- Only test code directly written in the project, not third-party library internals
+- For factory functions like Provider(), test initialization and instance creation behavior
+- For struct types, focus on zero-value behavior and field initialization
+- Avoid testing library methods like signals.AddListener, signals.Emit - assume they work
+- Test integration points where your code interfaces with libraries, not library functionality itself
