@@ -1,5 +1,6 @@
 import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 import { reactiveComputed } from '@vueuse/core';
+import { getObjectKeys } from '@/helpers';
 
 type NodePaddingSide = 'top' | 'right' | 'bottom' | 'left';
 type NodePadding = Record<NodePaddingSide, number>;
@@ -24,9 +25,7 @@ export function useNodePadding(inputRef: NodePaddingInput): INodePadding {
       };
     }
 
-    return Object.keys(input).reduce((padding, side_): NodePadding => {
-      const side = side_ as NodePaddingInputSide;
-
+    return getObjectKeys(input).reduce((padding, side): NodePadding => {
       if (side === 'horizontal') {
         return { ...padding, left: input.horizontal!, right: input.horizontal! };
       }

@@ -15,6 +15,7 @@ export const useEditorStore = defineStore('schemas/editor', () => {
 
   const saveDispatcher = useEditorSaveDispatcher(schema, async (patch) => {
     await httpClient.patch<HttpBody, UpdateSchemaRequest>(['/schemas', schema.value.id], patch);
+    schema.value.updatedAt = new Date().toISOString();
   });
 
   async function loadSchema(id: string): Promise<void> {
@@ -46,6 +47,7 @@ export const useEditorStore = defineStore('schemas/editor', () => {
     hasUnsavedChanges: toRef(saveDispatcher, 'hasUnsavedChanges'),
     isSaving: toRef(saveDispatcher, 'isSaving'),
     save: saveDispatcher.flush,
+    onSaved: saveDispatcher.onSaved,
     undo: history.undo,
     canUndo: toRef(history, 'canUndo'),
     redo: history.redo,

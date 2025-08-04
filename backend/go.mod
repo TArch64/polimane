@@ -3,19 +3,20 @@ module polimane/backend
 go 1.24.1
 
 require (
-	ariga.io/atlas-provider-gorm v0.5.3
+	ariga.io/atlas-go-sdk v0.7.2
+	ariga.io/atlas-provider-gorm v0.5.4
 	github.com/Netflix/go-env v0.1.2
 	github.com/aws/aws-lambda-go v1.49.0
 	github.com/bitwarden/sdk-go v1.0.2
-	github.com/getsentry/sentry-go v0.34.1
-	github.com/getsentry/sentry-go/fiber v0.34.1
+	github.com/getsentry/sentry-go v0.35.0
+	github.com/getsentry/sentry-go/fiber v0.35.0
 	github.com/go-playground/validator/v10 v10.27.0
 	github.com/gofiber/fiber/v2 v2.52.9
 	github.com/jackc/pgx/v5 v5.7.5
-	github.com/kittipat1413/go-common v0.17.0
-	github.com/lestrrat-go/jwx/v3 v3.0.8
+	github.com/kittipat1413/go-common v0.18.0
+	github.com/lestrrat-go/jwx/v3 v3.0.9
 	github.com/maniartech/signals v1.2.0
-	github.com/workos/workos-go/v4 v4.44.0
+	github.com/workos/workos-go/v4 v4.45.0
 	go.uber.org/fx v1.24.0
 	gorm.io/datatypes v1.2.6
 	gorm.io/driver/postgres v1.6.0
@@ -23,7 +24,6 @@ require (
 )
 
 require (
-	ariga.io/atlas-go-sdk v0.7.2 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/andybalholm/brotli v1.2.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
@@ -51,7 +51,7 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
-	github.com/mattn/go-sqlite3 v1.14.29 // indirect
+	github.com/mattn/go-sqlite3 v1.14.30 // indirect
 	github.com/microsoft/go-mssqldb v1.9.2 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect

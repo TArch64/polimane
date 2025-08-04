@@ -4,13 +4,12 @@ import (
 	"context"
 
 	"polimane/backend/model"
-	"polimane/backend/model/modelbase"
 )
 
 type UpdateOptions struct {
 	Ctx      context.Context
 	User     *model.User
-	SchemaID modelbase.ID
+	SchemaID model.ID
 	Updates  *model.Schema
 }
 
@@ -23,7 +22,7 @@ func (c *Client) Update(options *UpdateOptions) (err error) {
 	return c.db.
 		WithContext(options.Ctx).
 		Model(&model.Schema{
-			Identifiable: &modelbase.Identifiable{
+			Identifiable: &model.Identifiable{
 				ID: options.SchemaID,
 			},
 		}).

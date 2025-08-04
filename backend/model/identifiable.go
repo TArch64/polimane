@@ -1,4 +1,4 @@
-package modelbase
+package model
 
 import (
 	"github.com/jackc/pgx/v5/pgtype"
