@@ -43,7 +43,7 @@ resource "aws_cloudwatch_log_group" "lambda_logs" {
 }
 
 resource "null_resource" "lambda_migrations" {
-  triggers = { sources_hash = uuid() }
+  triggers = { sources_hash = local.migrations_hash }
   depends_on = [aws_lambda_function.lambda]
 
   provisioner "local-exec" {

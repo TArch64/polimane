@@ -24,7 +24,7 @@ db_migrate:
 	@make execute_with_retry cmd="atlas migrate apply --env $(env)" on_error="unexpected transaction status idle" interval=2
 
 execute_with_retry:
-	@while ! $(cmd) 2>&1 | grep -v "$(on_error)" > /dev/null; do \
+	@while ! $(cmd) 2>&1 | grep -v "$(on_error)"; do \
 		echo "Retrying..."; \
 		sleep $(interval); \
 	done
