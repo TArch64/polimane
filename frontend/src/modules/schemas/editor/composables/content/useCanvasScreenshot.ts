@@ -19,6 +19,7 @@ export function useCanvasScreenshot() {
     return layer.toDataURL({
       ...layerRect.toJSON(),
       mimeType: 'image/webp',
+      pixelRatio: window.devicePixelRatio,
     });
   }
 

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"go.uber.org/fx"
 
 	"polimane/backend/api"
@@ -13,6 +15,8 @@ import (
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryusers "polimane/backend/repository/users"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
+	"polimane/backend/services/awsconfig"
+	"polimane/backend/services/awss3"
 	"polimane/backend/services/bitwarden"
 	"polimane/backend/services/db"
 	"polimane/backend/services/jwk"
@@ -31,17 +35,30 @@ func Controller(f any) any {
 
 func main() {
 	fx.New(
+		fx.Supply(
+			fx.Annotate(context.Background(), fx.As(new(context.Context))),
+		),
+
 		fx.Provide(
+			// external
+			jwk.Provider,
+
+			// services
 			bitwarden.Provider,
 			env.Provider,
 			db.Provider,
-			jwk.Provider,
 			workos.Provider,
 			sentry.Provider,
 			signal.Provider,
+			awsconfig.Provider,
+			awss3.Provider,
+
+			// repositories
 			repositoryuserschemas.Provider,
 			repositoryusers.Provider,
 			repositoryschemas.Provider,
+
+			// api
 			auth.MiddlewareProvider,
 			Controller(ping.Provider),
 			Controller(auth.Provider),
