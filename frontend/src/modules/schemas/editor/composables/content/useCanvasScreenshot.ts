@@ -40,6 +40,10 @@ export function useCanvasScreenshot() {
   }
 
   function needScreenshot(): boolean {
+    if (!stage.value) {
+      return false;
+    }
+
     if (!editorStore.schema.screenshotedAt) {
       return true;
     }
