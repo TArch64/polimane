@@ -1,3 +1,7 @@
+locals {
+  cdn_domain = "cdn.${local.domain}"
+}
+
 data "aws_cloudfront_cache_policy" "caching_optimized" {
   name = "Managed-CachingOptimized"
 }
@@ -14,9 +18,10 @@ resource "aws_cloudfront_origin_access_control" "cdn" {
 }
 
 resource "aws_cloudfront_distribution" "cdn" {
+  http_version = "http2and3"
+  price_class  = "PriceClass_100"
+  aliases = [local.cdn_domain]
   enabled             = true
-  http_version        = "http2and3"
-  price_class         = "PriceClass_100"
   wait_for_deployment = true
   comment             = local.app_name
 
@@ -25,7 +30,9 @@ resource "aws_cloudfront_distribution" "cdn" {
   })
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate.cloudfront.arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 
   restrictions {

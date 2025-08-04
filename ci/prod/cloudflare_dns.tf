@@ -51,3 +51,48 @@ resource "cloudflare_dns_record" "webapp" {
   zone_id = local.cloudflare_zone_id
   content = "${cloudflare_pages_project.webapp.name}.pages.dev"
 }
+
+resource "aws_acm_certificate" "cloudfront" {
+  provider          = aws.us_east_1
+  domain_name       = "*.${local.domain}"
+  validation_method = "DNS"
+  tags              = local.aws_common_tags
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "cloudflare_dns_record" "cloudfront_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.cloudfront.domain_validation_options : dvo.domain_name => {
+      name = trimsuffix(dvo.resource_record_name, ".")
+      record = trimsuffix(dvo.resource_record_value, ".")
+      type = dvo.resource_record_type
+    }
+  }
+
+  zone_id = local.cloudflare_zone_id
+  name    = each.value.name
+  content = each.value.record
+  type    = each.value.type
+  ttl     = 60
+}
+
+resource "aws_acm_certificate_validation" "cloudfront" {
+  provider                = aws.us_east_1
+  certificate_arn         = aws_acm_certificate.cloudfront.arn
+  validation_record_fqdns = [
+    for record in cloudflare_dns_record.cloudfront_validation :
+    "${record.name}."
+  ]
+}
+
+resource "cloudflare_dns_record" "cdn" {
+  zone_id = local.cloudflare_zone_id
+  name    = local.cdn_domain
+  content = aws_cloudfront_distribution.cdn.domain_name
+  type    = "CNAME"
+  ttl     = 1
+  proxied = false
+}
