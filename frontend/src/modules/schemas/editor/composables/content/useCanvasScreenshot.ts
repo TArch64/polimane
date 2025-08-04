@@ -39,7 +39,21 @@ export function useCanvasScreenshot() {
     });
   }
 
+  function needScreenshot(): boolean {
+    if (!editorStore.schema.screenshotedAt) {
+      return true;
+    }
+
+    const lastSaved = new Date(editorStore.schema.screenshotedAt);
+    const now = new Date();
+    const diff = now.getTime() - lastSaved.getTime();
+
+    return diff > 30 * 60 * 1000;
+  }
+
   editorStore.onSaved(async () => {
-    await editorStore.updateScreenshot(generateScreenshot());
+    if (needScreenshot()) {
+      await editorStore.updateScreenshot(generateScreenshot());
+    }
   });
 }
