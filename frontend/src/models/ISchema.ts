@@ -6,5 +6,6 @@ export interface ISchema {
   palette: string[];
   createdAt: string;
   updatedAt: string;
+  screenshotedAt: string | null;
   content: ISchemaPattern[];
 }

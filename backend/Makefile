@@ -1,12 +1,14 @@
 .PHONY: dev db_migration_new db_migration_blank db_rehash_migrations db_migrate prod
 
 MAKEFLAGS += --no-print-directory
-CGO_ENABLED=1
-CC="musl-gcc"
 ldflags = '-linkmode external -extldflags "-static -Wl,-unresolved-symbols=ignore-all"'
 env ?= dev
 
-dev:
+cgo_envs:
+	go env -w CGO_ENABLED=1
+	go env -w CC=musl-gcc
+
+dev: cgo_envs
 	gow -e=go,mod run -tags "dev" -ldflags $(ldflags) main.go
 
 db_new_migration:
@@ -22,14 +24,13 @@ db_migrate:
 	@make execute_with_retry cmd="atlas migrate apply --env $(env)" on_error="unexpected transaction status idle" interval=2
 
 execute_with_retry:
-	@while ! $(cmd) 2>&1 | grep -v "$(on_error)" > /dev/null; do \
+	@while ! $(cmd) 2>&1 | grep -v "$(on_error)"; do \
 		echo "Retrying..."; \
 		sleep $(interval); \
 	done
 
-prod:
-	GOOS=linux \
-	GOARCH=arm64 \
+prod: cgo_envs
+	GOOS=linux GOARCH=arm64 \
 	go build -tags "prod" -o "$(out_dir)/bootstrap" -ldflags $(ldflags) main.go
 	zip -j "$(out_dir)/bootstrap.zip" "$(out_dir)/bootstrap"
 	rm "$(out_dir)/bootstrap"

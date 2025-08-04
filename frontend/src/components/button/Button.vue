@@ -11,7 +11,9 @@
       v-if="prependIcon"
     />
 
-    <span>
+    <slot v-if="icon" />
+
+    <span v-else>
       <slot />
     </span>
 

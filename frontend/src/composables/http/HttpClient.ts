@@ -1,10 +1,8 @@
+import { buildUrl, type UrlParams, type UrlPath } from '@/helpers';
 import { HttpError } from './HttpError';
 import type { HttpMiddleware, HttpMiddlewareExecutor } from './HttpMiddlewareExecutor';
 
 export type HttpBody = object;
-export type HttpParams = Record<string, string | number>;
-export type PathItem = string | number;
-export type Path = PathItem[] | PathItem;
 
 export interface IHttpClientOptions {
   baseUrl: string;
@@ -16,11 +14,11 @@ export interface IHttpRequestConfig {
 }
 
 interface IRequestConfig<
-  P extends HttpParams = HttpParams,
+  P extends UrlParams = UrlParams,
   B extends HttpBody = HttpBody,
 > extends IHttpRequestConfig {
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
-  path: Path;
+  path: UrlPath;
   params?: P;
   body?: B;
 }
@@ -34,8 +32,8 @@ export class HttpClient {
     this.middlewareExecutor = options.middlewareExecutor;
   }
 
-  get<R extends HttpBody, P extends HttpParams = HttpParams>(
-    path: Path,
+  get<R extends HttpBody, P extends UrlParams = UrlParams>(
+    path: UrlPath,
     params: P = {} as P,
     config: IHttpRequestConfig = {},
   ): Promise<R> {
@@ -47,8 +45,8 @@ export class HttpClient {
     });
   }
 
-  delete<R extends HttpBody, P extends HttpParams = HttpParams>(
-    path: Path,
+  delete<R extends HttpBody, P extends UrlParams = UrlParams>(
+    path: UrlPath,
     params: P = {} as P,
     config: IHttpRequestConfig = {},
   ): Promise<R> {
@@ -61,7 +59,7 @@ export class HttpClient {
   }
 
   post<R extends HttpBody, B extends HttpBody>(
-    path: Path,
+    path: UrlPath,
     body: B,
     config: IHttpRequestConfig = {},
   ): Promise<R> {
@@ -74,7 +72,7 @@ export class HttpClient {
   }
 
   patch<R extends HttpBody, B extends HttpBody>(
-    path: Path,
+    path: UrlPath,
     body: B,
     config: IHttpRequestConfig = {},
   ): Promise<R> {
@@ -88,7 +86,7 @@ export class HttpClient {
 
   private async request<
     R extends HttpBody,
-    P extends HttpParams,
+    P extends UrlParams,
     B extends HttpBody,
   >(config: IRequestConfig<P, B>): Promise<R> {
     const body = config.body ? JSON.stringify(config.body) : undefined;
@@ -111,14 +109,7 @@ export class HttpClient {
   }
 
   private buildUrl(config: IRequestConfig): URL {
-    const path = [config.path].flat().join('/');
-    const url = new URL(this.baseUrl + path);
-
-    if (config.params && Object.keys(config.params).length) {
-      url.search = new URLSearchParams(config.params as Record<string, string>).toString();
-    }
-
-    return url;
+    return buildUrl(this.baseUrl, config.path, config.params);
   }
 
   private async handleError(response: Response, config: IRequestConfig): Promise<never> {

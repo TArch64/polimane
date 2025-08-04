@@ -25,6 +25,13 @@ type Environment struct {
 		ClientID string `env:"BACKEND_WORKOS_CLIENT_ID,required=true"`
 		ApiKey   string `env:"BACKEND_WORKOS_API_KEY,required=true"`
 	}
+
+	AWS struct {
+		// Used only in dev env since in prod we connect using IAM roles
+		Region          string `env:"BACKEND_AWS_DEFAULT_REGION"`
+		AccessKeyID     string `env:"BACKEND_AWS_ACCESS_KEY_ID"`
+		SecretAccessKey string `env:"BACKEND_AWS_SECRET_ACCESS_KEY"`
+	}
 }
 
 func (e *Environment) AppURL() *url.URL {

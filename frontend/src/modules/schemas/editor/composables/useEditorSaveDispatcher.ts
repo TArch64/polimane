@@ -1,4 +1,5 @@
 import { computed, reactive, type Ref, ref, watch, type WatchStopHandle } from 'vue';
+import { createEventHook, type EventHookOn } from '@vueuse/core';
 import type { ISchema } from '@/models';
 import { combineStopHandles, getObjectKeys } from '@/helpers';
 import type { SafeAny } from '@/types';
@@ -12,11 +13,12 @@ export interface IEditorSaveDispatcher {
   disable: () => void;
   flush: () => Promise<void>;
   abandon: () => void;
+  onSaved: EventHookOn<[schema: ISchema]>;
 }
 
 type EditorSaveCallback = (patch: Partial<ISchema>) => Promise<void>;
 
-const NON_WATCHABLE_ATTRIBUTES = ['id', 'createdAt', 'updatedAt'] as const;
+const NON_WATCHABLE_ATTRIBUTES = ['id', 'createdAt', 'updatedAt', 'screenshotedAt'] as const;
 
 function isNonWatchableAttribute(attr: string): attr is NonWatchableAttribute {
   return NON_WATCHABLE_ATTRIBUTES.includes(attr as NonWatchableAttribute);
@@ -28,6 +30,7 @@ type WatchableAttribute = keyof Omit<ISchema, NonWatchableAttribute>;
 export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSaveCallback): IEditorSaveDispatcher {
   let saveTimeout: TimeoutId | null = null;
   let stopWatch: VoidFunction | null = null;
+  const savedHook = createEventHook<[schema: ISchema]>();
   const unsavedChanges = ref<Partial<ISchema> | null>(null);
   const hasUnsavedChanges = computed(() => !!unsavedChanges.value);
   const isSaving = ref(false);
@@ -39,6 +42,7 @@ export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSave
       try {
         isSaving.value = true;
         await onSave(unsavedChanges.value);
+        await savedHook.trigger(schema.value);
         unsavedChanges.value = null;
       } finally {
         isSaving.value = false;
@@ -99,5 +103,6 @@ export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSave
     disable,
     flush,
     abandon,
+    onSaved: savedHook.on,
   });
 }

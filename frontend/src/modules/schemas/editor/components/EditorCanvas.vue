@@ -29,6 +29,7 @@ import type { KonvaEventObject } from 'konva/lib/Node';
 import {
   provideNodeContextMenu,
   useCanvasNavigation,
+  useCanvasScreenshot,
   useCanvasStage,
   useCanvasZoom,
   useNodeRef,
@@ -76,6 +77,7 @@ const layerConfig: Konva.LayerConfig = {
 };
 
 provideNodeContextMenu(stageRef);
+useCanvasScreenshot();
 const canvasZoom = useCanvasZoom();
 const canvasNavigation = useCanvasNavigation();
 
