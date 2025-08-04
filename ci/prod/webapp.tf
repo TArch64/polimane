@@ -33,7 +33,8 @@ resource "null_resource" "webapp_deploy" {
       BUILD_CONTEXT = local.webapp_sources_dir
 
       BUILD_SECRET = jsonencode(["CLOUDFLARE_API_TOKEN"])
-      CLOUDFLARE_API_TOKEN = data.bitwarden_secret.cloudflare_api_token.value
+      # nonsensitive is safe here because values passed using env + build secrets
+      CLOUDFLARE_API_TOKEN = nonsensetive(data.bitwarden_secret.cloudflare_api_token.value)
 
       BUILD_ARGS = jsonencode(["CLOUDFLARE_ACCOUNT_ID", "PROJECT_NAME"])
       CLOUDFLARE_ACCOUNT_ID = local.cloudflare_account_id

@@ -43,7 +43,7 @@ resource "aws_cloudwatch_log_group" "lambda_logs" {
 }
 
 resource "null_resource" "lambda_migrations" {
-  triggers = { sources_hash = local.migrations_hash }
+  triggers = { sources_hash = uuid() }
   depends_on = [aws_lambda_function.lambda]
 
   provisioner "local-exec" {
@@ -56,8 +56,9 @@ resource "null_resource" "lambda_migrations" {
       BUILD_CONTEXT = local.lambda_sources_dir
 
       BUILD_SECRET = jsonencode(["BACKEND_DATABASE_URL", "BACKEND_DATABASE_CERT"])
-      BACKEND_DATABASE_URL     = bitwarden_secret.backend_database_url.value
-      BACKEND_DATABASE_CERT    = bitwarden_secret.backend_database_cert.value
+      # nonsensitive is safe here because values passed using env + build secrets
+      BACKEND_DATABASE_URL = nonsensitive(bitwarden_secret.backend_database_url.value)
+      BACKEND_DATABASE_CERT = nonsensitive(bitwarden_secret.backend_database_cert.value)
     }
   }
 }
