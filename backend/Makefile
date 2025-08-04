@@ -27,10 +27,10 @@ execute_with_retry:
 	done
 
 test:
-	$(cgoflags) go test -ldflags $(ldflags) $(test_pattern)
+	$(cgoflags) go test -tags "test" -ldflags $(ldflags) $(test_pattern)
 
 test_coverage:
-	$(cgoflags) go test -coverprofile=coverage/result.out -covermode=atomic -ldflags $(ldflags) ./...
+	$(cgoflags) go test -tags "test" -coverprofile=coverage/result.out -covermode=atomic -ldflags $(ldflags) ./...
 	go tool cover -html=coverage/result.out -o coverage/result.html
 
 prod:

@@ -131,3 +131,10 @@ TESTING_SCOPE_PRINCIPLES:
 - For struct types, focus on zero-value behavior and field initialization
 - Avoid testing library methods like signals.AddListener, signals.Emit - assume they work
 - Test integration points where your code interfaces with libraries, not library functionality itself
+
+BUILD_TAG_RULES:
+
+- Skip testing files with `//go:build dev` - these are development-only implementations
+- Test files with `//go:build !dev` - these are production implementations that should be tested
+- Test files without build tags as usual - these run in all environments
+- When encountering dev/prod file pairs, only create tests for the production version

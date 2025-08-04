@@ -229,7 +229,7 @@
 
             <option value="file65">polimane/backend/services/workos/get_error_code.go (100.0%)</option>
 
-            <option value="file66">polimane/backend/signal/provider.go (0.0%)</option>
+            <option value="file66">polimane/backend/signal/provider.go (100.0%)</option>
 
         </select>
     </div>
@@ -2806,7 +2806,7 @@ type Container struct {
         InvalidateAuthCache       signals.Signal[string]
 }
 
-func Provider() *Container <span class="cov0" title="0">{
+func Provider() *Container <span class="cov10" title="3">{
         return &amp;Container{
                 InvalidateUserCache:       signals.New[modelbase.ID](),
                 InvalidateWorkosUserCache: signals.New[string](),
