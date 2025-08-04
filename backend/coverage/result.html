@@ -165,9 +165,9 @@
 
             <option value="file33">polimane/backend/api/users/update.go (0.0%)</option>
 
-            <option value="file34">polimane/backend/base/tag_error.go (0.0%)</option>
+            <option value="file34">polimane/backend/base/tag_error.go (100.0%)</option>
 
-            <option value="file35">polimane/backend/env/env.go (0.0%)</option>
+            <option value="file35">polimane/backend/env/env.go (33.3%)</option>
 
             <option value="file36">polimane/backend/env/env_prod.go (0.0%)</option>
 
@@ -1729,12 +1729,12 @@ func (c *Controller) updateUser(ctx context.Context, userID string, body *update
 
 import "fmt"
 
-func TagError(tag string, err error) error <span class="cov0" title="0">{
-        if err == nil </span><span class="cov0" title="0">{
+func TagError(tag string, err error) error <span class="cov10" title="9">{
+        if err == nil </span><span class="cov1" title="1">{
                 return nil
         }</span>
 
-        <span class="cov0" title="0">return fmt.Errorf("%s: %w", tag, err)</span>
+        <span class="cov9" title="8">return fmt.Errorf("%s: %w", tag, err)</span>
 }
 </pre>
 
@@ -1767,14 +1767,14 @@ type Environment struct {
         }
 }
 
-func (e *Environment) AppURL() *url.URL <span class="cov0" title="0">{
+func (e *Environment) AppURL() *url.URL <span class="cov10" title="3">{
         return &amp;url.URL{
                 Scheme: e.AppProtocol,
                 Host:   e.AppDomain,
         }
 }</span>
 
-func (e *Environment) ApiURL() *url.URL <span class="cov0" title="0">{
+func (e *Environment) ApiURL() *url.URL <span class="cov10" title="3">{
         return &amp;url.URL{
                 Scheme: e.AppProtocol,
                 Host:   "api." + e.AppDomain,
