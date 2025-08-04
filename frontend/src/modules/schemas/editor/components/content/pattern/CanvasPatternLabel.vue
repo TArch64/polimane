@@ -9,13 +9,14 @@
 import { computed } from 'vue';
 import Konva from 'konva';
 import type { ISchemaPattern } from '@/models';
-import { useNodeRef } from '@/modules/schemas/editor/composables';
+import { SCREENSHOT_IGNORE, useNodeRef } from '@/modules/schemas/editor/composables';
 
 const props = defineProps<{
   pattern: ISchemaPattern;
 }>();
 
 const config: Partial<Konva.LabelConfig> = {
+  name: SCREENSHOT_IGNORE,
   x: 12,
   y: -10,
 };

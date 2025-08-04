@@ -14,6 +14,7 @@
 import Konva from 'konva';
 import type { ISchemaPattern } from '@/models';
 import {
+  SCREENSHOT_IGNORE,
   useNodeCentering,
   useNodeConfigs,
   useNodeContextMenu,
@@ -63,6 +64,7 @@ const contentGroupConfig = useNodeCentering(contentGroupRef, {
 
 const borderConfig = useNodeConfigs<Konva.RectConfig>([
   {
+    name: SCREENSHOT_IGNORE,
     x: 1,
     y: 1,
     stroke: 'rgba(0, 0, 0, 0.1)',
