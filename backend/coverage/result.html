@@ -173,7 +173,7 @@
 
             <option value="file37">polimane/backend/main.go (0.0%)</option>
 
-            <option value="file38">polimane/backend/model/modelbase/identifiable.go (0.0%)</option>
+            <option value="file38">polimane/backend/model/modelbase/identifiable.go (100.0%)</option>
 
             <option value="file39">polimane/backend/repository/schemas/by_id.go (90.0%)</option>
 
@@ -1912,18 +1912,18 @@ import (
 
 type ID = pgtype.UUID
 
-func StringToID(str string) (ID, error) <span class="cov0" title="0">{
+func StringToID(str string) (ID, error) <span class="cov10" title="11">{
         id := pgtype.UUID{}
         err := id.Scan(str)
         return id, err
 }</span>
 
-func MustStringToID(str string) ID <span class="cov0" title="0">{
+func MustStringToID(str string) ID <span class="cov7" title="5">{
         id, err := StringToID(str)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov5" title="3">{
                 panic(err)</span>
         }
-        <span class="cov0" title="0">return id</span>
+        <span class="cov3" title="2">return id</span>
 }
 
 type Identifiable struct {

@@ -17,7 +17,7 @@ FILE_STRUCTURE:
 - Mocks: mocks_test.go in same package
 - One test file per source file
 
-EXECUTION_COMMAND: docker compose run --rm backend make test test_pattern="./path/..."
+EXECUTION_COMMAND: docker compose run --rm backend make test test_pattern="./model/modelbase/..."
 
 MANDATORY_TEST_PATTERNS:
 
@@ -43,6 +43,14 @@ CRITICAL_SQL_MOCK_RULES:
 - Transaction operations need ExpectBegin() + ExpectCommit()/ExpectRollback()
 - GORM wraps Create() and Delete() operations in transactions automatically
 - Use actual error log patterns, not assumptions
+
+CRITICAL_HTTP_MOCK_RULES:
+
+- NEVER send real HTTP requests in tests
+- Mock all external HTTP calls using testify/mock or httptest
+- Use httptest.NewServer() for integration-style HTTP testing
+- Mock HTTP clients at the interface level, not implementation level
+- Always verify HTTP mock expectations with AssertExpectations(t)
 
 GORM_ERROR_BEHAVIOR:
 
