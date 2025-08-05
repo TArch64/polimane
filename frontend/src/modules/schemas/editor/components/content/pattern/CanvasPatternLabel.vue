@@ -27,12 +27,12 @@ const config: Partial<Konva.LabelConfig> = {
   y: -10,
 };
 
-const tagConfig: Partial<Konva.TagConfig> = {
+const tagConfig: Partial<Konva.TagConfig> = computed(() => ({
   fill: colorWhite.value,
   stroke: colorDivider.value,
   strokeWidth: 1,
   cornerRadius: roundedMd.value,
-};
+}));
 
 const textRef = useNodeRef<Konva.Text | null>();
 

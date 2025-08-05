@@ -43,9 +43,9 @@ const beadRef = useNodeRef<Konva.Rect>();
 useNodeCursor(rootRef, 'crosshair');
 
 const backgroundConfig = useNodeConfigs<Konva.RectConfig>([
-  {
+  () => ({
     fill: colorBackground2.value,
-  },
+  }),
 
   useNodeFiller(beadRef, {
     padding: 0.5,
@@ -53,11 +53,12 @@ const backgroundConfig = useNodeConfigs<Konva.RectConfig>([
 ]);
 
 const beadConfig = useNodeConfigs<Konva.RectConfig>([
-  {
+  () => ({
     width: 14,
     height: 14,
     cornerRadius: roundedFull.value,
-  },
+  }),
+
   computed(() => ({
     fill: props.bead.color || colorBackground3.value,
   })),

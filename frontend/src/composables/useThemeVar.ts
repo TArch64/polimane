@@ -22,19 +22,31 @@ type ColorVars = `--color-${KnownColor}`;
 
 const cache = shallowRef<CSSStyleDeclaration>(null!);
 
+function updateCache() {
+  cache.value = getComputedStyle(document.documentElement);
+}
+
 export function useThemeVar(nameRef: MaybeRefOrGetter<PxVars>): ComputedRef<number>;
 export function useThemeVar(nameRef: MaybeRefOrGetter<ColorVars | string>): ComputedRef<string>;
 export function useThemeVar(nameRef: MaybeRefOrGetter<string>): ComputedRef<string | number> {
-  cache.value ??= getComputedStyle(document.documentElement);
+  if (!cache.value) updateCache();
 
   return computed(() => {
     const name = toValue(nameRef);
-    const value = cache.value.getPropertyValue(name);
+    const value = cache.value.getPropertyValue(name).trim();
 
-    if (name.endsWith('px')) {
-      return parseFloat(value.trim());
+    if (value.endsWith('px')) {
+      return parseFloat(value);
     }
 
-    return value.trim();
+    return value;
   });
 }
+
+import.meta.hot?.on('vite:afterUpdate', (payload) => {
+  const needUpdate = payload.updates.some((update) => {
+    return update.type === 'js-update' && update.path.includes('style/main.css');
+  });
+
+  if (needUpdate) updateCache();
+});

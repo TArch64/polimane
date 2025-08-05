@@ -34,7 +34,7 @@ const props = defineProps<{
   pattern: ISchemaPattern;
 }>();
 
-const colorDivider = useThemeVar('--color-divider');
+const colorDivider2 = useThemeVar('--color-divider-2');
 const roundedMd = useThemeVar('--rounded-md');
 
 const addModal = useModal(RowAddModal);
@@ -67,15 +67,15 @@ const contentGroupConfig = useNodeCentering(contentGroupRef, {
 });
 
 const borderConfig = useNodeConfigs<Konva.RectConfig>([
-  {
+  () => ({
     name: SCREENSHOT_IGNORE,
     x: 1,
     y: 1,
-    stroke: colorDivider.value,
+    stroke: colorDivider2.value,
     strokeWidth: 1,
     cornerRadius: roundedMd.value,
     dash: [10, 5],
-  },
+  }),
 
   useNodeFiller(contentGroupRef, {
     minSize: {
