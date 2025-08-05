@@ -6,7 +6,7 @@ import (
 	"polimane/backend/model"
 )
 
-func (c *Client) CreateTx(tx *gorm.DB, userID, schemaID model.ID) error {
+func (c *Impl) CreateTx(tx *gorm.DB, userID, schemaID model.ID) error {
 	userSchema := &model.UserSchema{
 		UserID:   userID,
 		SchemaID: schemaID,

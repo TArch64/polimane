@@ -20,6 +20,8 @@ import (
 	"polimane/backend/services/bitwarden"
 	"polimane/backend/services/db"
 	"polimane/backend/services/jwk"
+	"polimane/backend/services/osenv"
+	"polimane/backend/services/osfs"
 	"polimane/backend/services/sentry"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
@@ -42,6 +44,8 @@ func main() {
 		fx.Provide(
 			// external
 			jwk.Provider,
+			osfs.Provider,
+			osenv.Provider,
 
 			// services
 			bitwarden.Provider,

@@ -27,7 +27,7 @@ func makeCopyName(originalName string) string {
 	return strings.ReplaceAll(originalName, counterMatch[0], " ("+counterStr+")")
 }
 
-func (c *Client) Copy(options *CopyOptions) (*model.Schema, error) {
+func (c *Impl) Copy(options *CopyOptions) (*model.Schema, error) {
 	original, err := c.ByID(&ByIDOptions{
 		Ctx:      options.Ctx,
 		SchemaID: options.SchemaID,

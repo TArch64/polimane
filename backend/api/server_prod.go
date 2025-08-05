@@ -23,38 +23,42 @@ func OptionsProvider() *Options {
 	}
 }
 
+func runHandler(ctx context.Context, handler http.Handler, req events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) {
+	url := req.RawPath
+	if req.RawQueryString != "" {
+		url += "?" + req.RawQueryString
+	}
+
+	httpReq, _ := http.NewRequestWithContext(ctx, req.RequestContext.HTTP.Method, url, strings.NewReader(req.Body))
+
+	for key, value := range req.Headers {
+		httpReq.Header.Set(key, value)
+	}
+
+	httpReq.RequestURI = url
+
+	recorder := httptest.NewRecorder()
+	handler.ServeHTTP(recorder, httpReq)
+
+	headers := make(map[string]string)
+	for key, values := range recorder.Header() {
+		if len(values) > 0 {
+			headers[key] = strings.Join(values, ", ")
+		}
+	}
+
+	return events.LambdaFunctionURLResponse{
+		StatusCode: recorder.Code,
+		Headers:    headers,
+		Body:       recorder.Body.String(),
+	}, nil
+}
+
 func Start(app *fiber.App) error {
 	handler := adaptor.FiberApp(app)
 
 	lambda.Start(func(ctx context.Context, req events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) {
-		url := req.RawPath
-		if req.RawQueryString != "" {
-			url += "?" + req.RawQueryString
-		}
-
-		httpReq, _ := http.NewRequestWithContext(ctx, req.RequestContext.HTTP.Method, url, strings.NewReader(req.Body))
-
-		for key, value := range req.Headers {
-			httpReq.Header.Set(key, value)
-		}
-
-		httpReq.RequestURI = url
-
-		recorder := httptest.NewRecorder()
-		handler.ServeHTTP(recorder, httpReq)
-
-		headers := make(map[string]string)
-		for key, values := range recorder.Header() {
-			if len(values) > 0 {
-				headers[key] = strings.Join(values, ", ")
-			}
-		}
-
-		return events.LambdaFunctionURLResponse{
-			StatusCode: recorder.Code,
-			Headers:    headers,
-			Body:       recorder.Body.String(),
-		}, nil
+		return runHandler(ctx, handler, req)
 	})
 
 	return nil

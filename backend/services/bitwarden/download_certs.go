@@ -14,7 +14,7 @@ func (c *Client) DownloadCerts(certs []*DownloadingCert) error {
 	sids := make([]string, len(certs))
 	idCertMap := make(map[string]*DownloadingCert)
 	for i, cert := range certs {
-		sids[i] = os.Getenv(cert.SID)
+		sids[i] = c.env.Getenv(cert.SID)
 		idCertMap[sids[i]] = cert
 	}
 
@@ -27,12 +27,12 @@ func (c *Client) DownloadCerts(certs []*DownloadingCert) error {
 	for sid, secret := range secrets {
 		dest = idCertMap[sid].Dest
 
-		err = os.MkdirAll(filepath.Dir(dest), os.ModePerm)
+		err = c.fs.MkdirAll(filepath.Dir(dest), os.ModePerm)
 		if err != nil {
 			return err
 		}
 
-		err = os.WriteFile(dest, []byte(secret), 0644)
+		err = c.fs.WriteFile(dest, []byte(secret), 0644)
 		if err != nil {
 			return err
 		}

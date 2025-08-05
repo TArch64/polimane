@@ -16,7 +16,7 @@ type CreateOptions struct {
 	Content model.SchemaContent
 }
 
-func (c *Client) Create(options *CreateOptions) (schema *model.Schema, err error) {
+func (c *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) {
 	if options.Palette == nil {
 		options.Palette = make(model.SchemaPalette, model.SchemaPaletteSize)
 	}

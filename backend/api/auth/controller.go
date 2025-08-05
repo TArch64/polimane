@@ -15,14 +15,14 @@ const groupPrefix = "auth"
 type Controller struct {
 	workosClient *workos.Client
 	env          *env.Environment
-	users        *repositoryusers.Client
+	users        repositoryusers.Client
 	signals      *signal.Container
 }
 
 func Provider(
 	workosClient *workos.Client,
 	environment *env.Environment,
-	users *repositoryusers.Client,
+	users repositoryusers.Client,
 	signals *signal.Container,
 ) base.Controller {
 	return &Controller{

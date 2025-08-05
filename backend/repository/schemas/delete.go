@@ -14,7 +14,7 @@ type DeleteOptions struct {
 	SchemaID model.ID
 }
 
-func (c *Client) Delete(options *DeleteOptions) (err error) {
+func (c *Impl) Delete(options *DeleteOptions) (err error) {
 	err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
 	if err != nil {
 		return err

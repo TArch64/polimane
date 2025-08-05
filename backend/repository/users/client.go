@@ -1,11 +1,24 @@
 package users
 
-import "gorm.io/gorm"
+import (
+	"context"
 
-type Client struct {
+	"gorm.io/gorm"
+
+	"polimane/backend/model"
+)
+
+type Client interface {
+	ByID(ctx context.Context, id model.ID) (*model.User, error)
+	CreateIfNeeded(ctx context.Context, workosID string) (*model.User, error)
+}
+
+type Impl struct {
 	db *gorm.DB
 }
 
-func Provider(db *gorm.DB) *Client {
-	return &Client{db: db}
+var _ Client = (*Impl)(nil)
+
+func Provider(db *gorm.DB) Client {
+	return &Impl{db: db}
 }

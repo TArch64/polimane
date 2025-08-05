@@ -26,14 +26,14 @@ type Middleware struct {
 	workosUserCache cache.Cache[*usermanagement.User]
 	workosClient    *workos.Client
 	env             *env.Environment
-	users           *repositoryusers.Client
+	users           repositoryusers.Client
 }
 
 func MiddlewareProvider(
 	signals *signal.Container,
 	environment *env.Environment,
 	workosClient *workos.Client,
-	users *repositoryusers.Client,
+	users repositoryusers.Client,
 ) *Middleware {
 	cacheOptions := []localcache.Option{
 		localcache.WithDefaultExpiration(10 * time.Minute),

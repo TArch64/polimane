@@ -6,7 +6,7 @@ import (
 	"polimane/backend/model"
 )
 
-func (c *Client) CreateIfNeeded(ctx context.Context, workosID string) (*model.User, error) {
+func (c *Impl) CreateIfNeeded(ctx context.Context, workosID string) (*model.User, error) {
 	user := &model.User{WorkosID: workosID}
 
 	err := c.db.

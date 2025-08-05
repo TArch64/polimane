@@ -6,16 +6,16 @@ import (
 	"github.com/lestrrat-go/jwx/v3/jwk"
 )
 
-type Interface interface {
+type Client interface {
 	Fetch(ctx context.Context, u string) (jwk.Set, error)
 }
 
-type Client struct{}
+type Impl struct{}
 
-func (j *Client) Fetch(ctx context.Context, u string) (jwk.Set, error) {
+func (j *Impl) Fetch(ctx context.Context, u string) (jwk.Set, error) {
 	return jwk.Fetch(ctx, u)
 }
 
-func Provider() Interface {
-	return &Client{}
+func Provider() Client {
+	return &Impl{}
 }
