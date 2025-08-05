@@ -10,7 +10,7 @@ type DownloadingCert struct {
 	Dest string
 }
 
-func (c *Client) DownloadCerts(certs []*DownloadingCert) error {
+func (c *Impl) DownloadCerts(certs []*DownloadingCert) error {
 	sids := make([]string, len(certs))
 	idCertMap := make(map[string]*DownloadingCert)
 	for i, cert := range certs {

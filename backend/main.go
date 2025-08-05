@@ -35,14 +35,15 @@ func Controller(f any) any {
 	)
 }
 
+func InitContext() context.Context {
+	return context.Background()
+}
+
 func main() {
 	fx.New(
-		fx.Supply(
-			fx.Annotate(context.Background(), fx.As(new(context.Context))),
-		),
-
 		fx.Provide(
 			// external
+			InitContext,
 			jwk.Provider,
 			osfs.Provider,
 			osenv.Provider,
@@ -69,10 +70,7 @@ func main() {
 			Controller(users.Provider),
 			Controller(schemas.Provider),
 			api.OptionsProvider,
-			fx.Annotate(
-				api.Provider,
-				fx.ParamTags(`group:"controllers"`),
-			),
+			api.Provider,
 		),
 		fx.Invoke(api.Start),
 	).Run()

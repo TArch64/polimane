@@ -10,7 +10,7 @@ import (
 
 const IsDev = true
 
-func loadEnvs(instance *Environment, _ *bitwarden.Client) error {
+func loadEnvs(instance *Environment, _ bitwarden.Client) error {
 	_, err := env.UnmarshalFromEnviron(instance)
 	return err
 }

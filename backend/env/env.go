@@ -3,6 +3,8 @@ package env
 import (
 	"net/url"
 
+	"go.uber.org/fx"
+
 	"polimane/backend/base"
 	"polimane/backend/services/bitwarden"
 )
@@ -48,9 +50,14 @@ func (e *Environment) ApiURL() *url.URL {
 	}
 }
 
-func Provider(bitwardenClient *bitwarden.Client) (*Environment, error) {
+type Options struct {
+	fx.In
+	BitwardenClient bitwarden.Client
+}
+
+func Provider(options Options) (*Environment, error) {
 	instance := &Environment{}
-	if err := loadEnvs(instance, bitwardenClient); err != nil {
+	if err := loadEnvs(instance, options.BitwardenClient); err != nil {
 		return nil, base.TagError("env.load", err)
 	}
 
