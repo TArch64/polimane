@@ -15,10 +15,14 @@
 <script setup lang="ts">
 import Konva from 'konva';
 import { PlusIcon } from '@/components/icon';
+import { useThemeVar } from '@/composables';
 import { CanvasIcon, CanvasStackH, GroupRenderer } from '../base';
 
+const colorDivider = useThemeVar('--color-divider');
+const colorPrimary = useThemeVar('--color-primary');
+
 const backgroundConfig: Partial<Konva.GroupConfig> = {
-  stroke: 'rgba(0, 0, 0, 0.2)',
+  stroke: colorDivider.value,
   strokeWidth: 1,
   cornerRadius: 8,
   width: 156,
@@ -31,7 +35,7 @@ const stackConfig: Partial<Konva.GroupConfig> = {
 
 const labelTextConfig: Partial<Konva.TextConfig> = {
   text: 'Додати Рядок',
-  fill: 'rgba(0, 0, 0, 0.8)',
+  fill: colorPrimary.value,
   fontSize: 15,
   height: 32,
   offsetY: -1,

@@ -10,10 +10,15 @@ import { computed } from 'vue';
 import Konva from 'konva';
 import type { ISchemaPattern } from '@/models';
 import { SCREENSHOT_IGNORE, useNodeRef } from '@/modules/schemas/editor/composables';
+import { useThemeVar } from '@/composables';
 
 const props = defineProps<{
   pattern: ISchemaPattern;
 }>();
+
+const colorWhite = useThemeVar('--color-white');
+const colorPrimary = useThemeVar('--color-primary');
+const colorDivider = useThemeVar('--color-divider');
 
 const config: Partial<Konva.LabelConfig> = {
   name: SCREENSHOT_IGNORE,
@@ -22,8 +27,8 @@ const config: Partial<Konva.LabelConfig> = {
 };
 
 const tagConfig: Partial<Konva.TagConfig> = {
-  fill: '#fff',
-  stroke: 'rgba(0, 0, 0, 0.2)',
+  fill: colorWhite.value,
+  stroke: colorDivider.value,
   strokeWidth: 1,
   cornerRadius: 4,
 };
@@ -36,7 +41,7 @@ const labelTextWidth = computed(() => {
 
 const textConfig = computed((): Partial<Konva.TextConfig> => ({
   text: props.pattern.name,
-  fill: '#000',
+  fill: colorPrimary.value,
   padding: 4,
   fontSize: 14,
   align: 'center',

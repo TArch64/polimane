@@ -22,12 +22,15 @@ import {
   useNodeRef,
 } from '@/modules/schemas/editor/composables';
 import { useBeadsStore, usePaletteStore } from '@/modules/schemas/editor/stores';
+import { useThemeVar } from '@/composables';
 import { GroupRenderer } from '../base';
 
 const props = defineProps<{
   row: ISchemaRow;
   bead: ISchemaBead;
 }>();
+
+const colorBackground3 = useThemeVar('--color-background-3');
 
 const paletteStore = usePaletteStore();
 const beadsStore = useBeadsStore(() => props.row);
@@ -48,7 +51,7 @@ const beadConfig = useNodeConfigs<Konva.RectConfig>([
     cornerRadius: 999,
   },
   computed(() => ({
-    fill: props.bead.color || 'rgba(0, 0, 0, 0.05)',
+    fill: props.bead.color || colorBackground3.value,
   })),
 ]);
 
