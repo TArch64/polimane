@@ -1,5 +1,7 @@
 <template>
   <Button
+    icon
+    size="none"
     class="color-eraser"
     :class="classes"
     @click="activate"

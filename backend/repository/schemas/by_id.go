@@ -4,13 +4,12 @@ import (
 	"context"
 
 	"polimane/backend/model"
-	"polimane/backend/model/modelbase"
 )
 
 type ByIDOptions struct {
 	Ctx      context.Context
 	User     *model.User
-	SchemaID modelbase.ID
+	SchemaID model.ID
 	Select   []string
 }
 

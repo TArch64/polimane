@@ -7,13 +7,12 @@ import (
 	"strings"
 
 	"polimane/backend/model"
-	"polimane/backend/model/modelbase"
 )
 
 type CopyOptions struct {
 	Ctx      context.Context
 	User     *model.User
-	SchemaID modelbase.ID
+	SchemaID model.ID
 }
 
 var nameCopyCounter = regexp.MustCompile(`\((\d+)\)$`)

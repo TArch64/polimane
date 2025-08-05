@@ -4,10 +4,9 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
-	"polimane/backend/model/modelbase"
 )
 
-func (c *Impl) CreateTx(tx *gorm.DB, userID, schemaID modelbase.ID) error {
+func (c *Impl) CreateTx(tx *gorm.DB, userID, schemaID model.ID) error {
 	userSchema := &model.UserSchema{
 		UserID:   userID,
 		SchemaID: schemaID,

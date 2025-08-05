@@ -9,3 +9,5 @@ export * from './fetchMapValue';
 export * from './destroyStore';
 export * from './compressor';
 export * from './newArray';
+export * from './object';
+export * from './buildUrl';

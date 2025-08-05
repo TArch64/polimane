@@ -4,7 +4,7 @@ import type { IUser } from '@/models';
 import { useAccessToken, useHttpClient, useRefreshAccessToken } from '@/composables';
 
 export const useSessionStore = defineStore('session', () => {
-  const httpClient = useHttpClient();
+  const http = useHttpClient();
   const user = ref<IUser | null>(null);
   const accessToken = useAccessToken();
   const refreshAccessToken = useRefreshAccessToken();
@@ -12,7 +12,7 @@ export const useSessionStore = defineStore('session', () => {
 
   async function refresh(): Promise<void> {
     try {
-      user.value = await httpClient.get<IUser>('/users/current');
+      user.value = await http.get<IUser>('/users/current');
     } catch (error) {
       user.value = null;
       console.error(error);
@@ -25,7 +25,7 @@ export const useSessionStore = defineStore('session', () => {
   }
 
   async function logout(): Promise<void> {
-    await httpClient.post('/auth/logout', {});
+    await http.post('/auth/logout', {});
     accessToken.value = undefined;
     refreshAccessToken.value = undefined;
     await nextTick();

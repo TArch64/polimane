@@ -1,4 +1,4 @@
-package modelbase
+package model
 
 import "time"
 

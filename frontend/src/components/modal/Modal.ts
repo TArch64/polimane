@@ -1,5 +1,5 @@
 import { type Component, reactive } from 'vue';
-import type { InferComponentProps, SafeAny } from '@/types';
+import type { InferComponentProps, MaybePromise, SafeAny } from '@/types';
 import { createWaiter, type IWaiter, type WaiterRelease } from '@/helpers';
 
 interface IModalState<P> {
@@ -7,7 +7,7 @@ interface IModalState<P> {
   props: P | null;
 }
 
-export type ModalCloseCallback = () => Promise<void>;
+export type ModalCloseCallback = () => MaybePromise<void>;
 
 export type AnyModal = Modal<Component, SafeAny, SafeAny>;
 

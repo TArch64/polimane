@@ -2,20 +2,30 @@ package schemas
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"go.uber.org/fx"
 
 	"polimane/backend/api/base"
 	repositoryschemas "polimane/backend/repository/schemas"
+	"polimane/backend/services/awss3"
 )
 
 const schemaIdParam = "schemaId"
 
-type Controller struct {
-	schemas repositoryschemas.Client
+type ControllerOptions struct {
+	fx.In
+	Schemas *repositoryschemas.Client
+	S3      awss3.Client
 }
 
-func Provider(schemas repositoryschemas.Client) base.Controller {
+type Controller struct {
+	schemas repositoryschemas.Client
+	s3      awss3.Client
+}
+
+func Provider(options ControllerOptions) base.Controller {
 	return &Controller{
-		schemas: schemas,
+		schemas: options.Schemas,
+		s3:      options.S3,
 	}
 }
 
@@ -31,6 +41,7 @@ func (c *Controller) Private(group fiber.Router) {
 			group.Delete("", c.apiDelete)
 			group.Patch("", c.apiUpdate)
 			group.Post("copy", c.apiCopy)
+			group.Patch("screenshot", c.apiUpdateScreenshot)
 		})
 	})
 }

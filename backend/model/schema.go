@@ -1,9 +1,9 @@
 package model
 
 import (
-	"gorm.io/datatypes"
+	"time"
 
-	"polimane/backend/model/modelbase"
+	"gorm.io/datatypes"
 )
 
 const (
@@ -14,12 +14,13 @@ const (
 )
 
 type Schema struct {
-	*modelbase.Identifiable
-	*modelbase.Timestamps
-	Name    string        `gorm:"not null;index;size:255" json:"name"`
-	Palette SchemaPalette `gorm:"not null;type:json" json:"palette,omitempty"`
-	Content SchemaContent `gorm:"not null;type:json" json:"content,omitempty"`
-	Users   []User        `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
+	*Identifiable
+	*Timestamps
+	Name           string        `gorm:"not null;index;size:255" json:"name"`
+	Palette        SchemaPalette `gorm:"not null;type:json" json:"palette,omitempty"`
+	Content        SchemaContent `gorm:"not null;type:json" json:"content,omitempty"`
+	ScreenshotedAt *time.Time    `json:"screenshotedAt"`
+	Users          []User        `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
 }
 
 type SchemaPalette = datatypes.JSONSlice[string]

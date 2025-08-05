@@ -6,13 +6,12 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
-	"polimane/backend/model/modelbase"
 )
 
 type DeleteOptions struct {
 	Ctx      context.Context
 	User     *model.User
-	SchemaID modelbase.ID
+	SchemaID model.ID
 }
 
 func (c *Impl) Delete(options *DeleteOptions) (err error) {

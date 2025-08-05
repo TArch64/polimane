@@ -14,7 +14,6 @@ import (
 	"polimane/backend/api/base"
 	"polimane/backend/env"
 	"polimane/backend/model"
-	"polimane/backend/model/modelbase"
 	repositoryusers "polimane/backend/repository/users"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
@@ -60,11 +59,11 @@ func (m *Middleware) invalidateAuthCache(ctx context.Context, sessionID string) 
 
 	if workosUser != nil {
 		m.invalidateWorkosUserCache(ctx, workosUser.ID)
-		m.invalidateUserCache(ctx, modelbase.MustStringToID(workosUser.ExternalID))
+		m.invalidateUserCache(ctx, model.MustStringToID(workosUser.ExternalID))
 	}
 }
 
-func (m *Middleware) invalidateUserCache(ctx context.Context, userID modelbase.ID) {
+func (m *Middleware) invalidateUserCache(ctx context.Context, userID model.ID) {
 	_ = m.userCache.Invalidate(ctx, userID.String())
 }
 
@@ -92,7 +91,7 @@ func (m *Middleware) Handler(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	userID, err := modelbase.StringToID(workosUser.ExternalID)
+	userID, err := model.StringToID(workosUser.ExternalID)
 	if err != nil {
 		return err
 	}
@@ -141,7 +140,7 @@ func (m *Middleware) getWorkosUser(ctx context.Context, accessTokenClaims *worko
 	})
 }
 
-func (m *Middleware) getUser(ctx context.Context, id modelbase.ID) (*model.User, error) {
+func (m *Middleware) getUser(ctx context.Context, id model.ID) (*model.User, error) {
 	return m.userCache.Get(ctx, id.String(), func() (*model.User, *time.Duration, error) {
 		user, err := m.users.ByID(ctx, id)
 

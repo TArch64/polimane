@@ -1,5 +1,13 @@
 <template>
   <Card ref="cardRef" interactable :binding="cardBinding">
+    <img
+      :src="screenshotUrl"
+      :alt="`Скріншот схеми ${schema.name}`"
+      draggable="false"
+      class="home-schema__screenshot"
+      v-if="screenshotUrl"
+    >
+
     {{ schema.name }}
   </Card>
 </template>
@@ -14,6 +22,7 @@ import { useDomRef } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { CopyIcon, TrashIcon } from '@/components/icon';
 import { useSchemasStore } from '@/modules/home/stores';
+import { useCdnUrl } from '@/composables/useCdnUrl';
 
 const props = defineProps<{
   schema: ISchema;
@@ -29,6 +38,17 @@ const cardBinding = makeBinding(RouterLink, () => ({
     params: { schemaId: props.schema.id },
   },
 }));
+
+const screenshotUrl = useCdnUrl(() => {
+  if (!props.schema.screenshotedAt) {
+    return null;
+  }
+
+  return {
+    path: ['images', props.schema.id, 'schema.webp'],
+    params: { v: new Date(props.schema.screenshotedAt).getTime() },
+  };
+});
 
 const deleteConfirm = useConfirm({
   danger: true,
@@ -73,3 +93,16 @@ useContextMenu({
   ],
 });
 </script>
+
+<style scoped>
+@layer page {
+  .home-schema__screenshot {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    object-position: center;
+    border-bottom: var(--divider);
+    margin-bottom: 4px;
+  }
+}
+</style>

@@ -1,13 +1,5 @@
 data "external_schema" "gorm" {
-  program = [
-    "go",
-    "run",
-    "-mod=mod",
-    "ariga.io/atlas-provider-gorm",
-    "load",
-    "--path", "./model",
-    "--dialect", "postgres"
-  ]
+  program = ["go", "run", "-mod=mod", "./migrations"]
 }
 
 data "template_dir" "migrations" {

@@ -2,46 +2,10 @@
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "Table",
+      "Sid": "S3",
       "Effect": "Allow",
-      "Action": [
-        "dynamodb:BatchGetItem",
-        "dynamodb:BatchWriteItem",
-        "dynamodb:UntagResource",
-        "dynamodb:PutItem",
-        "dynamodb:DeleteItem",
-        "dynamodb:PartiQLUpdate",
-        "dynamodb:Scan",
-        "dynamodb:Query",
-        "dynamodb:UpdateItem",
-        "dynamodb:CreateTable",
-        "dynamodb:TagResource",
-        "dynamodb:PartiQLSelect",
-        "dynamodb:DescribeTable",
-        "dynamodb:PartiQLInsert",
-        "dynamodb:GetItem",
-        "dynamodb:UpdateTable",
-        "dynamodb:PartiQLDelete"
-      ],
-      "Resource": [
-        "arn:aws:dynamodb:eu-central-1:708789309252:table/polimane-prod",
-        "arn:aws:dynamodb:eu-central-1:708789309252:table/*/index/*"
-      ]
-    },
-    {
-      "Sid": "Global",
-      "Effect": "Allow",
-      "Action": "dynamodb:ListTables",
-      "Resource": "*"
-    },
-    {
-      "Sid": "ParameterStore",
-      "Effect": "Allow",
-      "Action": [
-        "ssm:GetParameter",
-        "ssm:PutParameter"
-      ],
-      "Resource": "arn:aws:ssm:eu-central-1:708789309252:parameter/polimane/*"
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::polimane-prod/data/*"
     }
   ]
 }
