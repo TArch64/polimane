@@ -9,7 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"polimane/backend/model"
-	"polimane/backend/model/modelbase"
 )
 
 func TestUpdate(t *testing.T) {
@@ -17,9 +16,9 @@ func TestUpdate(t *testing.T) {
 	defer cleanup()
 
 	ctx := context.Background()
-	userID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
-	user := &model.User{Identifiable: &modelbase.Identifiable{ID: userID}}
-	schemaID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440001")
+	userID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+	user := &model.User{Identifiable: &model.Identifiable{ID: userID}}
+	schemaID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440001")
 
 	t.Run("success", func(t *testing.T) {
 		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(nil)

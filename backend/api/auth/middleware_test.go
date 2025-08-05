@@ -67,7 +67,7 @@ func TestMiddlewareHandler(t *testing.T) {
 		mockUserCache := &MockCache[*model.User]{}
 		mockWorkosUserCache := &MockCache[*usermanagement.User]{}
 
-		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 		testUser := &model.User{}
 		testUser.ID = testUserID
 
@@ -182,7 +182,7 @@ func TestMiddlewareHandler(t *testing.T) {
 		mockUserCache := &MockCache[*model.User]{}
 		mockWorkosUserCache := &MockCache[*usermanagement.User]{}
 
-		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 		testUser := &model.User{}
 		testUser.ID = testUserID
 
@@ -272,7 +272,7 @@ func TestInvalidateAuthCache(t *testing.T) {
 		mockUserCache := &MockCache[*model.User]{}
 		mockWorkosUserCache := &MockCache[*usermanagement.User]{}
 
-		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 		workosUser := &usermanagement.User{
 			ID:         "workos-123",
 			ExternalID: testUserID.String(),
@@ -319,7 +319,7 @@ func TestInvalidateUserCache(t *testing.T) {
 	t.Run("invalidates user cache by ID", func(t *testing.T) {
 		// Arrange
 		mockUserCache := &MockCache[*model.User]{}
-		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 
 		middleware := &Middleware{
 			userCache: mockUserCache,
@@ -358,7 +358,7 @@ func TestGetUser(t *testing.T) {
 	t.Run("returns cached user", func(t *testing.T) {
 		// Arrange
 		mockUserCache := &MockCache[*model.User]{}
-		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 		testUser := &model.User{}
 		testUser.ID = testUserID
 
@@ -382,7 +382,7 @@ func TestGetUser(t *testing.T) {
 		// Arrange
 		mockUserCache := &MockCache[*model.User]{}
 		mockUsers := &MockUsersClient{}
-		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 
 		middleware := &Middleware{
 			userCache: mockUserCache,

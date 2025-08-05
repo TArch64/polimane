@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"polimane/backend/model"
-	"polimane/backend/model/modelbase"
 )
 
 func TestByUser(t *testing.T) {
@@ -18,12 +17,12 @@ func TestByUser(t *testing.T) {
 	defer cleanup()
 
 	ctx := context.Background()
-	userID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
-	user := &model.User{Identifiable: &modelbase.Identifiable{ID: userID}}
+	userID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+	user := &model.User{Identifiable: &model.Identifiable{ID: userID}}
 
 	t.Run("success", func(t *testing.T) {
-		schemaID1 := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440001")
-		schemaID2 := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440002")
+		schemaID1 := model.MustStringToID("550e8400-e29b-41d4-a716-446655440001")
+		schemaID2 := model.MustStringToID("550e8400-e29b-41d4-a716-446655440002")
 		fixedTime := time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)
 
 		mock.ExpectQuery(`SELECT "schemas"\."id","schemas"\."created_at","schemas"\."updated_at","schemas"\."name","schemas"\."palette","schemas"\."content" FROM "schemas" JOIN user_schemas ON user_schemas\.schema_id = schemas\.id AND user_schemas\.user_id = \$1`).

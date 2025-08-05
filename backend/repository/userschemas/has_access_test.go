@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"polimane/backend/model/modelbase"
+	"polimane/backend/model"
 )
 
 func TestHasAccess(t *testing.T) {
@@ -17,8 +17,8 @@ func TestHasAccess(t *testing.T) {
 	defer cleanup()
 
 	ctx := context.Background()
-	userID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440001")
-	schemaID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440002")
+	userID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440001")
+	schemaID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440002")
 
 	t.Run("has access", func(t *testing.T) {
 		mock.ExpectQuery(`SELECT 1 AS exists FROM "user_schemas" WHERE user_id = \$1 AND schema_id = \$2`).

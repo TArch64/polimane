@@ -5,13 +5,13 @@ import (
 
 	"gorm.io/gorm"
 
-	"polimane/backend/model/modelbase"
+	"polimane/backend/model"
 )
 
 type Client interface {
-	CreateTx(tx *gorm.DB, userID, schemaID modelbase.ID) error
-	DeleteTx(tx *gorm.DB, userID, schemaID modelbase.ID) error
-	HasAccess(ctx context.Context, userID, schemaID modelbase.ID) error
+	CreateTx(tx *gorm.DB, userID, schemaID model.ID) error
+	DeleteTx(tx *gorm.DB, userID, schemaID model.ID) error
+	HasAccess(ctx context.Context, userID, schemaID model.ID) error
 }
 
 type Impl struct {

@@ -7,24 +7,23 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
-	"polimane/backend/model/modelbase"
 )
 
 type MockUserSchemas struct {
 	mock.Mock
 }
 
-func (m *MockUserSchemas) HasAccess(ctx context.Context, userID, schemaID modelbase.ID) error {
+func (m *MockUserSchemas) HasAccess(ctx context.Context, userID, schemaID model.ID) error {
 	args := m.Called(ctx, userID, schemaID)
 	return args.Error(0)
 }
 
-func (m *MockUserSchemas) CreateTx(tx *gorm.DB, userID, schemaID modelbase.ID) error {
+func (m *MockUserSchemas) CreateTx(tx *gorm.DB, userID, schemaID model.ID) error {
 	args := m.Called(tx, userID, schemaID)
 	return args.Error(0)
 }
 
-func (m *MockUserSchemas) DeleteTx(tx *gorm.DB, userID, schemaID modelbase.ID) error {
+func (m *MockUserSchemas) DeleteTx(tx *gorm.DB, userID, schemaID model.ID) error {
 	args := m.Called(tx, userID, schemaID)
 	return args.Error(0)
 }

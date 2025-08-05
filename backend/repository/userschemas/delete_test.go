@@ -7,15 +7,15 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"polimane/backend/model/modelbase"
+	"polimane/backend/model"
 )
 
 func TestDeleteTx(t *testing.T) {
 	client, mock, cleanup := setupTest(t)
 	defer cleanup()
 
-	userID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440001")
-	schemaID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440002")
+	userID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440001")
+	schemaID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440002")
 
 	t.Run("success", func(t *testing.T) {
 		mock.ExpectBegin()

@@ -7,14 +7,13 @@ import (
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
 
 	"polimane/backend/model"
-	"polimane/backend/model/modelbase"
 )
 
 func TestUserSession(t *testing.T) {
 	t.Run("struct initialization", func(t *testing.T) {
-		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 		user := &model.User{
-			Identifiable: &modelbase.Identifiable{ID: testUserID},
+			Identifiable: &model.Identifiable{ID: testUserID},
 		}
 
 		workosUser := &usermanagement.User{
@@ -49,9 +48,9 @@ func TestSetSession(t *testing.T) {
 	//	ctx := app.AcquireCtx(nil)
 	//	defer app.ReleaseCtx(ctx)
 	//
-	//	testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+	//	testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 	//	user := &model.User{
-	//		Identifiable: &modelbase.Identifiable{ID: testUserID},
+	//		Identifiable: &model.Identifiable{ID: testUserID},
 	//	}
 	//
 	//	session := &UserSession{
@@ -102,9 +101,9 @@ func TestSetSession(t *testing.T) {
 //		ctx := app.AcquireCtx(nil)
 //		defer app.ReleaseCtx(ctx)
 //
-//		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+//		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 //		user := &model.User{
-//			Identifiable: &modelbase.Identifiable{ID: testUserID},
+//			Identifiable: &model.Identifiable{ID: testUserID},
 //		}
 //
 //		originalSession := &UserSession{
@@ -153,9 +152,9 @@ func TestSetSession(t *testing.T) {
 //		ctx := app.AcquireCtx(nil)
 //		defer app.ReleaseCtx(ctx)
 //
-//		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+//		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 //		user := &model.User{
-//			Identifiable: &modelbase.Identifiable{ID: testUserID},
+//			Identifiable: &model.Identifiable{ID: testUserID},
 //		}
 //
 //		session := &UserSession{
@@ -185,8 +184,8 @@ func TestSetSession(t *testing.T) {
 //		defer app.ReleaseCtx(ctx)
 //
 //		user := &model.User{
-//			Identifiable: &modelbase.Identifiable{
-//				ID: modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000"),
+//			Identifiable: &model.Identifiable{
+//				ID: model.MustStringToID("550e8400-e29b-41d4-a716-446655440000"),
 //			},
 //		}
 //

@@ -15,7 +15,7 @@ Examples:
 - `./base/...` for base package
 - `./signal/...` for signal package
 - `./env/...` for env package
-- `./model/modelbase/...` for modelbase package
+- `./model/...` for model package
 
 **NEVER use bare `go test` commands - always use the docker compose wrapper.**
 

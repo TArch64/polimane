@@ -10,7 +10,6 @@ import (
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
 
 	"polimane/backend/model"
-	"polimane/backend/model/modelbase"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
 )
@@ -21,9 +20,9 @@ func TestApiLogout(t *testing.T) {
 	//	mockUserManagement := &MockUserManagement{}
 	//	mockSignal := &MockSignal[string]{}
 	//
-	//	testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+	//	testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 	//	testUser := &model.User{
-	//		Identifiable: &modelbase.Identifiable{ID: testUserID},
+	//		Identifiable: &model.Identifiable{ID: testUserID},
 	//	}
 	//
 	//	session := &UserSession{
@@ -79,9 +78,9 @@ func TestApiLogout(t *testing.T) {
 		mockUserManagement := &MockUserManagement{}
 		expectedError := assert.AnError
 
-		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 		testUser := &model.User{
-			Identifiable: &modelbase.Identifiable{ID: testUserID},
+			Identifiable: &model.Identifiable{ID: testUserID},
 		}
 
 		session := &UserSession{
@@ -124,9 +123,9 @@ func TestApiLogout(t *testing.T) {
 		mockUserManagement := &MockUserManagement{}
 		mockSignal := &MockSignal[string]{}
 
-		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 		testUser := &model.User{
-			Identifiable: &modelbase.Identifiable{ID: testUserID},
+			Identifiable: &model.Identifiable{ID: testUserID},
 		}
 
 		customSessionID := "custom-session-789"
@@ -177,9 +176,9 @@ func TestApiLogout(t *testing.T) {
 		mockUserManagement := &MockUserManagement{}
 		mockSignal := &MockSignal[string]{}
 
-		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 		testUser := &model.User{
-			Identifiable: &modelbase.Identifiable{ID: testUserID},
+			Identifiable: &model.Identifiable{ID: testUserID},
 		}
 
 		session := &UserSession{
@@ -228,9 +227,9 @@ func TestApiLogout(t *testing.T) {
 		mockUserManagement := &MockUserManagement{}
 		mockSignal := &MockSignal[string]{}
 
-		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 		testUser := &model.User{
-			Identifiable: &modelbase.Identifiable{ID: testUserID},
+			Identifiable: &model.Identifiable{ID: testUserID},
 		}
 
 		session := &UserSession{

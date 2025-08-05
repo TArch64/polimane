@@ -13,7 +13,7 @@ const schemaIdParam = "schemaId"
 
 type ControllerOptions struct {
 	fx.In
-	Schemas *repositoryschemas.Client
+	Schemas repositoryschemas.Client
 	S3      awss3.Client
 }
 

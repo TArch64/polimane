@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"polimane/backend/model/modelbase"
+	"polimane/backend/model"
 )
 
 func TestCreateIfNeeded(t *testing.T) {
@@ -19,7 +19,7 @@ func TestCreateIfNeeded(t *testing.T) {
 	workosID := "workos_user_123"
 
 	t.Run("creates new user when not exists", func(t *testing.T) {
-		userID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		userID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 
 		// Expect SELECT query to check if user exists (returns no rows)
 		mock.ExpectQuery(`SELECT \* FROM "users" WHERE "users"\."workos_id" = \$1 ORDER BY "users"\."id" LIMIT \$2`).
@@ -42,7 +42,7 @@ func TestCreateIfNeeded(t *testing.T) {
 	})
 
 	t.Run("returns existing user when found", func(t *testing.T) {
-		userID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		userID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 
 		// Expect SELECT query to check if user exists (returns existing user)
 		mock.ExpectQuery(`SELECT \* FROM "users" WHERE "users"\."workos_id" = \$1 ORDER BY "users"\."id" LIMIT \$2`).

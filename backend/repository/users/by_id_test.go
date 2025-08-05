@@ -10,7 +10,6 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
-	"polimane/backend/model/modelbase"
 )
 
 func TestByID(t *testing.T) {
@@ -18,11 +17,11 @@ func TestByID(t *testing.T) {
 	defer cleanup()
 
 	ctx := context.Background()
-	userID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+	userID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 
 	t.Run("success", func(t *testing.T) {
 		expectedUser := &model.User{
-			Identifiable: &modelbase.Identifiable{ID: userID},
+			Identifiable: &model.Identifiable{ID: userID},
 			WorkosID:     "workos_user_123",
 		}
 

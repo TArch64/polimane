@@ -12,7 +12,6 @@ import (
 
 	"polimane/backend/env"
 	"polimane/backend/model"
-	"polimane/backend/model/modelbase"
 	"polimane/backend/services/workos"
 )
 
@@ -22,9 +21,9 @@ func TestApiLoginComplete(t *testing.T) {
 		mockUserManagement := &MockUserManagement{}
 		mockUsers := &MockUsersClient{}
 
-		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 		testUser := &model.User{
-			Identifiable: &modelbase.Identifiable{ID: testUserID},
+			Identifiable: &model.Identifiable{ID: testUserID},
 		}
 
 		authResponse := usermanagement.AuthenticateResponse{
@@ -217,9 +216,9 @@ func TestApiLoginComplete(t *testing.T) {
 		mockUsers := &MockUsersClient{}
 		expectedError := assert.AnError
 
-		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 		testUser := &model.User{
-			Identifiable: &modelbase.Identifiable{ID: testUserID},
+			Identifiable: &model.Identifiable{ID: testUserID},
 		}
 
 		authResponse := usermanagement.AuthenticateResponse{
@@ -272,9 +271,9 @@ func TestApiLoginComplete(t *testing.T) {
 		mockUserManagement := &MockUserManagement{}
 		mockUsers := &MockUsersClient{}
 
-		testUserID := modelbase.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 		testUser := &model.User{
-			Identifiable: &modelbase.Identifiable{ID: testUserID},
+			Identifiable: &model.Identifiable{ID: testUserID},
 		}
 
 		authResponse := usermanagement.AuthenticateResponse{
