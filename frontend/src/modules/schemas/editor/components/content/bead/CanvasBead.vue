@@ -1,13 +1,13 @@
 <template>
-  <GroupRenderer ref="rootRef">
+  <GroupRenderer
+    ref="rootRef"
+    @click="beadsStore.paint(bead)"
+    @mouseenter="tryPaint"
+    @mouseleave="tryPaint"
+    @mousemove="tryPaint"
+  >
     <KonvaRect :config="backgroundConfig" />
-
-    <KonvaRect
-      ref="beadRef"
-      :config="beadConfig"
-      @click="beadsStore.paint(bead)"
-      @mousemove="onMouseMove"
-    />
+    <KonvaRect ref="beadRef" :config="beadConfig" />
   </GroupRenderer>
 </template>
 
@@ -30,6 +30,7 @@ const props = defineProps<{
   bead: ISchemaBead;
 }>();
 
+const colorBackground2 = useThemeVar('--color-background-2');
 const colorBackground3 = useThemeVar('--color-background-3');
 const roundedFull = useThemeVar('--rounded-full');
 
@@ -41,9 +42,15 @@ const beadRef = useNodeRef<Konva.Rect>();
 
 useNodeCursor(rootRef, 'crosshair');
 
-const backgroundConfig = useNodeFiller(beadRef, {
-  padding: 0.5,
-});
+const backgroundConfig = useNodeConfigs<Konva.RectConfig>([
+  {
+    fill: colorBackground2.value,
+  },
+
+  useNodeFiller(beadRef, {
+    padding: 0.5,
+  }),
+]);
 
 const beadConfig = useNodeConfigs<Konva.RectConfig>([
   {
@@ -56,7 +63,7 @@ const beadConfig = useNodeConfigs<Konva.RectConfig>([
   })),
 ]);
 
-function onMouseMove() {
+function tryPaint() {
   if (paletteStore.isPainting) {
     beadsStore.paint(props.bead);
   }

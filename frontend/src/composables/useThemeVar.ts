@@ -13,8 +13,10 @@ type KnownColor
     | 'text-1'
     | 'text-2'
     | 'text-3';
+
 type KnownFont = 'xs' | 'sm' | 'md';
 type KnownRounded = 'sm' | 'md' | 'full';
+
 type PxVars = `--font-${KnownFont}` | `--rounded-${KnownRounded}`;
 type ColorVars = `--color-${KnownColor}`;
 
