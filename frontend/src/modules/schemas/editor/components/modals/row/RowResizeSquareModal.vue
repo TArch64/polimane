@@ -4,7 +4,8 @@
       label
       required
       :min="row.content.length"
-      placeholder="Кількість Бісеринок"
+      variant="control"
+      placeholder="Ширина Рядка"
       v-model="form.size"
     />
   </Modal>

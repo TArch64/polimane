@@ -10,11 +10,12 @@ export function usePatternAddModal() {
   const patternsStore = usePatternsStore();
 
   const addPatternModal = useModal<typeof PatternAddModal, IAddingPattern>(PatternAddModal);
-  const addRowModal = useModal(RowAddModal);
+  const addRowModal = useModal<typeof RowAddModal, boolean>(RowAddModal);
 
   addPatternModal.onResult(async ({ pattern, toIndex }) => {
-    await addRowModal.open({ pattern });
-    patternsStore.patterns.insert(pattern, { toIndex });
+    if (await addRowModal.open({ pattern })) {
+      patternsStore.patterns.insert(pattern, { toIndex });
+    }
   });
 
   return addPatternModal;

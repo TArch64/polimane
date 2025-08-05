@@ -3,6 +3,7 @@ import type { ISchemaPattern } from '@/models';
 import { getMappedValue } from '@/helpers';
 import { PatternType } from '@/enums';
 import RowAddSquareModal from './RowAddSquareModal.vue';
+import RowAddDiamondModal from './RowAddDiamondModal.vue';
 
 interface IRowAddModalProps {
   pattern: ISchemaPattern;
@@ -11,7 +12,7 @@ interface IRowAddModalProps {
 
 const getComponent = (pattern: ISchemaPattern) => getMappedValue(pattern.type, {
   [PatternType.SQUARE]: RowAddSquareModal,
-  [PatternType.DIAMOND]: RowAddSquareModal,
+  [PatternType.DIAMOND]: RowAddDiamondModal,
 });
 
 export const RowAddModal: FunctionalComponent<IRowAddModalProps> = (props) => {

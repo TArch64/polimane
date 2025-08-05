@@ -3,10 +3,18 @@ import { Collection, type ISchemaBead, type ISchemaPattern, type ISchemaRow } fr
 import { newArray, newId } from '@/helpers';
 import { DynamicStore } from '@/stores';
 
-export interface INewSquareRowOptions {
+interface INewRowOptions {
   rows: number;
-  size: number;
   toIndex: number;
+}
+
+export interface INewSquareRowOptions extends INewRowOptions {
+  size: number;
+}
+
+export interface INewDiamondRowOptions extends INewRowOptions {
+  size: number;
+  sideSize: number;
 }
 
 const rowsDynamicStore = new DynamicStore({
@@ -29,12 +37,16 @@ const rowsDynamicStore = new DynamicStore({
       content: newArray(size, createBead),
     });
 
+    function addRows(newRows: ISchemaRow[], toIndex: number): void {
+      rows.insert(newRows, { toIndex });
+    }
+
     function addSquareRow(options: INewSquareRowOptions) {
       const newRows = newArray(options.rows, () => createRow(options.size));
+      addRows(newRows, options.toIndex);
+    }
 
-      rows.insert(newRows, {
-        toIndex: options.toIndex,
-      });
+    function addDiamondRow(options: INewDiamondRowOptions) {
     }
 
     function deleteRow(row: ISchemaRow): void {
@@ -58,7 +70,7 @@ const rowsDynamicStore = new DynamicStore({
       rows.update(row, { content: [...row.content, ...newBeads] });
     }
 
-    return { rows, addSquareRow, deleteRow, moveRow, resizeRow };
+    return { rows, addSquareRow, addDiamondRow, deleteRow, moveRow, resizeRow };
   },
 });
 

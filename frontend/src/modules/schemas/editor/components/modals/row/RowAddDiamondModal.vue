@@ -16,7 +16,18 @@
       :min="1"
       variant="control"
       placeholder="Ширина Рядка"
+      class="add-row__field"
       v-model="form.size"
+    />
+
+    <NumberField
+      label
+      required
+      :min="1"
+      :max="5"
+      variant="control"
+      placeholder="Ширина Сторони"
+      v-model="form.sideSize"
     />
   </Modal>
 </template>
@@ -39,9 +50,10 @@ const props = withDefaults(defineProps<{
 const modal = useActiveModal<boolean>();
 const rowsStore = useRowsStore(() => props.pattern);
 
-const lastForm = useLocalStorage('schema-editor-row-add-square-form', {
-  rows: 4,
+const lastForm = useLocalStorage('schema-editor-row-add-diamond-form', {
+  rows: 1,
   size: 50,
+  sideSize: 1,
 });
 
 const form = reactive({ ...lastForm.value });
@@ -49,7 +61,7 @@ const form = reactive({ ...lastForm.value });
 function save() {
   lastForm.value = { ...form };
 
-  rowsStore.addSquareRow({
+  rowsStore.addDiamondRow({
     ...form,
     toIndex: props.toIndex,
   });
