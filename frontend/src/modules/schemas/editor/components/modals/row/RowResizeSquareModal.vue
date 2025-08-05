@@ -37,8 +37,10 @@ function save() {
 
   modal.close(null, async () => {
     await nextTick();
-    const rowNode = stage.value.findOne(`#${props.row.id}`);
-    rowNode?.fire('layoutUpdate');
+
+    stage.value
+      .findOne(`#${props.row.id}`)
+      ?.fire('layoutUpdate');
   });
 }
 </script>
