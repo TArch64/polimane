@@ -9,6 +9,7 @@ import (
 	"github.com/kittipat1413/go-common/framework/cache"
 	"github.com/kittipat1413/go-common/framework/cache/localcache"
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
+	"go.uber.org/fx"
 	"gorm.io/gorm"
 
 	"polimane/backend/api/base"
@@ -21,6 +22,14 @@ import (
 
 var unauthorizedErr = base.NewReasonedError(fiber.StatusUnauthorized, "Unauthorized")
 
+type MiddlewareOptions struct {
+	fx.In
+	Signals      *signal.Container
+	Env          *env.Environment
+	WorkosClient *workos.Client
+	Users        repositoryusers.Client
+}
+
 type Middleware struct {
 	userCache       cache.Cache[*model.User]
 	workosUserCache cache.Cache[*usermanagement.User]
@@ -29,12 +38,7 @@ type Middleware struct {
 	users           repositoryusers.Client
 }
 
-func MiddlewareProvider(
-	signals *signal.Container,
-	environment *env.Environment,
-	workosClient *workos.Client,
-	users repositoryusers.Client,
-) *Middleware {
+func MiddlewareProvider(options MiddlewareOptions) *Middleware {
 	cacheOptions := []localcache.Option{
 		localcache.WithDefaultExpiration(10 * time.Minute),
 		localcache.WithCleanupInterval(5 * time.Minute),
@@ -43,14 +47,14 @@ func MiddlewareProvider(
 	middleware := &Middleware{
 		userCache:       localcache.New[*model.User](cacheOptions...),
 		workosUserCache: localcache.New[*usermanagement.User](cacheOptions...),
-		env:             environment,
-		workosClient:    workosClient,
-		users:           users,
+		env:             options.Env,
+		workosClient:    options.WorkosClient,
+		users:           options.Users,
 	}
 
-	signals.InvalidateUserCache.AddListener(middleware.invalidateUserCache)
-	signals.InvalidateWorkosUserCache.AddListener(middleware.invalidateWorkosUserCache)
-	signals.InvalidateAuthCache.AddListener(middleware.invalidateAuthCache)
+	options.Signals.InvalidateUserCache.AddListener(middleware.invalidateUserCache)
+	options.Signals.InvalidateWorkosUserCache.AddListener(middleware.invalidateWorkosUserCache)
+	options.Signals.InvalidateAuthCache.AddListener(middleware.invalidateAuthCache)
 	return middleware
 }
 

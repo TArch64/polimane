@@ -2,6 +2,7 @@ package auth
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"go.uber.org/fx"
 
 	"polimane/backend/api/base"
 	"polimane/backend/env"
@@ -12,6 +13,14 @@ import (
 
 const groupPrefix = "auth"
 
+type ControllerOptions struct {
+	fx.In
+	WorkosClient *workos.Client
+	Env          *env.Environment
+	Users        repositoryusers.Client
+	Signals      *signal.Container
+}
+
 type Controller struct {
 	workosClient *workos.Client
 	env          *env.Environment
@@ -19,17 +28,12 @@ type Controller struct {
 	signals      *signal.Container
 }
 
-func Provider(
-	workosClient *workos.Client,
-	environment *env.Environment,
-	users repositoryusers.Client,
-	signals *signal.Container,
-) base.Controller {
+func Provider(options ControllerOptions) base.Controller {
 	return &Controller{
-		workosClient: workosClient,
-		env:          environment,
-		users:        users,
-		signals:      signals,
+		workosClient: options.WorkosClient,
+		env:          options.Env,
+		users:        options.Users,
+		signals:      options.Signals,
 	}
 }
 

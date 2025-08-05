@@ -1,6 +1,6 @@
 package bitwarden
 
-func (c *Client) LoadToEnviron(names []string) error {
+func (c *Impl) LoadToEnviron(names []string) error {
 	ids := make([]string, len(names))
 	idNameMap := make(map[string]string)
 	for i, name := range names {

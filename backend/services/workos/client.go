@@ -6,6 +6,7 @@ import (
 
 	"github.com/workos/workos-go/v4/pkg/mfa"
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
+	"go.uber.org/fx"
 
 	"polimane/backend/env"
 	"polimane/backend/services/jwk"
@@ -32,6 +33,12 @@ type MFA interface {
 	GetFactor(ctx context.Context, opts mfa.GetFactorOpts) (mfa.Factor, error)
 }
 
+type ClientOptions struct {
+	fx.In
+	Env *env.Environment
+	JWK jwk.Client
+}
+
 type Client struct {
 	UserManagement UserManagement
 	MFA            MFA
@@ -39,14 +46,14 @@ type Client struct {
 	jwk            jwk.Client
 }
 
-func Provider(environment *env.Environment, jwk jwk.Client) *Client {
-	usermanagement.SetAPIKey(environment.WorkOS.ApiKey)
-	mfa.SetAPIKey(environment.WorkOS.ApiKey)
+func Provider(options ClientOptions) *Client {
+	usermanagement.SetAPIKey(options.Env.WorkOS.ApiKey)
+	mfa.SetAPIKey(options.Env.WorkOS.ApiKey)
 
 	return &Client{
 		UserManagement: usermanagement.DefaultClient,
 		MFA:            mfa.DefaultClient,
-		env:            environment,
-		jwk:            jwk,
+		env:            options.Env,
+		jwk:            options.JWK,
 	}
 }

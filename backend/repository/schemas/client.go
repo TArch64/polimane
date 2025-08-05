@@ -1,6 +1,7 @@
 package schemas
 
 import (
+	"go.uber.org/fx"
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
@@ -17,6 +18,13 @@ type Client interface {
 	Update(options *UpdateOptions) (err error)
 }
 
+type ClientOptions struct {
+	fx.In
+	DB          *gorm.DB
+	UserSchemas repositoryuserschemas.Client
+	Signals     *signal.Container
+}
+
 type Impl struct {
 	db          *gorm.DB
 	userSchemas repositoryuserschemas.Client
@@ -25,14 +33,10 @@ type Impl struct {
 
 var _ Client = (*Impl)(nil)
 
-func Provider(
-	db *gorm.DB,
-	userSchemas repositoryuserschemas.Client,
-	signals *signal.Container,
-) Client {
+func Provider(options ClientOptions) Client {
 	return &Impl{
-		db:          db,
-		userSchemas: userSchemas,
-		signals:     signals,
+		db:          options.DB,
+		userSchemas: options.UserSchemas,
+		signals:     options.Signals,
 	}
 }

@@ -2,6 +2,7 @@ package users
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"go.uber.org/fx"
 
 	"polimane/backend/api/base"
 	"polimane/backend/services/workos"
@@ -10,15 +11,21 @@ import (
 
 const factorIdParam = "factorId"
 
+type ControllerOptions struct {
+	fx.In
+	WorkosClient *workos.Client
+	Signals      *signal.Container
+}
+
 type Controller struct {
 	workosClient *workos.Client
 	signals      *signal.Container
 }
 
-func Provider(workosClient *workos.Client, signals *signal.Container) base.Controller {
+func Provider(options ControllerOptions) base.Controller {
 	return &Controller{
-		workosClient: workosClient,
-		signals:      signals,
+		workosClient: options.WorkosClient,
+		signals:      options.Signals,
 	}
 }
 

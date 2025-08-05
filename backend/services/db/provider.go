@@ -1,6 +1,7 @@
 package db
 
 import (
+	"go.uber.org/fx"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
@@ -8,8 +9,13 @@ import (
 	"polimane/backend/env"
 )
 
-func Provider(environment *env.Environment) (*gorm.DB, error) {
-	dialect := postgres.Open(environment.Database.URL)
+type Options struct {
+	fx.In
+	Env *env.Environment
+}
+
+func Provider(options Options) (*gorm.DB, error) {
+	dialect := postgres.Open(options.Env.Database.URL)
 
 	instance, err := gorm.Open(dialect, &gorm.Config{
 		Logger: newLogger(),
