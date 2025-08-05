@@ -44,7 +44,7 @@ export default defineConfig({
       },
     }),
 
-    SENTRY_AUTH_TOKEN && sentryVitePlugin({
+    !!SENTRY_AUTH_TOKEN && sentryVitePlugin({
       org: 'myself-zmf',
       project: 'polimane-frontend',
       authToken: SENTRY_AUTH_TOKEN,

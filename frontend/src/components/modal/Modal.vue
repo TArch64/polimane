@@ -27,9 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, provide, ref, type Slot } from 'vue';
+import { onMounted, ref, type Slot } from 'vue';
 import { onBackdropClick } from '@/composables';
-import { TOKEN_SCROLLER, TOKEN_TOP_EL } from '@/InjectionToken';
 import { CloseIcon } from '../icon';
 import { Form } from '../form';
 import { Button } from '../button';
@@ -61,9 +60,6 @@ const dialogRef = ref<HTMLDialogElement>(null!);
 
 onMounted(() => dialogRef.value.showModal());
 onBackdropClick(dialogRef, close);
-
-provide(TOKEN_SCROLLER, dialogRef);
-provide(TOKEN_TOP_EL, dialogRef);
 </script>
 
 <style scoped>
