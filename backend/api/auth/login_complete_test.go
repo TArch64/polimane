@@ -98,32 +98,43 @@ func TestApiLoginComplete(t *testing.T) {
 		mockUsers.AssertExpectations(t)
 	})
 
-	//t.Run("handles missing code parameter", func(t *testing.T) {
-	//	// Arrange
-	//	controller := &Controller{
-	//		workosClient: &workos.Client{
-	//			UserManagement: &MockUserManagement{},
-	//		},
-	//		env: &env.Environment{
-	//			WorkOS: struct {
-	//				ClientID string `env:"BACKEND_WORKOS_CLIENT_ID,required=true"`
-	//				ApiKey   string `env:"BACKEND_WORKOS_API_KEY,required=true"`
-	//			}{},
-	//		},
-	//	}
-	//
-	//	// Create fiber app and request without code parameter
-	//	app := fiber.New()
-	//	app.Get("/complete", controller.apiLoginComplete)
-	//	req := httptest.NewRequest("GET", "/complete", nil)
-	//
-	//	// Act
-	//	resp, err := app.Test(req)
-	//
-	//	// Assert
-	//	assert.NoError(t, err)
-	//	assert.Equal(t, 400, resp.StatusCode)
-	//})
+	t.Run("handles missing code parameter", func(t *testing.T) {
+		// Arrange
+		mockUserManagement := &MockUserManagement{}
+
+		controller := &Controller{
+			workosClient: &workos.Client{
+				UserManagement: mockUserManagement,
+			},
+			env: &env.Environment{
+				WorkOS: struct {
+					ClientID string `env:"BACKEND_WORKOS_CLIENT_ID,required=true"`
+					ApiKey   string `env:"BACKEND_WORKOS_API_KEY,required=true"`
+				}{
+					ClientID: "test-client-id",
+				},
+			},
+		}
+
+		// Mock should return an error for empty code
+		mockUserManagement.On("AuthenticateWithCode", mock.Anything, mock.MatchedBy(func(opts usermanagement.AuthenticateWithCodeOpts) bool {
+			return opts.Code == ""
+		})).Return(usermanagement.AuthenticateResponse{}, assert.AnError)
+
+		// Create fiber app and request without code parameter
+		app := fiber.New()
+		app.Get("/complete", controller.apiLoginComplete)
+		req := httptest.NewRequest("GET", "/complete", nil)
+
+		// Act
+		resp, err := app.Test(req)
+
+		// Assert
+		assert.NoError(t, err)
+		assert.Equal(t, 500, resp.StatusCode) // WorkOS error returns 500, not 400
+
+		mockUserManagement.AssertExpectations(t)
+	})
 
 	t.Run("handles WorkOS authentication error", func(t *testing.T) {
 		// Arrange

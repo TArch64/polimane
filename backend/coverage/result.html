@@ -105,9 +105,9 @@
 
             <option value="file3">polimane/backend/api/auth/logout.go (100.0%)</option>
 
-            <option value="file4">polimane/backend/api/auth/middleware.go (0.0%)</option>
+            <option value="file4">polimane/backend/api/auth/middleware.go (51.9%)</option>
 
-            <option value="file5">polimane/backend/api/auth/user_session.go (66.7%)</option>
+            <option value="file5">polimane/backend/api/auth/user_session.go (100.0%)</option>
 
             <option value="file6">polimane/backend/api/base/body_parser.go (0.0%)</option>
 
@@ -319,7 +319,7 @@ import (
         "github.com/workos/workos-go/v4/pkg/usermanagement"
 )
 
-func (c *Controller) apiLogin(ctx *fiber.Ctx) error <span class="cov10" title="3">{
+func (c *Controller) apiLogin(ctx *fiber.Ctx) error <span class="cov10" title="5">{
         url, err := c.workosClient.UserManagement.GetAuthorizationURL(usermanagement.GetAuthorizationURLOpts{
                 ClientID:    c.env.WorkOS.ClientID,
                 RedirectURI: c.env.ApiURL().JoinPath("api/auth/login/complete").String(),
@@ -330,7 +330,7 @@ func (c *Controller) apiLogin(ctx *fiber.Ctx) error <span class="cov10" title="3
                 return err
         }</span>
 
-        <span class="cov6" title="2">return ctx.JSON(fiber.Map{
+        <span class="cov8" title="4">return ctx.JSON(fiber.Map{
                 "url": url.String(),
         })</span>
 }
@@ -347,29 +347,29 @@ type loginCompleteQuery struct {
         Code string `query:"code"`
 }
 
-func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error <span class="cov10" title="5">{
+func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error <span class="cov10" title="6">{
         var query loginCompleteQuery
         if err := ctx.QueryParser(&amp;query); err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov10" title="5">reqCtx := ctx.Context()
+        <span class="cov10" title="6">reqCtx := ctx.Context()
         data, err := c.workosClient.UserManagement.AuthenticateWithCode(reqCtx, usermanagement.AuthenticateWithCodeOpts{
                 ClientID:  c.env.WorkOS.ClientID,
                 Code:      query.Code,
                 UserAgent: ctx.Get("User-Agent"),
         })
 
+        if err != nil </span><span class="cov4" title="2">{
+                return err
+        }</span>
+
+        <span class="cov7" title="4">user, err := c.users.CreateIfNeeded(reqCtx, data.User.ID)
         if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov8" title="4">user, err := c.users.CreateIfNeeded(reqCtx, data.User.ID)
-        if err != nil </span><span class="cov1" title="1">{
-                return err
-        }</span>
-
-        <span class="cov7" title="3">_, err = c.workosClient.UserManagement.UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
+        <span class="cov6" title="3">_, err = c.workosClient.UserManagement.UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
                 User:       data.User.ID,
                 ExternalID: user.ID.String(),
         })
@@ -396,7 +396,7 @@ import (
         "polimane/backend/api/base"
 )
 
-func (c *Controller) apiLogout(ctx *fiber.Ctx) error <span class="cov10" title="4">{
+func (c *Controller) apiLogout(ctx *fiber.Ctx) error <span class="cov10" title="5">{
         session := GetSession(ctx)
 
         err := c.workosClient.UserManagement.RevokeSession(ctx.Context(), usermanagement.RevokeSessionOpts{
@@ -407,7 +407,7 @@ func (c *Controller) apiLogout(ctx *fiber.Ctx) error <span class="cov10" title="
                 return err
         }</span>
 
-        <span class="cov8" title="3">c.signals.InvalidateAuthCache.Emit(ctx.Context(), session.ID)
+        <span class="cov8" title="4">c.signals.InvalidateAuthCache.Emit(ctx.Context(), session.ID)
 
         return base.NewSuccessResponse(ctx)</span>
 }
@@ -449,7 +449,7 @@ func MiddlewareProvider(
         environment *env.Environment,
         workosClient *workos.Client,
         users repositoryusers.Client,
-) *Middleware <span class="cov0" title="0">{
+) *Middleware <span class="cov5" title="2">{
         cacheOptions := []localcache.Option{
                 localcache.WithDefaultExpiration(10 * time.Minute),
                 localcache.WithCleanupInterval(5 * time.Minute),
@@ -469,27 +469,27 @@ func MiddlewareProvider(
         return middleware
 }</span>
 
-func (m *Middleware) invalidateAuthCache(ctx context.Context, sessionID string) <span class="cov0" title="0">{
+func (m *Middleware) invalidateAuthCache(ctx context.Context, sessionID string) <span class="cov5" title="2">{
         workosUser, _ := m.workosUserCache.Get(ctx, sessionID, nil)
 
-        if workosUser != nil </span><span class="cov0" title="0">{
+        if workosUser != nil </span><span class="cov1" title="1">{
                 m.invalidateWorkosUserCache(ctx, workosUser.ID)
                 m.invalidateUserCache(ctx, model.MustStringToID(workosUser.ExternalID))
         }</span>
 }
 
-func (m *Middleware) invalidateUserCache(ctx context.Context, userID model.ID) <span class="cov0" title="0">{
+func (m *Middleware) invalidateUserCache(ctx context.Context, userID model.ID) <span class="cov5" title="2">{
         _ = m.userCache.Invalidate(ctx, userID.String())
 }</span>
 
-func (m *Middleware) invalidateWorkosUserCache(ctx context.Context, userID string) <span class="cov0" title="0">{
+func (m *Middleware) invalidateWorkosUserCache(ctx context.Context, userID string) <span class="cov5" title="2">{
         _ = m.workosUserCache.Invalidate(ctx, userID)
 }</span>
 
-func (m *Middleware) Handler(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func (m *Middleware) Handler(ctx *fiber.Ctx) error <span class="cov5" title="2">{
         accessToken := ctx.Get("Authorization")
         refreshToken := ctx.Get("X-Refresh-Token")
-        if accessToken == "" || refreshToken == "" </span><span class="cov0" title="0">{
+        if accessToken == "" || refreshToken == "" </span><span class="cov5" title="2">{
                 return m.newUnauthorizedErr(errors.New("missing access or refresh token"))
         }</span>
 
@@ -545,12 +545,12 @@ func (m *Middleware) refreshToken(ctx *fiber.Ctx, token string) (*workos.AccessT
 }
 
 func (m *Middleware) getWorkosUser(ctx context.Context, accessTokenClaims *workos.AccessTokenClaims) (*usermanagement.User, error) <span
-            class="cov0"
-            title="0"
+            class="cov5"
+            title="2"
         >{
         return m.workosUserCache.Get(ctx, accessTokenClaims.UserID, func() (*usermanagement.User, *time.Duration, error) </span><span
-            class="cov0"
-            title="0"
+            class="cov1"
+            title="1"
         >{
                 user, err := m.workosClient.UserManagement.GetUser(ctx, usermanagement.GetUserOpts{
                         User: accessTokenClaims.UserID,
@@ -560,37 +560,37 @@ func (m *Middleware) getWorkosUser(ctx context.Context, accessTokenClaims *worko
                         return nil, nil, err
                 }</span>
 
-                <span class="cov0" title="0">return &amp;user, nil, nil</span>
+                <span class="cov1" title="1">return &amp;user, nil, nil</span>
         })
 }
 
-func (m *Middleware) getUser(ctx context.Context, id model.ID) (*model.User, error) <span class="cov0" title="0">{
+func (m *Middleware) getUser(ctx context.Context, id model.ID) (*model.User, error) <span class="cov8" title="3">{
         return m.userCache.Get(ctx, id.String(), func() (*model.User, *time.Duration, error) </span><span
-            class="cov0"
-            title="0"
+            class="cov5"
+            title="2"
         >{
                 user, err := m.users.ByID(ctx, id)
 
-                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov1" title="1">{
                         return nil, nil, m.newUnauthorizedErr(err, base.CustomErrorData{
                                 "userId": id.String(),
                         })
                 }</span>
-                <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                <span class="cov1" title="1">if err != nil </span><span class="cov0" title="0">{
                         return nil, nil, err
                 }</span>
 
-                <span class="cov0" title="0">return user, nil, nil</span>
+                <span class="cov1" title="1">return user, nil, nil</span>
         })
 }
 
-func (m *Middleware) newUnauthorizedErr(err error, extra ...base.CustomErrorData) error <span class="cov0" title="0">{
+func (m *Middleware) newUnauthorizedErr(err error, extra ...base.CustomErrorData) error <span class="cov10" title="4">{
         if env.IsDev </span><span class="cov0" title="0">{
                 extra = append(extra, base.CustomErrorData{"internalError": err.Error()})
                 return unauthorizedErr.AddCustomData(extra...)
         }</span>
 
-        <span class="cov0" title="0">return unauthorizedErr</span>
+        <span class="cov10" title="4">return unauthorizedErr</span>
 }
 </pre>
 
@@ -611,15 +611,15 @@ type UserSession struct {
 
 var sessionKey UserSession
 
-func setSession(ctx *fiber.Ctx, session *UserSession) <span class="cov10" title="4">{
+func setSession(ctx *fiber.Ctx, session *UserSession) <span class="cov10" title="12">{
         ctx.Locals(sessionKey, session)
 }</span>
 
-func GetSession(ctx *fiber.Ctx) *UserSession <span class="cov10" title="4">{
+func GetSession(ctx *fiber.Ctx) *UserSession <span class="cov8" title="9">{
         return ctx.Locals(sessionKey).(*UserSession)
 }</span>
 
-func GetSessionUser(ctx *fiber.Ctx) *model.User <span class="cov0" title="0">{
+func GetSessionUser(ctx *fiber.Ctx) *model.User <span class="cov3" title="2">{
         return GetSession(ctx).User
 }</span>
 </pre>

@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"encoding/json"
 	"net/http/httptest"
 	"testing"
 
@@ -15,63 +16,63 @@ import (
 )
 
 func TestApiLogout(t *testing.T) {
-	//t.Run("logs out successfully", func(t *testing.T) {
-	//	// Arrange
-	//	mockUserManagement := &MockUserManagement{}
-	//	mockSignal := &MockSignal[string]{}
-	//
-	//	testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
-	//	testUser := &model.User{
-	//		Identifiable: &model.Identifiable{ID: testUserID},
-	//	}
-	//
-	//	session := &UserSession{
-	//		ID:   "session-123",
-	//		User: testUser,
-	//		WorkosUser: &usermanagement.User{
-	//			ID: "workos-user-123",
-	//		},
-	//	}
-	//
-	//	controller := &Controller{
-	//		workosClient: &workos.Client{
-	//			UserManagement: mockUserManagement,
-	//		},
-	//		signals: &signal.Container{
-	//			InvalidateAuthCache: mockSignal,
-	//		},
-	//	}
-	//
-	//	mockUserManagement.On("RevokeSession", mock.Anything, mock.MatchedBy(func(opts usermanagement.RevokeSessionOpts) bool {
-	//		return opts.SessionID == "session-123"
-	//	})).Return(nil)
-	//
-	//	mockSignal.On("Emit", mock.Anything, "session-123").Return()
-	//
-	//	// Create fiber app and request
-	//	app := fiber.New()
-	//	app.Post("/logout", func(c *fiber.Ctx) error {
-	//		setSession(c, session)
-	//		return controller.apiLogout(c)
-	//	})
-	//	req := httptest.NewRequest("POST", "/logout", nil)
-	//
-	//	// Act
-	//	resp, err := app.Test(req)
-	//
-	//	// Assert
-	//	assert.NoError(t, err)
-	//	assert.Equal(t, 200, resp.StatusCode)
-	//
-	//	// Check response body is success response
-	//	var response map[string]interface{}
-	//	err = json.NewDecoder(resp.Body).Decode(&response)
-	//	assert.NoError(t, err)
-	//	assert.Equal(t, "success", response["status"])
-	//
-	//	mockUserManagement.AssertExpectations(t)
-	//	mockSignal.AssertExpectations(t)
-	//})
+	t.Run("logs out successfully", func(t *testing.T) {
+		// Arrange
+		mockUserManagement := &MockUserManagement{}
+		mockSignal := &MockSignal[string]{}
+
+		testUserID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
+		testUser := &model.User{
+			Identifiable: &model.Identifiable{ID: testUserID},
+		}
+
+		session := &UserSession{
+			ID:   "session-123",
+			User: testUser,
+			WorkosUser: &usermanagement.User{
+				ID: "workos-user-123",
+			},
+		}
+
+		controller := &Controller{
+			workosClient: &workos.Client{
+				UserManagement: mockUserManagement,
+			},
+			signals: &signal.Container{
+				InvalidateAuthCache: mockSignal,
+			},
+		}
+
+		mockUserManagement.On("RevokeSession", mock.Anything, mock.MatchedBy(func(opts usermanagement.RevokeSessionOpts) bool {
+			return opts.SessionID == "session-123"
+		})).Return(nil)
+
+		mockSignal.On("Emit", mock.Anything, "session-123").Return()
+
+		// Create fiber app and request
+		app := fiber.New()
+		app.Post("/logout", func(c *fiber.Ctx) error {
+			setSession(c, session)
+			return controller.apiLogout(c)
+		})
+		req := httptest.NewRequest("POST", "/logout", nil)
+
+		// Act
+		resp, err := app.Test(req)
+
+		// Assert
+		assert.NoError(t, err)
+		assert.Equal(t, 200, resp.StatusCode)
+
+		// Check response body is success response
+		var response map[string]interface{}
+		err = json.NewDecoder(resp.Body).Decode(&response)
+		assert.NoError(t, err)
+		assert.Equal(t, true, response["success"])
+
+		mockUserManagement.AssertExpectations(t)
+		mockSignal.AssertExpectations(t)
+	})
 
 	t.Run("handles WorkOS revoke session error", func(t *testing.T) {
 		// Arrange

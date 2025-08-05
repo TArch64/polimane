@@ -163,6 +163,63 @@ WillReturnRows(sqlmock.NewRows([]string{"col"}).AddRow(value))
 
 ---
 
+## Fiber Testing Rules
+
+### Custom Error Handler Configuration
+
+**🚨 CRITICAL:** When testing Fiber applications that use custom error types (like `base.CustomError`), always configure
+the test app with the same error handler as production:
+
+```go
+import "polimane/backend/api/base"
+
+// ✅ Correct - Configure custom error handler
+app := fiber.New(fiber.Config{
+ErrorHandler: base.ErrorHandler,
+})
+
+// ❌ Wrong - Default error handler doesn't handle custom errors
+app := fiber.New()
+```
+
+**Why this matters:**
+
+- Custom errors return 500 instead of intended status codes (e.g., 401) without proper handling
+- Fiber's default error handler treats custom errors as generic errors
+- Test behavior must match production behavior
+- Especially critical when `env.IsDev` is false in test environments
+
+### Fiber Test Patterns
+
+```go
+func TestMiddlewareHandler(t *testing.T) {
+t.Run("returns unauthorized when access token missing", func (t *testing.T) {
+// Arrange
+middleware := &Middleware{...}
+
+// Create fiber app with custom error handler
+app := fiber.New(fiber.Config{
+ErrorHandler: base.ErrorHandler,
+})
+app.Use(middleware.Handler)
+app.Get("/test", func (c *fiber.Ctx) error {
+return c.SendString("success")
+})
+
+req := httptest.NewRequest("GET", "/test", nil)
+
+// Act
+resp, err := app.Test(req)
+
+// Assert
+assert.NoError(t, err)
+assert.Equal(t, 401, resp.StatusCode) // Now works correctly!
+})
+}
+```
+
+---
+
 ## Mock Implementation Template
 
 ```go
@@ -203,4 +260,37 @@ appropriate sections.
 - SQL pattern variations
 - Transaction handling edge cases
 - Mock setup requirements
+- Fiber error handler configuration
+- Cache implementation patterns
 - Common pitfalls and resolutions
+
+---
+
+## Cache Testing Guidelines
+
+### Real vs Mock Cache Implementation
+
+**Pattern:** Use real cache implementations for core functionality, mocks for external dependencies:
+
+```go
+// ✅ Correct - Real cache for core functionality
+cacheOptions := []localcache.Option{
+localcache.WithDefaultExpiration(10 * time.Minute),
+localcache.WithCleanupInterval(5 * time.Minute),
+}
+
+middleware := &Middleware{
+userCache:       localcache.New[*model.User](cacheOptions...),
+workosUserCache: localcache.New[*usermanagement.User](cacheOptions...),
+workosClient:    &workos.Client{}, // Mock external service
+env:             &env.Environment{}, // Mock configuration
+users:           &MockUsersClient{}, // Mock repository
+}
+```
+
+**Why:**
+
+- Cache behavior is integral to the functionality being tested
+- Real cache implementations provide more accurate integration testing
+- External services should be mocked to avoid network dependencies
+- Mocks should be placed in `mocks_test.go` following project conventions
