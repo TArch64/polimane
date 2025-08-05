@@ -35,6 +35,7 @@ const props = defineProps<{
 }>();
 
 const colorDivider = useThemeVar('--color-divider');
+const roundedMd = useThemeVar('--rounded-md');
 
 const addModal = useModal(RowAddModal);
 
@@ -72,7 +73,7 @@ const borderConfig = useNodeConfigs<Konva.RectConfig>([
     y: 1,
     stroke: colorDivider.value,
     strokeWidth: 1,
-    cornerRadius: 8,
+    cornerRadius: roundedMd.value,
     dash: [10, 5],
   },
 

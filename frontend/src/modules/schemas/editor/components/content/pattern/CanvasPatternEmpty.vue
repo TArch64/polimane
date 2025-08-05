@@ -20,11 +20,12 @@ import { CanvasIcon, CanvasStackH, GroupRenderer } from '../base';
 
 const colorDivider = useThemeVar('--color-divider');
 const colorPrimary = useThemeVar('--color-primary');
+const roundedMd = useThemeVar('--rounded-md');
 
 const backgroundConfig: Partial<Konva.GroupConfig> = {
   stroke: colorDivider.value,
   strokeWidth: 1,
-  cornerRadius: 8,
+  cornerRadius: roundedMd.value,
   width: 156,
   height: 32,
 };

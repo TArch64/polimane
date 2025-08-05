@@ -19,6 +19,7 @@ const props = defineProps<{
 const colorWhite = useThemeVar('--color-white');
 const colorPrimary = useThemeVar('--color-primary');
 const colorDivider = useThemeVar('--color-divider');
+const roundedMd = useThemeVar('--rounded-sm');
 
 const config: Partial<Konva.LabelConfig> = {
   name: SCREENSHOT_IGNORE,
@@ -30,7 +31,7 @@ const tagConfig: Partial<Konva.TagConfig> = {
   fill: colorWhite.value,
   stroke: colorDivider.value,
   strokeWidth: 1,
-  cornerRadius: 4,
+  cornerRadius: roundedMd.value,
 };
 
 const textRef = useNodeRef<Konva.Text | null>();

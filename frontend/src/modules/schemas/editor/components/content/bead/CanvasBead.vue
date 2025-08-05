@@ -31,6 +31,7 @@ const props = defineProps<{
 }>();
 
 const colorBackground3 = useThemeVar('--color-background-3');
+const roundedFull = useThemeVar('--rounded-full');
 
 const paletteStore = usePaletteStore();
 const beadsStore = useBeadsStore(() => props.row);
@@ -48,7 +49,7 @@ const beadConfig = useNodeConfigs<Konva.RectConfig>([
   {
     width: 14,
     height: 14,
-    cornerRadius: 999,
+    cornerRadius: roundedFull.value,
   },
   computed(() => ({
     fill: props.bead.color || colorBackground3.value,
