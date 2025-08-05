@@ -25,11 +25,11 @@ func TestByUser(t *testing.T) {
 		schemaID2 := model.MustStringToID("550e8400-e29b-41d4-a716-446655440002")
 		fixedTime := time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)
 
-		mock.ExpectQuery(`SELECT "schemas"\."id","schemas"\."created_at","schemas"\."updated_at","schemas"\."name","schemas"\."palette","schemas"\."content" FROM "schemas" JOIN user_schemas ON user_schemas\.schema_id = schemas\.id AND user_schemas\.user_id = \$1`).
+		mock.ExpectQuery(`SELECT "schemas"\."id","schemas"\."created_at","schemas"\."updated_at","schemas"\."name","schemas"\."palette","schemas"\."content","schemas"\."screenshoted_at" FROM "schemas" JOIN user_schemas ON user_schemas\.schema_id = schemas\.id AND user_schemas\.user_id = \$1`).
 			WithArgs(user.ID).
-			WillReturnRows(sqlmock.NewRows([]string{"id", "created_at", "updated_at", "name", "palette", "content"}).
-				AddRow("550e8400-e29b-41d4-a716-446655440001", fixedTime, fixedTime, "Schema 1", `[]`, `[]`).
-				AddRow("550e8400-e29b-41d4-a716-446655440002", fixedTime, fixedTime, "Schema 2", `[]`, `[]`))
+			WillReturnRows(sqlmock.NewRows([]string{"id", "created_at", "updated_at", "name", "palette", "content", "screenshoted_at"}).
+				AddRow("550e8400-e29b-41d4-a716-446655440001", fixedTime, fixedTime, "Schema 1", `[]`, `[]`, nil).
+				AddRow("550e8400-e29b-41d4-a716-446655440002", fixedTime, fixedTime, "Schema 2", `[]`, `[]`, nil))
 
 		result, err := client.ByUser(&ByUserOptions{
 			Ctx:  ctx,
@@ -64,9 +64,9 @@ func TestByUser(t *testing.T) {
 	})
 
 	t.Run("no schemas found", func(t *testing.T) {
-		mock.ExpectQuery(`SELECT "schemas"\."id","schemas"\."created_at","schemas"\."updated_at","schemas"\."name","schemas"\."palette","schemas"\."content" FROM "schemas" JOIN user_schemas ON user_schemas\.schema_id = schemas\.id AND user_schemas\.user_id = \$1`).
+		mock.ExpectQuery(`SELECT "schemas"\."id","schemas"\."created_at","schemas"\."updated_at","schemas"\."name","schemas"\."palette","schemas"\."content","schemas"\."screenshoted_at" FROM "schemas" JOIN user_schemas ON user_schemas\.schema_id = schemas\.id AND user_schemas\.user_id = \$1`).
 			WithArgs(user.ID).
-			WillReturnRows(sqlmock.NewRows([]string{"id", "created_at", "updated_at", "name", "palette", "content"}))
+			WillReturnRows(sqlmock.NewRows([]string{"id", "created_at", "updated_at", "name", "palette", "content", "screenshoted_at"}))
 
 		result, err := client.ByUser(&ByUserOptions{
 			Ctx:  ctx,

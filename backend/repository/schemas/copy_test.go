@@ -64,14 +64,14 @@ func TestCopy(t *testing.T) {
 		// Mock ByID query
 		mock.ExpectQuery(`SELECT \* FROM "schemas"`).
 			WithArgs(schemaID, 1).
-			WillReturnRows(sqlmock.NewRows([]string{"id", "name", "palette", "content"}).
-				AddRow("550e8400-e29b-41d4-a716-446655440001", "Original Schema", `["#ffffff", "#000000"]`, `[{"id": "1", "name": "Pattern 1", "type": "square"}]`))
+			WillReturnRows(sqlmock.NewRows([]string{"id", "name", "palette", "content", "screenshoted_at"}).
+				AddRow("550e8400-e29b-41d4-a716-446655440001", "Original Schema", `["#ffffff", "#000000"]`, `[{"id": "1", "name": "Pattern 1", "type": "square"}]`, nil))
 
 		// Mock Create transaction
 		mockUserSchemas.On("CreateTx", tmock.Anything, userID, tmock.Anything).Return(nil)
 		mock.ExpectBegin()
 		mock.ExpectQuery(`INSERT INTO "schemas"`).
-			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "Original Schema (1)", sqlmock.AnyArg(), sqlmock.AnyArg()).
+			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "Original Schema (1)", sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow("550e8400-e29b-41d4-a716-446655440002"))
 		mock.ExpectCommit()
 

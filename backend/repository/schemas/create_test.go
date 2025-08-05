@@ -25,7 +25,7 @@ func TestCreate(t *testing.T) {
 
 		mock.ExpectBegin()
 		mock.ExpectQuery(`INSERT INTO "schemas"`).
-			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "Test Schema", sqlmock.AnyArg(), sqlmock.AnyArg()).
+			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "Test Schema", sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow("550e8400-e29b-41d4-a716-446655440001"))
 		mock.ExpectCommit()
 
@@ -51,7 +51,7 @@ func TestCreate(t *testing.T) {
 
 		mock.ExpectBegin()
 		mock.ExpectQuery(`INSERT INTO "schemas"`).
-			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "Test Schema", sqlmock.AnyArg(), sqlmock.AnyArg()).
+			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "Test Schema", sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow("550e8400-e29b-41d4-a716-446655440001"))
 		mock.ExpectCommit()
 
