@@ -1,4 +1,4 @@
-import type { ISchemaPattern } from './ISchemaPattern';
+import type { SchemaPattern } from './ISchemaPattern';
 
 export interface ISchema {
   id: string;
@@ -7,5 +7,5 @@ export interface ISchema {
   createdAt: string;
   updatedAt: string;
   screenshotedAt: string | null;
-  content: ISchemaPattern[];
+  content: SchemaPattern[];
 }

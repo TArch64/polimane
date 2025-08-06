@@ -10,13 +10,13 @@ import {
   TrashIcon,
 } from '@/components/icon';
 import { useModal } from '@/components/modal';
-import type { ISchemaPattern } from '@/models';
+import type { SchemaPattern } from '@/models';
 import { useRouteTransition } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { PatternRenameModal, usePatternAddModal } from '../components/modals';
 import { usePatternsStore } from '../stores';
 
-export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<ISchemaPattern>): Ref<MaybeContextMenuAction[]> {
+export function usePatternContextMenuActions(patternRef: MaybeRefOrGetter<SchemaPattern>): Ref<MaybeContextMenuAction[]> {
   const pattern = toRef(patternRef);
 
   const routeTransition = useRouteTransition();

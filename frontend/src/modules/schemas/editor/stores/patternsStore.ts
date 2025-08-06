@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { computed } from 'vue';
 import { getPatternTitle, PatternType } from '@/enums';
 import { newId } from '@/helpers';
-import { Collection, type ISchemaPattern } from '@/models';
+import { Collection, type SchemaPattern } from '@/models';
 import { setObjectParent } from '../models';
 import { useEditorStore } from './editorStore';
 
@@ -12,7 +12,7 @@ export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
   const hasPatterns = computed(() => !!patterns.size);
 
   function createPattern(type: PatternType) {
-    const pattern: ISchemaPattern = {
+    const pattern: SchemaPattern = {
       id: newId(),
       name: `${getPatternTitle(type)} [${patterns.size + 1}]`,
       type: type,
@@ -23,11 +23,11 @@ export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
     return pattern;
   }
 
-  function deletePattern(pattern: ISchemaPattern) {
+  function deletePattern(pattern: SchemaPattern) {
     patterns.delete(pattern);
   }
 
-  function movePattern(pattern: ISchemaPattern, shift: number): void {
+  function movePattern(pattern: SchemaPattern, shift: number): void {
     const index = patterns.indexOf(pattern);
     const newIndex = index + shift;
 
@@ -38,7 +38,7 @@ export const usePatternsStore = defineStore('schemas/editor/patterns', () => {
     patterns.move(pattern, newIndex);
   }
 
-  function updatePattern(pattern: ISchemaPattern, patch: Partial<ISchemaPattern>): void {
+  function updatePattern(pattern: SchemaPattern, patch: Partial<SchemaPattern>): void {
     patterns.update(pattern, patch);
   }
 

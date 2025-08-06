@@ -9,11 +9,11 @@
 </template>
 
 <script setup lang="ts">
-import type { ISchemaPattern } from '@/models';
+import type { SchemaPattern } from '@/models';
 import { CanvasStackV } from '../base';
 import { CanvasRow } from '../row';
 
 defineProps<{
-  pattern: ISchemaPattern;
+  pattern: SchemaPattern;
 }>();
 </script>

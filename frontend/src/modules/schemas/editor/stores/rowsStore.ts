@@ -1,5 +1,5 @@
 import { type MaybeRefOrGetter, toValue } from 'vue';
-import { Collection, type ISchemaBead, type ISchemaPattern, type ISchemaRow } from '@/models';
+import { Collection, type ISchemaBead, type ISchemaRow, type SchemaPattern } from '@/models';
 import { newArray, newId } from '@/helpers';
 import { DynamicStore } from '@/stores';
 
@@ -18,12 +18,12 @@ export interface INewDiamondRowOptions extends INewRowOptions {
 }
 
 const rowsDynamicStore = new DynamicStore({
-  buildPath(patternRef: MaybeRefOrGetter<ISchemaPattern>) {
+  buildPath(patternRef: MaybeRefOrGetter<SchemaPattern>) {
     const { id } = toValue(patternRef);
     return `schemas/editor/patterns/${id}/rows` as const;
   },
 
-  setup(patternRef: MaybeRefOrGetter<ISchemaPattern>) {
+  setup(patternRef: MaybeRefOrGetter<SchemaPattern>) {
     const pattern = toValue(patternRef);
     const rows = Collection.fromParent(pattern);
 

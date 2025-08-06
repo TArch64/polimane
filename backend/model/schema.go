@@ -26,11 +26,22 @@ type Schema struct {
 type SchemaPalette = datatypes.JSONSlice[string]
 type SchemaContent = datatypes.JSONSlice[*SchemaPattern]
 
+type SchemaPatternSquareAttrs struct {
+	Size uint8 `json:"size"`
+}
+
+type SchemaPatternDiamondAttrs struct {
+	Size     uint  `json:"size"`
+	SideSize uint8 `json:"sideSize"`
+}
+
 type SchemaPattern struct {
-	ID      string       `json:"id"`
-	Name    string       `json:"name"`
-	Type    string       `json:"type"`
-	Content []*SchemaRow `json:"content"`
+	ID      string                     `json:"id"`
+	Name    string                     `json:"name"`
+	Type    string                     `json:"type"`
+	Square  *SchemaPatternSquareAttrs  `json:"square,omitempty"`
+	Diamond *SchemaPatternDiamondAttrs `json:"diamond,omitempty"`
+	Content []*SchemaRow               `json:"content"`
 }
 
 type SchemaRow struct {

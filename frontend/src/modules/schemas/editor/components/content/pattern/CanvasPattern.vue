@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import Konva from 'konva';
-import type { ISchemaPattern } from '@/models';
+import type { SchemaPattern } from '@/models';
 import {
   SCREENSHOT_IGNORE,
   useNodeCentering,
@@ -31,7 +31,7 @@ import CanvasPatternContent from './CanvasPatternContent.vue';
 import CanvasPatternEmpty from './CanvasPatternEmpty.vue';
 
 const props = defineProps<{
-  pattern: ISchemaPattern;
+  pattern: SchemaPattern;
 }>();
 
 const colorDivider2 = useThemeVar('--color-divider-2');

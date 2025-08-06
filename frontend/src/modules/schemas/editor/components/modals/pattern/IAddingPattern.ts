@@ -1,6 +1,6 @@
-import type { ISchemaPattern } from '@/models';
+import type { SchemaPattern } from '@/models';
 
 export interface IAddingPattern {
-  pattern: ISchemaPattern;
+  pattern: SchemaPattern;
   toIndex?: number;
 }

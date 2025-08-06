@@ -8,12 +8,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import Konva from 'konva';
-import type { ISchemaPattern } from '@/models';
+import type { SchemaPattern } from '@/models';
 import { SCREENSHOT_IGNORE, useNodeRef } from '@/modules/schemas/editor/composables';
 import { useThemeVar } from '@/composables';
 
 const props = defineProps<{
-  pattern: ISchemaPattern;
+  pattern: SchemaPattern;
 }>();
 
 const colorBackground1 = useThemeVar('--color-background-1');
