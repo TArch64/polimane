@@ -33,9 +33,20 @@ type SchemaPattern struct {
 	Content []*SchemaRow `json:"content"`
 }
 
+type SchemaSquareRowAttrs struct {
+	Size uint8 `json:"size"`
+}
+
+type SchemaDiamondRowAttrs struct {
+	Size     uint8 `json:"size"`
+	SideSize uint8 `json:"sideSize"`
+}
+
 type SchemaRow struct {
-	ID      string       `json:"id"`
-	Content []SchemaBead `json:"content"`
+	ID      string                 `json:"id"`
+	Square  *SchemaSquareRowAttrs  `json:"square,omitempty"`
+	Diamond *SchemaDiamondRowAttrs `json:"diamond,omitempty"`
+	Content []SchemaBead           `json:"content"`
 }
 
 type SchemaBead struct {

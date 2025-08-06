@@ -1,10 +1,18 @@
 import { type MaybeRefOrGetter, toValue } from 'vue';
-import { Collection, type ISchemaBead, type ISchemaPattern, type ISchemaRow } from '@/models';
+import {
+  Collection,
+  type ISchemaBead,
+  type ISchemaPattern,
+  type ISchemaSquareRow,
+  type SchemaRow,
+} from '@/models';
 import { newArray, newId } from '@/helpers';
 import { DynamicStore } from '@/stores';
+import { PatternType } from '@/enums';
 
 interface INewRowOptions {
   rows: number;
+  type: PatternType;
   toIndex: number;
 }
 
@@ -32,28 +40,28 @@ const rowsDynamicStore = new DynamicStore({
       color: '',
     });
 
-    const createRow = (size: number): ISchemaRow => ({
-      id: newId(),
-      content: newArray(size, createBead),
-    });
-
-    function addRows(newRows: ISchemaRow[], toIndex: number): void {
+    function addRows(newRows: SchemaRow[], toIndex: number): void {
       rows.insert(newRows, { toIndex });
     }
 
     function addSquareRow(options: INewSquareRowOptions) {
-      const newRows = newArray(options.rows, () => createRow(options.size));
+      const newRows = newArray<ISchemaSquareRow>(options.rows, () => ({
+        id: newId(),
+        content: newArray(options.size, createBead),
+        square: { size: options.size },
+      }));
+
       addRows(newRows, options.toIndex);
     }
 
     function addDiamondRow(options: INewDiamondRowOptions) {
     }
 
-    function deleteRow(row: ISchemaRow): void {
+    function deleteRow(row: SchemaRow): void {
       rows.delete(row);
     }
 
-    function moveRow(row: ISchemaRow, shift: number): void {
+    function moveRow(row: SchemaRow, shift: number): void {
       const index = rows.indexOf(row);
       const newIndex = index + shift;
 
@@ -64,7 +72,7 @@ const rowsDynamicStore = new DynamicStore({
       rows.move(row, newIndex);
     }
 
-    function resizeRow(row: ISchemaRow, newSize: number): void {
+    function resizeRow(row: SchemaRow, newSize: number): void {
       const newBeadsCount = newSize - row.content.length;
       const newBeads = newArray(newBeadsCount, createBead);
       rows.update(row, { content: [...row.content, ...newBeads] });

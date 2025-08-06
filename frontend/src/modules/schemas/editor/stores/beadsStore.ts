@@ -1,15 +1,15 @@
 import { type MaybeRefOrGetter, toValue } from 'vue';
-import { Collection, type ISchemaBead, type ISchemaRow } from '@/models';
+import { Collection, type ISchemaBead, type SchemaRow } from '@/models';
 import { DynamicStore } from '@/stores';
 import { usePaletteStore } from './paletteStore';
 
 const beadsDynamicStore = new DynamicStore({
-  buildPath(rowRef: MaybeRefOrGetter<ISchemaRow>) {
+  buildPath(rowRef: MaybeRefOrGetter<SchemaRow>) {
     const { id } = toValue(rowRef);
     return `schemas/editor/rows/${id}/beads`;
   },
 
-  setup(rowRef: MaybeRefOrGetter<ISchemaRow>) {
+  setup(rowRef: MaybeRefOrGetter<SchemaRow>) {
     const row = toValue(rowRef);
     const paletteStore = usePaletteStore();
     const beads = Collection.fromParent(row);

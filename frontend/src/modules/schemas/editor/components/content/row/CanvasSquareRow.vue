@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import Konva from 'konva';
 import { computed } from 'vue';
-import type { ISchemaRow } from '@/models';
+import type { SchemaRow } from '@/models';
 import {
   useNodeContextMenu,
   useNodeRef,
@@ -23,7 +23,7 @@ import { CanvasBead } from '../bead';
 import { CanvasStackH } from '../base';
 
 const props = defineProps<{
-  row: ISchemaRow;
+  row: SchemaRow;
 }>();
 
 const rootRef = useNodeRef<Konva.Group>();

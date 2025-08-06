@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import Konva from 'konva';
 import { computed } from 'vue';
-import type { ISchemaBead, ISchemaRow } from '@/models';
+import type { ISchemaBead, SchemaRow } from '@/models';
 import {
   useNodeConfigs,
   useNodeCursor,
@@ -26,7 +26,7 @@ import { useThemeVar } from '@/composables';
 import { GroupRenderer } from '../base';
 
 const props = defineProps<{
-  row: ISchemaRow;
+  row: SchemaRow;
   bead: ISchemaBead;
 }>();
 

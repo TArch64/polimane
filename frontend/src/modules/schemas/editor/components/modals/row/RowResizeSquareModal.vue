@@ -14,14 +14,14 @@
 <script setup lang="ts">
 import { nextTick, reactive } from 'vue';
 import { Modal, useActiveModal } from '@/components/modal';
-import type { ISchemaRow } from '@/models';
+import type { SchemaRow } from '@/models';
 import { NumberField } from '@/components/form';
 import { useRowsStore } from '@/modules/schemas/editor/stores';
 import { getObjectParent } from '@/modules/schemas/editor/models';
 import { useCanvasStage } from '@/modules/schemas/editor/composables';
 
 const props = defineProps<{
-  row: ISchemaRow;
+  row: SchemaRow;
 }>();
 
 const stage = useCanvasStage();
