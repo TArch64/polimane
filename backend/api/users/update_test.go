@@ -228,6 +228,106 @@ func TestController_apiUpdate(t *testing.T) {
 		assert.Equal(t, 200, resp.StatusCode)
 		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertCalled(t, "SendVerificationEmail", mock.Anything, mock.Anything)
 	})
+
+	t.Run("handles updateUser error", func(t *testing.T) {
+		// Arrange
+		mockWorkosClient := NewMockWorkosClient()
+		signalsContainer := signal.Provider()
+		testUser := createTestUser()
+
+		controller := &Controller{
+			workosClient: mockWorkosClient,
+			signals:      signalsContainer,
+		}
+
+		// Mock updateUser to fail
+		updateError := &fiber.Error{
+			Code:    fiber.StatusInternalServerError,
+			Message: "WorkOS API error",
+		}
+
+		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("UpdateUser",
+			mock.Anything, mock.Anything).Return(usermanagement.User{}, updateError)
+
+		app := fiber.New(fiber.Config{
+			ErrorHandler: base.ErrorHandler,
+		})
+
+		app.Put("/users/current", func(c *fiber.Ctx) error {
+			auth.SetSession(c, &auth.UserSession{
+				ID:   "session-123",
+				User: testUser,
+			})
+			return controller.apiUpdate(c)
+		})
+
+		requestBody := updateBody{
+			FirstName: "Updated",
+		}
+		bodyBytes, _ := json.Marshal(requestBody)
+		req := httptest.NewRequest("PUT", "/users/current", bytes.NewReader(bodyBytes))
+		req.Header.Set("Content-Type", "application/json")
+
+		// Act
+		resp, err := app.Test(req)
+
+		// Assert
+		assert.NoError(t, err)
+		assert.Equal(t, 500, resp.StatusCode)
+		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+	})
+
+	t.Run("handles sendEmailVerification error", func(t *testing.T) {
+		// Arrange
+		mockWorkosClient := NewMockWorkosClient()
+		signalsContainer := signal.Provider()
+		testUser := createTestUser()
+
+		controller := &Controller{
+			workosClient: mockWorkosClient,
+			signals:      signalsContainer,
+		}
+
+		// Mock updateUser to succeed
+		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("UpdateUser",
+			mock.Anything, mock.Anything).Return(usermanagement.User{}, nil)
+
+		// Mock sendEmailVerification to fail
+		emailError := &fiber.Error{
+			Code:    fiber.StatusBadRequest,
+			Message: "Email verification failed",
+		}
+
+		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("SendVerificationEmail",
+			mock.Anything, mock.Anything).Return(usermanagement.UserResponse{}, emailError)
+
+		app := fiber.New(fiber.Config{
+			ErrorHandler: base.ErrorHandler,
+		})
+
+		app.Put("/users/current", func(c *fiber.Ctx) error {
+			auth.SetSession(c, &auth.UserSession{
+				ID:   "session-123",
+				User: testUser,
+			})
+			return controller.apiUpdate(c)
+		})
+
+		requestBody := updateBody{
+			Email: "updated@example.com",
+		}
+		bodyBytes, _ := json.Marshal(requestBody)
+		req := httptest.NewRequest("PUT", "/users/current", bytes.NewReader(bodyBytes))
+		req.Header.Set("Content-Type", "application/json")
+
+		// Act
+		resp, err := app.Test(req)
+
+		// Assert
+		assert.NoError(t, err)
+		assert.Equal(t, 400, resp.StatusCode)
+		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+	})
 }
 
 func TestUpdateBody(t *testing.T) {

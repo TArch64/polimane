@@ -167,7 +167,7 @@
 
             <option value="file34">polimane/backend/api/users/password_reset.go (100.0%)</option>
 
-            <option value="file35">polimane/backend/api/users/update.go (86.7%)</option>
+            <option value="file35">polimane/backend/api/users/update.go (100.0%)</option>
 
             <option value="file36">polimane/backend/base/tag_error.go (100.0%)</option>
 
@@ -1719,10 +1719,10 @@ func (c *Controller) apiEmailVerifyRetry(ctx *fiber.Ctx) (err error) <span class
                 return err
         }</span>
 
-        <span class="cov4" title="2">return base.NewSuccessResponse(ctx)</span>
+        <span class="cov3" title="2">return base.NewSuccessResponse(ctx)</span>
 }
 
-func (c *Controller) sendEmailVerification(ctx context.Context, userID string) error <span class="cov10" title="8">{
+func (c *Controller) sendEmailVerification(ctx context.Context, userID string) error <span class="cov10" title="9">{
         _, err := c.workosClient.UserManagement.SendVerificationEmail(ctx, usermanagement.SendVerificationEmailOpts{
                 User: userID,
         })
@@ -1807,15 +1807,15 @@ type updateBody struct {
         Email     string `json:"email" validate:"omitempty,email"`
 }
 
-func (c *Controller) apiUpdate(ctx *fiber.Ctx) (err error) <span class="cov10" title="5">{
+func (c *Controller) apiUpdate(ctx *fiber.Ctx) (err error) <span class="cov10" title="7">{
         var body updateBody
         if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
         <span
-            class="cov8"
-            title="4"
+            class="cov9"
+            title="6"
         >if body.FirstName == "" &amp;&amp; body.LastName == "" &amp;&amp; body.Email == "" </span><span
             class="cov1"
             title="1"
@@ -1823,28 +1823,28 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) (err error) <span class="cov10" t
                 return fiber.ErrUnprocessableEntity
         }</span>
 
-        <span class="cov7" title="3">user := auth.GetSessionUser(ctx)
+        <span class="cov8" title="5">user := auth.GetSessionUser(ctx)
 
-        if err = c.updateUser(ctx.Context(), user.WorkosID, &amp;body); err != nil </span><span class="cov0" title="0">{
+        if err = c.updateUser(ctx.Context(), user.WorkosID, &amp;body); err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov7" title="3">if body.Email != "" </span><span class="cov4" title="2">{
+        <span class="cov7" title="4">if body.Email != "" </span><span class="cov6" title="3">{
                 if err = c.sendEmailVerification(ctx.Context(), user.WorkosID); err != nil </span><span
-            class="cov0"
-            title="0"
+            class="cov1"
+            title="1"
         >{
                         return err
                 }</span>
         }
 
-        <span class="cov7" title="3">c.signals.InvalidateWorkosUserCache.Emit(ctx.Context(), user.WorkosID)
+        <span class="cov6" title="3">c.signals.InvalidateWorkosUserCache.Emit(ctx.Context(), user.WorkosID)
         return base.NewSuccessResponse(ctx)</span>
 }
 
 func (c *Controller) updateUser(ctx context.Context, userID string, body *updateBody) error <span
-            class="cov8"
-            title="4"
+            class="cov9"
+            title="6"
         >{
         _, err := c.workosClient.UserManagement.UpdateUser(ctx, usermanagement.UpdateUserOpts{
                 User:      userID,
