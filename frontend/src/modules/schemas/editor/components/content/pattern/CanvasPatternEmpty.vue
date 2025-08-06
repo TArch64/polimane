@@ -1,5 +1,5 @@
 <template>
-  <GroupRenderer>
+  <GroupRenderer :config="rootConfig">
     <KonvaRect :config="backgroundConfig" />
 
     <CanvasStackH ref="contentRef" align="center" :gap="8">
@@ -17,7 +17,12 @@ import Konva from 'konva';
 import { computed } from 'vue';
 import { PlusIcon } from '@/components/icon';
 import { useThemeVar } from '@/composables';
-import { useNodeConfigs, useNodeFiller, useNodeRef } from '@/modules/schemas/editor/composables';
+import {
+  SCREENSHOT_IGNORE,
+  useNodeConfigs,
+  useNodeFiller,
+  useNodeRef,
+} from '@/modules/schemas/editor/composables';
 import { CanvasIcon, CanvasStackH, GroupRenderer } from '../base';
 
 const colorDivider = useThemeVar('--color-divider');
@@ -26,6 +31,10 @@ const colorBackground1 = useThemeVar('--color-background-1');
 const roundedMd = useThemeVar('--rounded-md');
 
 const contentRef = useNodeRef<Konva.Group>();
+
+const rootConfig: Partial<Konva.GroupConfig> = {
+  name: SCREENSHOT_IGNORE,
+};
 
 const backgroundConfig = useNodeConfigs<Konva.RectConfig>([
   () => ({

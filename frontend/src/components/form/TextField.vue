@@ -87,7 +87,7 @@ defineExpose({ setError });
     margin-bottom: 2px;
     margin-left: 2px;
     font-size: var(--font-xs);
-    color: color-mix(in srgb, var(--color-primary), transparent 40%);
+    color: color-mix(in srgb, var(--color-black), transparent 40%);
   }
 
   .text-field__container {
