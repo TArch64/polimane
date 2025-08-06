@@ -11,7 +11,6 @@ docker compose run --rm backend make test test_pattern="./path/..."
 **MANDATORY:** Always use this exact command format. Replace `./path/...` with actual package path.
 
 Examples:
-
 - `./base/...` for base package
 - `./signal/...` for signal package
 - `./env/...` for env package
@@ -36,7 +35,9 @@ Examples:
 
 ---
 
-## Required Frameworks
+## FOUNDATION: Required Setup
+
+### Frameworks and Imports
 
 ```go
 import (
@@ -47,17 +48,24 @@ import (
 )
 ```
 
----
-
-## File Structure Rules
+### File Structure Rules
 
 - **Test files:** Same package, `{source_file}_test.go` suffix
 - **Mock files:** `mocks_test.go` in same package
 - **One test file per source file**
 
+### Required Test Cases
+
+For every function/method, include these test cases when applicable:
+
+1. **✅ Success case** - Happy path
+2. **❌ Error cases** - What can go wrong?
+3. **🔍 Edge cases** - Empty inputs, nil values, zero values
+4. **🗄️ Database errors** (if applicable) - Connection failures, not found, etc.
+
 ---
 
-## Standard Test Structure
+## CORE PATTERNS: Basic Test Structure
 
 ### Simple Functions (like TagError, Provider functions)
 
@@ -76,7 +84,149 @@ assert.Equal(t, expectedValue, result)
 }
 ```
 
-### Database Tests (with setupTest pattern)
+### Mock Implementation Template
+
+```go
+type MockClient struct {
+mock.Mock
+}
+
+func (m *MockClient) Method(ctx context.Context, param Type) (*Model, error) {
+args := m.Called(ctx, param)
+if args.Get(0) == nil {
+return nil, args.Error(1)
+}
+return args.Get(0).(*Model), args.Error(1)
+}
+```
+
+---
+
+## DEPENDENCY INJECTION: Options Struct Pattern
+
+### 🚨 Critical Pattern: Provider Functions
+
+This codebase uses `fx.In` dependency injection through options structs. **Always use the options struct format:**
+
+```go
+// ✅ Correct - Use options struct
+client := Provider(ClientOptions{
+DB:          gormDB,
+UserSchemas: userSchemas,
+Signals:     signals,
+})
+
+// ❌ Wrong - Individual parameters (old pattern)
+client := Provider(gormDB, userSchemas, signals)
+```
+
+### Common Provider Patterns
+
+**Repository Clients:**
+
+```go
+client := Provider(ClientOptions{
+DB: gormDB,
+})
+```
+
+**Service Clients:**
+
+```go
+client := Provider(ClientOptions{
+Env: environment,
+JWK: jwkClient,
+})
+```
+
+**API Controllers:**
+
+```go
+controller := Provider(ControllerOptions{
+WorkosClient: workosClient,
+Env:          environment,
+Users:        usersClient,
+Signals:      signalsContainer,
+})
+```
+
+**API Server:**
+
+```go
+app, err := Provider(ServerOptions{
+Controllers:    controllers,
+Options:        options,
+Sentry:         sentryContainer,
+Env:            environment,
+AuthMiddleware: authMiddleware,
+})
+```
+
+---
+
+## MOCKING: Advanced Mock Patterns
+
+### Context Handling in Mocks
+
+**⚠️ Common Problem:** S3 and other external service mocks fail due to context type mismatches:
+
+```go
+// ❌ This fails - runtime context differs from expected
+mockS3.On("PutObject", mock.AnythingOfType("*context.timerCtx"), ...)
+
+// ✅ This works - flexible context matching
+mockS3.On("PutObject", mock.Anything, ...)
+```
+
+**Rule:** When mocking functions that accept `context.Context`, use `mock.Anything` for context parameters unless
+specifically testing context behavior.
+
+### Complex Parameter Matching with mock.MatchedBy
+
+**Pattern for Repository Calls:**
+
+```go
+// ✅ Use matcher functions instead of exact struct matching
+mockSchemas.On("Update", mock.MatchedBy(func(options *repositoryschemas.UpdateOptions) bool {
+return options.User == testUser &&
+options.SchemaID == testSchemaID &&
+options.Updates != nil
+})).Return(nil)
+
+// ❌ Avoid exact struct matching (context type issues)
+mockSchemas.On("Update", &repositoryschemas.UpdateOptions{
+Ctx:      testUser, // Type error!
+User:     testUser,
+SchemaID: testSchemaID,
+})
+```
+
+### Interface vs Implementation
+
+**🚨 Critical Rule:** When creating test fixtures that need access to unexported fields, always instantiate the concrete
+implementation:
+
+```go
+// ✅ Correct - Use concrete implementation
+client := &Impl{
+api: mockAPI,
+fs:  mockFS,
+env: mockEnv,
+}
+
+// ❌ Wrong - Cannot instantiate interface
+client := &Client{
+api: mockAPI, // Compilation error
+}
+```
+
+**Pattern:** Look for the concrete type (usually `Impl`) that implements the interface (`Client`).
+
+---
+
+## DATABASE TESTING: GORM & SQL Patterns
+
+### Database Test Setup Pattern
 
 ```go
 func setupTest(t *testing.T) (*Impl, sqlmock.Sqlmock, func ()) {
@@ -110,21 +260,6 @@ assert.NoError(t, mock.ExpectationsWereMet())
 }
 ```
 
----
-
-## Required Test Cases
-
-For every function/method, include these test cases when applicable:
-
-1. **✅ Success case** - Happy path
-2. **❌ Error cases** - What can go wrong?
-3. **🔍 Edge cases** - Empty inputs, nil values, zero values
-4. **🗄️ Database errors** (if applicable) - Connection failures, not found, etc.
-
----
-
-## Database Testing Rules
-
 ### SQL Operation Mapping
 
 - `INSERT/UPDATE/DELETE` → Use `mock.ExpectExec()`
@@ -136,7 +271,7 @@ For every function/method, include these test cases when applicable:
 - `Create()`, `Delete()` automatically wrapped in transactions
 - GORM adds `created_at`/`updated_at` to INSERT - use `sqlmock.AnyArg()`
 
-### Common Patterns
+### Common SQL Patterns
 
 ```go
 // CREATE with timestamps
@@ -154,21 +289,19 @@ WillReturnRows(sqlmock.NewRows([]string{"col"}).AddRow(value))
 
 ---
 
-## HTTP Testing Rules
+## HTTP & FIBER TESTING: Web Application Patterns
+
+### HTTP Testing Rules
 
 - ❌ **NEVER send real HTTP requests in tests**
 - ✅ Mock all external HTTP calls using `testify/mock` or `httptest`
 - ✅ Use `httptest.NewServer()` for integration-style testing
 - ✅ Always verify mock expectations with `AssertExpectations(t)`
 
----
+### 🚨 CRITICAL: Fiber Custom Error Handler Configuration
 
-## Fiber Testing Rules
-
-### Custom Error Handler Configuration
-
-**🚨 CRITICAL:** When testing Fiber applications that use custom error types (like `base.CustomError`), always configure
-the test app with the same error handler as production:
+When testing Fiber applications that use custom error types (like `base.CustomError`), **always configure the test app
+with the same error handler as production:**
 
 ```go
 import "polimane/backend/api/base"
@@ -183,13 +316,12 @@ app := fiber.New()
 ```
 
 **Why this matters:**
-
 - Custom errors return 500 instead of intended status codes (e.g., 401) without proper handling
 - Fiber's default error handler treats custom errors as generic errors
 - Test behavior must match production behavior
 - Especially critical when `env.IsDev` is false in test environments
 
-### Fiber Test Patterns
+### Fiber Test Pattern
 
 ```go
 func TestMiddlewareHandler(t *testing.T) {
@@ -220,55 +352,26 @@ assert.Equal(t, 401, resp.StatusCode) // Now works correctly!
 
 ---
 
-## Mock Implementation Template
+## SPECIAL CASES: Global State & Cache Testing
+
+### Global State and Test Isolation
+
+**Rule:** Tests that use validation must initialize the validator in each test:
 
 ```go
-type MockClient struct {
-mock.Mock
-}
+func TestController_apiCreate(t *testing.T) {
+t.Run("validates input", func (t *testing.T) {
+// Initialize validator for this test
+base.InitValidator()
 
-func (m *MockClient) Method(ctx context.Context, param Type) (*Model, error) {
-args := m.Called(ctx, param)
-if args.Get(0) == nil {
-return nil, args.Error(1)
-}
-return args.Get(0).(*Model), args.Error(1)
+// Test code...
+})
 }
 ```
 
----
+**Why:** Tests should not depend on execution order or shared global state.
 
-## Debugging Failed Tests
-
-1. **Run the test** and capture the exact error message
-2. **Check operation type** - Are you using `ExpectExec` vs `ExpectQuery` correctly?
-3. **Extract SQL pattern** from error log and match exactly
-4. **Verify argument count** - Include timestamps for GORM operations
-5. **Check transactions** - GORM auto-wraps Create/Delete operations
-6. **Update this file** with new patterns you discover
-
----
-
-## Auto-Update Enabled
-
-When you encounter new patterns, GORM behaviors, or debugging solutions, immediately add them to this file in the
-appropriate sections.
-
-**Learning Categories to Update:**
-
-- New GORM operation behaviors
-- SQL pattern variations
-- Transaction handling edge cases
-- Mock setup requirements
-- Fiber error handler configuration
-- Cache implementation patterns
-- Common pitfalls and resolutions
-
----
-
-## Cache Testing Guidelines
-
-### Real vs Mock Cache Implementation
+### Cache Testing Guidelines
 
 **Pattern:** Use real cache implementations for core functionality, mocks for external dependencies:
 
@@ -289,15 +392,48 @@ users:           &MockUsersClient{}, // Mock repository
 ```
 
 **Why:**
-
 - Cache behavior is integral to the functionality being tested
 - Real cache implementations provide more accurate integration testing
 - External services should be mocked to avoid network dependencies
-- Mocks should be placed in `mocks_test.go` following project conventions
 
 ---
 
-## Common Pitfalls and Resolutions
+## DEBUGGING & TROUBLESHOOTING
+
+### Systematic Test Fixing Strategy
+
+When encountering widespread test failures:
+
+1. **Categorize by error type:**
+    - Provider function signature mismatches
+    - Mock type errors
+    - Context type mismatches
+    - Interface vs implementation issues
+
+2. **Fix one category at a time:**
+    - Use pattern matching tools (`grep`, `sed`) for bulk fixes
+    - Don't jump between different error types
+
+3. **Verify incrementally:**
+    - Run tests after each category of fixes
+    - Use `docker compose run --rm backend make test` to verify progress
+
+4. **Update patterns:**
+    - Document new patterns discovered during fixes
+    - Add to this instruction file for future reference
+
+### Common Debugging Steps
+
+1. **Run the test** and capture the exact error message
+2. **Check operation type** - Are you using `ExpectExec` vs `ExpectQuery` correctly?
+3. **Extract SQL pattern** from error log and match exactly
+4. **Verify argument count** - Include timestamps for GORM operations
+5. **Check transactions** - GORM auto-wraps Create/Delete operations
+6. **Update this file** with new patterns you discover
+
+---
+
+## ANTI-PATTERNS: Common Pitfalls to Avoid
 
 ### Don't Test Language Mechanics
 
@@ -325,7 +461,7 @@ func TestUserController_CreateUser(t *testing.T) {
 
 **Why:** The Go compiler already enforces interface compliance. Focus tests on business logic and behavior.
 
-### Fiber Context Testing
+### Fiber Context Testing Issues
 
 **⚠️ Common Issue:** Cannot directly create Fiber contexts for unit testing
 
@@ -363,3 +499,25 @@ req.Header.Set("Content-Type", "application/json")
 // CustomErrorData{} → serializes as {} → unmarshals as non-nil empty map  
 // nil → omitted from JSON (due to omitempty tag) → unmarshals as nil
 ```
+
+---
+
+## CONTINUOUS IMPROVEMENT
+
+### Auto-Update Enabled
+
+When you encounter new patterns, GORM behaviors, or debugging solutions, immediately add them to this file in the
+appropriate sections.
+
+**Learning Categories to Update:**
+
+- New GORM operation behaviors
+- SQL pattern variations
+- Transaction handling edge cases
+- Mock setup requirements
+- Fiber error handler configuration
+- Cache implementation patterns
+- Common pitfalls and resolutions
+- Provider function signature updates
+- Context handling solutions
+- Interface vs implementation issues
