@@ -1,1 +1,1 @@
-export { default as CanvasRow } from './CanvasRow.vue';
+export * from './CanvasRow';

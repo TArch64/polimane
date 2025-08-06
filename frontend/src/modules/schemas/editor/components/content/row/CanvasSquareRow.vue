@@ -27,7 +27,10 @@ const props = defineProps<{
 }>();
 
 const rootRef = useNodeRef<Konva.Group>();
-const rootConfig = computed((): Partial<Konva.GroupConfig> => ({ id: props.row.id }));
+
+const rootConfig = computed((): Partial<Konva.GroupConfig> => ({
+  id: props.row.id,
+}));
 
 useNodeContextMenu({
   nodeRef: rootRef,
