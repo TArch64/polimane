@@ -1,11 +1,11 @@
 import { type FunctionalComponent, h } from 'vue';
-import type { ISchemaRow, SchemaPattern } from '@/models';
+import type { ISchemaPattern, ISchemaRow } from '@/models';
 import { getMappedValue } from '@/helpers';
 import { PatternType } from '@/enums';
 import CanvasSquareRow from './CanvasSquareRow.vue';
 
 export interface ICanvasRowProps {
-  pattern: SchemaPattern;
+  pattern: ISchemaPattern;
   row: ISchemaRow;
 }
 

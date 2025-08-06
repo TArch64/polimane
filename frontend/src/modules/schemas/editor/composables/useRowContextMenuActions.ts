@@ -1,6 +1,6 @@
 import { toRef } from '@vueuse/core';
 import { computed, type MaybeRefOrGetter, nextTick, type Ref } from 'vue';
-import type { ISchemaRow, SchemaPattern } from '@/models';
+import type { ISchemaPattern, ISchemaRow } from '@/models';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import {
   ArrowDownwardIcon,
@@ -20,7 +20,7 @@ import { useRowTitle } from './useRowTitle';
 
 export function useRowContextMenuActions(rowRef: MaybeRefOrGetter<ISchemaRow>): Ref<MaybeContextMenuAction[]> {
   const row = toRef(rowRef);
-  const pattern = useObjectParent<SchemaPattern>(rowRef);
+  const pattern = useObjectParent<ISchemaPattern>(rowRef);
 
   const rowsStore = useRowsStore(pattern);
   const routeTransition = useRouteTransition();

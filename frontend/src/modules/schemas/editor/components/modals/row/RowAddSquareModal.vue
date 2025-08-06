@@ -24,13 +24,13 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { useLocalStorage } from '@vueuse/core';
-import type { SchemaPattern } from '@/models';
+import type { ISchemaPattern } from '@/models';
 import { Modal, useActiveModal } from '@/components/modal';
 import { NumberField } from '@/components/form';
 import { useRowsStore } from '@/modules/schemas/editor/stores';
 
 const props = withDefaults(defineProps<{
-  pattern: SchemaPattern;
+  pattern: ISchemaPattern;
   toIndex?: number;
 }>(), {
   toIndex: -1,

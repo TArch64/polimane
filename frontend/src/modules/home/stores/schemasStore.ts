@@ -1,14 +1,14 @@
 import { defineStore } from 'pinia';
 import { computed } from 'vue';
 import { useAsyncData, useHttpClient } from '@/composables';
-import type { ISchema, SchemaPattern } from '@/models';
+import type { ISchema, ISchemaPattern } from '@/models';
 
 export type SchemaListItem = Omit<ISchema, 'content'>;
 
 export interface ICreateSchemaInput {
   name: string;
   palette?: string[];
-  content?: SchemaPattern[];
+  content?: ISchemaPattern[];
 }
 
 export const useSchemasStore = defineStore('schemas/list', () => {

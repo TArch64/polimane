@@ -12,11 +12,11 @@
 import { ref } from 'vue';
 import { Modal, useActiveModal } from '@/components/modal';
 import { TextField } from '@/components/form';
-import type { SchemaPattern } from '@/models';
+import type { ISchemaPattern } from '@/models';
 import { usePatternsStore } from '@/modules/schemas/editor/stores';
 
 const props = defineProps<{
-  pattern: SchemaPattern;
+  pattern: ISchemaPattern;
 }>();
 
 const patternsStore = usePatternsStore();
