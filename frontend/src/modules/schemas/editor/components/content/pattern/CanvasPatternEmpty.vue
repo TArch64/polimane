@@ -2,8 +2,8 @@
   <GroupRenderer>
     <KonvaRect :config="backgroundConfig" />
 
-    <CanvasStackH align="center" :gap="8" :config="stackConfig">
-      <CanvasIcon size="22" color="rgba(0, 0, 0, 0.8)">
+    <CanvasStackH ref="contentRef" align="center" :gap="8">
+      <CanvasIcon size="22" color="--color-primary">
         <PlusIcon />
       </CanvasIcon>
 
@@ -17,30 +17,38 @@ import Konva from 'konva';
 import { computed } from 'vue';
 import { PlusIcon } from '@/components/icon';
 import { useThemeVar } from '@/composables';
+import { useNodeConfigs, useNodeFiller, useNodeRef } from '@/modules/schemas/editor/composables';
 import { CanvasIcon, CanvasStackH, GroupRenderer } from '../base';
 
 const colorDivider = useThemeVar('--color-divider');
 const colorPrimary = useThemeVar('--color-primary');
+const colorBackground1 = useThemeVar('--color-background-1');
 const roundedMd = useThemeVar('--rounded-md');
 
-const backgroundConfig: Partial<Konva.GroupConfig> = computed(() => ({
-  stroke: colorDivider.value,
-  strokeWidth: 1,
-  cornerRadius: roundedMd.value,
-  width: 156,
-  height: 32,
-}));
+const contentRef = useNodeRef<Konva.Group>();
 
-const stackConfig: Partial<Konva.GroupConfig> = {
-  x: 12,
-};
+const backgroundConfig = useNodeConfigs<Konva.RectConfig>([
+  () => ({
+    fill: colorBackground1.value,
+    stroke: colorDivider.value,
+    strokeWidth: 1,
+    cornerRadius: roundedMd.value,
+    offsetY: 3,
+    offsetX: 16,
+  }),
+
+  useNodeFiller(contentRef, {
+    padding: {
+      vertical: 3,
+      horizontal: 12,
+    },
+  }),
+]);
 
 const labelTextConfig: Partial<Konva.TextConfig> = computed(() => ({
   text: 'Додати Рядок',
   fill: colorPrimary.value,
   fontSize: 15,
-  height: 32,
-  offsetY: -1,
   verticalAlign: 'middle',
 }));
 </script>

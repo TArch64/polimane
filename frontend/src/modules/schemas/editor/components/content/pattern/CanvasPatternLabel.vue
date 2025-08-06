@@ -16,7 +16,7 @@ const props = defineProps<{
   pattern: ISchemaPattern;
 }>();
 
-const colorWhite = useThemeVar('--color-white');
+const colorBackground1 = useThemeVar('--color-background-1');
 const colorPrimary = useThemeVar('--color-primary');
 const colorDivider = useThemeVar('--color-divider');
 const roundedMd = useThemeVar('--rounded-sm');
@@ -28,7 +28,7 @@ const config: Partial<Konva.LabelConfig> = {
 };
 
 const tagConfig: Partial<Konva.TagConfig> = computed(() => ({
-  fill: colorWhite.value,
+  fill: colorBackground1.value,
   stroke: colorDivider.value,
   strokeWidth: 1,
   cornerRadius: roundedMd.value,

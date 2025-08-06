@@ -1,5 +1,6 @@
 import { computed, reactive, type Ref, ref } from 'vue';
 import { useDebounceFn, useMutationObserver } from '@vueuse/core';
+import { useThemeVar } from '@/composables';
 
 export interface IIconSourceOptions {
   size: Ref<number | string>;
@@ -12,6 +13,8 @@ export interface IIconSource {
 }
 
 export function useIconSource(options: IIconSourceOptions): IIconSource {
+  const iconColor = useThemeVar(options.color);
+
   const hostEl = document.createElement('div');
   const originalSource = ref('');
 
@@ -37,8 +40,8 @@ export function useIconSource(options: IIconSourceOptions): IIconSource {
   });
 
   const iconSource = computed(() => {
-    return options.color.value
-      ? originalSource.value.replaceAll('currentColor', options.color.value)
+    return iconColor.value
+      ? originalSource.value.replaceAll('currentColor', iconColor.value)
       : originalSource.value;
   });
 

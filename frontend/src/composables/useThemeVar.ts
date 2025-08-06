@@ -39,7 +39,7 @@ export function useThemeVar(nameRef: MaybeRefOrGetter<string>): ComputedRef<stri
       return parseFloat(value);
     }
 
-    return value;
+    return value || name;
   });
 }
 

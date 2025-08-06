@@ -1,7 +1,7 @@
 import { type MaybeRefOrGetter } from 'vue';
 import Konva from 'konva';
-import { useNodeListener } from './useNodeListener';
 import { useNodeStage } from './useNodeStage';
+import { useNodeHovering } from './useNodeHover';
 
 export function useNodeCursor(nodeRef: MaybeRefOrGetter<Konva.Node>, cursor: string) {
   const stage = useNodeStage(nodeRef);
@@ -12,6 +12,7 @@ export function useNodeCursor(nodeRef: MaybeRefOrGetter<Konva.Node>, cursor: str
     }
   }
 
-  useNodeListener(nodeRef, 'mouseover', () => setCursor(cursor));
-  useNodeListener(nodeRef, 'mouseout', () => setCursor('default'));
+  useNodeHovering(nodeRef, (isHovering) => {
+    isHovering ? setCursor(cursor) : setCursor('default');
+  });
 }

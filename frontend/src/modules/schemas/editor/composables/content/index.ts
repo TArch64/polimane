@@ -12,3 +12,4 @@ export * from './useNodeContextMenu';
 export * from './useNodeFiller';
 export * from './useNodeCursor';
 export * from './useNodeListener';
+export * from './useNodeHover';
