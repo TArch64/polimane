@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -148,25 +149,25 @@
 
             <option value="file25">polimane/backend/api/server_prod.go (80.0%)</option>
 
-            <option value="file26">polimane/backend/api/users/auth_factor_delete.go (0.0%)</option>
+            <option value="file26">polimane/backend/api/users/auth_factor_delete.go (100.0%)</option>
 
-            <option value="file27">polimane/backend/api/users/auth_factors_create.go (0.0%)</option>
+            <option value="file27">polimane/backend/api/users/auth_factors_create.go (100.0%)</option>
 
-            <option value="file28">polimane/backend/api/users/auth_factors_init.go (0.0%)</option>
+            <option value="file28">polimane/backend/api/users/auth_factors_init.go (100.0%)</option>
 
-            <option value="file29">polimane/backend/api/users/auth_factors_list.go (0.0%)</option>
+            <option value="file29">polimane/backend/api/users/auth_factors_list.go (100.0%)</option>
 
-            <option value="file30">polimane/backend/api/users/controller.go (0.0%)</option>
+            <option value="file30">polimane/backend/api/users/controller.go (7.7%)</option>
 
-            <option value="file31">polimane/backend/api/users/email_verify.go (0.0%)</option>
+            <option value="file31">polimane/backend/api/users/email_verify.go (100.0%)</option>
 
-            <option value="file32">polimane/backend/api/users/email_verify_send.go (0.0%)</option>
+            <option value="file32">polimane/backend/api/users/email_verify_send.go (100.0%)</option>
 
-            <option value="file33">polimane/backend/api/users/get.go (0.0%)</option>
+            <option value="file33">polimane/backend/api/users/get.go (100.0%)</option>
 
-            <option value="file34">polimane/backend/api/users/password_reset.go (0.0%)</option>
+            <option value="file34">polimane/backend/api/users/password_reset.go (100.0%)</option>
 
-            <option value="file35">polimane/backend/api/users/update.go (0.0%)</option>
+            <option value="file35">polimane/backend/api/users/update.go (86.7%)</option>
 
             <option value="file36">polimane/backend/base/tag_error.go (100.0%)</option>
 
@@ -1448,21 +1449,21 @@ import (
         "polimane/backend/api/base"
 )
 
-func (c *Controller) apiAuthFactorDelete(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func (c *Controller) apiAuthFactorDelete(ctx *fiber.Ctx) error <span class="cov10" title="5">{
         factorID, err := base.GetRequiredParam(ctx, factorIdParam)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">err = c.workosClient.MFA.DeleteFactor(ctx.Context(), mfa.DeleteFactorOpts{
+        <span class="cov8" title="4">err = c.workosClient.MFA.DeleteFactor(ctx.Context(), mfa.DeleteFactorOpts{
                 FactorID: factorID,
         })
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov4" title="2">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return base.NewSuccessResponse(ctx)</span>
+        <span class="cov4" title="2">return base.NewSuccessResponse(ctx)</span>
 }
 </pre>
 
@@ -1484,34 +1485,34 @@ var (
         ErrInvalidAuthFactor = base.NewReasonedError(fiber.StatusBadRequest, "InvalidAuthFactor")
 )
 
-func (c *Controller) apiAuthFactorCreate(ctx *fiber.Ctx) (err error) <span class="cov0" title="0">{
+func (c *Controller) apiAuthFactorCreate(ctx *fiber.Ctx) (err error) <span class="cov10" title="6">{
         var body createAuthFactorBody
-        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov0" title="0">{
+        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov4" title="2">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">response, err := c.workosClient.MFA.VerifyChallenge(ctx.Context(), mfa.VerifyChallengeOpts{
+        <span class="cov7" title="4">response, err := c.workosClient.MFA.VerifyChallenge(ctx.Context(), mfa.VerifyChallengeOpts{
                 Code:        body.Code,
                 ChallengeID: body.ChallengeID,
         })
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">if !response.Valid </span><span class="cov0" title="0">{
+        <span class="cov6" title="3">if !response.Valid </span><span class="cov1" title="1">{
                 return ErrInvalidAuthFactor
         }</span>
 
-        <span class="cov0" title="0">factor, err := c.workosClient.MFA.GetFactor(ctx.Context(), mfa.GetFactorOpts{
+        <span class="cov4" title="2">factor, err := c.workosClient.MFA.GetFactor(ctx.Context(), mfa.GetFactorOpts{
                 FactorID: response.Challenge.FactorID,
         })
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return ctx.JSON(factor)</span>
+        <span class="cov1" title="1">return ctx.JSON(factor)</span>
 }
 </pre>
 
@@ -1532,7 +1533,7 @@ type newAuthFactorResponse struct {
         URI         string `json:"uri"`
 }
 
-func (c *Controller) apiAuthFactorsInit(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func (c *Controller) apiAuthFactorsInit(ctx *fiber.Ctx) error <span class="cov10" title="4">{
         session := auth.GetSession(ctx)
 
         response, err := c.workosClient.UserManagement.EnrollAuthFactor(ctx.Context(), usermanagement.EnrollAuthFactorOpts{
@@ -1542,11 +1543,11 @@ func (c *Controller) apiAuthFactorsInit(ctx *fiber.Ctx) error <span class="cov0"
                 TOTPUser:   session.WorkosUser.Email,
         })
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return ctx.JSON(newAuthFactorResponse{
+        <span class="cov8" title="3">return ctx.JSON(newAuthFactorResponse{
                 ChallengeID: response.Challenge.ID,
                 QRCode:      response.Factor.TOTP.QRCode,
                 Secret:      response.Factor.TOTP.Secret,
@@ -1569,26 +1570,26 @@ type authFactorListItem struct {
         CreatedAt string `json:"createdAt"`
 }
 
-func (c *Controller) apiListAuthFactors(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func (c *Controller) apiListAuthFactors(ctx *fiber.Ctx) error <span class="cov10" title="4">{
         user := auth.GetSessionUser(ctx)
 
         factors, err := c.workosClient.UserManagement.ListAuthFactors(ctx.Context(), usermanagement.ListAuthFactorsOpts{
                 User: user.WorkosID,
         })
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">response := make([]authFactorListItem, len(factors.Data))
-        for i, factor := range factors.Data </span><span class="cov0" title="0">{
+        <span class="cov8" title="3">response := make([]authFactorListItem, len(factors.Data))
+        for i, factor := range factors.Data </span><span class="cov5" title="2">{
                 response[i] = authFactorListItem{
                         Id:        factor.ID,
                         CreatedAt: factor.CreatedAt,
                 }
         }</span>
 
-        <span class="cov0" title="0">return ctx.JSON(response)</span>
+        <span class="cov8" title="3">return ctx.JSON(response)</span>
 }
 </pre>
 
@@ -1616,14 +1617,14 @@ type Controller struct {
         signals      *signal.Container
 }
 
-func Provider(options ControllerOptions) base.Controller <span class="cov0" title="0">{
+func Provider(options ControllerOptions) base.Controller <span class="cov8" title="1">{
         return &amp;Controller{
                 workosClient: options.WorkosClient,
                 signals:      options.Signals,
         }
 }</span>
 
-func (c *Controller) Public(_ fiber.Router) {<span class="cov0" title="0">}</span>
+func (c *Controller) Public(_ fiber.Router) {<span class="cov8" title="1">}</span>
 
 func (c *Controller) Private(group fiber.Router) <span class="cov0" title="0">{
         base.WithGroup(group, "users/current", func(group fiber.Router) </span><span class="cov0" title="0">{
@@ -1669,13 +1670,13 @@ type bodyEmailVerify struct {
         Code string `json:"code" validate:"required,numeric,len=6"`
 }
 
-func (c *Controller) apiEmailVerify(ctx *fiber.Ctx) (err error) <span class="cov0" title="0">{
+func (c *Controller) apiEmailVerify(ctx *fiber.Ctx) (err error) <span class="cov10" title="7">{
         var body bodyEmailVerify
-        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov0" title="0">{
+        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov6" title="3">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">user := auth.GetSessionUser(ctx)
+        <span class="cov7" title="4">user := auth.GetSessionUser(ctx)
 
         _, err = c.workosClient.UserManagement.VerifyEmail(ctx.Context(), usermanagement.VerifyEmailOpts{
                 User: user.WorkosID,
@@ -1684,17 +1685,17 @@ func (c *Controller) apiEmailVerify(ctx *fiber.Ctx) (err error) <span class="cov
 
         var httpError workos_errors.HTTPError
         if errors.As(err, &amp;httpError) &amp;&amp; workos.GetErrorCode(httpError) == workos.CodeEmailVerificationCodeExpired </span><span
-            class="cov0"
-            title="0"
+            class="cov1"
+            title="1"
         >{
                 return ErrEmailVerificationCodeExpired
         }</span>
 
-        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+        <span class="cov6" title="3">if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">c.signals.InvalidateWorkosUserCache.Emit(ctx.Context(), user.WorkosID)
+        <span class="cov4" title="2">c.signals.InvalidateWorkosUserCache.Emit(ctx.Context(), user.WorkosID)
         return base.NewSuccessResponse(ctx)</span>
 }
 </pre>
@@ -1711,17 +1712,17 @@ import (
         "polimane/backend/api/base"
 )
 
-func (c *Controller) apiEmailVerifyRetry(ctx *fiber.Ctx) (err error) <span class="cov0" title="0">{
+func (c *Controller) apiEmailVerifyRetry(ctx *fiber.Ctx) (err error) <span class="cov5" title="3">{
         user := auth.GetSessionUser(ctx)
 
-        if err = c.sendEmailVerification(ctx.Context(), user.WorkosID); err != nil </span><span class="cov0" title="0">{
+        if err = c.sendEmailVerification(ctx.Context(), user.WorkosID); err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return base.NewSuccessResponse(ctx)</span>
+        <span class="cov4" title="2">return base.NewSuccessResponse(ctx)</span>
 }
 
-func (c *Controller) sendEmailVerification(ctx context.Context, userID string) error <span class="cov0" title="0">{
+func (c *Controller) sendEmailVerification(ctx context.Context, userID string) error <span class="cov10" title="8">{
         _, err := c.workosClient.UserManagement.SendVerificationEmail(ctx, usermanagement.SendVerificationEmailOpts{
                 User: userID,
         })
@@ -1748,7 +1749,7 @@ type currentUser struct {
         ProfilePictureURL string   `json:"profilePictureUrl"`
 }
 
-func (c *Controller) apiGet(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func (c *Controller) apiGet(ctx *fiber.Ctx) error <span class="cov8" title="1">{
         session := auth.GetSession(ctx)
 
         return ctx.JSON(currentUser{
@@ -1772,18 +1773,18 @@ import (
         "polimane/backend/api/base"
 )
 
-func (c *Controller) apiPasswordReset(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func (c *Controller) apiPasswordReset(ctx *fiber.Ctx) error <span class="cov10" title="3">{
         session := auth.GetSession(ctx)
 
         _, err := c.workosClient.UserManagement.CreatePasswordReset(ctx.Context(), usermanagement.CreatePasswordResetOpts{
                 Email: session.WorkosUser.Email,
         })
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">c.signals.InvalidateAuthCache.Emit(ctx.Context(), session.ID)
+        <span class="cov6" title="2">c.signals.InvalidateAuthCache.Emit(ctx.Context(), session.ID)
         return base.NewSuccessResponse(ctx)</span>
 }
 </pre>
@@ -1806,29 +1807,29 @@ type updateBody struct {
         Email     string `json:"email" validate:"omitempty,email"`
 }
 
-func (c *Controller) apiUpdate(ctx *fiber.Ctx) (err error) <span class="cov0" title="0">{
+func (c *Controller) apiUpdate(ctx *fiber.Ctx) (err error) <span class="cov10" title="5">{
         var body updateBody
-        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov0" title="0">{
+        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
         <span
-            class="cov0"
-            title="0"
+            class="cov8"
+            title="4"
         >if body.FirstName == "" &amp;&amp; body.LastName == "" &amp;&amp; body.Email == "" </span><span
-            class="cov0"
-            title="0"
+            class="cov1"
+            title="1"
         >{
                 return fiber.ErrUnprocessableEntity
         }</span>
 
-        <span class="cov0" title="0">user := auth.GetSessionUser(ctx)
+        <span class="cov7" title="3">user := auth.GetSessionUser(ctx)
 
         if err = c.updateUser(ctx.Context(), user.WorkosID, &amp;body); err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">if body.Email != "" </span><span class="cov0" title="0">{
+        <span class="cov7" title="3">if body.Email != "" </span><span class="cov4" title="2">{
                 if err = c.sendEmailVerification(ctx.Context(), user.WorkosID); err != nil </span><span
             class="cov0"
             title="0"
@@ -1837,13 +1838,13 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) (err error) <span class="cov0" ti
                 }</span>
         }
 
-        <span class="cov0" title="0">c.signals.InvalidateWorkosUserCache.Emit(ctx.Context(), user.WorkosID)
+        <span class="cov7" title="3">c.signals.InvalidateWorkosUserCache.Emit(ctx.Context(), user.WorkosID)
         return base.NewSuccessResponse(ctx)</span>
 }
 
 func (c *Controller) updateUser(ctx context.Context, userID string, body *updateBody) error <span
-            class="cov0"
-            title="0"
+            class="cov8"
+            title="4"
         >{
         _, err := c.workosClient.UserManagement.UpdateUser(ctx, usermanagement.UpdateUserOpts{
                 User:      userID,
