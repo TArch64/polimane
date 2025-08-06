@@ -161,7 +161,7 @@ func TestClient_DownloadCerts(t *testing.T) {
 				}
 			}
 
-			client := &Client{
+			client := &Impl{
 				api: mockClient,
 				fs:  mockFS,
 				env: mockEnv,

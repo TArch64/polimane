@@ -15,7 +15,7 @@ type UserSession struct {
 
 var sessionKey UserSession
 
-func setSession(ctx *fiber.Ctx, session *UserSession) {
+func SetSession(ctx *fiber.Ctx, session *UserSession) {
 	ctx.Locals(sessionKey, session)
 }
 

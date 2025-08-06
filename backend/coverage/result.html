@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -109,19 +108,19 @@
 
             <option value="file5">polimane/backend/api/auth/user_session.go (100.0%)</option>
 
-            <option value="file6">polimane/backend/api/base/body_parser.go (0.0%)</option>
+            <option value="file6">polimane/backend/api/base/body_parser.go (100.0%)</option>
 
-            <option value="file7">polimane/backend/api/base/error.go (0.0%)</option>
+            <option value="file7">polimane/backend/api/base/error.go (100.0%)</option>
 
-            <option value="file8">polimane/backend/api/base/error_handler.go (0.0%)</option>
+            <option value="file8">polimane/backend/api/base/error_handler.go (100.0%)</option>
 
-            <option value="file9">polimane/backend/api/base/params.go (0.0%)</option>
+            <option value="file9">polimane/backend/api/base/params.go (100.0%)</option>
 
-            <option value="file10">polimane/backend/api/base/success_response.go (0.0%)</option>
+            <option value="file10">polimane/backend/api/base/success_response.go (100.0%)</option>
 
-            <option value="file11">polimane/backend/api/base/validator.go (0.0%)</option>
+            <option value="file11">polimane/backend/api/base/validator.go (100.0%)</option>
 
-            <option value="file12">polimane/backend/api/base/with_group.go (0.0%)</option>
+            <option value="file12">polimane/backend/api/base/with_group.go (100.0%)</option>
 
             <option value="file13">polimane/backend/api/not_found.go (100.0%)</option>
 
@@ -129,21 +128,21 @@
 
             <option value="file15">polimane/backend/api/ping/ping.go (0.0%)</option>
 
-            <option value="file16">polimane/backend/api/schemas/by_id.go (0.0%)</option>
+            <option value="file16">polimane/backend/api/schemas/by_id.go (100.0%)</option>
 
-            <option value="file17">polimane/backend/api/schemas/controller.go (0.0%)</option>
+            <option value="file17">polimane/backend/api/schemas/controller.go (10.0%)</option>
 
-            <option value="file18">polimane/backend/api/schemas/copy.go (0.0%)</option>
+            <option value="file18">polimane/backend/api/schemas/copy.go (100.0%)</option>
 
-            <option value="file19">polimane/backend/api/schemas/create.go (0.0%)</option>
+            <option value="file19">polimane/backend/api/schemas/create.go (100.0%)</option>
 
-            <option value="file20">polimane/backend/api/schemas/delete.go (0.0%)</option>
+            <option value="file20">polimane/backend/api/schemas/delete.go (100.0%)</option>
 
-            <option value="file21">polimane/backend/api/schemas/list.go (0.0%)</option>
+            <option value="file21">polimane/backend/api/schemas/list.go (100.0%)</option>
 
-            <option value="file22">polimane/backend/api/schemas/update.go (0.0%)</option>
+            <option value="file22">polimane/backend/api/schemas/update.go (100.0%)</option>
 
-            <option value="file23">polimane/backend/api/schemas/update_screenshot.go (0.0%)</option>
+            <option value="file23">polimane/backend/api/schemas/update_screenshot.go (100.0%)</option>
 
             <option value="file24">polimane/backend/api/server.go (100.0%)</option>
 
@@ -268,6 +267,7 @@
 
 import (
         "github.com/gofiber/fiber/v2"
+        "go.uber.org/fx"
 
         "polimane/backend/api/base"
         "polimane/backend/env"
@@ -278,6 +278,14 @@ import (
 
 const groupPrefix = "auth"
 
+type ControllerOptions struct {
+        fx.In
+        WorkosClient *workos.Client
+        Env          *env.Environment
+        Users        repositoryusers.Client
+        Signals      *signal.Container
+}
+
 type Controller struct {
         workosClient *workos.Client
         env          *env.Environment
@@ -285,17 +293,12 @@ type Controller struct {
         signals      *signal.Container
 }
 
-func Provider(
-        workosClient *workos.Client,
-        environment *env.Environment,
-        users repositoryusers.Client,
-        signals *signal.Container,
-) base.Controller <span class="cov10" title="2">{
+func Provider(options ControllerOptions) base.Controller <span class="cov10" title="2">{
         return &amp;Controller{
-                workosClient: workosClient,
-                env:          environment,
-                users:        users,
-                signals:      signals,
+                workosClient: options.WorkosClient,
+                env:          options.Env,
+                users:        options.Users,
+                signals:      options.Signals,
         }
 }</span>
 
@@ -424,6 +427,7 @@ import (
         "github.com/kittipat1413/go-common/framework/cache"
         "github.com/kittipat1413/go-common/framework/cache/localcache"
         "github.com/workos/workos-go/v4/pkg/usermanagement"
+        "go.uber.org/fx"
         "gorm.io/gorm"
 
         "polimane/backend/api/base"
@@ -436,6 +440,14 @@ import (
 
 var unauthorizedErr = base.NewReasonedError(fiber.StatusUnauthorized, "Unauthorized")
 
+type MiddlewareOptions struct {
+        fx.In
+        Signals      *signal.Container
+        Env          *env.Environment
+        WorkosClient *workos.Client
+        Users        repositoryusers.Client
+}
+
 type Middleware struct {
         userCache       cache.Cache[*model.User]
         workosUserCache cache.Cache[*usermanagement.User]
@@ -444,12 +456,7 @@ type Middleware struct {
         users           repositoryusers.Client
 }
 
-func MiddlewareProvider(
-        signals *signal.Container,
-        environment *env.Environment,
-        workosClient *workos.Client,
-        users repositoryusers.Client,
-) *Middleware <span class="cov5" title="2">{
+func MiddlewareProvider(options MiddlewareOptions) *Middleware <span class="cov5" title="2">{
         cacheOptions := []localcache.Option{
                 localcache.WithDefaultExpiration(10 * time.Minute),
                 localcache.WithCleanupInterval(5 * time.Minute),
@@ -458,14 +465,14 @@ func MiddlewareProvider(
         middleware := &amp;Middleware{
                 userCache:       localcache.New[*model.User](cacheOptions...),
                 workosUserCache: localcache.New[*usermanagement.User](cacheOptions...),
-                env:             environment,
-                workosClient:    workosClient,
-                users:           users,
+                env:             options.Env,
+                workosClient:    options.WorkosClient,
+                users:           options.Users,
         }
 
-        signals.InvalidateUserCache.AddListener(middleware.invalidateUserCache)
-        signals.InvalidateWorkosUserCache.AddListener(middleware.invalidateWorkosUserCache)
-        signals.InvalidateAuthCache.AddListener(middleware.invalidateAuthCache)
+        options.Signals.InvalidateUserCache.AddListener(middleware.invalidateUserCache)
+        options.Signals.InvalidateWorkosUserCache.AddListener(middleware.invalidateWorkosUserCache)
+        options.Signals.InvalidateAuthCache.AddListener(middleware.invalidateAuthCache)
         return middleware
 }</span>
 
@@ -516,7 +523,7 @@ func (m *Middleware) Handler(ctx *fiber.Ctx) error <span class="cov5" title="2">
                 return err
         }</span>
 
-        <span class="cov0" title="0">setSession(ctx, &amp;UserSession{
+        <span class="cov0" title="0">SetSession(ctx, &amp;UserSession{
                 User:       user,
                 WorkosUser: workosUser,
                 ID:         accessTokenClaims.SessionID,
@@ -611,7 +618,7 @@ type UserSession struct {
 
 var sessionKey UserSession
 
-func setSession(ctx *fiber.Ctx, session *UserSession) <span class="cov10" title="12">{
+func SetSession(ctx *fiber.Ctx, session *UserSession) <span class="cov10" title="12">{
         ctx.Locals(sessionKey, session)
 }</span>
 
@@ -630,14 +637,14 @@ import (
         "github.com/gofiber/fiber/v2"
 )
 
-func ParseBody[B any](ctx *fiber.Ctx, body *B) (err error) <span class="cov0" title="0">{
-        if err = ctx.BodyParser(body); err != nil </span><span class="cov0" title="0">{
+func ParseBody[B any](ctx *fiber.Ctx, body *B) (err error) <span class="cov10" title="5">{
+        if err = ctx.BodyParser(body); err != nil </span><span class="cov4" title="2">{
                 return err
         }</span>
-        <span class="cov0" title="0">if err = Validate(body); err != nil </span><span class="cov0" title="0">{
+        <span class="cov7" title="3">if err = Validate(body); err != nil </span><span class="cov4" title="2">{
                 return err
         }</span>
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov1" title="1">return nil</span>
 }
 </pre>
 
@@ -659,7 +666,7 @@ type CustomError struct {
 
 var _ error = (*CustomError)(nil)
 
-func NewCustomError(code int, message string, data CustomErrorData) *CustomError <span class="cov0" title="0">{
+func NewCustomError(code int, message string, data CustomErrorData) *CustomError <span class="cov10" title="28">{
         return &amp;CustomError{
                 Code:    code,
                 Message: message,
@@ -667,24 +674,24 @@ func NewCustomError(code int, message string, data CustomErrorData) *CustomError
         }
 }</span>
 
-func (e *CustomError) Error() string <span class="cov0" title="0">{
+func (e *CustomError) Error() string <span class="cov7" title="13">{
         return e.Message
 }</span>
 
-func (e *CustomError) AddCustomData(extra ...CustomErrorData) *CustomError <span class="cov0" title="0">{
+func (e *CustomError) AddCustomData(extra ...CustomErrorData) *CustomError <span class="cov5" title="6">{
         err := new(CustomError)
         *err = *e
 
         err.Data = make(CustomErrorData)
         maps.Copy(err.Data, e.Data)
-        for _, data := range extra </span><span class="cov0" title="0">{
+        for _, data := range extra </span><span class="cov6" title="7">{
                 maps.Copy(err.Data, data)
         }</span>
 
-        <span class="cov0" title="0">return err</span>
+        <span class="cov5" title="6">return err</span>
 }
 
-func NewReasonedError(code int, reason string) *CustomError <span class="cov0" title="0">{
+func NewReasonedError(code int, reason string) *CustomError <span class="cov7" title="12">{
         return NewCustomError(code, reason, CustomErrorData{"reason": reason})
 }</span>
 
@@ -708,31 +715,31 @@ type errorResponse struct {
         Data    CustomErrorData `json:"data,omitempty"`
 }
 
-func getErrorStatus(err error) int <span class="cov0" title="0">{
-        if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+func getErrorStatus(err error) int <span class="cov10" title="22">{
+        if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov3" title="2">{
                 return fiber.StatusNotFound
         }</span>
 
-        <span class="cov0" title="0">switch v := err.(type) </span>{
-        case *CustomError:<span class="cov0" title="0">
+        <span class="cov9" title="20">switch v := err.(type) </span>{
+        case *CustomError:<span class="cov7" title="11">
                 return v.Code</span>
-        case *fiber.Error:<span class="cov0" title="0">
+        case *fiber.Error:<span class="cov5" title="5">
                 return v.Code</span>
-        default:<span class="cov0" title="0">
+        default:<span class="cov5" title="4">
                 return fiber.StatusInternalServerError</span>
         }
 }
 
-func getErrorData(err error) CustomErrorData <span class="cov0" title="0">{
+func getErrorData(err error) CustomErrorData <span class="cov10" title="22">{
         switch v := err.(type) </span>{
-        case *CustomError:<span class="cov0" title="0">
+        case *CustomError:<span class="cov7" title="11">
                 return v.Data</span>
-        default:<span class="cov0" title="0">
+        default:<span class="cov7" title="11">
                 return nil</span>
         }
 }
 
-func ErrorHandler(ctx *fiber.Ctx, err error) error <span class="cov0" title="0">{
+func ErrorHandler(ctx *fiber.Ctx, err error) error <span class="cov9" title="18">{
         return ctx.Status(getErrorStatus(err)).JSON(errorResponse{
                 Success: false,
                 Message: err.Error(),
@@ -751,30 +758,30 @@ import (
         "github.com/gofiber/fiber/v2"
 )
 
-func newMissingParamErr(name string) error <span class="cov0" title="0">{
+func newMissingParamErr(name string) error <span class="cov9" title="9">{
         return NewReasonedError(fiber.StatusBadRequest, fmt.Sprintf("MissingRequiredParam[%s]", name))
 }</span>
 
-func GetRequiredParam(ctx *fiber.Ctx, name string) (string, error) <span class="cov0" title="0">{
+func GetRequiredParam(ctx *fiber.Ctx, name string) (string, error) <span class="cov10" title="10">{
         value := ctx.Params(name)
-        if value == "" </span><span class="cov0" title="0">{
+        if value == "" </span><span class="cov6" title="4">{
                 return "", newMissingParamErr(name)
         }</span>
-        <span class="cov0" title="0">return value, nil</span>
+        <span class="cov8" title="6">return value, nil</span>
 }
 
-func GetParamID(ctx *fiber.Ctx, name string) (model.ID, error) <span class="cov0" title="0">{
+func GetParamID(ctx *fiber.Ctx, name string) (model.ID, error) <span class="cov8" title="7">{
         value, err := GetRequiredParam(ctx, name)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov5" title="3">{
                 return model.ID{}, err
         }</span>
 
-        <span class="cov0" title="0">id, err := model.StringToID(value)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov6" title="4">id, err := model.StringToID(value)
+        if err != nil </span><span class="cov5" title="3">{
                 return model.ID{}, newMissingParamErr(name)
         }</span>
 
-        <span class="cov0" title="0">return id, nil</span>
+        <span class="cov1" title="1">return id, nil</span>
 }
 </pre>
 
@@ -782,7 +789,7 @@ func GetParamID(ctx *fiber.Ctx, name string) (model.ID, error) <span class="cov0
 
 import "github.com/gofiber/fiber/v2"
 
-func NewSuccessResponse(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func NewSuccessResponse(ctx *fiber.Ctx) error <span class="cov10" title="6">{
         return ctx.JSON(fiber.Map{
                 "success": true,
         })
@@ -812,18 +819,18 @@ type requestValidator struct {
 
 var validatorInstance *requestValidator
 
-func InitValidator() <span class="cov0" title="0">{
+func InitValidator() <span class="cov6" title="6">{
         validatorInstance = &amp;requestValidator{
                 validator: validator.New(),
         }
 }</span>
 
-func (v *requestValidator) Validate(data interface{}) []ValidationErrorResponse <span class="cov0" title="0">{
+func (v *requestValidator) Validate(data interface{}) []ValidationErrorResponse <span class="cov10" title="15">{
         var validationErrors []ValidationErrorResponse
 
         errs := v.validator.Struct(data)
-        if errs != nil </span><span class="cov0" title="0">{
-                for _, err := range errs.(validator.ValidationErrors) </span><span class="cov0" title="0">{
+        if errs != nil </span><span class="cov8" title="9">{
+                for _, err := range errs.(validator.ValidationErrors) </span><span class="cov9" title="14">{
                         var elem ValidationErrorResponse
 
                         elem.FailedField = err.Field()
@@ -835,17 +842,17 @@ func (v *requestValidator) Validate(data interface{}) []ValidationErrorResponse 
                 }</span>
         }
 
-        <span class="cov0" title="0">return validationErrors</span>
+        <span class="cov10" title="15">return validationErrors</span>
 }
 
-func Validate(data interface{}) error <span class="cov0" title="0">{
+func Validate(data interface{}) error <span class="cov8" title="9">{
         if errs := validatorInstance.Validate(data); len(errs) &gt; 0 &amp;&amp; errs[0].Error </span><span
-            class="cov0"
-            title="0"
+            class="cov6"
+            title="6"
         >{
                 errMsgs := make([]string, len(errs))
 
-                for i, err := range errs </span><span class="cov0" title="0">{
+                for i, err := range errs </span><span class="cov7" title="7">{
                         errMsgs[i] = fmt.Sprintf(
                                 "[%s]: '%v' | Needs to implement '%s'",
                                 err.FailedField,
@@ -854,13 +861,13 @@ func Validate(data interface{}) error <span class="cov0" title="0">{
                         )
                 }</span>
 
-                <span class="cov0" title="0">return &amp;fiber.Error{
+                <span class="cov6" title="6">return &amp;fiber.Error{
                         Code:    fiber.StatusBadRequest,
                         Message: strings.Join(errMsgs, " and "),
                 }</span>
         }
 
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov4" title="3">return nil</span>
 }
 </pre>
 
@@ -868,7 +875,7 @@ func Validate(data interface{}) error <span class="cov0" title="0">{
 
 import "github.com/gofiber/fiber/v2"
 
-func WithGroup(group fiber.Router, path string, handler func(group fiber.Router)) <span class="cov0" title="0">{
+func WithGroup(group fiber.Router, path string, handler func(group fiber.Router)) <span class="cov10" title="11">{
         handler(group.Group(path))
 }</span>
 </pre>
@@ -931,23 +938,23 @@ import (
         repositoryschemas "polimane/backend/repository/schemas"
 )
 
-func (c *Controller) apiById(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func (c *Controller) apiById(ctx *fiber.Ctx) error <span class="cov10" title="4">{
         schemaId, err := base.GetParamID(ctx, schemaIdParam)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">schema, err := c.schemas.ByID(&amp;repositoryschemas.ByIDOptions{
+        <span class="cov8" title="3">schema, err := c.schemas.ByID(&amp;repositoryschemas.ByIDOptions{
                 Ctx:      ctx.Context(),
                 User:     auth.GetSessionUser(ctx),
                 SchemaID: schemaId,
         })
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov5" title="2">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return ctx.JSON(schema)</span>
+        <span class="cov1" title="1">return ctx.JSON(schema)</span>
 }
 </pre>
 
@@ -975,14 +982,14 @@ type Controller struct {
         s3      awss3.Client
 }
 
-func Provider(options ControllerOptions) base.Controller <span class="cov0" title="0">{
+func Provider(options ControllerOptions) base.Controller <span class="cov8" title="1">{
         return &amp;Controller{
                 schemas: options.Schemas,
                 s3:      options.S3,
         }
 }</span>
 
-func (c *Controller) Public(_ fiber.Router) {<span class="cov0" title="0">}</span>
+func (c *Controller) Public(_ fiber.Router) {<span class="cov8" title="1">}</span>
 
 func (c *Controller) Private(group fiber.Router) <span class="cov0" title="0">{
         base.WithGroup(group, "schemas", func(group fiber.Router) </span><span class="cov0" title="0">{
@@ -1010,23 +1017,23 @@ import (
         repositoryschemas "polimane/backend/repository/schemas"
 )
 
-func (c *Controller) apiCopy(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func (c *Controller) apiCopy(ctx *fiber.Ctx) error <span class="cov10" title="5">{
         schemaId, err := base.GetParamID(ctx, schemaIdParam)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">schema, err := c.schemas.Copy(&amp;repositoryschemas.CopyOptions{
+        <span class="cov8" title="4">schema, err := c.schemas.Copy(&amp;repositoryschemas.CopyOptions{
                 Ctx:      ctx.Context(),
                 User:     auth.GetSessionUser(ctx),
                 SchemaID: schemaId,
         })
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov4" title="2">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">schema.Content = nil
+        <span class="cov4" title="2">schema.Content = nil
         return ctx.JSON(schema)</span>
 }
 </pre>
@@ -1045,24 +1052,24 @@ type createBody struct {
         Name string `json:"name" validate:"required"`
 }
 
-func (c *Controller) apiCreate(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func (c *Controller) apiCreate(ctx *fiber.Ctx) error <span class="cov10" title="6">{
         var body createBody
         err := base.ParseBody(ctx, &amp;body)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov6" title="3">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">schema, err := c.schemas.Create(&amp;repositoryschemas.CreateOptions{
+        <span class="cov6" title="3">schema, err := c.schemas.Create(&amp;repositoryschemas.CreateOptions{
                 Ctx:  ctx.Context(),
                 User: auth.GetSessionUser(ctx),
                 Name: body.Name,
         })
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">schema.Content = nil
+        <span class="cov4" title="2">schema.Content = nil
         return ctx.JSON(schema)</span>
 }
 </pre>
@@ -1077,23 +1084,23 @@ import (
         repositoryschemas "polimane/backend/repository/schemas"
 )
 
-func (c *Controller) apiDelete(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func (c *Controller) apiDelete(ctx *fiber.Ctx) error <span class="cov10" title="5">{
         schemaId, err := base.GetParamID(ctx, schemaIdParam)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">err = c.schemas.Delete(&amp;repositoryschemas.DeleteOptions{
+        <span class="cov8" title="4">err = c.schemas.Delete(&amp;repositoryschemas.DeleteOptions{
                 Ctx:      ctx.Context(),
                 User:     auth.GetSessionUser(ctx),
                 SchemaID: schemaId,
         })
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov4" title="2">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return base.NewSuccessResponse(ctx)</span>
+        <span class="cov4" title="2">return base.NewSuccessResponse(ctx)</span>
 }
 </pre>
 
@@ -1107,22 +1114,22 @@ import (
         repositoryschemas "polimane/backend/repository/schemas"
 )
 
-func (c *Controller) apiList(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func (c *Controller) apiList(ctx *fiber.Ctx) error <span class="cov10" title="5">{
         schemas, err := c.schemas.ByUser(&amp;repositoryschemas.ByUserOptions{
                 Ctx:    ctx.Context(),
                 User:   auth.GetSessionUser(ctx),
                 Select: []string{"id", "name", "screenshoted_at"},
         })
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">if schemas == nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="4">if schemas == nil </span><span class="cov1" title="1">{
                 schemas = []*model.Schema{}
         }</span>
 
-        <span class="cov0" title="0">return ctx.JSON(schemas)</span>
+        <span class="cov8" title="4">return ctx.JSON(schemas)</span>
 }
 </pre>
 
@@ -1143,60 +1150,60 @@ type updateBody struct {
         Content model.SchemaContent `json:"content" validate:"omitempty,dive,required"`
 }
 
-func collectUpdates(body *updateBody) *model.Schema <span class="cov0" title="0">{
+func collectUpdates(body *updateBody) *model.Schema <span class="cov10" title="13">{
         changed := false
         updates := &amp;model.Schema{}
 
-        if len(body.Name) &gt; 0 </span><span class="cov0" title="0">{
+        if len(body.Name) &gt; 0 </span><span class="cov5" title="4">{
                 changed = true
                 updates.Name = body.Name
         }</span>
 
-        <span class="cov0" title="0">if body.Content != nil </span><span class="cov0" title="0">{
+        <span class="cov10" title="13">if body.Content != nil </span><span class="cov4" title="3">{
                 changed = true
                 updates.Content = body.Content
         }</span>
 
-        <span class="cov0" title="0">if body.Palette != nil </span><span class="cov0" title="0">{
+        <span class="cov10" title="13">if body.Palette != nil </span><span class="cov4" title="3">{
                 changed = true
                 updates.Palette = body.Palette
         }</span>
 
-        <span class="cov0" title="0">if changed </span><span class="cov0" title="0">{
+        <span class="cov10" title="13">if changed </span><span class="cov8" title="8">{
                 return updates
         }</span>
 
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov6" title="5">return nil</span>
 }
 
-func (c *Controller) apiUpdate(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func (c *Controller) apiUpdate(ctx *fiber.Ctx) error <span class="cov7" title="7">{
         schemaId, err := base.GetParamID(ctx, schemaIdParam)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">var body updateBody
-        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov0" title="0">{
+        <span class="cov7" title="6">var body updateBody
+        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">updates := collectUpdates(&amp;body)
-        if updates == nil </span><span class="cov0" title="0">{
+        <span class="cov6" title="5">updates := collectUpdates(&amp;body)
+        if updates == nil </span><span class="cov1" title="1">{
                 return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
         }</span>
 
-        <span class="cov0" title="0">err = c.schemas.Update(&amp;repositoryschemas.UpdateOptions{
+        <span class="cov5" title="4">err = c.schemas.Update(&amp;repositoryschemas.UpdateOptions{
                 Ctx:      ctx.Context(),
                 User:     auth.GetSessionUser(ctx),
                 SchemaID: schemaId,
                 Updates:  updates,
         })
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return base.NewSuccessResponse(ctx)</span>
+        <span class="cov4" title="3">return base.NewSuccessResponse(ctx)</span>
 }
 </pre>
 
@@ -1226,25 +1233,25 @@ type apiUpdateScreenshotBody struct {
         Src string `json:"src" validate:"required,url,startswith=data:image/webp;base64"`
 }
 
-func (c *Controller) apiUpdateScreenshot(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func (c *Controller) apiUpdateScreenshot(ctx *fiber.Ctx) error <span class="cov8" title="6">{
         schemaId, err := base.GetParamID(ctx, schemaIdParam)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">var body apiUpdateScreenshotBody
-        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov0" title="0">{
+        <span class="cov7" title="5">var body apiUpdateScreenshotBody
+        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov4" title="2">{
                 return err
         }</span>
 
         <span
-            class="cov0"
-            title="0"
-        >if err = c.uploadScreenshot(ctx.Context(), schemaId, body.Src); err != nil </span><span class="cov0" title="0">{
+            class="cov5"
+            title="3"
+        >if err = c.uploadScreenshot(ctx.Context(), schemaId, body.Src); err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">screenshotedAt := time.Now()
+        <span class="cov4" title="2">screenshotedAt := time.Now()
 
         err = c.schemas.Update(&amp;repositoryschemas.UpdateOptions{
                 Ctx:      ctx.Context(),
@@ -1253,26 +1260,26 @@ func (c *Controller) apiUpdateScreenshot(ctx *fiber.Ctx) error <span class="cov0
                 Updates:  &amp;model.Schema{ScreenshotedAt: &amp;screenshotedAt},
         })
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">return base.NewSuccessResponse(ctx)</span>
+        <span class="cov1" title="1">return base.NewSuccessResponse(ctx)</span>
 }
 
 func (c *Controller) uploadScreenshot(ctx context.Context, schemaId model.ID, src string) error <span
-            class="cov0"
-            title="0"
+            class="cov10"
+            title="8"
         >{
         key := fmt.Sprintf("data/images/%s/schema.webp", schemaId.String())
 
         dataBase64 := src[strings.IndexByte(src, ',')+1:]
         data, err := base64.StdEncoding.DecodeString(dataBase64)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">_, err = c.s3.PutObject(ctx, &amp;s3.PutObjectInput{
+        <span class="cov9" title="7">_, err = c.s3.PutObject(ctx, &amp;s3.PutObjectInput{
                 Key:         &amp;key,
                 Bucket:      &amp;awsconfig.S3Bucket,
                 ACL:         types.ObjectCannedACLPrivate,
@@ -1291,6 +1298,7 @@ import (
         "github.com/gofiber/fiber/v2/middleware/cors"
         "github.com/gofiber/fiber/v2/middleware/encryptcookie"
         "github.com/gofiber/fiber/v2/middleware/helmet"
+        "go.uber.org/fx"
 
         "polimane/backend/api/auth"
         "polimane/backend/api/base"
@@ -1303,29 +1311,32 @@ type Options struct {
         Configure func(config *fiber.Config)
 }
 
-func Provider(
-        controllers []base.Controller, // group:"controllers"
-        options *Options,
-        sentry *sentry.Container,
-        environment *env.Environment,
-        authMiddleware *auth.Middleware,
-) (*fiber.App, error) <span class="cov10" title="6">{
+type ServerOptions struct {
+        fx.In
+        Controllers    []base.Controller `group:"controllers"`
+        Options        *Options
+        Sentry         *sentry.Container
+        Env            *env.Environment
+        AuthMiddleware *auth.Middleware
+}
+
+func Provider(options ServerOptions) (*fiber.App, error) <span class="cov10" title="6">{
         config := fiber.Config{
                 AppName:      "Polimane",
                 ErrorHandler: base.ErrorHandler,
         }
 
-        options.Configure(&amp;config)
+        options.Options.Configure(&amp;config)
         app := fiber.New(config)
 
-        if sentry.Handler != nil </span><span class="cov1" title="1">{
-                app.Use(sentry.Handler)
+        if options.Sentry.Handler != nil </span><span class="cov1" title="1">{
+                app.Use(options.Sentry.Handler)
         }</span>
 
         <span class="cov10" title="6">app.Use(helmet.New())
 
         app.Use(cors.New(cors.Config{
-                AllowOrigins:     environment.AppURL().String(),
+                AllowOrigins:     options.Env.AppURL().String(),
                 AllowHeaders:     "Origin, Content-Type, Accept, Authorization, X-Refresh-Token, X-Requested-With, X-CSRF-Token, Cookie",
                 AllowMethods:     "*",
                 ExposeHeaders:    "*",
@@ -1333,19 +1344,19 @@ func Provider(
         }))
 
         app.Use(encryptcookie.New(encryptcookie.Config{
-                Key: environment.SecretKey,
+                Key: options.Env.SecretKey,
         }))
 
         base.InitValidator()
 
         base.WithGroup(app, "/api", func(group fiber.Router) </span><span class="cov10" title="6">{
-                for _, controller := range controllers </span><span class="cov6" title="3">{
+                for _, controller := range options.Controllers </span><span class="cov6" title="3">{
                         controller.Public(group)
                 }</span>
 
-                <span class="cov10" title="6">group.Use(authMiddleware.Handler)
+                <span class="cov10" title="6">group.Use(options.AuthMiddleware.Handler)
 
-                for _, controller := range controllers </span><span class="cov6" title="3">{
+                for _, controller := range options.Controllers </span><span class="cov6" title="3">{
                         controller.Private(group)
                 }</span>
         })
@@ -1585,6 +1596,7 @@ func (c *Controller) apiListAuthFactors(ctx *fiber.Ctx) error <span class="cov0"
 
 import (
         "github.com/gofiber/fiber/v2"
+        "go.uber.org/fx"
 
         "polimane/backend/api/base"
         "polimane/backend/services/workos"
@@ -1593,15 +1605,21 @@ import (
 
 const factorIdParam = "factorId"
 
+type ControllerOptions struct {
+        fx.In
+        WorkosClient *workos.Client
+        Signals      *signal.Container
+}
+
 type Controller struct {
         workosClient *workos.Client
         signals      *signal.Container
 }
 
-func Provider(workosClient *workos.Client, signals *signal.Container) base.Controller <span class="cov0" title="0">{
+func Provider(options ControllerOptions) base.Controller <span class="cov0" title="0">{
         return &amp;Controller{
-                workosClient: workosClient,
-                signals:      signals,
+                workosClient: options.WorkosClient,
+                signals:      options.Signals,
         }
 }</span>
 
@@ -1856,6 +1874,8 @@ func TagError(tag string, err error) error <span class="cov10" title="9">{
 import (
         "net/url"
 
+        "go.uber.org/fx"
+
         "polimane/backend/base"
         "polimane/backend/services/bitwarden"
 )
@@ -1901,9 +1921,14 @@ func (e *Environment) ApiURL() *url.URL <span class="cov10" title="3">{
         }
 }</span>
 
-func Provider(bitwardenClient *bitwarden.Client) (*Environment, error) <span class="cov0" title="0">{
+type Options struct {
+        fx.In
+        BitwardenClient bitwarden.Client
+}
+
+func Provider(options Options) (*Environment, error) <span class="cov0" title="0">{
         instance := &amp;Environment{}
-        if err := loadEnvs(instance, bitwardenClient); err != nil </span><span class="cov0" title="0">{
+        if err := loadEnvs(instance, options.BitwardenClient); err != nil </span><span class="cov0" title="0">{
                 return nil, base.TagError("env.load", err)
         }</span>
 
@@ -1924,7 +1949,7 @@ import (
 
 const IsDev = false
 
-func loadEnvs(instance *Environment, bitwardenClient *bitwarden.Client) error <span class="cov0" title="0">{
+func loadEnvs(instance *Environment, bitwardenClient bitwarden.Client) error <span class="cov0" title="0">{
         err := bitwardenClient.LoadToEnviron([]string{
                 "BACKEND_SECRET_KEY",
                 "BACKEND_SENTRY_DSN",
@@ -1990,14 +2015,15 @@ func Controller(f any) any <span class="cov0" title="0">{
         )
 }</span>
 
+func InitContext() context.Context <span class="cov0" title="0">{
+        return context.Background()
+}</span>
+
 func main() <span class="cov0" title="0">{
         fx.New(
-                fx.Supply(
-                        fx.Annotate(context.Background(), fx.As(new(context.Context))),
-                ),
-
                 fx.Provide(
                         // external
+                        InitContext,
                         jwk.Provider,
                         osfs.Provider,
                         osenv.Provider,
@@ -2024,10 +2050,7 @@ func main() <span class="cov0" title="0">{
                         Controller(users.Provider),
                         Controller(schemas.Provider),
                         api.OptionsProvider,
-                        fx.Annotate(
-                                api.Provider,
-                                fx.ParamTags(`group:"controllers"`),
-                        ),
+                        api.Provider,
                 ),
                 fx.Invoke(api.Start),
         ).Run()
@@ -2158,6 +2181,7 @@ func (c *Impl) ByUser(options *ByUserOptions) ([]*model.Schema, error) <span cla
     <pre class="file" id="file44" style="display: none">package schemas
 
 import (
+        "go.uber.org/fx"
         "gorm.io/gorm"
 
         "polimane/backend/model"
@@ -2174,6 +2198,13 @@ type Client interface {
         Update(options *UpdateOptions) (err error)
 }
 
+type ClientOptions struct {
+        fx.In
+        DB          *gorm.DB
+        UserSchemas repositoryuserschemas.Client
+        Signals     *signal.Container
+}
+
 type Impl struct {
         db          *gorm.DB
         userSchemas repositoryuserschemas.Client
@@ -2182,15 +2213,11 @@ type Impl struct {
 
 var _ Client = (*Impl)(nil)
 
-func Provider(
-        db *gorm.DB,
-        userSchemas repositoryuserschemas.Client,
-        signals *signal.Container,
-) Client <span class="cov8" title="1">{
+func Provider(options ClientOptions) Client <span class="cov8" title="1">{
         return &amp;Impl{
-                db:          db,
-                userSchemas: userSchemas,
-                signals:     signals,
+                db:          options.DB,
+                userSchemas: options.UserSchemas,
+                signals:     options.Signals,
         }
 }</span>
 </pre>
@@ -2400,6 +2427,7 @@ func (c *Impl) ByID(ctx context.Context, id model.ID) (*model.User, error) <span
 import (
         "context"
 
+        "go.uber.org/fx"
         "gorm.io/gorm"
 
         "polimane/backend/model"
@@ -2410,14 +2438,19 @@ type Client interface {
         CreateIfNeeded(ctx context.Context, workosID string) (*model.User, error)
 }
 
+type ClientOptions struct {
+        fx.In
+        DB *gorm.DB
+}
+
 type Impl struct {
         db *gorm.DB
 }
 
 var _ Client = (*Impl)(nil)
 
-func Provider(db *gorm.DB) Client <span class="cov8" title="1">{
-        return &amp;Impl{db: db}
+func Provider(options ClientOptions) Client <span class="cov8" title="1">{
+        return &amp;Impl{db: options.DB}
 }</span>
 </pre>
 
@@ -2448,6 +2481,7 @@ func (c *Impl) CreateIfNeeded(ctx context.Context, workosID string) (*model.User
 import (
         "context"
 
+        "go.uber.org/fx"
         "gorm.io/gorm"
 
         "polimane/backend/model"
@@ -2459,14 +2493,19 @@ type Client interface {
         HasAccess(ctx context.Context, userID, schemaID model.ID) error
 }
 
+type ClientOptions struct {
+        fx.In
+        DB *gorm.DB
+}
+
 type Impl struct {
         db *gorm.DB
 }
 
 var _ Client = (*Impl)(nil)
 
-func Provider(db *gorm.DB) Client <span class="cov8" title="1">{
-        return &amp;Impl{db: db}
+func Provider(options ClientOptions) Client <span class="cov8" title="1">{
+        return &amp;Impl{db: options.DB}
 }</span>
 </pre>
 
@@ -2561,16 +2600,23 @@ import (
 
         "github.com/aws/aws-sdk-go-v2/aws"
         "github.com/aws/aws-sdk-go-v2/config"
+        "go.uber.org/fx"
 
         "polimane/backend/env"
 )
 
-func Provider(ctx context.Context, environment *env.Environment) (*aws.Config, error) <span class="cov0" title="0">{
-        cfg, err := config.LoadDefaultConfig(ctx, func(options *config.LoadOptions) error </span><span
+type Options struct {
+        fx.In
+        Ctx context.Context
+        Env *env.Environment
+}
+
+func Provider(options Options) (*aws.Config, error) <span class="cov0" title="0">{
+        cfg, err := config.LoadDefaultConfig(options.Ctx, func(loadOptions *config.LoadOptions) error </span><span
             class="cov0"
             title="0"
         >{
-                return configure(environment, options)
+                return configure(options.Env, loadOptions)
         }</span>)
 
         <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
@@ -2588,16 +2634,22 @@ import (
 
         "github.com/aws/aws-sdk-go-v2/aws"
         "github.com/aws/aws-sdk-go-v2/service/s3"
+        "go.uber.org/fx"
 )
 
 type Option = func(*s3.Options)
+
+type ClientOptions struct {
+        fx.In
+        Config *aws.Config
+}
 
 type Client interface {
         PutObject(ctx context.Context, params *s3.PutObjectInput, optFns ...Option) (*s3.PutObjectOutput, error)
 }
 
-func Provider(config *aws.Config) Client <span class="cov0" title="0">{
-        return s3.NewFromConfig(*config)
+func Provider(options ClientOptions) Client <span class="cov0" title="0">{
+        return s3.NewFromConfig(*options.Config)
 }</span>
 </pre>
 
@@ -2613,7 +2665,7 @@ type DownloadingCert struct {
         Dest string
 }
 
-func (c *Client) DownloadCerts(certs []*DownloadingCert) error <span class="cov10" title="6">{
+func (c *Impl) DownloadCerts(certs []*DownloadingCert) error <span class="cov10" title="6">{
         sids := make([]string, len(certs))
         idCertMap := make(map[string]*DownloadingCert)
         for i, cert := range certs </span><span class="cov10" title="6">{
@@ -2647,7 +2699,7 @@ func (c *Client) DownloadCerts(certs []*DownloadingCert) error <span class="cov1
 
     <pre class="file" id="file60" style="display: none">package bitwarden
 
-func (c *Client) Load(sids []string) (map[string]string, error) <span class="cov10" title="15">{
+func (c *Impl) Load(sids []string) (map[string]string, error) <span class="cov10" title="15">{
         res, err := c.api.Secrets().GetByIDS(sids)
         if err != nil </span><span class="cov4" title="3">{
                 return nil, err
@@ -2664,7 +2716,7 @@ func (c *Client) Load(sids []string) (map[string]string, error) <span class="cov
 
     <pre class="file" id="file61" style="display: none">package bitwarden
 
-func (c *Client) LoadToEnviron(names []string) error <span class="cov10" title="5">{
+func (c *Impl) LoadToEnviron(names []string) error <span class="cov10" title="5">{
         ids := make([]string, len(names))
         idNameMap := make(map[string]string)
         for i, name := range names </span><span class="cov10" title="5">{
@@ -2691,6 +2743,7 @@ func (c *Client) LoadToEnviron(names []string) error <span class="cov10" title="
 
 import (
         "github.com/bitwarden/sdk-go"
+        "go.uber.org/fx"
 
         "polimane/backend/base"
         "polimane/backend/services/osenv"
@@ -2702,14 +2755,28 @@ var (
         identityUrl = "https://identity.bitwarden.eu"
 )
 
-type Client struct {
+type ClientOptions struct {
+        fx.In
+        FS  osfs.FS
+        Env osenv.Env
+}
+
+type Client interface {
+        DownloadCerts(certs []*DownloadingCert) error
+        Load(sids []string) (map[string]string, error)
+        LoadToEnviron(names []string) error
+}
+
+type Impl struct {
         api sdk.BitwardenClientInterface
         fs  osfs.FS
         env osenv.Env
 }
 
-func Provider(fs osfs.FS, env osenv.Env) (*Client, error) <span class="cov0" title="0">{
-        accessToken := env.Getenv("BACKEND_BITWARDEN_TOKEN")
+var _ Client = (*Impl)(nil)
+
+func Provider(options ClientOptions) (Client, error) <span class="cov0" title="0">{
+        accessToken := options.Env.Getenv("BACKEND_BITWARDEN_TOKEN")
         if accessToken == "" </span><span class="cov0" title="0">{
                 return nil, nil
         }</span>
@@ -2726,10 +2793,10 @@ func Provider(fs osfs.FS, env osenv.Env) (*Client, error) <span class="cov0" tit
                 return nil, base.TagError("bitwarden.auth", err)
         }</span>
 
-        <span class="cov0" title="0">return &amp;Client{
+        <span class="cov0" title="0">return &amp;Impl{
                 api: api,
-                fs:  fs,
-                env: env,
+                fs:  options.FS,
+                env: options.Env,
         }, nil</span>
 }
 </pre>
@@ -2748,6 +2815,7 @@ func newLogger() logger.Interface <span class="cov0" title="0">{
     <pre class="file" id="file64" style="display: none">package db
 
 import (
+        "go.uber.org/fx"
         "gorm.io/driver/postgres"
         "gorm.io/gorm"
 
@@ -2755,8 +2823,13 @@ import (
         "polimane/backend/env"
 )
 
-func Provider(environment *env.Environment) (*gorm.DB, error) <span class="cov0" title="0">{
-        dialect := postgres.Open(environment.Database.URL)
+type Options struct {
+        fx.In
+        Env *env.Environment
+}
+
+func Provider(options Options) (*gorm.DB, error) <span class="cov0" title="0">{
+        dialect := postgres.Open(options.Env.Database.URL)
 
         instance, err := gorm.Open(dialect, &amp;gorm.Config{
                 Logger: newLogger(),
@@ -2851,17 +2924,23 @@ import (
         "github.com/getsentry/sentry-go"
         sentryfiber "github.com/getsentry/sentry-go/fiber"
         "github.com/gofiber/fiber/v2"
+        "go.uber.org/fx"
 
         "polimane/backend/base"
         "polimane/backend/env"
 )
 
+type Options struct {
+        fx.In
+        Env *env.Environment
+}
+
 type Container struct {
         Handler fiber.Handler
 }
 
-func Provider(environment *env.Environment) (*Container, error) <span class="cov0" title="0">{
-        config := environment.Sentry
+func Provider(options Options) (*Container, error) <span class="cov0" title="0">{
+        config := options.Env.Sentry
         if len(config.Dsn) == 0 </span><span class="cov0" title="0">{
                 return &amp;Container{Handler: nil}, nil
         }</span>
@@ -2955,6 +3034,7 @@ import (
 
         "github.com/workos/workos-go/v4/pkg/mfa"
         "github.com/workos/workos-go/v4/pkg/usermanagement"
+        "go.uber.org/fx"
 
         "polimane/backend/env"
         "polimane/backend/services/jwk"
@@ -2981,6 +3061,12 @@ type MFA interface {
         GetFactor(ctx context.Context, opts mfa.GetFactorOpts) (mfa.Factor, error)
 }
 
+type ClientOptions struct {
+        fx.In
+        Env *env.Environment
+        JWK jwk.Client
+}
+
 type Client struct {
         UserManagement UserManagement
         MFA            MFA
@@ -2988,15 +3074,15 @@ type Client struct {
         jwk            jwk.Client
 }
 
-func Provider(environment *env.Environment, jwk jwk.Client) *Client <span class="cov10" title="3">{
-        usermanagement.SetAPIKey(environment.WorkOS.ApiKey)
-        mfa.SetAPIKey(environment.WorkOS.ApiKey)
+func Provider(options ClientOptions) *Client <span class="cov10" title="3">{
+        usermanagement.SetAPIKey(options.Env.WorkOS.ApiKey)
+        mfa.SetAPIKey(options.Env.WorkOS.ApiKey)
 
         return &amp;Client{
                 UserManagement: usermanagement.DefaultClient,
                 MFA:            mfa.DefaultClient,
-                env:            environment,
-                jwk:            jwk,
+                env:            options.Env,
+                jwk:            options.JWK,
         }
 }</span>
 </pre>

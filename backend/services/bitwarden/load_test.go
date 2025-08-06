@@ -73,7 +73,7 @@ func TestClient_Load(t *testing.T) {
 			mockClient.On("Secrets").Return(mockSecretsManager)
 			mockSecretsManager.On("GetByIDS", tt.sids).Return(tt.response, tt.apiError)
 
-			client := &Client{
+			client := &Impl{
 				api: mockClient,
 			}
 

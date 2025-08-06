@@ -21,7 +21,12 @@ func TestControllerProvider(t *testing.T) {
 		signalsContainer := &signal.Container{}
 
 		// Act
-		controller := Provider(workosClient, environment, usersClient, signalsContainer)
+		controller := Provider(ControllerOptions{
+			WorkosClient: workosClient,
+			Env:          environment,
+			Users:        usersClient,
+			Signals:      signalsContainer,
+		})
 
 		// Assert
 		assert.NotNil(t, controller)
@@ -39,7 +44,12 @@ func TestControllerProvider(t *testing.T) {
 		signalsContainer := &signal.Container{}
 
 		// Act
-		controller := Provider(workosClient, environment, usersClient, signalsContainer).(*Controller)
+		controller := Provider(ControllerOptions{
+			WorkosClient: workosClient,
+			Env:          environment,
+			Users:        usersClient,
+			Signals:      signalsContainer,
+		}).(*Controller)
 
 		// Assert
 		assert.Equal(t, workosClient, controller.workosClient)

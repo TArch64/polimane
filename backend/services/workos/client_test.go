@@ -50,7 +50,10 @@ func TestProvider(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			client := Provider(tt.environment, tt.jwkInterface)
+			client := Provider(ClientOptions{
+				Env: tt.environment,
+				JWK: tt.jwkInterface,
+			})
 
 			if tt.expectNil {
 				assert.Nil(t, client)
@@ -111,7 +114,10 @@ func TestProvider_APIKeyConfiguration(t *testing.T) {
 	// Note: We can't easily test that SetAPIKey was called with the correct values
 	// since it's a side effect that modifies global state in the WorkOS library.
 	// This test mainly verifies that Provider doesn't panic and returns a valid client.
-	client := Provider(environment, nil)
+	client := Provider(ClientOptions{
+		Env: environment,
+		JWK: nil,
+	})
 
 	assert.NotNil(t, client)
 	assert.Equal(t, environment, client.env)

@@ -52,7 +52,7 @@ func TestApiLogout(t *testing.T) {
 		// Create fiber app and request
 		app := fiber.New()
 		app.Post("/logout", func(c *fiber.Ctx) error {
-			setSession(c, session)
+			SetSession(c, session)
 			return controller.apiLogout(c)
 		})
 		req := httptest.NewRequest("POST", "/logout", nil)
@@ -104,7 +104,7 @@ func TestApiLogout(t *testing.T) {
 		// Create fiber app and request
 		app := fiber.New()
 		app.Post("/logout", func(c *fiber.Ctx) error {
-			setSession(c, session)
+			SetSession(c, session)
 			return controller.apiLogout(c)
 		})
 		req := httptest.NewRequest("POST", "/logout", nil)
@@ -156,7 +156,7 @@ func TestApiLogout(t *testing.T) {
 		// Create fiber app and request
 		app := fiber.New()
 		app.Post("/logout", func(c *fiber.Ctx) error {
-			setSession(c, session)
+			SetSession(c, session)
 			return controller.apiLogout(c)
 		})
 		req := httptest.NewRequest("POST", "/logout", nil)
@@ -206,7 +206,7 @@ func TestApiLogout(t *testing.T) {
 		// Create fiber app and request
 		app := fiber.New()
 		app.Post("/logout", func(c *fiber.Ctx) error {
-			setSession(c, session)
+			SetSession(c, session)
 			return controller.apiLogout(c)
 		})
 		req := httptest.NewRequest("POST", "/logout", nil)
@@ -256,7 +256,7 @@ func TestApiLogout(t *testing.T) {
 		// Create fiber app and request
 		app := fiber.New()
 		app.Post("/logout", func(c *fiber.Ctx) error {
-			setSession(c, session)
+			SetSession(c, session)
 			return controller.apiLogout(c)
 		})
 		req := httptest.NewRequest("POST", "/logout", nil)

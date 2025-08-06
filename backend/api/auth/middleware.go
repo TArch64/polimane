@@ -105,7 +105,7 @@ func (m *Middleware) Handler(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	setSession(ctx, &UserSession{
+	SetSession(ctx, &UserSession{
 		User:       user,
 		WorkosUser: workosUser,
 		ID:         accessTokenClaims.SessionID,

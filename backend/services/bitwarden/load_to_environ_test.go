@@ -123,7 +123,7 @@ func TestClient_LoadToEnviron(t *testing.T) {
 				}
 			}
 
-			client := &Client{
+			client := &Impl{
 				api: mockClient,
 				env: mockEnv,
 			}

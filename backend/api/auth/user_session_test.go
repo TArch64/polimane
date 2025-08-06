@@ -65,7 +65,7 @@ func TestSetSession(t *testing.T) {
 
 		// Act & Assert using middleware pattern
 		app.Get("/", func(c *fiber.Ctx) error {
-			setSession(c, session)
+			SetSession(c, session)
 
 			// Verify session is stored in locals
 			storedSession := c.Locals(sessionKey)
@@ -87,11 +87,11 @@ func TestSetSession(t *testing.T) {
 		app.Get("/", func(c *fiber.Ctx) error {
 			// Set initial session
 			initialSession := &UserSession{ID: "initial"}
-			setSession(c, initialSession)
+			SetSession(c, initialSession)
 
 			// Create new session
 			newSession := &UserSession{ID: "new"}
-			setSession(c, newSession)
+			SetSession(c, newSession)
 
 			// Assert
 			storedSession := c.Locals(sessionKey)
@@ -127,7 +127,7 @@ func TestGetSession(t *testing.T) {
 
 		// Act & Assert using middleware pattern
 		app.Get("/", func(c *fiber.Ctx) error {
-			setSession(c, originalSession)
+			SetSession(c, originalSession)
 
 			// Act
 			retrievedSession := GetSession(c)
@@ -154,7 +154,7 @@ func TestGetSession(t *testing.T) {
 
 		// Act & Assert using middleware pattern
 		app.Get("/", func(c *fiber.Ctx) error {
-			setSession(c, session)
+			SetSession(c, session)
 
 			// Act
 			retrievedSession := GetSession(c)
@@ -191,7 +191,7 @@ func TestGetSessionUser(t *testing.T) {
 
 		// Act & Assert using middleware pattern
 		app.Get("/", func(c *fiber.Ctx) error {
-			setSession(c, session)
+			SetSession(c, session)
 
 			// Act
 			retrievedUser := GetSessionUser(c)
@@ -225,7 +225,7 @@ func TestGetSessionUser(t *testing.T) {
 
 		// Act & Assert using middleware pattern
 		app.Get("/", func(c *fiber.Ctx) error {
-			setSession(c, session)
+			SetSession(c, session)
 
 			// Act
 			retrievedUser := GetSessionUser(c)

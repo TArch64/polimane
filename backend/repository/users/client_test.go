@@ -40,7 +40,9 @@ func TestProvider(t *testing.T) {
 	}), &gorm.Config{})
 	require.NoError(t, err)
 
-	client := Provider(gormDB)
+	client := Provider(ClientOptions{
+		DB: gormDB,
+	})
 
 	assert.NotNil(t, client)
 	assert.IsType(t, &Impl{}, client)

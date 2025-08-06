@@ -29,7 +29,12 @@ func TestMiddlewareProvider(t *testing.T) {
 		usersClient := &MockUsersClient{}
 
 		// Act
-		middleware := MiddlewareProvider(signalsContainer, environment, workosClient, usersClient)
+		middleware := MiddlewareProvider(MiddlewareOptions{
+			Signals:      signalsContainer,
+			Env:          environment,
+			WorkosClient: workosClient,
+			Users:        usersClient,
+		})
 
 		// Assert
 		assert.NotNil(t, middleware)
@@ -49,7 +54,12 @@ func TestMiddlewareProvider(t *testing.T) {
 		workosClient := &workos.Client{}
 		usersClient := &MockUsersClient{}
 
-		middleware := MiddlewareProvider(signalsContainer, environment, workosClient, usersClient)
+		middleware := MiddlewareProvider(MiddlewareOptions{
+			Signals:      signalsContainer,
+			Env:          environment,
+			WorkosClient: workosClient,
+			Users:        usersClient,
+		})
 
 		assert.NotNil(t, middleware)
 	})

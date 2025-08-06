@@ -85,7 +85,13 @@ func TestProvider(t *testing.T) {
 		authMiddleware := &auth.Middleware{}
 
 		// Act
-		app, err := Provider(controllers, options, sentryContainer, environment, authMiddleware)
+		app, err := Provider(ServerOptions{
+			Controllers:    controllers,
+			Options:        options,
+			Sentry:         sentryContainer,
+			Env:            environment,
+			AuthMiddleware: authMiddleware,
+		})
 
 		// Assert
 		assert.NoError(t, err)
@@ -117,7 +123,13 @@ func TestProvider(t *testing.T) {
 		authMiddleware := &auth.Middleware{}
 
 		// Act
-		app, err := Provider(controllers, options, sentryContainer, environment, authMiddleware)
+		app, err := Provider(ServerOptions{
+			Controllers:    controllers,
+			Options:        options,
+			Sentry:         sentryContainer,
+			Env:            environment,
+			AuthMiddleware: authMiddleware,
+		})
 
 		// Assert
 		assert.NoError(t, err)
@@ -147,7 +159,13 @@ func TestProvider(t *testing.T) {
 		authMiddleware := &auth.Middleware{}
 
 		// Act
-		app, err := Provider(controllers, options, sentryContainer, environment, authMiddleware)
+		app, err := Provider(ServerOptions{
+			Controllers:    controllers,
+			Options:        options,
+			Sentry:         sentryContainer,
+			Env:            environment,
+			AuthMiddleware: authMiddleware,
+		})
 
 		// Assert
 		assert.NoError(t, err)
@@ -180,7 +198,13 @@ func TestProvider(t *testing.T) {
 		authMiddleware := &auth.Middleware{}
 
 		// Act
-		app, err := Provider(controllers, options, sentryContainer, environment, authMiddleware)
+		app, err := Provider(ServerOptions{
+			Controllers:    controllers,
+			Options:        options,
+			Sentry:         sentryContainer,
+			Env:            environment,
+			AuthMiddleware: authMiddleware,
+		})
 
 		// Assert
 		assert.NoError(t, err)
@@ -210,7 +234,13 @@ func TestProvider(t *testing.T) {
 		authMiddleware := &auth.Middleware{}
 
 		// Act
-		app, err := Provider(controllers, options, sentryContainer, environment, authMiddleware)
+		app, err := Provider(ServerOptions{
+			Controllers:    controllers,
+			Options:        options,
+			Sentry:         sentryContainer,
+			Env:            environment,
+			AuthMiddleware: authMiddleware,
+		})
 
 		// Assert
 		assert.NoError(t, err)
@@ -248,7 +278,13 @@ func TestProvider(t *testing.T) {
 		authMiddleware := &auth.Middleware{}
 
 		// Act
-		app, err := Provider(controllers, options, sentryContainer, environment, authMiddleware)
+		app, err := Provider(ServerOptions{
+			Controllers:    controllers,
+			Options:        options,
+			Sentry:         sentryContainer,
+			Env:            environment,
+			AuthMiddleware: authMiddleware,
+		})
 
 		// Assert
 		assert.NoError(t, err)

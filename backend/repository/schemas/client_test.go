@@ -25,7 +25,11 @@ func TestProvider(t *testing.T) {
 	userSchemas := &MockUserSchemas{}
 	signals := &signal.Container{}
 
-	client := Provider(gormDB, userSchemas, signals)
+	client := Provider(ClientOptions{
+		DB:          gormDB,
+		UserSchemas: userSchemas,
+		Signals:     signals,
+	})
 
 	assert.NotNil(t, client)
 	assert.IsType(t, &Impl{}, client)
