@@ -294,3 +294,72 @@ users:           &MockUsersClient{}, // Mock repository
 - Real cache implementations provide more accurate integration testing
 - External services should be mocked to avoid network dependencies
 - Mocks should be placed in `mocks_test.go` following project conventions
+
+---
+
+## Common Pitfalls and Resolutions
+
+### Don't Test Language Mechanics
+
+**❌ Avoid testing interface definitions:**
+
+```go
+// BAD - This test is pointless
+func TestController(t *testing.T) {
+t.Run("implements Controller interface", func (t *testing.T) {
+mock := &mockController{}
+var controller Controller = mock // Compiler already checks this
+assert.NotNil(t, controller)
+})
+}
+```
+
+**✅ Instead, test concrete implementations and behavior:**
+
+```go
+// GOOD - Test actual functionality
+func TestUserController_CreateUser(t *testing.T) {
+// Test the actual business logic of CreateUser method
+}
+```
+
+**Why:** The Go compiler already enforces interface compliance. Focus tests on business logic and behavior.
+
+### Fiber Context Testing
+
+**⚠️ Common Issue:** Cannot directly create Fiber contexts for unit testing
+
+```go
+// ❌ This doesn't work
+ctx := app.AcquireCtx(&httptest.Request{}) // Wrong type
+```
+
+**✅ Use integration-style testing with Fiber's Test method:**
+
+```go
+// ✅ Correct approach
+app := fiber.New()
+app.Get("/test", handlerFunction)
+req := httptest.NewRequest("GET", "/test", nil)
+resp, err := app.Test(req)
+```
+
+### Empty Request Body Behavior
+
+**Learning:** Empty request bodies cause JSON parsing errors (500), not validation errors (400)
+
+```go
+// Empty body with application/json content-type
+req := httptest.NewRequest("POST", "/test", strings.NewReader(""))
+req.Header.Set("Content-Type", "application/json")
+// Results in 500 (JSON parse error), not 400 (validation error)
+```
+
+### JSON Marshaling of Empty Maps
+
+**Learning:** Empty `CustomErrorData{}` maps serialize differently than `nil`:
+
+```go
+// CustomErrorData{} → serializes as {} → unmarshals as non-nil empty map  
+// nil → omitted from JSON (due to omitempty tag) → unmarshals as nil
+```
