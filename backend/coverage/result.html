@@ -1,0 +1,3231 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>auth: Go Coverage Report</title>
+    <style>
+        body {
+            background: black;
+            color: rgb(80, 80, 80);
+        }
+
+        body, pre, #legend span {
+            font-family: Menlo, monospace;
+            font-weight: bold;
+        }
+
+        #topbar {
+            background: black;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 42px;
+            border-bottom: 1px solid rgb(80, 80, 80);
+        }
+
+        #content {
+            margin-top: 50px;
+        }
+
+        #nav, #legend {
+            float: left;
+            margin-left: 10px;
+        }
+
+        #legend {
+            margin-top: 12px;
+        }
+
+        #nav {
+            margin-top: 10px;
+        }
+
+        #legend span {
+            margin: 0 5px;
+        }
+
+        .cov0 {
+            color: rgb(192, 0, 0)
+        }
+
+        .cov1 {
+            color: rgb(128, 128, 128)
+        }
+
+        .cov2 {
+            color: rgb(116, 140, 131)
+        }
+
+        .cov3 {
+            color: rgb(104, 152, 134)
+        }
+
+        .cov4 {
+            color: rgb(92, 164, 137)
+        }
+
+        .cov5 {
+            color: rgb(80, 176, 140)
+        }
+
+        .cov6 {
+            color: rgb(68, 188, 143)
+        }
+
+        .cov7 {
+            color: rgb(56, 200, 146)
+        }
+
+        .cov8 {
+            color: rgb(44, 212, 149)
+        }
+
+        .cov9 {
+            color: rgb(32, 224, 152)
+        }
+
+        .cov10 {
+            color: rgb(20, 236, 155)
+        }
+
+    </style>
+</head>
+<body>
+<div id="topbar">
+    <div id="nav">
+        <select id="files">
+
+            <option value="file0">polimane/backend/api/auth/controller.go (0.0%)</option>
+
+            <option value="file1">polimane/backend/api/auth/login.go (100.0%)</option>
+
+            <option value="file2">polimane/backend/api/auth/login_complete.go (100.0%)</option>
+
+            <option value="file3">polimane/backend/api/auth/logout.go (100.0%)</option>
+
+            <option value="file4">polimane/backend/api/auth/middleware.go (96.3%)</option>
+
+            <option value="file5">polimane/backend/api/auth/user_session.go (100.0%)</option>
+
+            <option value="file6">polimane/backend/api/base/error.go (100.0%)</option>
+
+            <option value="file7">polimane/backend/api/base/error_handler.go (100.0%)</option>
+
+            <option value="file8">polimane/backend/api/base/params.go (100.0%)</option>
+
+            <option value="file9">polimane/backend/api/base/parse_body.go (100.0%)</option>
+
+            <option value="file10">polimane/backend/api/base/parse_query.go (100.0%)</option>
+
+            <option value="file11">polimane/backend/api/base/success_response.go (100.0%)</option>
+
+            <option value="file12">polimane/backend/api/base/validator.go (100.0%)</option>
+
+            <option value="file13">polimane/backend/api/base/with_group.go (100.0%)</option>
+
+            <option value="file14">polimane/backend/api/not_found.go (100.0%)</option>
+
+            <option value="file15">polimane/backend/api/ping/controller.go (0.0%)</option>
+
+            <option value="file16">polimane/backend/api/ping/ping.go (0.0%)</option>
+
+            <option value="file17">polimane/backend/api/schemas/by_id.go (100.0%)</option>
+
+            <option value="file18">polimane/backend/api/schemas/controller.go (0.0%)</option>
+
+            <option value="file19">polimane/backend/api/schemas/copy.go (100.0%)</option>
+
+            <option value="file20">polimane/backend/api/schemas/create.go (100.0%)</option>
+
+            <option value="file21">polimane/backend/api/schemas/delete.go (100.0%)</option>
+
+            <option value="file22">polimane/backend/api/schemas/list.go (100.0%)</option>
+
+            <option value="file23">polimane/backend/api/schemas/update.go (100.0%)</option>
+
+            <option value="file24">polimane/backend/api/schemas/update_screenshot.go (100.0%)</option>
+
+            <option value="file25">polimane/backend/api/server.go (100.0%)</option>
+
+            <option value="file26">polimane/backend/api/server_prod.go (80.0%)</option>
+
+            <option value="file27">polimane/backend/api/users/auth_factor_delete.go (100.0%)</option>
+
+            <option value="file28">polimane/backend/api/users/auth_factors_create.go (100.0%)</option>
+
+            <option value="file29">polimane/backend/api/users/auth_factors_init.go (100.0%)</option>
+
+            <option value="file30">polimane/backend/api/users/auth_factors_list.go (100.0%)</option>
+
+            <option value="file31">polimane/backend/api/users/controller.go (0.0%)</option>
+
+            <option value="file32">polimane/backend/api/users/email_verify.go (100.0%)</option>
+
+            <option value="file33">polimane/backend/api/users/email_verify_send.go (100.0%)</option>
+
+            <option value="file34">polimane/backend/api/users/get.go (100.0%)</option>
+
+            <option value="file35">polimane/backend/api/users/password_reset.go (100.0%)</option>
+
+            <option value="file36">polimane/backend/api/users/update.go (100.0%)</option>
+
+            <option value="file37">polimane/backend/base/tag_error.go (100.0%)</option>
+
+            <option value="file38">polimane/backend/env/env.go (100.0%)</option>
+
+            <option value="file39">polimane/backend/env/env_prod.go (100.0%)</option>
+
+            <option value="file40">polimane/backend/main.go (0.0%)</option>
+
+            <option value="file41">polimane/backend/migrations/loader.go (0.0%)</option>
+
+            <option value="file42">polimane/backend/model/identifiable.go (100.0%)</option>
+
+            <option value="file43">polimane/backend/repository/schemas/by_id.go (100.0%)</option>
+
+            <option value="file44">polimane/backend/repository/schemas/by_user.go (100.0%)</option>
+
+            <option value="file45">polimane/backend/repository/schemas/client.go (100.0%)</option>
+
+            <option value="file46">polimane/backend/repository/schemas/copy.go (100.0%)</option>
+
+            <option value="file47">polimane/backend/repository/schemas/create.go (100.0%)</option>
+
+            <option value="file48">polimane/backend/repository/schemas/delete.go (100.0%)</option>
+
+            <option value="file49">polimane/backend/repository/schemas/update.go (100.0%)</option>
+
+            <option value="file50">polimane/backend/repository/users/by_id.go (100.0%)</option>
+
+            <option value="file51">polimane/backend/repository/users/client.go (100.0%)</option>
+
+            <option value="file52">polimane/backend/repository/users/create_if_needed.go (100.0%)</option>
+
+            <option value="file53">polimane/backend/repository/userschemas/client.go (100.0%)</option>
+
+            <option value="file54">polimane/backend/repository/userschemas/create.go (100.0%)</option>
+
+            <option value="file55">polimane/backend/repository/userschemas/delete.go (100.0%)</option>
+
+            <option value="file56">polimane/backend/repository/userschemas/has_access.go (100.0%)</option>
+
+            <option value="file57">polimane/backend/services/awsconfig/config_prod.go (0.0%)</option>
+
+            <option value="file58">polimane/backend/services/awsconfig/provider.go (0.0%)</option>
+
+            <option value="file59">polimane/backend/services/awss3/provider.go (0.0%)</option>
+
+            <option value="file60">polimane/backend/services/bitwarden/download_certs.go (100.0%)</option>
+
+            <option value="file61">polimane/backend/services/bitwarden/load.go (100.0%)</option>
+
+            <option value="file62">polimane/backend/services/bitwarden/load_to_environ.go (100.0%)</option>
+
+            <option value="file63">polimane/backend/services/bitwarden/provider.go (0.0%)</option>
+
+            <option value="file64">polimane/backend/services/db/logger_prod.go (0.0%)</option>
+
+            <option value="file65">polimane/backend/services/db/provider.go (0.0%)</option>
+
+            <option value="file66">polimane/backend/services/jwk/provider.go (0.0%)</option>
+
+            <option value="file67">polimane/backend/services/osenv/provider.go (0.0%)</option>
+
+            <option value="file68">polimane/backend/services/osfs/provider.go (0.0%)</option>
+
+            <option value="file69">polimane/backend/services/sentry/provider.go (0.0%)</option>
+
+            <option value="file70">polimane/backend/services/workos/authenticate_with_access_token.go (100.0%)</option>
+
+            <option value="file71">polimane/backend/services/workos/client.go (0.0%)</option>
+
+            <option value="file72">polimane/backend/services/workos/get_error_code.go (100.0%)</option>
+
+            <option value="file73">polimane/backend/services/workos/mfa.go (100.0%)</option>
+
+            <option value="file74">polimane/backend/services/workos/user_management.go (100.0%)</option>
+
+            <option value="file75">polimane/backend/signal/provider.go (100.0%)</option>
+
+        </select>
+    </div>
+    <div id="legend">
+        <span>not tracked</span>
+
+        <span class="cov0">no coverage</span>
+        <span class="cov1">low coverage</span>
+        <span class="cov2">*</span>
+        <span class="cov3">*</span>
+        <span class="cov4">*</span>
+        <span class="cov5">*</span>
+        <span class="cov6">*</span>
+        <span class="cov7">*</span>
+        <span class="cov8">*</span>
+        <span class="cov9">*</span>
+        <span class="cov10">high coverage</span>
+
+    </div>
+</div>
+<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package auth
+
+import (
+        "github.com/gofiber/fiber/v2"
+        "go.uber.org/fx"
+
+        "polimane/backend/api/base"
+        "polimane/backend/env"
+        repositoryusers "polimane/backend/repository/users"
+        "polimane/backend/services/workos"
+        "polimane/backend/signal"
+)
+
+const groupPrefix = "auth"
+
+type ControllerOptions struct {
+        fx.In
+        WorkosClient workos.Client
+        Env          *env.Environment
+        Users        repositoryusers.Client
+        Signals      *signal.Container
+}
+
+type Controller struct {
+        workosClient workos.Client
+        env          *env.Environment
+        users        repositoryusers.Client
+        signals      *signal.Container
+}
+
+func Provider(options ControllerOptions) base.Controller <span class="cov0" title="0">{
+        return &amp;Controller{
+                workosClient: options.WorkosClient,
+                env:          options.Env,
+                users:        options.Users,
+                signals:      options.Signals,
+        }
+}</span>
+
+func (c *Controller) Public(group fiber.Router) <span class="cov0" title="0">{
+        base.WithGroup(group, groupPrefix+"/login", func(group fiber.Router) </span><span class="cov0" title="0">{
+                group.Get("", c.apiLogin)
+                group.Get("complete", c.apiLoginComplete)
+        }</span>)
+}
+
+func (c *Controller) Private(group fiber.Router) <span class="cov0" title="0">{
+        group = group.Group(groupPrefix)
+        group.Post("logout", c.apiLogout)
+}</span>
+</pre>
+
+    <pre class="file" id="file1" style="display: none">package auth
+
+import (
+        "github.com/gofiber/fiber/v2"
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
+)
+
+func (c *Controller) apiLogin(ctx *fiber.Ctx) error <span class="cov10" title="5">{
+        url, err := c.workosClient.UserManagement().GetAuthorizationURL(usermanagement.GetAuthorizationURLOpts{
+                ClientID:    c.env.WorkOS.ClientID,
+                RedirectURI: c.env.ApiURL().JoinPath("api/auth/login/complete").String(),
+                Provider:    "authkit",
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="4">return ctx.JSON(fiber.Map{
+                "url": url.String(),
+        })</span>
+}
+</pre>
+
+    <pre class="file" id="file2" style="display: none">package auth
+
+import (
+        "github.com/gofiber/fiber/v2"
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
+
+        "polimane/backend/api/base"
+)
+
+type loginCompleteQuery struct {
+        Code string `query:"code" validate:"required"`
+}
+
+func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error <span class="cov10" title="7">{
+        var query loginCompleteQuery
+        if err := base.ParseQuery(ctx, &amp;query); err != nil </span><span class="cov4" title="2">{
+                return err
+        }</span>
+
+        <span class="cov8" title="5">reqCtx := ctx.Context()
+        data, err := c.workosClient.UserManagement().AuthenticateWithCode(reqCtx, usermanagement.AuthenticateWithCodeOpts{
+                ClientID:  c.env.WorkOS.ClientID,
+                Code:      query.Code,
+                UserAgent: ctx.Get("User-Agent"),
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov7" title="4">user, err := c.users.CreateIfNeeded(reqCtx, data.User.ID)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov6" title="3">_, err = c.workosClient.UserManagement().UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
+                User:       data.User.ID,
+                ExternalID: user.ID.String(),
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov4" title="2">redirectUrl := c.env.AppURL().JoinPath("auth/complete")
+        redirectQuery := redirectUrl.Query()
+        redirectQuery.Set("access-token", data.AccessToken)
+        redirectQuery.Set("refresh-token", data.RefreshToken)
+        redirectUrl.RawQuery = redirectQuery.Encode()
+        return ctx.Redirect(redirectUrl.String())</span>
+}
+</pre>
+
+    <pre class="file" id="file3" style="display: none">package auth
+
+import (
+        "github.com/gofiber/fiber/v2"
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
+
+        "polimane/backend/api/base"
+)
+
+func (c *Controller) apiLogout(ctx *fiber.Ctx) error <span class="cov10" title="5">{
+        session := GetSession(ctx)
+
+        err := c.workosClient.UserManagement().RevokeSession(ctx.Context(), usermanagement.RevokeSessionOpts{
+                SessionID: session.ID,
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="4">c.signals.InvalidateAuthCache.Emit(ctx.Context(), session.ID)
+
+        return base.NewSuccessResponse(ctx)</span>
+}
+</pre>
+
+    <pre class="file" id="file4" style="display: none">package auth
+
+import (
+        "context"
+        "errors"
+        "time"
+
+        "github.com/gofiber/fiber/v2"
+        "github.com/kittipat1413/go-common/framework/cache"
+        "github.com/kittipat1413/go-common/framework/cache/localcache"
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
+        "go.uber.org/fx"
+        "gorm.io/gorm"
+
+        "polimane/backend/api/base"
+        "polimane/backend/env"
+        "polimane/backend/model"
+        repositoryusers "polimane/backend/repository/users"
+        "polimane/backend/services/workos"
+        "polimane/backend/signal"
+)
+
+var unauthorizedErr = base.NewReasonedError(fiber.StatusUnauthorized, "Unauthorized")
+
+type MiddlewareOptions struct {
+        fx.In
+        Signals      *signal.Container
+        Env          *env.Environment
+        WorkosClient workos.Client
+        Users        repositoryusers.Client
+}
+
+type Middleware struct {
+        userCache       cache.Cache[*model.User]
+        workosUserCache cache.Cache[*usermanagement.User]
+        workosClient    workos.Client
+        env             *env.Environment
+        users           repositoryusers.Client
+}
+
+func MiddlewareProvider(options MiddlewareOptions) *Middleware <span class="cov4" title="2">{
+        cacheOptions := []localcache.Option{
+                localcache.WithDefaultExpiration(10 * time.Minute),
+                localcache.WithCleanupInterval(5 * time.Minute),
+        }
+
+        middleware := &amp;Middleware{
+                userCache:       localcache.New[*model.User](cacheOptions...),
+                workosUserCache: localcache.New[*usermanagement.User](cacheOptions...),
+                env:             options.Env,
+                workosClient:    options.WorkosClient,
+                users:           options.Users,
+        }
+
+        options.Signals.InvalidateUserCache.AddListener(middleware.invalidateUserCache)
+        options.Signals.InvalidateWorkosUserCache.AddListener(middleware.invalidateWorkosUserCache)
+        options.Signals.InvalidateAuthCache.AddListener(middleware.invalidateAuthCache)
+        return middleware
+}</span>
+
+func (m *Middleware) invalidateAuthCache(ctx context.Context, sessionID string) <span class="cov4" title="2">{
+        workosUser, _ := m.workosUserCache.Get(ctx, sessionID, nil)
+
+        if workosUser != nil </span><span class="cov1" title="1">{
+                m.invalidateWorkosUserCache(ctx, workosUser.ID)
+                m.invalidateUserCache(ctx, model.MustStringToID(workosUser.ExternalID))
+        }</span>
+}
+
+func (m *Middleware) invalidateUserCache(ctx context.Context, userID model.ID) <span class="cov4" title="2">{
+        _ = m.userCache.Invalidate(ctx, userID.String())
+}</span>
+
+func (m *Middleware) invalidateWorkosUserCache(ctx context.Context, userID string) <span class="cov4" title="2">{
+        _ = m.workosUserCache.Invalidate(ctx, userID)
+}</span>
+
+func (m *Middleware) Handler(ctx *fiber.Ctx) error <span class="cov10" title="8">{
+        accessToken := ctx.Get("Authorization")
+        refreshToken := ctx.Get("X-Refresh-Token")
+        if accessToken == "" || refreshToken == "" </span><span class="cov4" title="2">{
+                return m.newUnauthorizedErr(errors.New("missing access or refresh token"))
+        }</span>
+
+        <span class="cov8" title="6">accessTokenClaims, err := m.workosClient.AuthenticateWithAccessToken(ctx.Context(), accessToken)
+        if errors.Is(err, workos.AccessTokenExpired) </span><span class="cov1" title="1">{
+                accessTokenClaims, err = m.refreshToken(ctx, refreshToken)
+        }</span>
+        <span class="cov8" title="6">if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov7" title="5">workosUser, err := m.getWorkosUser(ctx.Context(), accessTokenClaims)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov7" title="4">userID, err := model.StringToID(workosUser.ExternalID)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov5" title="3">user, err := m.getUser(ctx.Context(), userID)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov4" title="2">SetSession(ctx, &amp;UserSession{
+                User:       user,
+                WorkosUser: workosUser,
+                ID:         accessTokenClaims.SessionID,
+        })
+
+        return ctx.Next()</span>
+}
+
+func (m *Middleware) refreshToken(ctx *fiber.Ctx, token string) (*workos.AccessTokenClaims, error) <span
+            class="cov5"
+            title="3"
+        >{
+        res, err := m.workosClient.UserManagement().AuthenticateWithRefreshToken(ctx.Context(), usermanagement.AuthenticateWithRefreshTokenOpts{
+                ClientID:     m.env.WorkOS.ClientID,
+                RefreshToken: token,
+                UserAgent:    ctx.Get("User-Agent"),
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov4" title="2">ctx.Set("X-New-Refresh-Token", res.RefreshToken)
+        ctx.Set("X-New-Access-Token", res.AccessToken)
+        return m.workosClient.AuthenticateWithAccessToken(ctx.Context(), res.AccessToken)</span>
+}
+
+func (m *Middleware) getWorkosUser(ctx context.Context, accessTokenClaims *workos.AccessTokenClaims) (*usermanagement.User, error) <span
+            class="cov10"
+            title="8"
+        >{
+        return m.workosUserCache.Get(ctx, accessTokenClaims.UserID, func() (*usermanagement.User, *time.Duration, error) </span><span
+            class="cov9"
+            title="7"
+        >{
+                user, err := m.workosClient.UserManagement().GetUser(ctx, usermanagement.GetUserOpts{
+                        User: accessTokenClaims.UserID,
+                })
+
+                if err != nil </span><span class="cov4" title="2">{
+                        return nil, nil, err
+                }</span>
+
+                <span class="cov7" title="5">return &amp;user, nil, nil</span>
+        })
+}
+
+func (m *Middleware) getUser(ctx context.Context, id model.ID) (*model.User, error) <span class="cov9" title="7">{
+        return m.userCache.Get(ctx, id.String(), func() (*model.User, *time.Duration, error) </span><span
+            class="cov8"
+            title="6"
+        >{
+                user, err := m.users.ByID(ctx, id)
+
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov1" title="1">{
+                        return nil, nil, m.newUnauthorizedErr(err, base.CustomErrorData{
+                                "userId": id.String(),
+                        })
+                }</span>
+                <span class="cov7" title="5">if err != nil </span><span class="cov4" title="2">{
+                        return nil, nil, err
+                }</span>
+
+                <span class="cov5" title="3">return user, nil, nil</span>
+        })
+}
+
+func (m *Middleware) newUnauthorizedErr(err error, extra ...base.CustomErrorData) error <span class="cov7" title="5">{
+        if env.IsDev </span><span class="cov0" title="0">{
+                extra = append(extra, base.CustomErrorData{"internalError": err.Error()})
+                return unauthorizedErr.AddCustomData(extra...)
+        }</span>
+
+        <span class="cov7" title="5">return unauthorizedErr</span>
+}
+</pre>
+
+    <pre class="file" id="file5" style="display: none">package auth
+
+import (
+        "github.com/gofiber/fiber/v2"
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
+
+        "polimane/backend/model"
+)
+
+type UserSession struct {
+        ID         string
+        User       *model.User
+        WorkosUser *usermanagement.User
+}
+
+var sessionKey UserSession
+
+func SetSession(ctx *fiber.Ctx, session *UserSession) <span class="cov10" title="14">{
+        ctx.Locals(sessionKey, session)
+}</span>
+
+func GetSession(ctx *fiber.Ctx) *UserSession <span class="cov8" title="10">{
+        return ctx.Locals(sessionKey).(*UserSession)
+}</span>
+
+func GetSessionUser(ctx *fiber.Ctx) *model.User <span class="cov3" title="2">{
+        return GetSession(ctx).User
+}</span>
+</pre>
+
+    <pre class="file" id="file6" style="display: none">package base
+
+import (
+        "maps"
+
+        "github.com/gofiber/fiber/v2"
+)
+
+type CustomErrorData map[string]interface{}
+
+type CustomError struct {
+        Code    int
+        Message string
+        Data    CustomErrorData
+}
+
+var _ error = (*CustomError)(nil)
+
+func NewCustomError(code int, message string, data CustomErrorData) *CustomError <span class="cov10" title="28">{
+        return &amp;CustomError{
+                Code:    code,
+                Message: message,
+                Data:    data,
+        }
+}</span>
+
+func (e *CustomError) Error() string <span class="cov7" title="13">{
+        return e.Message
+}</span>
+
+func (e *CustomError) AddCustomData(extra ...CustomErrorData) *CustomError <span class="cov5" title="6">{
+        err := new(CustomError)
+        *err = *e
+
+        err.Data = make(CustomErrorData)
+        maps.Copy(err.Data, e.Data)
+        for _, data := range extra </span><span class="cov6" title="7">{
+                maps.Copy(err.Data, data)
+        }</span>
+
+        <span class="cov5" title="6">return err</span>
+}
+
+func NewReasonedError(code int, reason string) *CustomError <span class="cov7" title="12">{
+        return NewCustomError(code, reason, CustomErrorData{"reason": reason})
+}</span>
+
+var (
+        NotFoundErr = NewReasonedError(fiber.StatusNotFound, "NotFound")
+)
+</pre>
+
+    <pre class="file" id="file7" style="display: none">package base
+
+import (
+        "errors"
+
+        "github.com/gofiber/fiber/v2"
+        "gorm.io/gorm"
+)
+
+type errorResponse struct {
+        Success bool            `json:"success"`
+        Message string          `json:"message"`
+        Data    CustomErrorData `json:"data,omitempty"`
+}
+
+func getErrorStatus(err error) int <span class="cov10" title="24">{
+        if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov2" title="2">{
+                return fiber.StatusNotFound
+        }</span>
+
+        <span class="cov9" title="22">switch v := err.(type) </span>{
+        case *CustomError:<span class="cov7" title="11">
+                return v.Code</span>
+        case *fiber.Error:<span class="cov6" title="6">
+                return v.Code</span>
+        default:<span class="cov5" title="5">
+                return fiber.StatusInternalServerError</span>
+        }
+}
+
+func getErrorData(err error) CustomErrorData <span class="cov10" title="24">{
+        switch v := err.(type) </span>{
+        case *CustomError:<span class="cov7" title="11">
+                return v.Data</span>
+        default:<span class="cov8" title="13">
+                return nil</span>
+        }
+}
+
+func ErrorHandler(ctx *fiber.Ctx, err error) error <span class="cov9" title="20">{
+        return ctx.Status(getErrorStatus(err)).JSON(errorResponse{
+                Success: false,
+                Message: err.Error(),
+                Data:    getErrorData(err),
+        })
+}</span>
+</pre>
+
+    <pre class="file" id="file8" style="display: none">package base
+
+import (
+        "fmt"
+
+        "polimane/backend/model"
+
+        "github.com/gofiber/fiber/v2"
+)
+
+func newMissingParamErr(name string) error <span class="cov9" title="9">{
+        return NewReasonedError(fiber.StatusBadRequest, fmt.Sprintf("MissingRequiredParam[%s]", name))
+}</span>
+
+func GetRequiredParam(ctx *fiber.Ctx, name string) (string, error) <span class="cov10" title="10">{
+        value := ctx.Params(name)
+        if value == "" </span><span class="cov6" title="4">{
+                return "", newMissingParamErr(name)
+        }</span>
+        <span class="cov8" title="6">return value, nil</span>
+}
+
+func GetParamID(ctx *fiber.Ctx, name string) (model.ID, error) <span class="cov8" title="7">{
+        value, err := GetRequiredParam(ctx, name)
+        if err != nil </span><span class="cov5" title="3">{
+                return model.ID{}, err
+        }</span>
+
+        <span class="cov6" title="4">id, err := model.StringToID(value)
+        if err != nil </span><span class="cov5" title="3">{
+                return model.ID{}, newMissingParamErr(name)
+        }</span>
+
+        <span class="cov1" title="1">return id, nil</span>
+}
+</pre>
+
+    <pre class="file" id="file9" style="display: none">package base
+
+import (
+        "github.com/gofiber/fiber/v2"
+)
+
+func ParseBody[B any](ctx *fiber.Ctx, body *B) (err error) <span class="cov10" title="5">{
+        if err = ctx.BodyParser(body); err != nil </span><span class="cov4" title="2">{
+                return err
+        }</span>
+        <span class="cov7" title="3">if err = Validate(body); err != nil </span><span class="cov4" title="2">{
+                return err
+        }</span>
+        <span class="cov1" title="1">return nil</span>
+}
+</pre>
+
+    <pre class="file" id="file10" style="display: none">package base
+
+import (
+        "github.com/gofiber/fiber/v2"
+)
+
+func ParseQuery[B any](ctx *fiber.Ctx, query *B) (err error) <span class="cov10" title="5">{
+        if err = ctx.QueryParser(query); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="4">if err = Validate(query); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+        <span class="cov7" title="3">return nil</span>
+}
+</pre>
+
+    <pre class="file" id="file11" style="display: none">package base
+
+import "github.com/gofiber/fiber/v2"
+
+func NewSuccessResponse(ctx *fiber.Ctx) error <span class="cov10" title="6">{
+        return ctx.JSON(fiber.Map{
+                "success": true,
+        })
+}</span>
+</pre>
+
+    <pre class="file" id="file12" style="display: none">package base
+
+import (
+        "fmt"
+        "strings"
+
+        "github.com/go-playground/validator/v10"
+        "github.com/gofiber/fiber/v2"
+)
+
+type ValidationErrorResponse struct {
+        Error       bool
+        FailedField string
+        Tag         string
+        Value       interface{}
+}
+
+type requestValidator struct {
+        validator *validator.Validate
+}
+
+var validatorInstance *requestValidator
+
+func InitValidator() <span class="cov6" title="7">{
+        validatorInstance = &amp;requestValidator{
+                validator: validator.New(),
+        }
+}</span>
+
+func (v *requestValidator) Validate(data interface{}) []ValidationErrorResponse <span class="cov10" title="19">{
+        var validationErrors []ValidationErrorResponse
+
+        errs := v.validator.Struct(data)
+        if errs != nil </span><span class="cov8" title="10">{
+                for _, err := range errs.(validator.ValidationErrors) </span><span class="cov9" title="15">{
+                        var elem ValidationErrorResponse
+
+                        elem.FailedField = err.Field()
+                        elem.Tag = err.Tag()
+                        elem.Value = err.Value()
+                        elem.Error = true
+
+                        validationErrors = append(validationErrors, elem)
+                }</span>
+        }
+
+        <span class="cov10" title="19">return validationErrors</span>
+}
+
+func Validate(data interface{}) error <span class="cov8" title="13">{
+        if errs := validatorInstance.Validate(data); len(errs) &gt; 0 &amp;&amp; errs[0].Error </span><span
+            class="cov6"
+            title="7"
+        >{
+                errMsgs := make([]string, len(errs))
+
+                for i, err := range errs </span><span class="cov7" title="8">{
+                        errMsgs[i] = fmt.Sprintf(
+                                "[%s]: '%v' | Needs to implement '%s'",
+                                err.FailedField,
+                                err.Value,
+                                err.Tag,
+                        )
+                }</span>
+
+                <span class="cov6" title="7">return &amp;fiber.Error{
+                        Code:    fiber.StatusBadRequest,
+                        Message: strings.Join(errMsgs, " and "),
+                }</span>
+        }
+
+        <span class="cov6" title="6">return nil</span>
+}
+</pre>
+
+    <pre class="file" id="file13" style="display: none">package base
+
+import "github.com/gofiber/fiber/v2"
+
+func WithGroup(group fiber.Router, path string, handler func(group fiber.Router)) <span class="cov10" title="11">{
+        handler(group.Group(path))
+}</span>
+</pre>
+
+    <pre class="file" id="file14" style="display: none">package api
+
+import (
+        "log"
+
+        "github.com/gofiber/fiber/v2"
+)
+
+func apiNotFound(c *fiber.Ctx) error <span class="cov10" title="12">{
+        log.Println("Unhandled route:", c.Path())
+
+        return c.
+                Status(404).
+                JSON(fiber.Map{"error": "Not Found"})
+}</span>
+</pre>
+
+    <pre class="file" id="file15" style="display: none">package ping
+
+import (
+        "github.com/gofiber/fiber/v2"
+
+        "polimane/backend/api/base"
+)
+
+type Controller struct{}
+
+func Provider() base.Controller <span class="cov0" title="0">{
+        return &amp;Controller{}
+}</span>
+
+func (c *Controller) Public(_ fiber.Router) {<span class="cov0" title="0">}</span>
+
+func (c *Controller) Private(group fiber.Router) <span class="cov0" title="0">{
+        group = group.Group("ping")
+        group.Get("", c.apiPing)
+}</span>
+</pre>
+
+    <pre class="file" id="file16" style="display: none">package ping
+
+import "github.com/gofiber/fiber/v2"
+
+func (c *Controller) apiPing(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+        return ctx.JSON(fiber.Map{"message": "pong"})
+}</span>
+</pre>
+
+    <pre class="file" id="file17" style="display: none">package schemas
+
+import (
+        "github.com/gofiber/fiber/v2"
+
+        "polimane/backend/api/auth"
+        "polimane/backend/api/base"
+        repositoryschemas "polimane/backend/repository/schemas"
+)
+
+func (c *Controller) apiById(ctx *fiber.Ctx) error <span class="cov10" title="4">{
+        schemaId, err := base.GetParamID(ctx, schemaIdParam)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="3">schema, err := c.schemas.ByID(&amp;repositoryschemas.ByIDOptions{
+                Ctx:      ctx.Context(),
+                User:     auth.GetSessionUser(ctx),
+                SchemaID: schemaId,
+        })
+
+        if err != nil </span><span class="cov5" title="2">{
+                return err
+        }</span>
+
+        <span class="cov1" title="1">return ctx.JSON(schema)</span>
+}
+</pre>
+
+    <pre class="file" id="file18" style="display: none">package schemas
+
+import (
+        "github.com/gofiber/fiber/v2"
+        "go.uber.org/fx"
+
+        "polimane/backend/api/base"
+        repositoryschemas "polimane/backend/repository/schemas"
+        "polimane/backend/services/awss3"
+)
+
+const schemaIdParam = "schemaId"
+
+type ControllerOptions struct {
+        fx.In
+        Schemas repositoryschemas.Client
+        S3      awss3.Client
+}
+
+type Controller struct {
+        schemas repositoryschemas.Client
+        s3      awss3.Client
+}
+
+func Provider(options ControllerOptions) base.Controller <span class="cov0" title="0">{
+        return &amp;Controller{
+                schemas: options.Schemas,
+                s3:      options.S3,
+        }
+}</span>
+
+func (c *Controller) Public(_ fiber.Router) {<span class="cov0" title="0">}</span>
+
+func (c *Controller) Private(group fiber.Router) <span class="cov0" title="0">{
+        base.WithGroup(group, "schemas", func(group fiber.Router) </span><span class="cov0" title="0">{
+                group.Get("", c.apiList)
+                group.Post("", c.apiCreate)
+
+                base.WithGroup(group, ":"+schemaIdParam, func(group fiber.Router) </span><span class="cov0" title="0">{
+                        group.Get("", c.apiById)
+                        group.Delete("", c.apiDelete)
+                        group.Patch("", c.apiUpdate)
+                        group.Post("copy", c.apiCopy)
+                        group.Patch("screenshot", c.apiUpdateScreenshot)
+                }</span>)
+        })
+}
+</pre>
+
+    <pre class="file" id="file19" style="display: none">package schemas
+
+import (
+        "github.com/gofiber/fiber/v2"
+
+        "polimane/backend/api/auth"
+        "polimane/backend/api/base"
+        repositoryschemas "polimane/backend/repository/schemas"
+)
+
+func (c *Controller) apiCopy(ctx *fiber.Ctx) error <span class="cov10" title="5">{
+        schemaId, err := base.GetParamID(ctx, schemaIdParam)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="4">schema, err := c.schemas.Copy(&amp;repositoryschemas.CopyOptions{
+                Ctx:      ctx.Context(),
+                User:     auth.GetSessionUser(ctx),
+                SchemaID: schemaId,
+        })
+
+        if err != nil </span><span class="cov4" title="2">{
+                return err
+        }</span>
+
+        <span class="cov4" title="2">schema.Content = nil
+        return ctx.JSON(schema)</span>
+}
+</pre>
+
+    <pre class="file" id="file20" style="display: none">package schemas
+
+import (
+        "github.com/gofiber/fiber/v2"
+
+        "polimane/backend/api/auth"
+        "polimane/backend/api/base"
+        repositoryschemas "polimane/backend/repository/schemas"
+)
+
+type createBody struct {
+        Name string `json:"name" validate:"required"`
+}
+
+func (c *Controller) apiCreate(ctx *fiber.Ctx) error <span class="cov10" title="6">{
+        var body createBody
+        err := base.ParseBody(ctx, &amp;body)
+        if err != nil </span><span class="cov6" title="3">{
+                return err
+        }</span>
+
+        <span class="cov6" title="3">schema, err := c.schemas.Create(&amp;repositoryschemas.CreateOptions{
+                Ctx:  ctx.Context(),
+                User: auth.GetSessionUser(ctx),
+                Name: body.Name,
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov4" title="2">schema.Content = nil
+        return ctx.JSON(schema)</span>
+}
+</pre>
+
+    <pre class="file" id="file21" style="display: none">package schemas
+
+import (
+        "github.com/gofiber/fiber/v2"
+
+        "polimane/backend/api/auth"
+        "polimane/backend/api/base"
+        repositoryschemas "polimane/backend/repository/schemas"
+)
+
+func (c *Controller) apiDelete(ctx *fiber.Ctx) error <span class="cov10" title="5">{
+        schemaId, err := base.GetParamID(ctx, schemaIdParam)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="4">err = c.schemas.Delete(&amp;repositoryschemas.DeleteOptions{
+                Ctx:      ctx.Context(),
+                User:     auth.GetSessionUser(ctx),
+                SchemaID: schemaId,
+        })
+
+        if err != nil </span><span class="cov4" title="2">{
+                return err
+        }</span>
+
+        <span class="cov4" title="2">return base.NewSuccessResponse(ctx)</span>
+}
+</pre>
+
+    <pre class="file" id="file22" style="display: none">package schemas
+
+import (
+        "github.com/gofiber/fiber/v2"
+
+        "polimane/backend/api/auth"
+        "polimane/backend/model"
+        repositoryschemas "polimane/backend/repository/schemas"
+)
+
+func (c *Controller) apiList(ctx *fiber.Ctx) error <span class="cov10" title="5">{
+        schemas, err := c.schemas.ByUser(&amp;repositoryschemas.ByUserOptions{
+                Ctx:    ctx.Context(),
+                User:   auth.GetSessionUser(ctx),
+                Select: []string{"id", "name", "screenshoted_at"},
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="4">if schemas == nil </span><span class="cov1" title="1">{
+                schemas = []*model.Schema{}
+        }</span>
+
+        <span class="cov8" title="4">return ctx.JSON(schemas)</span>
+}
+</pre>
+
+    <pre class="file" id="file23" style="display: none">package schemas
+
+import (
+        "github.com/gofiber/fiber/v2"
+
+        "polimane/backend/api/auth"
+        "polimane/backend/api/base"
+        "polimane/backend/model"
+        repositoryschemas "polimane/backend/repository/schemas"
+)
+
+type updateBody struct {
+        Name    string              `json:"name" validate:"omitempty,min=1"`
+        Palette []string            `json:"palette" validate:"omitempty,len=9,dive,omitempty,iscolor"`
+        Content model.SchemaContent `json:"content" validate:"omitempty,dive,required"`
+}
+
+func collectUpdates(body *updateBody) *model.Schema <span class="cov10" title="13">{
+        changed := false
+        updates := &amp;model.Schema{}
+
+        if len(body.Name) &gt; 0 </span><span class="cov5" title="4">{
+                changed = true
+                updates.Name = body.Name
+        }</span>
+
+        <span class="cov10" title="13">if body.Content != nil </span><span class="cov4" title="3">{
+                changed = true
+                updates.Content = body.Content
+        }</span>
+
+        <span class="cov10" title="13">if body.Palette != nil </span><span class="cov4" title="3">{
+                changed = true
+                updates.Palette = body.Palette
+        }</span>
+
+        <span class="cov10" title="13">if changed </span><span class="cov8" title="8">{
+                return updates
+        }</span>
+
+        <span class="cov6" title="5">return nil</span>
+}
+
+func (c *Controller) apiUpdate(ctx *fiber.Ctx) error <span class="cov7" title="7">{
+        schemaId, err := base.GetParamID(ctx, schemaIdParam)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov7" title="6">var body updateBody
+        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov6" title="5">updates := collectUpdates(&amp;body)
+        if updates == nil </span><span class="cov1" title="1">{
+                return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
+        }</span>
+
+        <span class="cov5" title="4">err = c.schemas.Update(&amp;repositoryschemas.UpdateOptions{
+                Ctx:      ctx.Context(),
+                User:     auth.GetSessionUser(ctx),
+                SchemaID: schemaId,
+                Updates:  updates,
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov4" title="3">return base.NewSuccessResponse(ctx)</span>
+}
+</pre>
+
+    <pre class="file" id="file24" style="display: none">package schemas
+
+import (
+        "bytes"
+        "context"
+        "encoding/base64"
+        "fmt"
+        "strings"
+        "time"
+
+        "github.com/aws/aws-sdk-go-v2/aws"
+        "github.com/aws/aws-sdk-go-v2/service/s3"
+        "github.com/aws/aws-sdk-go-v2/service/s3/types"
+        "github.com/gofiber/fiber/v2"
+
+        "polimane/backend/api/auth"
+        "polimane/backend/api/base"
+        "polimane/backend/model"
+        repositoryschemas "polimane/backend/repository/schemas"
+        "polimane/backend/services/awsconfig"
+)
+
+type apiUpdateScreenshotBody struct {
+        Src string `json:"src" validate:"required,url,startswith=data:image/webp;base64"`
+}
+
+func (c *Controller) apiUpdateScreenshot(ctx *fiber.Ctx) error <span class="cov8" title="6">{
+        schemaId, err := base.GetParamID(ctx, schemaIdParam)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov7" title="5">var body apiUpdateScreenshotBody
+        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov4" title="2">{
+                return err
+        }</span>
+
+        <span
+            class="cov5"
+            title="3"
+        >if err = c.uploadScreenshot(ctx.Context(), schemaId, body.Src); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov4" title="2">screenshotedAt := time.Now()
+
+        err = c.schemas.Update(&amp;repositoryschemas.UpdateOptions{
+                Ctx:      ctx.Context(),
+                User:     auth.GetSessionUser(ctx),
+                SchemaID: schemaId,
+                Updates:  &amp;model.Schema{ScreenshotedAt: &amp;screenshotedAt},
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov1" title="1">return base.NewSuccessResponse(ctx)</span>
+}
+
+func (c *Controller) uploadScreenshot(ctx context.Context, schemaId model.ID, src string) error <span
+            class="cov10"
+            title="8"
+        >{
+        key := fmt.Sprintf("data/images/%s/schema.webp", schemaId.String())
+
+        dataBase64 := src[strings.IndexByte(src, ',')+1:]
+        data, err := base64.StdEncoding.DecodeString(dataBase64)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov9" title="7">_, err = c.s3.PutObject(ctx, &amp;s3.PutObjectInput{
+                Key:         &amp;key,
+                Bucket:      &amp;awsconfig.S3Bucket,
+                ACL:         types.ObjectCannedACLPrivate,
+                Body:        bytes.NewReader(data),
+                ContentType: aws.String("image/webp"),
+        })
+
+        return err</span>
+}
+</pre>
+
+    <pre class="file" id="file25" style="display: none">package api
+
+import (
+        "github.com/gofiber/fiber/v2"
+        "github.com/gofiber/fiber/v2/middleware/cors"
+        "github.com/gofiber/fiber/v2/middleware/encryptcookie"
+        "github.com/gofiber/fiber/v2/middleware/helmet"
+        "go.uber.org/fx"
+
+        "polimane/backend/api/auth"
+        "polimane/backend/api/base"
+        "polimane/backend/env"
+        "polimane/backend/services/sentry"
+)
+
+type Options struct {
+        Protocol  string
+        Configure func(config *fiber.Config)
+}
+
+type ServerOptions struct {
+        fx.In
+        Controllers    []base.Controller `group:"controllers"`
+        Options        *Options
+        Sentry         *sentry.Container
+        Env            *env.Environment
+        AuthMiddleware *auth.Middleware
+}
+
+func Provider(options ServerOptions) (*fiber.App, error) <span class="cov10" title="6">{
+        config := fiber.Config{
+                AppName:      "Polimane",
+                ErrorHandler: base.ErrorHandler,
+        }
+
+        options.Options.Configure(&amp;config)
+        app := fiber.New(config)
+
+        if options.Sentry.Handler != nil </span><span class="cov1" title="1">{
+                app.Use(options.Sentry.Handler)
+        }</span>
+
+        <span class="cov10" title="6">app.Use(helmet.New())
+
+        app.Use(cors.New(cors.Config{
+                AllowOrigins:     options.Env.AppURL().String(),
+                AllowHeaders:     "Origin, Content-Type, Accept, Authorization, X-Refresh-Token, X-Requested-With, X-CSRF-Token, Cookie",
+                AllowMethods:     "*",
+                ExposeHeaders:    "*",
+                AllowCredentials: true,
+        }))
+
+        app.Use(encryptcookie.New(encryptcookie.Config{
+                Key: options.Env.SecretKey,
+        }))
+
+        base.InitValidator()
+
+        base.WithGroup(app, "/api", func(group fiber.Router) </span><span class="cov10" title="6">{
+                for _, controller := range options.Controllers </span><span class="cov6" title="3">{
+                        controller.Public(group)
+                }</span>
+
+                <span class="cov10" title="6">group.Use(options.AuthMiddleware.Handler)
+
+                for _, controller := range options.Controllers </span><span class="cov6" title="3">{
+                        controller.Private(group)
+                }</span>
+        })
+
+        <span class="cov10" title="6">app.Use(apiNotFound)
+        return app, nil</span>
+}
+</pre>
+
+    <pre class="file" id="file26" style="display: none">//go:build !dev
+
+package api
+
+import (
+        "context"
+        "net/http"
+        "net/http/httptest"
+        "strings"
+
+        "github.com/aws/aws-lambda-go/events"
+        "github.com/aws/aws-lambda-go/lambda"
+        "github.com/gofiber/fiber/v2"
+        "github.com/gofiber/fiber/v2/middleware/adaptor"
+)
+
+func OptionsProvider() *Options <span class="cov7" title="5">{
+        return &amp;Options{
+                Protocol: "https",
+                Configure: func(config *fiber.Config) </span><span class="cov1" title="1">{
+                        config.DisableStartupMessage = true
+                }</span>,
+        }
+}
+
+func runHandler(ctx context.Context, handler http.Handler, req events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) <span
+            class="cov10"
+            title="8"
+        >{
+        url := req.RawPath
+        if req.RawQueryString != "" </span><span class="cov4" title="2">{
+                url += "?" + req.RawQueryString
+        }</span>
+
+        <span class="cov10" title="8">httpReq, _ := http.NewRequestWithContext(ctx, req.RequestContext.HTTP.Method, url, strings.NewReader(req.Body))
+
+        for key, value := range req.Headers </span><span class="cov9" title="7">{
+                httpReq.Header.Set(key, value)
+        }</span>
+
+        <span class="cov10" title="8">httpReq.RequestURI = url
+
+        recorder := httptest.NewRecorder()
+        handler.ServeHTTP(recorder, httpReq)
+
+        headers := make(map[string]string)
+        for key, values := range recorder.Header() </span><span class="cov9" title="7">{
+                if len(values) &gt; 0 </span><span class="cov9" title="7">{
+                        headers[key] = strings.Join(values, ", ")
+                }</span>
+        }
+
+        <span class="cov10" title="8">return events.LambdaFunctionURLResponse{
+                StatusCode: recorder.Code,
+                Headers:    headers,
+                Body:       recorder.Body.String(),
+        }, nil</span>
+}
+
+func Start(app *fiber.App) error <span class="cov0" title="0">{
+        handler := adaptor.FiberApp(app)
+
+        lambda.Start(func(ctx context.Context, req events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) </span><span
+            class="cov0"
+            title="0"
+        >{
+                return runHandler(ctx, handler, req)
+        }</span>)
+
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+
+    <pre class="file" id="file27" style="display: none">package users
+
+import (
+        "github.com/gofiber/fiber/v2"
+        "github.com/workos/workos-go/v4/pkg/mfa"
+
+        "polimane/backend/api/base"
+)
+
+func (c *Controller) apiAuthFactorDelete(ctx *fiber.Ctx) error <span class="cov10" title="5">{
+        factorID, err := base.GetRequiredParam(ctx, factorIdParam)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="4">err = c.workosClient.MFA().DeleteFactor(ctx.Context(), mfa.DeleteFactorOpts{
+                FactorID: factorID,
+        })
+
+        if err != nil </span><span class="cov4" title="2">{
+                return err
+        }</span>
+
+        <span class="cov4" title="2">return base.NewSuccessResponse(ctx)</span>
+}
+</pre>
+
+    <pre class="file" id="file28" style="display: none">package users
+
+import (
+        "github.com/gofiber/fiber/v2"
+        "github.com/workos/workos-go/v4/pkg/mfa"
+
+        "polimane/backend/api/base"
+)
+
+type createAuthFactorBody struct {
+        ChallengeID string `json:"challengeId" validate:"required"`
+        Code        string `json:"code" validate:"required"`
+}
+
+var (
+        ErrInvalidAuthFactor = base.NewReasonedError(fiber.StatusBadRequest, "InvalidAuthFactor")
+)
+
+func (c *Controller) apiAuthFactorCreate(ctx *fiber.Ctx) (err error) <span class="cov10" title="6">{
+        var body createAuthFactorBody
+        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov4" title="2">{
+                return err
+        }</span>
+
+        <span class="cov7" title="4">response, err := c.workosClient.MFA().VerifyChallenge(ctx.Context(), mfa.VerifyChallengeOpts{
+                Code:        body.Code,
+                ChallengeID: body.ChallengeID,
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov6" title="3">if !response.Valid </span><span class="cov1" title="1">{
+                return ErrInvalidAuthFactor
+        }</span>
+
+        <span class="cov4" title="2">factor, err := c.workosClient.MFA().GetFactor(ctx.Context(), mfa.GetFactorOpts{
+                FactorID: response.Challenge.FactorID,
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov1" title="1">return ctx.JSON(factor)</span>
+}
+</pre>
+
+    <pre class="file" id="file29" style="display: none">package users
+
+import (
+        "github.com/gofiber/fiber/v2"
+        "github.com/workos/workos-go/v4/pkg/mfa"
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
+
+        "polimane/backend/api/auth"
+)
+
+type newAuthFactorResponse struct {
+        ChallengeID string `json:"challengeId"`
+        QRCode      string `json:"qrCode"`
+        Secret      string `json:"secret"`
+        URI         string `json:"uri"`
+}
+
+func (c *Controller) apiAuthFactorsInit(ctx *fiber.Ctx) error <span class="cov10" title="4">{
+        session := auth.GetSession(ctx)
+
+        response, err := c.workosClient.UserManagement().EnrollAuthFactor(ctx.Context(), usermanagement.EnrollAuthFactorOpts{
+                User:       session.WorkosUser.ID,
+                Type:       mfa.TOTP,
+                TOTPIssuer: "Polimane",
+                TOTPUser:   session.WorkosUser.Email,
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="3">return ctx.JSON(newAuthFactorResponse{
+                ChallengeID: response.Challenge.ID,
+                QRCode:      response.Factor.TOTP.QRCode,
+                Secret:      response.Factor.TOTP.Secret,
+                URI:         response.Factor.TOTP.URI,
+        })</span>
+}
+</pre>
+
+    <pre class="file" id="file30" style="display: none">package users
+
+import (
+        "github.com/gofiber/fiber/v2"
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
+
+        "polimane/backend/api/auth"
+)
+
+type authFactorListItem struct {
+        Id        string `json:"id"`
+        CreatedAt string `json:"createdAt"`
+}
+
+func (c *Controller) apiListAuthFactors(ctx *fiber.Ctx) error <span class="cov10" title="4">{
+        user := auth.GetSessionUser(ctx)
+
+        factors, err := c.workosClient.UserManagement().ListAuthFactors(ctx.Context(), usermanagement.ListAuthFactorsOpts{
+                User: user.WorkosID,
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="3">response := make([]authFactorListItem, len(factors.Data))
+        for i, factor := range factors.Data </span><span class="cov5" title="2">{
+                response[i] = authFactorListItem{
+                        Id:        factor.ID,
+                        CreatedAt: factor.CreatedAt,
+                }
+        }</span>
+
+        <span class="cov8" title="3">return ctx.JSON(response)</span>
+}
+</pre>
+
+    <pre class="file" id="file31" style="display: none">package users
+
+import (
+        "github.com/gofiber/fiber/v2"
+        "go.uber.org/fx"
+
+        "polimane/backend/api/base"
+        "polimane/backend/services/workos"
+        "polimane/backend/signal"
+)
+
+const factorIdParam = "factorId"
+
+type ControllerOptions struct {
+        fx.In
+        WorkosClient workos.Client
+        Signals      *signal.Container
+}
+
+type Controller struct {
+        workosClient workos.Client
+        signals      *signal.Container
+}
+
+func Provider(options ControllerOptions) base.Controller <span class="cov0" title="0">{
+        return &amp;Controller{
+                workosClient: options.WorkosClient,
+                signals:      options.Signals,
+        }
+}</span>
+
+func (c *Controller) Public(_ fiber.Router) {<span class="cov0" title="0">}</span>
+
+func (c *Controller) Private(group fiber.Router) <span class="cov0" title="0">{
+        base.WithGroup(group, "users/current", func(group fiber.Router) </span><span class="cov0" title="0">{
+                group.Get("", c.apiGet)
+                group.Patch("", c.apiUpdate)
+
+                base.WithGroup(group, "email/verify", func(group fiber.Router) </span><span class="cov0" title="0">{
+                        group.Post("", c.apiEmailVerify)
+                        group.Post("retry", c.apiEmailVerifyRetry)
+                }</span>)
+
+                <span class="cov0" title="0">group.Post("password/reset", c.apiPasswordReset)
+
+                base.WithGroup(group, "auth-factors", func(group fiber.Router) </span><span class="cov0" title="0">{
+                        group.Get("", c.apiListAuthFactors)
+                        group.Post("", c.apiAuthFactorCreate)
+                        group.Post("init", c.apiAuthFactorsInit)
+                        group.Delete(":"+factorIdParam, c.apiAuthFactorDelete)
+                }</span>)
+        })
+}
+</pre>
+
+    <pre class="file" id="file32" style="display: none">package users
+
+import (
+        "errors"
+
+        "github.com/gofiber/fiber/v2"
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
+        "github.com/workos/workos-go/v4/pkg/workos_errors"
+
+        "polimane/backend/api/auth"
+        "polimane/backend/api/base"
+        "polimane/backend/services/workos"
+)
+
+var (
+        ErrEmailVerificationCodeExpired = base.NewReasonedError(fiber.StatusBadRequest, "CodeExpired")
+)
+
+type bodyEmailVerify struct {
+        Code string `json:"code" validate:"required,numeric,len=6"`
+}
+
+func (c *Controller) apiEmailVerify(ctx *fiber.Ctx) (err error) <span class="cov10" title="7">{
+        var body bodyEmailVerify
+        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov6" title="3">{
+                return err
+        }</span>
+
+        <span class="cov7" title="4">user := auth.GetSessionUser(ctx)
+
+        _, err = c.workosClient.UserManagement().VerifyEmail(ctx.Context(), usermanagement.VerifyEmailOpts{
+                User: user.WorkosID,
+                Code: body.Code,
+        })
+
+        var httpError workos_errors.HTTPError
+        if errors.As(err, &amp;httpError) &amp;&amp; workos.GetErrorCode(httpError) == workos.CodeEmailVerificationCodeExpired </span><span
+            class="cov1"
+            title="1"
+        >{
+                return ErrEmailVerificationCodeExpired
+        }</span>
+
+        <span class="cov6" title="3">if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov4" title="2">c.signals.InvalidateWorkosUserCache.Emit(ctx.Context(), user.WorkosID)
+        return base.NewSuccessResponse(ctx)</span>
+}
+</pre>
+
+    <pre class="file" id="file33" style="display: none">package users
+
+import (
+        "context"
+
+        "github.com/gofiber/fiber/v2"
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
+
+        "polimane/backend/api/auth"
+        "polimane/backend/api/base"
+)
+
+func (c *Controller) apiEmailVerifyRetry(ctx *fiber.Ctx) (err error) <span class="cov5" title="3">{
+        user := auth.GetSessionUser(ctx)
+
+        if err = c.sendEmailVerification(ctx.Context(), user.WorkosID); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov3" title="2">return base.NewSuccessResponse(ctx)</span>
+}
+
+func (c *Controller) sendEmailVerification(ctx context.Context, userID string) error <span class="cov10" title="9">{
+        _, err := c.workosClient.UserManagement().SendVerificationEmail(ctx, usermanagement.SendVerificationEmailOpts{
+                User: userID,
+        })
+
+        return err
+}</span>
+</pre>
+
+    <pre class="file" id="file34" style="display: none">package users
+
+import (
+        "github.com/gofiber/fiber/v2"
+
+        "polimane/backend/api/auth"
+        "polimane/backend/model"
+)
+
+type currentUser struct {
+        ID                model.ID `json:"id"`
+        FirstName         string   `json:"firstName"`
+        LastName          string   `json:"lastName"`
+        Email             string   `json:"email"`
+        EmailVerified     bool     `json:"isEmailVerified"`
+        ProfilePictureURL string   `json:"profilePictureUrl"`
+}
+
+func (c *Controller) apiGet(ctx *fiber.Ctx) error <span class="cov8" title="1">{
+        session := auth.GetSession(ctx)
+
+        return ctx.JSON(currentUser{
+                ID:                session.User.ID,
+                FirstName:         session.WorkosUser.FirstName,
+                LastName:          session.WorkosUser.LastName,
+                Email:             session.WorkosUser.Email,
+                EmailVerified:     session.WorkosUser.EmailVerified,
+                ProfilePictureURL: session.WorkosUser.ProfilePictureURL,
+        })
+}</span>
+</pre>
+
+    <pre class="file" id="file35" style="display: none">package users
+
+import (
+        "github.com/gofiber/fiber/v2"
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
+
+        "polimane/backend/api/auth"
+        "polimane/backend/api/base"
+)
+
+func (c *Controller) apiPasswordReset(ctx *fiber.Ctx) error <span class="cov10" title="3">{
+        session := auth.GetSession(ctx)
+
+        _, err := c.workosClient.UserManagement().CreatePasswordReset(ctx.Context(), usermanagement.CreatePasswordResetOpts{
+                Email: session.WorkosUser.Email,
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov6" title="2">c.signals.InvalidateAuthCache.Emit(ctx.Context(), session.ID)
+        return base.NewSuccessResponse(ctx)</span>
+}
+</pre>
+
+    <pre class="file" id="file36" style="display: none">package users
+
+import (
+        "context"
+
+        "github.com/gofiber/fiber/v2"
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
+
+        "polimane/backend/api/auth"
+        "polimane/backend/api/base"
+)
+
+type updateBody struct {
+        FirstName string `json:"firstName" validate:"omitempty,min=1"`
+        LastName  string `json:"lastName" validate:"omitempty,min=1"`
+        Email     string `json:"email" validate:"omitempty,email"`
+}
+
+func (c *Controller) apiUpdate(ctx *fiber.Ctx) (err error) <span class="cov10" title="7">{
+        var body updateBody
+        if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span
+            class="cov9"
+            title="6"
+        >if body.FirstName == "" &amp;&amp; body.LastName == "" &amp;&amp; body.Email == "" </span><span
+            class="cov1"
+            title="1"
+        >{
+                return fiber.ErrUnprocessableEntity
+        }</span>
+
+        <span class="cov8" title="5">user := auth.GetSessionUser(ctx)
+
+        if err = c.updateUser(ctx.Context(), user.WorkosID, &amp;body); err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov7" title="4">if body.Email != "" </span><span class="cov6" title="3">{
+                if err = c.sendEmailVerification(ctx.Context(), user.WorkosID); err != nil </span><span
+            class="cov1"
+            title="1"
+        >{
+                        return err
+                }</span>
+        }
+
+        <span class="cov6" title="3">c.signals.InvalidateWorkosUserCache.Emit(ctx.Context(), user.WorkosID)
+        return base.NewSuccessResponse(ctx)</span>
+}
+
+func (c *Controller) updateUser(ctx context.Context, userID string, body *updateBody) error <span
+            class="cov9"
+            title="6"
+        >{
+        _, err := c.workosClient.UserManagement().UpdateUser(ctx, usermanagement.UpdateUserOpts{
+                User:      userID,
+                FirstName: body.FirstName,
+                LastName:  body.LastName,
+                Email:     body.Email,
+        })
+
+        return err
+}</span>
+</pre>
+
+    <pre class="file" id="file37" style="display: none">package base
+
+import "fmt"
+
+func TagError(tag string, err error) error <span class="cov10" title="9">{
+        if err == nil </span><span class="cov1" title="1">{
+                return nil
+        }</span>
+
+        <span class="cov9" title="8">return fmt.Errorf("%s: %w", tag, err)</span>
+}
+</pre>
+
+    <pre class="file" id="file38" style="display: none">package env
+
+import (
+        "net/url"
+
+        "go.uber.org/fx"
+
+        "polimane/backend/base"
+        "polimane/backend/services/bitwarden"
+)
+
+type Environment struct {
+        SecretKey   string `env:"BACKEND_SECRET_KEY,required=true"`
+        AppDomain   string `env:"BACKEND_APP_DOMAIN,required=true"`
+        AppProtocol string `env:"BACKEND_APP_PROTOCOL,required=true"`
+
+        Database struct {
+                URL string `env:"BACKEND_DATABASE_URL,required=true"`
+        }
+
+        Sentry struct {
+                Dsn     string `env:"BACKEND_SENTRY_DSN"`
+                Release string `env:"BACKEND_SENTRY_RELEASE"`
+        }
+
+        WorkOS struct {
+                ClientID string `env:"BACKEND_WORKOS_CLIENT_ID,required=true"`
+                ApiKey   string `env:"BACKEND_WORKOS_API_KEY,required=true"`
+        }
+
+        AWS struct {
+                // Used only in dev env since in prod we connect using IAM roles
+                Region          string `env:"BACKEND_AWS_DEFAULT_REGION"`
+                AccessKeyID     string `env:"BACKEND_AWS_ACCESS_KEY_ID"`
+                SecretAccessKey string `env:"BACKEND_AWS_SECRET_ACCESS_KEY"`
+        }
+}
+
+func (e *Environment) AppURL() *url.URL <span class="cov10" title="3">{
+        return &amp;url.URL{
+                Scheme: e.AppProtocol,
+                Host:   e.AppDomain,
+        }
+}</span>
+
+func (e *Environment) ApiURL() *url.URL <span class="cov10" title="3">{
+        return &amp;url.URL{
+                Scheme: e.AppProtocol,
+                Host:   "api." + e.AppDomain,
+        }
+}</span>
+
+type Options struct {
+        fx.In
+        BitwardenClient bitwarden.Client
+}
+
+func Provider(options Options) (*Environment, error) <span class="cov10" title="3">{
+        instance := &amp;Environment{}
+        if err := loadEnvs(instance, options.BitwardenClient); err != nil </span><span class="cov6" title="2">{
+                return nil, base.TagError("env.load", err)
+        }</span>
+
+        <span class="cov1" title="1">return instance, nil</span>
+}
+</pre>
+
+    <pre class="file" id="file39" style="display: none">//go:build !dev
+
+package env
+
+import (
+        "github.com/Netflix/go-env"
+
+        "polimane/backend/base"
+        "polimane/backend/services/bitwarden"
+)
+
+const IsDev = false
+
+func loadEnvs(instance *Environment, bitwardenClient bitwarden.Client) error <span class="cov10" title="6">{
+        err := bitwardenClient.LoadToEnviron([]string{
+                "BACKEND_SECRET_KEY",
+                "BACKEND_SENTRY_DSN",
+                "BACKEND_DATABASE_URL",
+                "BACKEND_WORKOS_CLIENT_ID",
+                "BACKEND_WORKOS_API_KEY",
+        })
+
+        if err != nil </span><span class="cov4" title="2">{
+                return base.TagError("env.load.bitwarden.envs", err)
+        }</span>
+
+        <span class="cov7" title="4">err = bitwardenClient.DownloadCerts([]*bitwarden.DownloadingCert{
+                {
+                        SID:  "BACKEND_DATABASE_CERT_SID",
+                        Dest: "/tmp/postgres/ca-cert.pem",
+                },
+        })
+
+        if err != nil </span><span class="cov4" title="2">{
+                return base.TagError("env.load.bitwarden.certs", err)
+        }</span>
+
+        <span class="cov4" title="2">_, err = env.UnmarshalFromEnviron(instance)
+        return err</span>
+}
+</pre>
+
+    <pre class="file" id="file40" style="display: none">package main
+
+import (
+        "context"
+
+        "go.uber.org/fx"
+
+        "polimane/backend/api"
+        "polimane/backend/api/auth"
+        "polimane/backend/api/base"
+        "polimane/backend/api/ping"
+        "polimane/backend/api/schemas"
+        "polimane/backend/api/users"
+        "polimane/backend/env"
+        repositoryschemas "polimane/backend/repository/schemas"
+        repositoryusers "polimane/backend/repository/users"
+        repositoryuserschemas "polimane/backend/repository/userschemas"
+        "polimane/backend/services/awsconfig"
+        "polimane/backend/services/awss3"
+        "polimane/backend/services/bitwarden"
+        "polimane/backend/services/db"
+        "polimane/backend/services/jwk"
+        "polimane/backend/services/osenv"
+        "polimane/backend/services/osfs"
+        "polimane/backend/services/sentry"
+        "polimane/backend/services/workos"
+        "polimane/backend/signal"
+)
+
+func Controller(f any) any <span class="cov0" title="0">{
+        return fx.Annotate(
+                f,
+                fx.As(new(base.Controller)),
+                fx.ResultTags(`group:"controllers"`),
+        )
+}</span>
+
+func InitContext() context.Context <span class="cov0" title="0">{
+        return context.Background()
+}</span>
+
+func main() <span class="cov0" title="0">{
+        fx.New(
+                fx.Provide(
+                        // external
+                        InitContext,
+                        jwk.Provider,
+                        osfs.Provider,
+                        osenv.Provider,
+
+                        // services
+                        bitwarden.Provider,
+                        env.Provider,
+                        db.Provider,
+                        workos.Provider,
+                        sentry.Provider,
+                        signal.Provider,
+                        awsconfig.Provider,
+                        awss3.Provider,
+
+                        // repositories
+                        repositoryuserschemas.Provider,
+                        repositoryusers.Provider,
+                        repositoryschemas.Provider,
+
+                        // api
+                        auth.MiddlewareProvider,
+                        Controller(ping.Provider),
+                        Controller(auth.Provider),
+                        Controller(users.Provider),
+                        Controller(schemas.Provider),
+                        api.OptionsProvider,
+                        api.Provider,
+                ),
+                fx.Invoke(api.Start),
+        ).Run()
+}</span>
+</pre>
+
+    <pre class="file" id="file41" style="display: none">package main
+
+import (
+        "fmt"
+        "io"
+        "os"
+
+        _ "ariga.io/atlas-go-sdk/recordriver"
+        "ariga.io/atlas-provider-gorm/gormschema"
+
+        "polimane/backend/model"
+)
+
+func main() <span class="cov0" title="0">{
+        stmts, err := gormschema.New("postgres").Load(
+                &amp;model.User{},
+                &amp;model.Schema{},
+                &amp;model.UserSchema{},
+        )
+
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Fprintf(os.Stderr, "failed to load gorm schema: %v\n", err)
+                os.Exit(1)
+        }</span>
+
+        <span class="cov0" title="0">io.WriteString(os.Stdout, stmts)</span>
+}
+</pre>
+
+    <pre class="file" id="file42" style="display: none">package model
+
+import (
+        "github.com/jackc/pgx/v5/pgtype"
+)
+
+type ID = pgtype.UUID
+
+func StringToID(str string) (ID, error) <span class="cov10" title="11">{
+        id := pgtype.UUID{}
+        err := id.Scan(str)
+        return id, err
+}</span>
+
+func MustStringToID(str string) ID <span class="cov7" title="5">{
+        id, err := StringToID(str)
+        if err != nil </span><span class="cov5" title="3">{
+                panic(err)</span>
+        }
+        <span class="cov3" title="2">return id</span>
+}
+
+type Identifiable struct {
+        ID ID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
+}
+</pre>
+
+    <pre class="file" id="file43" style="display: none">package schemas
+
+import (
+        "context"
+
+        "polimane/backend/model"
+)
+
+type ByIDOptions struct {
+        Ctx      context.Context
+        User     *model.User
+        SchemaID model.ID
+        Select   []string
+}
+
+func (c *Impl) ByID(options *ByIDOptions) (*model.Schema, error) <span class="cov10" title="9">{
+        var err error
+
+        err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+        if err != nil </span><span class="cov3" title="2">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="7">query := c.db.WithContext(options.Ctx)
+
+        if len(options.Select) &gt; 0 </span><span class="cov3" title="2">{
+                query = query.Select(options.Select)
+        }</span>
+
+        <span class="cov8" title="7">var schema model.Schema
+        err = query.Take(&amp;schema, options.SchemaID).Error
+        return &amp;schema, err</span>
+}
+</pre>
+
+    <pre class="file" id="file44" style="display: none">package schemas
+
+import (
+        "context"
+
+        "polimane/backend/model"
+)
+
+type ByUserOptions struct {
+        Ctx    context.Context
+        User   *model.User
+        Select []string
+}
+
+func (c *Impl) ByUser(options *ByUserOptions) ([]*model.Schema, error) <span class="cov10" title="3">{
+        query := c.db.
+                WithContext(options.Ctx).
+                Joins("JOIN user_schemas ON user_schemas.schema_id = schemas.id AND user_schemas.user_id = ?", options.User.ID)
+
+        if len(options.Select) &gt; 0 </span><span class="cov1" title="1">{
+                query = query.Select(options.Select)
+        }</span>
+
+        <span class="cov10" title="3">var schemas []*model.Schema
+        err := query.Find(&amp;schemas).Error
+        return schemas, err</span>
+}
+</pre>
+
+    <pre class="file" id="file45" style="display: none">package schemas
+
+import (
+        "go.uber.org/fx"
+        "gorm.io/gorm"
+
+        "polimane/backend/model"
+        repositoryuserschemas "polimane/backend/repository/userschemas"
+        "polimane/backend/signal"
+)
+
+type Client interface {
+        ByID(options *ByIDOptions) (*model.Schema, error)
+        ByUser(options *ByUserOptions) ([]*model.Schema, error)
+        Copy(options *CopyOptions) (*model.Schema, error)
+        Create(options *CreateOptions) (schema *model.Schema, err error)
+        Delete(options *DeleteOptions) (err error)
+        Update(options *UpdateOptions) (err error)
+}
+
+type ClientOptions struct {
+        fx.In
+        DB          *gorm.DB
+        UserSchemas repositoryuserschemas.Client
+        Signals     *signal.Container
+}
+
+type Impl struct {
+        db          *gorm.DB
+        userSchemas repositoryuserschemas.Client
+        signals     *signal.Container
+}
+
+var _ Client = (*Impl)(nil)
+
+func Provider(options ClientOptions) Client <span class="cov8" title="1">{
+        return &amp;Impl{
+                db:          options.DB,
+                userSchemas: options.UserSchemas,
+                signals:     options.Signals,
+        }
+}</span>
+</pre>
+
+    <pre class="file" id="file46" style="display: none">package schemas
+
+import (
+        "context"
+        "regexp"
+        "strconv"
+        "strings"
+
+        "polimane/backend/model"
+)
+
+type CopyOptions struct {
+        Ctx      context.Context
+        User     *model.User
+        SchemaID model.ID
+}
+
+var nameCopyCounter = regexp.MustCompile(`\((\d+)\)$`)
+
+func makeCopyName(originalName string) string <span class="cov10" title="5">{
+        counterMatch := nameCopyCounter.FindStringSubmatch(originalName)
+        if len(counterMatch) == 0 </span><span class="cov7" title="3">{
+                return originalName + " (1)"
+        }</span>
+        <span class="cov4" title="2">counter, _ := strconv.Atoi(counterMatch[1])
+        counterStr := strconv.Itoa(counter + 1)
+        return strings.ReplaceAll(originalName, counterMatch[0], " ("+counterStr+")")</span>
+}
+
+func (c *Impl) Copy(options *CopyOptions) (*model.Schema, error) <span class="cov4" title="2">{
+        original, err := c.ByID(&amp;ByIDOptions{
+                Ctx:      options.Ctx,
+                SchemaID: options.SchemaID,
+                User:     options.User,
+        })
+
+        if err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov1" title="1">return c.Create(&amp;CreateOptions{
+                Ctx:     options.Ctx,
+                User:    options.User,
+                Name:    makeCopyName(original.Name),
+                Palette: original.Palette,
+                Content: original.Content,
+        })</span>
+}
+</pre>
+
+    <pre class="file" id="file47" style="display: none">package schemas
+
+import (
+        "context"
+
+        "gorm.io/gorm"
+
+        "polimane/backend/model"
+)
+
+type CreateOptions struct {
+        Ctx     context.Context
+        User    *model.User
+        Name    string
+        Palette model.SchemaPalette
+        Content model.SchemaContent
+}
+
+func (c *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) <span class="cov10" title="4">{
+        if options.Palette == nil </span><span class="cov5" title="2">{
+                options.Palette = make(model.SchemaPalette, model.SchemaPaletteSize)
+        }</span>
+
+        <span class="cov10" title="4">if options.Content == nil </span><span class="cov5" title="2">{
+                options.Content = make(model.SchemaContent, 0)
+        }</span>
+
+        <span
+            class="cov10"
+            title="4"
+        >err = c.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error </span><span class="cov10" title="4">{
+                schema = &amp;model.Schema{
+                        Name:    options.Name,
+                        Palette: options.Palette,
+                        Content: options.Content,
+                }
+
+                if err = tx.Create(schema).Error; err != nil </span><span class="cov1" title="1">{
+                        return err
+                }</span>
+
+                <span class="cov8" title="3">return c.userSchemas.CreateTx(tx, options.User.ID, schema.ID)</span>
+        })
+
+        <span class="cov10" title="4">if err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="3">c.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
+        return schema, nil</span>
+}
+</pre>
+
+    <pre class="file" id="file48" style="display: none">package schemas
+
+import (
+        "context"
+
+        "gorm.io/gorm"
+
+        "polimane/backend/model"
+)
+
+type DeleteOptions struct {
+        Ctx      context.Context
+        User     *model.User
+        SchemaID model.ID
+}
+
+func (c *Impl) Delete(options *DeleteOptions) (err error) <span class="cov10" title="6">{
+        err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span
+            class="cov9"
+            title="5"
+        >err = c.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error </span><span class="cov9" title="5">{
+                if err = tx.Delete(&amp;model.Schema{}, options.SchemaID).Error; err != nil </span><span
+            class="cov1"
+            title="1"
+        >{
+                        return err
+                }</span>
+
+                <span class="cov7" title="4">return c.userSchemas.DeleteTx(tx, options.User.ID, options.SchemaID)</span>
+        })
+
+        <span class="cov9" title="5">if err != nil </span><span class="cov6" title="3">{
+                return err
+        }</span>
+
+        <span class="cov4" title="2">c.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
+        return nil</span>
+}
+</pre>
+
+    <pre class="file" id="file49" style="display: none">package schemas
+
+import (
+        "context"
+
+        "polimane/backend/model"
+)
+
+type UpdateOptions struct {
+        Ctx      context.Context
+        User     *model.User
+        SchemaID model.ID
+        Updates  *model.Schema
+}
+
+func (c *Impl) Update(options *UpdateOptions) (err error) <span class="cov10" title="4">{
+        err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="3">return c.db.
+                WithContext(options.Ctx).
+                Model(&amp;model.Schema{
+                        Identifiable: &amp;model.Identifiable{
+                                ID: options.SchemaID,
+                        },
+                }).
+                Updates(options.Updates).
+                Error</span>
+}
+</pre>
+
+    <pre class="file" id="file50" style="display: none">package users
+
+import (
+        "context"
+
+        "polimane/backend/model"
+)
+
+func (c *Impl) ByID(ctx context.Context, id model.ID) (*model.User, error) <span class="cov10" title="3">{
+        var user model.User
+        err := c.db.WithContext(ctx).Take(&amp;user, id).Error
+        if err != nil </span><span class="cov6" title="2">{
+                return nil, err
+        }</span>
+
+        <span class="cov1" title="1">return &amp;user, nil</span>
+}
+</pre>
+
+    <pre class="file" id="file51" style="display: none">package users
+
+import (
+        "context"
+
+        "go.uber.org/fx"
+        "gorm.io/gorm"
+
+        "polimane/backend/model"
+)
+
+type Client interface {
+        ByID(ctx context.Context, id model.ID) (*model.User, error)
+        CreateIfNeeded(ctx context.Context, workosID string) (*model.User, error)
+}
+
+type ClientOptions struct {
+        fx.In
+        DB *gorm.DB
+}
+
+type Impl struct {
+        db *gorm.DB
+}
+
+var _ Client = (*Impl)(nil)
+
+func Provider(options ClientOptions) Client <span class="cov8" title="1">{
+        return &amp;Impl{db: options.DB}
+}</span>
+</pre>
+
+    <pre class="file" id="file52" style="display: none">package users
+
+import (
+        "context"
+
+        "polimane/backend/model"
+)
+
+func (c *Impl) CreateIfNeeded(ctx context.Context, workosID string) (*model.User, error) <span class="cov10" title="4">{
+        user := &amp;model.User{WorkosID: workosID}
+
+        err := c.db.
+                WithContext(ctx).
+                Where(*user).
+                Attrs(*user).
+                FirstOrCreate(user).
+                Error
+
+        return user, err
+}</span>
+</pre>
+
+    <pre class="file" id="file53" style="display: none">package userschemas
+
+import (
+        "context"
+
+        "go.uber.org/fx"
+        "gorm.io/gorm"
+
+        "polimane/backend/model"
+)
+
+type Client interface {
+        CreateTx(tx *gorm.DB, userID, schemaID model.ID) error
+        DeleteTx(tx *gorm.DB, userID, schemaID model.ID) error
+        HasAccess(ctx context.Context, userID, schemaID model.ID) error
+}
+
+type ClientOptions struct {
+        fx.In
+        DB *gorm.DB
+}
+
+type Impl struct {
+        db *gorm.DB
+}
+
+var _ Client = (*Impl)(nil)
+
+func Provider(options ClientOptions) Client <span class="cov8" title="1">{
+        return &amp;Impl{db: options.DB}
+}</span>
+</pre>
+
+    <pre class="file" id="file54" style="display: none">package userschemas
+
+import (
+        "gorm.io/gorm"
+
+        "polimane/backend/model"
+)
+
+func (c *Impl) CreateTx(tx *gorm.DB, userID, schemaID model.ID) error <span class="cov10" title="2">{
+        userSchema := &amp;model.UserSchema{
+                UserID:   userID,
+                SchemaID: schemaID,
+        }
+
+        return tx.Create(userSchema).Error
+}</span>
+</pre>
+
+    <pre class="file" id="file55" style="display: none">package userschemas
+
+import (
+        "gorm.io/gorm"
+
+        "polimane/backend/model"
+)
+
+func (c *Impl) DeleteTx(tx *gorm.DB, userID, schemaID model.ID) error <span class="cov10" title="3">{
+        return tx.
+                Where("user_id = ? AND schema_id = ?", userID, schemaID).
+                Delete(&amp;model.UserSchema{}).
+                Error
+}</span>
+</pre>
+
+    <pre class="file" id="file56" style="display: none">package userschemas
+
+import (
+        "context"
+
+        "gorm.io/gorm"
+
+        "polimane/backend/model"
+)
+
+func (c *Impl) HasAccess(ctx context.Context, userID, schemaID model.ID) error <span class="cov10" title="3">{
+        var exists bool
+
+        err := c.db.
+                WithContext(ctx).
+                Model(&amp;model.UserSchema{}).
+                Select("1 AS exists").
+                Where("user_id = ? AND schema_id = ?", userID, schemaID).
+                Pluck("exists", &amp;exists).
+                Error
+
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov6" title="2">if !exists </span><span class="cov1" title="1">{
+                return gorm.ErrRecordNotFound
+        }</span>
+
+        <span class="cov1" title="1">return nil</span>
+}
+</pre>
+
+    <pre class="file" id="file57" style="display: none">//go:build !dev
+
+package awsconfig
+
+import (
+        "github.com/aws/aws-sdk-go-v2/config"
+
+        "polimane/backend/env"
+)
+
+var S3Bucket = "polimane-prod"
+
+func configure(_ *env.Environment, _ *config.LoadOptions) error <span class="cov0" title="0">{
+        return nil
+}</span>
+</pre>
+
+    <pre class="file" id="file58" style="display: none">package awsconfig
+
+import (
+        "context"
+
+        "github.com/aws/aws-sdk-go-v2/aws"
+        "github.com/aws/aws-sdk-go-v2/config"
+        "go.uber.org/fx"
+
+        "polimane/backend/env"
+)
+
+type Options struct {
+        fx.In
+        Ctx context.Context
+        Env *env.Environment
+}
+
+func Provider(options Options) (*aws.Config, error) <span class="cov0" title="0">{
+        cfg, err := config.LoadDefaultConfig(options.Ctx, func(loadOptions *config.LoadOptions) error </span><span
+            class="cov0"
+            title="0"
+        >{
+                return configure(options.Env, loadOptions)
+        }</span>)
+
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return &amp;cfg, nil</span>
+}
+</pre>
+
+    <pre class="file" id="file59" style="display: none">package awss3
+
+import (
+        "context"
+
+        "github.com/aws/aws-sdk-go-v2/aws"
+        "github.com/aws/aws-sdk-go-v2/service/s3"
+        "go.uber.org/fx"
+)
+
+type Option = func(*s3.Options)
+
+type ClientOptions struct {
+        fx.In
+        Config *aws.Config
+}
+
+type Client interface {
+        PutObject(ctx context.Context, params *s3.PutObjectInput, optFns ...Option) (*s3.PutObjectOutput, error)
+}
+
+func Provider(options ClientOptions) Client <span class="cov0" title="0">{
+        return s3.NewFromConfig(*options.Config)
+}</span>
+</pre>
+
+    <pre class="file" id="file60" style="display: none">package bitwarden
+
+import (
+        "os"
+        "path/filepath"
+)
+
+type DownloadingCert struct {
+        SID  string
+        Dest string
+}
+
+func (c *Impl) DownloadCerts(certs []*DownloadingCert) error <span class="cov10" title="6">{
+        sids := make([]string, len(certs))
+        idCertMap := make(map[string]*DownloadingCert)
+        for i, cert := range certs </span><span class="cov10" title="6">{
+                sids[i] = c.env.Getenv(cert.SID)
+                idCertMap[sids[i]] = cert
+        }</span>
+
+        <span class="cov10" title="6">secrets, err := c.Load(sids)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov9" title="5">var dest string
+        for sid, secret := range secrets </span><span class="cov9" title="5">{
+                dest = idCertMap[sid].Dest
+
+                err = c.fs.MkdirAll(filepath.Dir(dest), os.ModePerm)
+                if err != nil </span><span class="cov1" title="1">{
+                        return err
+                }</span>
+
+                <span class="cov7" title="4">err = c.fs.WriteFile(dest, []byte(secret), 0644)
+                if err != nil </span><span class="cov1" title="1">{
+                        return err
+                }</span>
+        }
+
+        <span class="cov6" title="3">return nil</span>
+}
+</pre>
+
+    <pre class="file" id="file61" style="display: none">package bitwarden
+
+func (c *Impl) Load(sids []string) (map[string]string, error) <span class="cov10" title="15">{
+        res, err := c.api.Secrets().GetByIDS(sids)
+        if err != nil </span><span class="cov4" title="3">{
+                return nil, err
+        }</span>
+
+        <span class="cov9" title="12">secrets := make(map[string]string, len(res.Data))
+        for _, secret := range res.Data </span><span class="cov9" title="12">{
+                secrets[secret.ID] = secret.Value
+        }</span>
+
+        <span class="cov9" title="12">return secrets, nil</span>
+}
+</pre>
+
+    <pre class="file" id="file62" style="display: none">package bitwarden
+
+func (c *Impl) LoadToEnviron(names []string) error <span class="cov10" title="5">{
+        ids := make([]string, len(names))
+        idNameMap := make(map[string]string)
+        for i, name := range names </span><span class="cov10" title="5">{
+                ids[i] = c.env.Getenv(name + "_SID")
+                idNameMap[ids[i]] = name
+        }</span>
+
+        <span class="cov10" title="5">secrets, err := c.Load(ids)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="4">for sid, secret := range secrets </span><span class="cov8" title="4">{
+                if err = c.env.Setenv(idNameMap[sid], secret); err != nil </span><span class="cov1" title="1">{
+                        return err
+                }</span>
+        }
+
+        <span class="cov7" title="3">return nil</span>
+}
+</pre>
+
+    <pre class="file" id="file63" style="display: none">package bitwarden
+
+import (
+        "github.com/bitwarden/sdk-go"
+        "go.uber.org/fx"
+
+        "polimane/backend/base"
+        "polimane/backend/services/osenv"
+        "polimane/backend/services/osfs"
+)
+
+var (
+        apiUrl      = "https://api.bitwarden.eu"
+        identityUrl = "https://identity.bitwarden.eu"
+)
+
+type ClientOptions struct {
+        fx.In
+        FS  osfs.FS
+        Env osenv.Env
+}
+
+type Client interface {
+        DownloadCerts(certs []*DownloadingCert) error
+        Load(sids []string) (map[string]string, error)
+        LoadToEnviron(names []string) error
+}
+
+type Impl struct {
+        api sdk.BitwardenClientInterface
+        fs  osfs.FS
+        env osenv.Env
+}
+
+var _ Client = (*Impl)(nil)
+
+func Provider(options ClientOptions) (Client, error) <span class="cov0" title="0">{
+        accessToken := options.Env.Getenv("BACKEND_BITWARDEN_TOKEN")
+        if accessToken == "" </span><span class="cov0" title="0">{
+                return nil, nil
+        }</span>
+
+        <span class="cov0" title="0">api, err := sdk.NewBitwardenClient(&amp;apiUrl, &amp;identityUrl)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, base.TagError("bitwarden.client", err)
+        }</span>
+
+        <span
+            class="cov0"
+            title="0"
+        >if err = api.AccessTokenLogin(accessToken, nil); err != nil </span><span class="cov0" title="0">{
+                return nil, base.TagError("bitwarden.auth", err)
+        }</span>
+
+        <span class="cov0" title="0">return &amp;Impl{
+                api: api,
+                fs:  options.FS,
+                env: options.Env,
+        }, nil</span>
+}
+</pre>
+
+    <pre class="file" id="file64" style="display: none">//go:build !dev
+
+package db
+
+import "gorm.io/gorm/logger"
+
+func newLogger() logger.Interface <span class="cov0" title="0">{
+        return logger.Discard
+}</span>
+</pre>
+
+    <pre class="file" id="file65" style="display: none">package db
+
+import (
+        "go.uber.org/fx"
+        "gorm.io/driver/postgres"
+        "gorm.io/gorm"
+
+        "polimane/backend/base"
+        "polimane/backend/env"
+)
+
+type Options struct {
+        fx.In
+        Env *env.Environment
+}
+
+func Provider(options Options) (*gorm.DB, error) <span class="cov0" title="0">{
+        dialect := postgres.Open(options.Env.Database.URL)
+
+        instance, err := gorm.Open(dialect, &amp;gorm.Config{
+                Logger: newLogger(),
+        })
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, base.TagError("db.open", err)
+        }</span>
+
+        <span class="cov0" title="0">return instance, nil</span>
+}
+</pre>
+
+    <pre class="file" id="file66" style="display: none">package jwk
+
+import (
+        "context"
+
+        "github.com/lestrrat-go/jwx/v3/jwk"
+)
+
+type Client interface {
+        Fetch(ctx context.Context, u string) (jwk.Set, error)
+}
+
+type Impl struct{}
+
+func (j *Impl) Fetch(ctx context.Context, u string) (jwk.Set, error) <span class="cov0" title="0">{
+        return jwk.Fetch(ctx, u)
+}</span>
+
+func Provider() Client <span class="cov0" title="0">{
+        return &amp;Impl{}
+}</span>
+</pre>
+
+    <pre class="file" id="file67" style="display: none">package osenv
+
+import "os"
+
+type Env interface {
+        Getenv(key string) string
+        Setenv(key, value string) error
+}
+
+type envImpl struct{}
+
+var _ Env = (*envImpl)(nil)
+
+func (e *envImpl) Getenv(key string) string <span class="cov0" title="0">{
+        return os.Getenv(key)
+}</span>
+
+func (e *envImpl) Setenv(key, value string) error <span class="cov0" title="0">{
+        return os.Setenv(key, value)
+}</span>
+
+func Provider() Env <span class="cov0" title="0">{
+        return &amp;envImpl{}
+}</span>
+</pre>
+
+    <pre class="file" id="file68" style="display: none">package osfs
+
+import "os"
+
+type FS interface {
+        MkdirAll(path string, perm os.FileMode) error
+        WriteFile(name string, data []byte, perm os.FileMode) error
+}
+
+type fsImpl struct{}
+
+var _ FS = (*fsImpl)(nil)
+
+func (f *fsImpl) MkdirAll(path string, perm os.FileMode) error <span class="cov0" title="0">{
+        return os.MkdirAll(path, perm)
+}</span>
+
+func (f *fsImpl) WriteFile(name string, data []byte, perm os.FileMode) error <span class="cov0" title="0">{
+        return os.WriteFile(name, data, perm)
+}</span>
+
+func Provider() FS <span class="cov0" title="0">{
+        return &amp;fsImpl{}
+}</span>
+</pre>
+
+    <pre class="file" id="file69" style="display: none">package sentry
+
+import (
+        "github.com/getsentry/sentry-go"
+        sentryfiber "github.com/getsentry/sentry-go/fiber"
+        "github.com/gofiber/fiber/v2"
+        "go.uber.org/fx"
+
+        "polimane/backend/base"
+        "polimane/backend/env"
+)
+
+type Options struct {
+        fx.In
+        Env *env.Environment
+}
+
+type Container struct {
+        Handler fiber.Handler
+}
+
+func Provider(options Options) (*Container, error) <span class="cov0" title="0">{
+        config := options.Env.Sentry
+        if len(config.Dsn) == 0 </span><span class="cov0" title="0">{
+                return &amp;Container{Handler: nil}, nil
+        }</span>
+
+        <span class="cov0" title="0">err := sentry.Init(sentry.ClientOptions{
+                Dsn:              config.Dsn,
+                Release:          config.Release,
+                AttachStacktrace: true,
+        })
+
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, base.TagError("sentry", err)
+        }</span>
+
+        <span class="cov0" title="0">sentryHandler := sentryfiber.New(sentryfiber.Options{
+                Repanic:         true,
+                WaitForDelivery: true,
+        })
+
+        return &amp;Container{Handler: sentryHandler}, nil</span>
+}
+</pre>
+
+    <pre class="file" id="file70" style="display: none">package workos
+
+import (
+        "context"
+        "errors"
+        "strings"
+
+        "github.com/lestrrat-go/jwx/v3/jwt"
+)
+
+var (
+        AccessTokenExpired = errors.New("access token expired")
+)
+
+type AccessTokenClaims struct {
+        UserID    string
+        SessionID string
+}
+
+func (i *Impl) AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*AccessTokenClaims, error) <span
+            class="cov10"
+            title="11"
+        >{
+        jwksURL, err := i.UserManagement().GetJWKSURL(i.env.WorkOS.ClientID)
+        if err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="7">keySet, err := i.jwk.Fetch(ctx, jwksURL.String())
+        if err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov7" title="6">token, err := jwt.Parse(
+                []byte(tokenStr),
+                jwt.WithContext(ctx),
+                jwt.WithKeySet(keySet),
+                jwt.WithValidate(true),
+        )
+
+        if err != nil </span><span class="cov6" title="4">{
+                if strings.Contains(err.Error(), "token is expired") </span><span class="cov1" title="1">{
+                        return nil, AccessTokenExpired
+                }</span>
+
+                <span class="cov5" title="3">return nil, err</span>
+        }
+
+        <span class="cov3" title="2">userID, _ := token.Subject()
+
+        var sessionID string
+        if err = token.Get("sid", &amp;sessionID); err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov1" title="1">return &amp;AccessTokenClaims{
+                UserID:    userID,
+                SessionID: sessionID,
+        }, nil</span>
+}
+</pre>
+
+    <pre class="file" id="file71" style="display: none">package workos
+
+import (
+        "context"
+
+        "github.com/workos/workos-go/v4/pkg/mfa"
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
+        "go.uber.org/fx"
+
+        "polimane/backend/env"
+        "polimane/backend/services/jwk"
+)
+
+type ClientOptions struct {
+        fx.In
+        Env *env.Environment
+        JWK jwk.Client
+}
+
+type Client interface {
+        UserManagement() UserManagement
+        MFA() MFA
+        AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*AccessTokenClaims, error)
+}
+
+type Impl struct {
+        userManagement UserManagement
+        mfa            MFA
+        env            *env.Environment
+        jwk            jwk.Client
+}
+
+func Provider(options ClientOptions) Client <span class="cov0" title="0">{
+        usermanagement.SetAPIKey(options.Env.WorkOS.ApiKey)
+        mfa.SetAPIKey(options.Env.WorkOS.ApiKey)
+
+        return &amp;Impl{
+                userManagement: usermanagement.DefaultClient,
+                mfa:            mfa.DefaultClient,
+                env:            options.Env,
+                jwk:            options.JWK,
+        }
+}</span>
+</pre>
+
+    <pre class="file" id="file72" style="display: none">package workos
+
+import (
+        "encoding/json"
+
+        "github.com/workos/workos-go/v4/pkg/workos_errors"
+)
+
+const (
+        CodeEmailVerificationCodeExpired = "email_verification_code_expired"
+        CodeUnknownError                 = "unknown"
+)
+
+type httpErrorRawBody struct {
+        Code string `json:"code"`
+}
+
+func GetErrorCode(httpErr workos_errors.HTTPError) string <span class="cov10" title="13">{
+        var rawBody httpErrorRawBody
+        if err := json.Unmarshal([]byte(httpErr.RawBody), &amp;rawBody); err != nil </span><span class="cov7" title="6">{
+                return CodeUnknownError
+        }</span>
+        <span class="cov7" title="7">if rawBody.Code == "" </span><span class="cov5" title="4">{
+                return CodeUnknownError
+        }</span>
+        <span class="cov4" title="3">return rawBody.Code</span>
+}
+</pre>
+
+    <pre class="file" id="file73" style="display: none">package workos
+
+import (
+        "context"
+
+        "github.com/workos/workos-go/v4/pkg/mfa"
+)
+
+type MFA interface {
+        DeleteFactor(ctx context.Context, opts mfa.DeleteFactorOpts) error
+        VerifyChallenge(ctx context.Context, opts mfa.VerifyChallengeOpts) (mfa.VerifyChallengeResponse, error)
+        GetFactor(ctx context.Context, opts mfa.GetFactorOpts) (mfa.Factor, error)
+}
+
+func (i *Impl) MFA() MFA <span class="cov10" title="2">{
+        return i.mfa
+}</span>
+</pre>
+
+    <pre class="file" id="file74" style="display: none">package workos
+
+import (
+        "context"
+        "net/url"
+
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
+)
+
+type UserManagement interface {
+        GetAuthorizationURL(opts usermanagement.GetAuthorizationURLOpts) (*url.URL, error)
+        AuthenticateWithCode(ctx context.Context, opts usermanagement.AuthenticateWithCodeOpts) (usermanagement.AuthenticateResponse, error)
+        UpdateUser(ctx context.Context, opts usermanagement.UpdateUserOpts) (usermanagement.User, error)
+        RevokeSession(ctx context.Context, opts usermanagement.RevokeSessionOpts) error
+        AuthenticateWithRefreshToken(ctx context.Context, opts usermanagement.AuthenticateWithRefreshTokenOpts) (usermanagement.RefreshAuthenticationResponse, error)
+        GetUser(ctx context.Context, opts usermanagement.GetUserOpts) (usermanagement.User, error)
+        EnrollAuthFactor(ctx context.Context, opts usermanagement.EnrollAuthFactorOpts) (usermanagement.EnrollAuthFactorResponse, error)
+        ListAuthFactors(ctx context.Context, opts usermanagement.ListAuthFactorsOpts) (usermanagement.ListAuthFactorsResponse, error)
+        VerifyEmail(ctx context.Context, opts usermanagement.VerifyEmailOpts) (usermanagement.UserResponse, error)
+        SendVerificationEmail(ctx context.Context, opts usermanagement.SendVerificationEmailOpts) (usermanagement.UserResponse, error)
+        CreatePasswordReset(ctx context.Context, opts usermanagement.CreatePasswordResetOpts) (usermanagement.PasswordReset, error)
+        GetJWKSURL(clientID string) (*url.URL, error)
+}
+
+func (i *Impl) UserManagement() UserManagement <span class="cov10" title="13">{
+        return i.userManagement
+}</span>
+</pre>
+
+    <pre class="file" id="file75" style="display: none">package signal
+
+import (
+        "github.com/maniartech/signals"
+
+        "polimane/backend/model"
+)
+
+type Container struct {
+        InvalidateUserCache       signals.Signal[model.ID]
+        InvalidateWorkosUserCache signals.Signal[string]
+        InvalidateAuthCache       signals.Signal[string]
+}
+
+func Provider() *Container <span class="cov10" title="3">{
+        return &amp;Container{
+                InvalidateUserCache:       signals.New[model.ID](),
+                InvalidateWorkosUserCache: signals.New[string](),
+                InvalidateAuthCache:       signals.New[string](),
+        }
+}</span>
+</pre>
+
+</div>
+</body>
+<script>
+    (function () {
+        var files = document.getElementById('files');
+        var visible;
+        files.addEventListener('change', onChange, false);
+
+        function select(part) {
+            if (visible)
+                visible.style.display = 'none';
+            visible = document.getElementById(part);
+            if (!visible)
+                return;
+            files.value = part;
+            visible.style.display = 'block';
+            location.hash = part;
+        }
+
+        function onChange() {
+            select(files.value);
+            window.scrollTo(0, 0);
+        }
+
+        if (location.hash != '') {
+            select(location.hash.substr(1));
+        }
+        if (!visible) {
+            select('file0');
+        }
+    })();
+</script>
+</html>
