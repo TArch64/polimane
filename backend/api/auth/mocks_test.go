@@ -48,7 +48,11 @@ func (m *MockWorkosClient) MFA() workos.MFA {
 }
 
 func (m *MockWorkosClient) AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*workos.AccessTokenClaims, error) {
-	return nil, nil
+	args := m.Called(ctx, tokenStr)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*workos.AccessTokenClaims), args.Error(1)
 }
 
 // MockUserManagement implements workos.UserManagement interface for testing
