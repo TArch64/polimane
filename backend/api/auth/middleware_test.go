@@ -25,7 +25,7 @@ func TestMiddlewareProvider(t *testing.T) {
 		// Arrange
 		signalsContainer := signal.Provider()
 		environment := &env.Environment{}
-		workosClient := &workos.Client{}
+		workosClient := &workos.Client{UserManagement: &MockUserManagement{}}
 		usersClient := &MockUsersClient{}
 
 		// Act
@@ -51,7 +51,7 @@ func TestMiddlewareProvider(t *testing.T) {
 		// The actual signal behavior is tested in separate signal tests
 		signalsContainer := signal.Provider()
 		environment := &env.Environment{}
-		workosClient := &workos.Client{}
+		workosClient := &workos.Client{UserManagement: &MockUserManagement{}}
 		usersClient := &MockUsersClient{}
 
 		middleware := MiddlewareProvider(MiddlewareOptions{

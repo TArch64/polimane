@@ -18,8 +18,8 @@ type MockUsersClient struct {
 	mock.Mock
 }
 
-func (m *MockUsersClient) CreateIfNeeded(ctx context.Context, userID string) (*model.User, error) {
-	args := m.Called(ctx, userID)
+func (m *MockUsersClient) CreateIfNeeded(ctx context.Context, workosID string) (*model.User, error) {
+	args := m.Called(ctx, workosID)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}

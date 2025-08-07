@@ -125,9 +125,9 @@
 
             <option value="file13">polimane/backend/api/not_found.go (100.0%)</option>
 
-            <option value="file14">polimane/backend/api/ping/controller.go (0.0%)</option>
+            <option value="file14">polimane/backend/api/ping/controller.go (100.0%)</option>
 
-            <option value="file15">polimane/backend/api/ping/ping.go (0.0%)</option>
+            <option value="file15">polimane/backend/api/ping/ping.go (100.0%)</option>
 
             <option value="file16">polimane/backend/api/schemas/by_id.go (100.0%)</option>
 
@@ -908,13 +908,13 @@ import (
 
 type Controller struct{}
 
-func Provider() base.Controller <span class="cov0" title="0">{
+func Provider() base.Controller <span class="cov8" title="1">{
         return &amp;Controller{}
 }</span>
 
-func (c *Controller) Public(_ fiber.Router) {<span class="cov0" title="0">}</span>
+func (c *Controller) Public(_ fiber.Router) {<span class="cov8" title="1">}</span>
 
-func (c *Controller) Private(group fiber.Router) <span class="cov0" title="0">{
+func (c *Controller) Private(group fiber.Router) <span class="cov8" title="1">{
         group = group.Group("ping")
         group.Get("", c.apiPing)
 }</span>
@@ -924,7 +924,7 @@ func (c *Controller) Private(group fiber.Router) <span class="cov0" title="0">{
 
 import "github.com/gofiber/fiber/v2"
 
-func (c *Controller) apiPing(ctx *fiber.Ctx) error <span class="cov0" title="0">{
+func (c *Controller) apiPing(ctx *fiber.Ctx) error <span class="cov8" title="1">{
         return ctx.JSON(fiber.Map{"message": "pong"})
 }</span>
 </pre>
