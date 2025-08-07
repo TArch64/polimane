@@ -13,12 +13,12 @@ const factorIdParam = "factorId"
 
 type ControllerOptions struct {
 	fx.In
-	WorkosClient *workos.Client
+	WorkosClient workos.Client
 	Signals      *signal.Container
 }
 
 type Controller struct {
-	workosClient *workos.Client
+	workosClient workos.Client
 	signals      *signal.Container
 }
 

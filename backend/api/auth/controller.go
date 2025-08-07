@@ -15,14 +15,14 @@ const groupPrefix = "auth"
 
 type ControllerOptions struct {
 	fx.In
-	WorkosClient *workos.Client
+	WorkosClient workos.Client
 	Env          *env.Environment
 	Users        repositoryusers.Client
 	Signals      *signal.Container
 }
 
 type Controller struct {
-	workosClient *workos.Client
+	workosClient workos.Client
 	env          *env.Environment
 	users        repositoryusers.Client
 	signals      *signal.Container

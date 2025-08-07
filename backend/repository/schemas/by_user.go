@@ -13,8 +13,6 @@ type ByUserOptions struct {
 }
 
 func (c *Impl) ByUser(options *ByUserOptions) ([]*model.Schema, error) {
-	var schemas []*model.Schema
-
 	query := c.db.
 		WithContext(options.Ctx).
 		Joins("JOIN user_schemas ON user_schemas.schema_id = schemas.id AND user_schemas.user_id = ?", options.User.ID)
@@ -23,6 +21,7 @@ func (c *Impl) ByUser(options *ByUserOptions) ([]*model.Schema, error) {
 		query = query.Select(options.Select)
 	}
 
+	var schemas []*model.Schema
 	err := query.Find(&schemas).Error
 	return schemas, err
 }

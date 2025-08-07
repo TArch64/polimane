@@ -21,13 +21,13 @@ func (c *Impl) ByID(options *ByIDOptions) (*model.Schema, error) {
 		return nil, err
 	}
 
-	var schema model.Schema
 	query := c.db.WithContext(options.Ctx)
 
 	if len(options.Select) > 0 {
 		query = query.Select(options.Select)
 	}
 
+	var schema model.Schema
 	err = query.Take(&schema, options.SchemaID).Error
 	return &schema, err
 }

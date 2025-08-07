@@ -18,7 +18,7 @@ type newAuthFactorResponse struct {
 func (c *Controller) apiAuthFactorsInit(ctx *fiber.Ctx) error {
 	session := auth.GetSession(ctx)
 
-	response, err := c.workosClient.UserManagement.EnrollAuthFactor(ctx.Context(), usermanagement.EnrollAuthFactorOpts{
+	response, err := c.workosClient.UserManagement().EnrollAuthFactor(ctx.Context(), usermanagement.EnrollAuthFactorOpts{
 		User:       session.WorkosUser.ID,
 		Type:       mfa.TOTP,
 		TOTPIssuer: "Polimane",
