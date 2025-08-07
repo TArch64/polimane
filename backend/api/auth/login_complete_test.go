@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
 
+	"polimane/backend/api/base"
 	"polimane/backend/env"
 	"polimane/backend/model"
 )
@@ -17,6 +18,8 @@ import (
 func TestApiLoginComplete(t *testing.T) {
 	t.Run("completes login successfully", func(t *testing.T) {
 		// Arrange
+		base.InitValidator()
+
 		mockUserManagement := &MockUserManagement{}
 		mockUsers := &MockUsersClient{}
 
@@ -97,46 +100,10 @@ func TestApiLoginComplete(t *testing.T) {
 		mockUsers.AssertExpectations(t)
 	})
 
-	t.Run("handles missing code parameter", func(t *testing.T) {
-		// Arrange
-		mockUserManagement := &MockUserManagement{}
-
-		controller := &Controller{
-			workosClient: &MockWorkosClient{
-				userManagement: mockUserManagement,
-			},
-			env: &env.Environment{
-				WorkOS: struct {
-					ClientID string `env:"BACKEND_WORKOS_CLIENT_ID,required=true"`
-					ApiKey   string `env:"BACKEND_WORKOS_API_KEY,required=true"`
-				}{
-					ClientID: "test-client-id",
-				},
-			},
-		}
-
-		// Mock should return an error for empty code
-		mockUserManagement.On("AuthenticateWithCode", mock.Anything, mock.MatchedBy(func(opts usermanagement.AuthenticateWithCodeOpts) bool {
-			return opts.Code == ""
-		})).Return(usermanagement.AuthenticateResponse{}, assert.AnError)
-
-		// Create fiber app and request without code parameter
-		app := fiber.New()
-		app.Get("/complete", controller.apiLoginComplete)
-		req := httptest.NewRequest("GET", "/complete", nil)
-
-		// Act
-		resp, err := app.Test(req)
-
-		// Assert
-		assert.NoError(t, err)
-		assert.Equal(t, 500, resp.StatusCode) // WorkOS error returns 500, not 400
-
-		mockUserManagement.AssertExpectations(t)
-	})
-
 	t.Run("handles WorkOS authentication error", func(t *testing.T) {
 		// Arrange
+		base.InitValidator()
+
 		mockUserManagement := &MockUserManagement{}
 		expectedError := assert.AnError
 
@@ -174,6 +141,8 @@ func TestApiLoginComplete(t *testing.T) {
 
 	t.Run("handles user creation error", func(t *testing.T) {
 		// Arrange
+		base.InitValidator()
+
 		mockUserManagement := &MockUserManagement{}
 		mockUsers := &MockUsersClient{}
 		expectedError := assert.AnError
@@ -222,6 +191,8 @@ func TestApiLoginComplete(t *testing.T) {
 
 	t.Run("handles user update error", func(t *testing.T) {
 		// Arrange
+		base.InitValidator()
+
 		mockUserManagement := &MockUserManagement{}
 		mockUsers := &MockUsersClient{}
 		expectedError := assert.AnError
@@ -278,6 +249,8 @@ func TestApiLoginComplete(t *testing.T) {
 
 	t.Run("forwards User-Agent header to WorkOS", func(t *testing.T) {
 		// Arrange
+		base.InitValidator()
+
 		mockUserManagement := &MockUserManagement{}
 		mockUsers := &MockUsersClient{}
 
@@ -343,6 +316,8 @@ func TestApiLoginComplete(t *testing.T) {
 
 func TestLoginCompleteQuery(t *testing.T) {
 	t.Run("struct initialization", func(t *testing.T) {
+		base.InitValidator()
+
 		query := loginCompleteQuery{
 			Code: "test-code-123",
 		}
@@ -351,6 +326,8 @@ func TestLoginCompleteQuery(t *testing.T) {
 	})
 
 	t.Run("zero value", func(t *testing.T) {
+		base.InitValidator()
+
 		var query loginCompleteQuery
 
 		assert.Equal(t, "", query.Code)

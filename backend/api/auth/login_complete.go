@@ -3,15 +3,17 @@ package auth
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
+
+	"polimane/backend/api/base"
 )
 
 type loginCompleteQuery struct {
-	Code string `query:"code"`
+	Code string `query:"code" validate:"required"`
 }
 
 func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error {
 	var query loginCompleteQuery
-	if err := ctx.QueryParser(&query); err != nil {
+	if err := base.ParseQuery(ctx, &query); err != nil {
 		return err
 	}
 
