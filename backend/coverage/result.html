@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>schemas: Go Coverage Report</title>
+    <title>workos: Go Coverage Report</title>
     <style>
         body {
             background: black;
@@ -97,19 +97,15 @@
     <div id="nav">
         <select id="files">
 
-            <option value="file0">polimane/backend/repository/schemas/by_id.go (100.0%)</option>
+            <option value="file0">polimane/backend/services/workos/authenticate_with_access_token.go (100.0%)</option>
 
-            <option value="file1">polimane/backend/repository/schemas/by_user.go (100.0%)</option>
+            <option value="file1">polimane/backend/services/workos/client.go (0.0%)</option>
 
-            <option value="file2">polimane/backend/repository/schemas/client.go (100.0%)</option>
+            <option value="file2">polimane/backend/services/workos/get_error_code.go (100.0%)</option>
 
-            <option value="file3">polimane/backend/repository/schemas/copy.go (100.0%)</option>
+            <option value="file3">polimane/backend/services/workos/mfa.go (100.0%)</option>
 
-            <option value="file4">polimane/backend/repository/schemas/create.go (100.0%)</option>
-
-            <option value="file5">polimane/backend/repository/schemas/delete.go (100.0%)</option>
-
-            <option value="file6">polimane/backend/repository/schemas/update.go (100.0%)</option>
+            <option value="file4">polimane/backend/services/workos/user_management.go (100.0%)</option>
 
         </select>
     </div>
@@ -132,293 +128,188 @@
 </div>
 <div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package schemas
+		<pre class="file" id="file0" style="display: none">package workos
 
 import (
         "context"
+        "errors"
+        "strings"
 
-        "polimane/backend/model"
+        "github.com/lestrrat-go/jwx/v3/jwt"
 )
 
-type ByIDOptions struct {
-        Ctx      context.Context
-        User     *model.User
-        SchemaID model.ID
-        Select   []string
+var (
+        AccessTokenExpired = errors.New("access token expired")
+)
+
+type AccessTokenClaims struct {
+        UserID    string
+        SessionID string
 }
 
-func (c *Impl) ByID(options *ByIDOptions) (*model.Schema, error) <span class="cov10" title="9">{
-        var err error
-
-        err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
-        if err != nil </span><span class="cov3" title="2">{
+func (i *Impl) AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*AccessTokenClaims, error) <span
+                class="cov10"
+                title="11"
+            >{
+        jwksURL, err := i.UserManagement().GetJWKSURL(i.env.WorkOS.ClientID)
+        if err != nil </span><span class="cov1" title="1">{
                 return nil, err
         }</span>
 
-        <span class="cov8" title="7">query := c.db.WithContext(options.Ctx)
-
-        if len(options.Select) &gt; 0 </span><span class="cov3" title="2">{
-                query = query.Select(options.Select)
+        <span class="cov8" title="7">keySet, err := i.jwk.Fetch(ctx, jwksURL.String())
+        if err != nil </span><span class="cov1" title="1">{
+                return nil, err
         }</span>
 
-        <span class="cov8" title="7">var schema model.Schema
-        err = query.Take(&amp;schema, options.SchemaID).Error
-        return &amp;schema, err</span>
+        <span class="cov7" title="6">token, err := jwt.Parse(
+                []byte(tokenStr),
+                jwt.WithContext(ctx),
+                jwt.WithKeySet(keySet),
+                jwt.WithValidate(true),
+        )
+
+        if err != nil </span><span class="cov6" title="4">{
+                if strings.Contains(err.Error(), "token is expired") </span><span class="cov1" title="1">{
+                        return nil, AccessTokenExpired
+                }</span>
+
+                <span class="cov5" title="3">return nil, err</span>
+        }
+
+        <span class="cov3" title="2">userID, _ := token.Subject()
+
+        var sessionID string
+        if err = token.Get("sid", &amp;sessionID); err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov1" title="1">return &amp;AccessTokenClaims{
+                UserID:    userID,
+                SessionID: sessionID,
+        }, nil</span>
 }
 </pre>
 
-    <pre class="file" id="file1" style="display: none">package schemas
+    <pre class="file" id="file1" style="display: none">package workos
 
 import (
         "context"
 
-        "polimane/backend/model"
-)
-
-type ByUserOptions struct {
-        Ctx    context.Context
-        User   *model.User
-        Select []string
-}
-
-func (c *Impl) ByUser(options *ByUserOptions) ([]*model.Schema, error) <span class="cov10" title="3">{
-        query := c.db.
-                WithContext(options.Ctx).
-                Joins("JOIN user_schemas ON user_schemas.schema_id = schemas.id AND user_schemas.user_id = ?", options.User.ID)
-
-        if len(options.Select) &gt; 0 </span><span class="cov1" title="1">{
-                query = query.Select(options.Select)
-        }</span>
-
-        <span class="cov10" title="3">var schemas []*model.Schema
-        err := query.Find(&amp;schemas).Error
-        return schemas, err</span>
-}
-</pre>
-
-    <pre class="file" id="file2" style="display: none">package schemas
-
-import (
+        "github.com/workos/workos-go/v4/pkg/mfa"
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
         "go.uber.org/fx"
-        "gorm.io/gorm"
 
-        "polimane/backend/model"
-        repositoryuserschemas "polimane/backend/repository/userschemas"
-        "polimane/backend/signal"
+        "polimane/backend/env"
+        "polimane/backend/services/jwk"
 )
-
-type Client interface {
-        ByID(options *ByIDOptions) (*model.Schema, error)
-        ByUser(options *ByUserOptions) ([]*model.Schema, error)
-        Copy(options *CopyOptions) (*model.Schema, error)
-        Create(options *CreateOptions) (schema *model.Schema, err error)
-        Delete(options *DeleteOptions) (err error)
-        Update(options *UpdateOptions) (err error)
-}
 
 type ClientOptions struct {
         fx.In
-        DB          *gorm.DB
-        UserSchemas repositoryuserschemas.Client
-        Signals     *signal.Container
+        Env *env.Environment
+        JWK jwk.Client
+}
+
+type Client interface {
+        UserManagement() UserManagement
+        MFA() MFA
+        AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*AccessTokenClaims, error)
 }
 
 type Impl struct {
-        db          *gorm.DB
-        userSchemas repositoryuserschemas.Client
-        signals     *signal.Container
+        userManagement UserManagement
+        mfa            MFA
+        env            *env.Environment
+        jwk            jwk.Client
 }
 
-var _ Client = (*Impl)(nil)
+func Provider(options ClientOptions) Client <span class="cov0" title="0">{
+        usermanagement.SetAPIKey(options.Env.WorkOS.ApiKey)
+        mfa.SetAPIKey(options.Env.WorkOS.ApiKey)
 
-func Provider(options ClientOptions) Client <span class="cov8" title="1">{
         return &amp;Impl{
-                db:          options.DB,
-                userSchemas: options.UserSchemas,
-                signals:     options.Signals,
+                userManagement: usermanagement.DefaultClient,
+                mfa:            mfa.DefaultClient,
+                env:            options.Env,
+                jwk:            options.JWK,
         }
 }</span>
 </pre>
 
-    <pre class="file" id="file3" style="display: none">package schemas
+    <pre class="file" id="file2" style="display: none">package workos
 
 import (
-        "context"
-        "regexp"
-        "strconv"
-        "strings"
+        "encoding/json"
 
-        "polimane/backend/model"
+        "github.com/workos/workos-go/v4/pkg/workos_errors"
 )
 
-type CopyOptions struct {
-        Ctx      context.Context
-        User     *model.User
-        SchemaID model.ID
+const (
+        CodeEmailVerificationCodeExpired = "email_verification_code_expired"
+        CodeUnknownError                 = "unknown"
+)
+
+type httpErrorRawBody struct {
+        Code string `json:"code"`
 }
 
-var nameCopyCounter = regexp.MustCompile(`\((\d+)\)$`)
-
-func makeCopyName(originalName string) string <span class="cov10" title="5">{
-        counterMatch := nameCopyCounter.FindStringSubmatch(originalName)
-        if len(counterMatch) == 0 </span><span class="cov7" title="3">{
-                return originalName + " (1)"
+func GetErrorCode(httpErr workos_errors.HTTPError) string <span class="cov10" title="13">{
+        var rawBody httpErrorRawBody
+        if err := json.Unmarshal([]byte(httpErr.RawBody), &amp;rawBody); err != nil </span><span class="cov7" title="6">{
+                return CodeUnknownError
         }</span>
-        <span class="cov4" title="2">counter, _ := strconv.Atoi(counterMatch[1])
-        counterStr := strconv.Itoa(counter + 1)
-        return strings.ReplaceAll(originalName, counterMatch[0], " ("+counterStr+")")</span>
-}
-
-func (c *Impl) Copy(options *CopyOptions) (*model.Schema, error) <span class="cov4" title="2">{
-        original, err := c.ByID(&amp;ByIDOptions{
-                Ctx:      options.Ctx,
-                SchemaID: options.SchemaID,
-                User:     options.User,
-        })
-
-        if err != nil </span><span class="cov1" title="1">{
-                return nil, err
+        <span class="cov7" title="7">if rawBody.Code == "" </span><span class="cov5" title="4">{
+                return CodeUnknownError
         }</span>
-
-        <span class="cov1" title="1">return c.Create(&amp;CreateOptions{
-                Ctx:     options.Ctx,
-                User:    options.User,
-                Name:    makeCopyName(original.Name),
-                Palette: original.Palette,
-                Content: original.Content,
-        })</span>
+        <span class="cov4" title="3">return rawBody.Code</span>
 }
 </pre>
 
-    <pre class="file" id="file4" style="display: none">package schemas
+    <pre class="file" id="file3" style="display: none">package workos
 
 import (
         "context"
 
-        "gorm.io/gorm"
-
-        "polimane/backend/model"
+        "github.com/workos/workos-go/v4/pkg/mfa"
 )
 
-type CreateOptions struct {
-        Ctx     context.Context
-        User    *model.User
-        Name    string
-        Palette model.SchemaPalette
-        Content model.SchemaContent
+type MFA interface {
+        DeleteFactor(ctx context.Context, opts mfa.DeleteFactorOpts) error
+        VerifyChallenge(ctx context.Context, opts mfa.VerifyChallengeOpts) (mfa.VerifyChallengeResponse, error)
+        GetFactor(ctx context.Context, opts mfa.GetFactorOpts) (mfa.Factor, error)
 }
 
-func (c *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) <span class="cov10" title="4">{
-        if options.Palette == nil </span><span class="cov5" title="2">{
-                options.Palette = make(model.SchemaPalette, model.SchemaPaletteSize)
-        }</span>
-
-        <span class="cov10" title="4">if options.Content == nil </span><span class="cov5" title="2">{
-                options.Content = make(model.SchemaContent, 0)
-        }</span>
-
-        <span
-            class="cov10"
-            title="4"
-        >err = c.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error </span><span class="cov10" title="4">{
-                schema = &amp;model.Schema{
-                        Name:    options.Name,
-                        Palette: options.Palette,
-                        Content: options.Content,
-                }
-
-                if err = tx.Create(schema).Error; err != nil </span><span class="cov1" title="1">{
-                        return err
-                }</span>
-
-                <span class="cov8" title="3">return c.userSchemas.CreateTx(tx, options.User.ID, schema.ID)</span>
-        })
-
-        <span class="cov10" title="4">if err != nil </span><span class="cov1" title="1">{
-                return nil, err
-        }</span>
-
-        <span class="cov8" title="3">c.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
-        return schema, nil</span>
-}
+func (i *Impl) MFA() MFA <span class="cov10" title="2">{
+        return i.mfa
+}</span>
 </pre>
 
-    <pre class="file" id="file5" style="display: none">package schemas
+    <pre class="file" id="file4" style="display: none">package workos
 
 import (
         "context"
+        "net/url"
 
-        "gorm.io/gorm"
-
-        "polimane/backend/model"
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
 )
 
-type DeleteOptions struct {
-        Ctx      context.Context
-        User     *model.User
-        SchemaID model.ID
+type UserManagement interface {
+        GetAuthorizationURL(opts usermanagement.GetAuthorizationURLOpts) (*url.URL, error)
+        AuthenticateWithCode(ctx context.Context, opts usermanagement.AuthenticateWithCodeOpts) (usermanagement.AuthenticateResponse, error)
+        UpdateUser(ctx context.Context, opts usermanagement.UpdateUserOpts) (usermanagement.User, error)
+        RevokeSession(ctx context.Context, opts usermanagement.RevokeSessionOpts) error
+        AuthenticateWithRefreshToken(ctx context.Context, opts usermanagement.AuthenticateWithRefreshTokenOpts) (usermanagement.RefreshAuthenticationResponse, error)
+        GetUser(ctx context.Context, opts usermanagement.GetUserOpts) (usermanagement.User, error)
+        EnrollAuthFactor(ctx context.Context, opts usermanagement.EnrollAuthFactorOpts) (usermanagement.EnrollAuthFactorResponse, error)
+        ListAuthFactors(ctx context.Context, opts usermanagement.ListAuthFactorsOpts) (usermanagement.ListAuthFactorsResponse, error)
+        VerifyEmail(ctx context.Context, opts usermanagement.VerifyEmailOpts) (usermanagement.UserResponse, error)
+        SendVerificationEmail(ctx context.Context, opts usermanagement.SendVerificationEmailOpts) (usermanagement.UserResponse, error)
+        CreatePasswordReset(ctx context.Context, opts usermanagement.CreatePasswordResetOpts) (usermanagement.PasswordReset, error)
+        GetJWKSURL(clientID string) (*url.URL, error)
 }
 
-func (c *Impl) Delete(options *DeleteOptions) (err error) <span class="cov10" title="6">{
-        err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
-        if err != nil </span><span class="cov1" title="1">{
-                return err
-        }</span>
-
-        <span
-            class="cov9"
-            title="5"
-        >err = c.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error </span><span class="cov9" title="5">{
-                if err = tx.Delete(&amp;model.Schema{}, options.SchemaID).Error; err != nil </span><span
-            class="cov1"
-            title="1"
-        >{
-                        return err
-                }</span>
-
-                <span class="cov7" title="4">return c.userSchemas.DeleteTx(tx, options.User.ID, options.SchemaID)</span>
-        })
-
-        <span class="cov9" title="5">if err != nil </span><span class="cov6" title="3">{
-                return err
-        }</span>
-
-        <span class="cov4" title="2">c.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
-        return nil</span>
-}
-</pre>
-
-    <pre class="file" id="file6" style="display: none">package schemas
-
-import (
-        "context"
-
-        "polimane/backend/model"
-)
-
-type UpdateOptions struct {
-        Ctx      context.Context
-        User     *model.User
-        SchemaID model.ID
-        Updates  *model.Schema
-}
-
-func (c *Impl) Update(options *UpdateOptions) (err error) <span class="cov10" title="4">{
-        err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
-        if err != nil </span><span class="cov1" title="1">{
-                return err
-        }</span>
-
-        <span class="cov8" title="3">return c.db.
-                WithContext(options.Ctx).
-                Model(&amp;model.Schema{
-                        Identifiable: &amp;model.Identifiable{
-                                ID: options.SchemaID,
-                        },
-                }).
-                Updates(options.Updates).
-                Error</span>
-}
+func (i *Impl) UserManagement() UserManagement <span class="cov10" title="13">{
+        return i.userManagement
+}</span>
 </pre>
 
 </div>
