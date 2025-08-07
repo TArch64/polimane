@@ -183,7 +183,7 @@
 
             <option value="file42">polimane/backend/model/identifiable.go (100.0%)</option>
 
-            <option value="file43">polimane/backend/repository/schemas/by_id.go (90.0%)</option>
+            <option value="file43">polimane/backend/repository/schemas/by_id.go (100.0%)</option>
 
             <option value="file44">polimane/backend/repository/schemas/by_user.go (100.0%)</option>
 
@@ -2154,22 +2154,22 @@ type ByIDOptions struct {
         Select   []string
 }
 
-func (c *Impl) ByID(options *ByIDOptions) (*model.Schema, error) <span class="cov10" title="5">{
+func (c *Impl) ByID(options *ByIDOptions) (*model.Schema, error) <span class="cov10" title="9">{
         var err error
 
         err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov3" title="2">{
                 return nil, err
         }</span>
 
-        <span class="cov10" title="5">var schema model.Schema
-        query := c.db.WithContext(options.Ctx)
+        <span class="cov8" title="7">query := c.db.WithContext(options.Ctx)
 
-        if len(options.Select) &gt; 0 </span><span class="cov1" title="1">{
+        if len(options.Select) &gt; 0 </span><span class="cov3" title="2">{
                 query = query.Select(options.Select)
         }</span>
 
-        <span class="cov10" title="5">err = query.Take(&amp;schema, options.SchemaID).Error
+        <span class="cov8" title="7">var schema model.Schema
+        err = query.Take(&amp;schema, options.SchemaID).Error
         return &amp;schema, err</span>
 }
 </pre>
@@ -2189,8 +2189,6 @@ type ByUserOptions struct {
 }
 
 func (c *Impl) ByUser(options *ByUserOptions) ([]*model.Schema, error) <span class="cov10" title="3">{
-        var schemas []*model.Schema
-
         query := c.db.
                 WithContext(options.Ctx).
                 Joins("JOIN user_schemas ON user_schemas.schema_id = schemas.id AND user_schemas.user_id = ?", options.User.ID)
@@ -2199,7 +2197,8 @@ func (c *Impl) ByUser(options *ByUserOptions) ([]*model.Schema, error) <span cla
                 query = query.Select(options.Select)
         }</span>
 
-        <span class="cov10" title="3">err := query.Find(&amp;schemas).Error
+        <span class="cov10" title="3">var schemas []*model.Schema
+        err := query.Find(&amp;schemas).Error
         return schemas, err</span>
 }
 </pre>

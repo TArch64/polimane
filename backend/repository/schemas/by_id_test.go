@@ -38,15 +38,15 @@ func setupTest(t *testing.T) (*Impl, *MockUserSchemas, sqlmock.Sqlmock, func()) 
 }
 
 func TestByID(t *testing.T) {
-	client, mockUserSchemas, mock, cleanup := setupTest(t)
-	defer cleanup()
-
 	ctx := context.Background()
 	userID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440000")
 	user := &model.User{Identifiable: &model.Identifiable{ID: userID}}
 	schemaID := model.MustStringToID("550e8400-e29b-41d4-a716-446655440001")
 
 	t.Run("success", func(t *testing.T) {
+		client, mockUserSchemas, mock, cleanup := setupTest(t)
+		defer cleanup()
+
 		expectedSchema := &model.Schema{
 			Identifiable: &model.Identifiable{ID: schemaID},
 			Name:         "Test Schema",
@@ -73,6 +73,9 @@ func TestByID(t *testing.T) {
 	})
 
 	t.Run("with select fields", func(t *testing.T) {
+		client, mockUserSchemas, mock, cleanup := setupTest(t)
+		defer cleanup()
+
 		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(nil)
 
 		mock.ExpectQuery(`SELECT "name" FROM "schemas"`).
@@ -94,6 +97,9 @@ func TestByID(t *testing.T) {
 	})
 
 	t.Run("not found", func(t *testing.T) {
+		client, mockUserSchemas, mock, cleanup := setupTest(t)
+		defer cleanup()
+
 		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(nil)
 
 		mock.ExpectQuery(`SELECT \* FROM "schemas"`).
@@ -104,6 +110,92 @@ func TestByID(t *testing.T) {
 			Ctx:      ctx,
 			User:     user,
 			SchemaID: schemaID,
+		})
+
+		assert.Error(t, err)
+		assert.NotNil(t, result) // GORM returns empty struct even on error
+		assert.NoError(t, mock.ExpectationsWereMet())
+		mockUserSchemas.AssertExpectations(t)
+	})
+
+	t.Run("access denied", func(t *testing.T) {
+		client, mockUserSchemas, _, cleanup := setupTest(t)
+		defer cleanup()
+
+		accessError := assert.AnError
+
+		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(accessError)
+
+		result, err := client.ByID(&ByIDOptions{
+			Ctx:      ctx,
+			User:     user,
+			SchemaID: schemaID,
+		})
+
+		assert.Error(t, err)
+		assert.Equal(t, accessError, err)
+		assert.Nil(t, result)
+		mockUserSchemas.AssertExpectations(t)
+	})
+
+	t.Run("database connection error", func(t *testing.T) {
+		client, mockUserSchemas, mock, cleanup := setupTest(t)
+		defer cleanup()
+
+		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(nil)
+
+		mock.ExpectQuery(`SELECT \* FROM "schemas"`).
+			WithArgs(schemaID, 1).
+			WillReturnError(assert.AnError)
+
+		result, err := client.ByID(&ByIDOptions{
+			Ctx:      ctx,
+			User:     user,
+			SchemaID: schemaID,
+		})
+
+		assert.Error(t, err)
+		assert.NotNil(t, result) // GORM returns empty struct even on error
+		assert.NoError(t, mock.ExpectationsWereMet())
+		mockUserSchemas.AssertExpectations(t)
+	})
+
+	t.Run("with select fields - access denied", func(t *testing.T) {
+		client, mockUserSchemas, _, cleanup := setupTest(t)
+		defer cleanup()
+
+		accessError := assert.AnError
+
+		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(accessError)
+
+		result, err := client.ByID(&ByIDOptions{
+			Ctx:      ctx,
+			User:     user,
+			SchemaID: schemaID,
+			Select:   []string{"name"},
+		})
+
+		assert.Error(t, err)
+		assert.Equal(t, accessError, err)
+		assert.Nil(t, result)
+		mockUserSchemas.AssertExpectations(t)
+	})
+
+	t.Run("with select fields - database error", func(t *testing.T) {
+		client, mockUserSchemas, mock, cleanup := setupTest(t)
+		defer cleanup()
+
+		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(nil)
+
+		mock.ExpectQuery(`SELECT "name" FROM "schemas"`).
+			WithArgs(schemaID, 1).
+			WillReturnError(assert.AnError)
+
+		result, err := client.ByID(&ByIDOptions{
+			Ctx:      ctx,
+			User:     user,
+			SchemaID: schemaID,
+			Select:   []string{"name"},
 		})
 
 		assert.Error(t, err)
