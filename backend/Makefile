@@ -34,7 +34,7 @@ test: cgo_envs
 	go test -tags "test" -ldflags $(ldflags) $(test_pattern)
 
 test_coverage: cgo_envs
-	go test -tags "test" -coverprofile=coverage/result.out -covermode=atomic -ldflags $(ldflags) ./...
+	go test -tags "test" -coverprofile=coverage/result.out -covermode=atomic -ldflags $(ldflags) $(test_pattern)
 	go tool cover -html=coverage/result.out -o coverage/result.html
 
 prod: cgo_envs
