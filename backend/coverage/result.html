@@ -117,7 +117,7 @@
 
             <option value="file9">polimane/backend/api/base/parse_body.go (100.0%)</option>
 
-            <option value="file10">polimane/backend/api/base/parse_query.go (0.0%)</option>
+            <option value="file10">polimane/backend/api/base/parse_query.go (100.0%)</option>
 
             <option value="file11">polimane/backend/api/base/success_response.go (100.0%)</option>
 
@@ -707,31 +707,31 @@ type errorResponse struct {
         Data    CustomErrorData `json:"data,omitempty"`
 }
 
-func getErrorStatus(err error) int <span class="cov10" title="22">{
-        if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov3" title="2">{
+func getErrorStatus(err error) int <span class="cov10" title="24">{
+        if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov2" title="2">{
                 return fiber.StatusNotFound
         }</span>
 
-        <span class="cov9" title="20">switch v := err.(type) </span>{
+        <span class="cov9" title="22">switch v := err.(type) </span>{
         case *CustomError:<span class="cov7" title="11">
                 return v.Code</span>
-        case *fiber.Error:<span class="cov5" title="5">
+        case *fiber.Error:<span class="cov6" title="6">
                 return v.Code</span>
-        default:<span class="cov5" title="4">
+        default:<span class="cov5" title="5">
                 return fiber.StatusInternalServerError</span>
         }
 }
 
-func getErrorData(err error) CustomErrorData <span class="cov10" title="22">{
+func getErrorData(err error) CustomErrorData <span class="cov10" title="24">{
         switch v := err.(type) </span>{
         case *CustomError:<span class="cov7" title="11">
                 return v.Data</span>
-        default:<span class="cov7" title="11">
+        default:<span class="cov8" title="13">
                 return nil</span>
         }
 }
 
-func ErrorHandler(ctx *fiber.Ctx, err error) error <span class="cov9" title="18">{
+func ErrorHandler(ctx *fiber.Ctx, err error) error <span class="cov9" title="20">{
         return ctx.Status(getErrorStatus(err)).JSON(errorResponse{
                 Success: false,
                 Message: err.Error(),
@@ -800,14 +800,14 @@ import (
         "github.com/gofiber/fiber/v2"
 )
 
-func ParseQuery[B any](ctx *fiber.Ctx, query *B) (err error) <span class="cov0" title="0">{
-        if err = ctx.QueryParser(query); err != nil </span><span class="cov0" title="0">{
+func ParseQuery[B any](ctx *fiber.Ctx, query *B) (err error) <span class="cov10" title="5">{
+        if err = ctx.QueryParser(query); err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
-        <span class="cov0" title="0">if err = Validate(query); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="4">if err = Validate(query); err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov7" title="3">return nil</span>
 }
 </pre>
 
@@ -845,18 +845,18 @@ type requestValidator struct {
 
 var validatorInstance *requestValidator
 
-func InitValidator() <span class="cov6" title="6">{
+func InitValidator() <span class="cov6" title="7">{
         validatorInstance = &amp;requestValidator{
                 validator: validator.New(),
         }
 }</span>
 
-func (v *requestValidator) Validate(data interface{}) []ValidationErrorResponse <span class="cov10" title="15">{
+func (v *requestValidator) Validate(data interface{}) []ValidationErrorResponse <span class="cov10" title="19">{
         var validationErrors []ValidationErrorResponse
 
         errs := v.validator.Struct(data)
-        if errs != nil </span><span class="cov8" title="9">{
-                for _, err := range errs.(validator.ValidationErrors) </span><span class="cov9" title="14">{
+        if errs != nil </span><span class="cov8" title="10">{
+                for _, err := range errs.(validator.ValidationErrors) </span><span class="cov9" title="15">{
                         var elem ValidationErrorResponse
 
                         elem.FailedField = err.Field()
@@ -868,17 +868,17 @@ func (v *requestValidator) Validate(data interface{}) []ValidationErrorResponse 
                 }</span>
         }
 
-        <span class="cov10" title="15">return validationErrors</span>
+        <span class="cov10" title="19">return validationErrors</span>
 }
 
-func Validate(data interface{}) error <span class="cov8" title="9">{
+func Validate(data interface{}) error <span class="cov8" title="13">{
         if errs := validatorInstance.Validate(data); len(errs) &gt; 0 &amp;&amp; errs[0].Error </span><span
             class="cov6"
-            title="6"
+            title="7"
         >{
                 errMsgs := make([]string, len(errs))
 
-                for i, err := range errs </span><span class="cov7" title="7">{
+                for i, err := range errs </span><span class="cov7" title="8">{
                         errMsgs[i] = fmt.Sprintf(
                                 "[%s]: '%v' | Needs to implement '%s'",
                                 err.FailedField,
@@ -887,13 +887,13 @@ func Validate(data interface{}) error <span class="cov8" title="9">{
                         )
                 }</span>
 
-                <span class="cov6" title="6">return &amp;fiber.Error{
+                <span class="cov6" title="7">return &amp;fiber.Error{
                         Code:    fiber.StatusBadRequest,
                         Message: strings.Join(errMsgs, " and "),
                 }</span>
         }
 
-        <span class="cov4" title="3">return nil</span>
+        <span class="cov6" title="6">return nil</span>
 }
 </pre>
 
