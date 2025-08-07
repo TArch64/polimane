@@ -36,6 +36,7 @@ test: cgo_envs
 test_coverage: cgo_envs
 	go test -tags "test" -coverprofile=coverage/result.out -covermode=atomic -ldflags $(ldflags) $(test_pattern)
 	go tool cover -html=coverage/result.out -o coverage/result.html
+	go tool cover -func=coverage/result.out
 
 prod: cgo_envs
 	GOOS=linux GOARCH=arm64 \
