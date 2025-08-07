@@ -101,7 +101,7 @@
 
             <option value="file1">polimane/backend/api/auth/login.go (100.0%)</option>
 
-            <option value="file2">polimane/backend/api/auth/login_complete.go (94.7%)</option>
+            <option value="file2">polimane/backend/api/auth/login_complete.go (100.0%)</option>
 
             <option value="file3">polimane/backend/api/auth/logout.go (100.0%)</option>
 
@@ -359,13 +359,13 @@ type loginCompleteQuery struct {
         Code string `query:"code" validate:"required"`
 }
 
-func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error <span class="cov10" title="5">{
+func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error <span class="cov10" title="7">{
         var query loginCompleteQuery
-        if err := base.ParseQuery(ctx, &amp;query); err != nil </span><span class="cov0" title="0">{
+        if err := base.ParseQuery(ctx, &amp;query); err != nil </span><span class="cov4" title="2">{
                 return err
         }</span>
 
-        <span class="cov10" title="5">reqCtx := ctx.Context()
+        <span class="cov8" title="5">reqCtx := ctx.Context()
         data, err := c.workosClient.UserManagement().AuthenticateWithCode(reqCtx, usermanagement.AuthenticateWithCodeOpts{
                 ClientID:  c.env.WorkOS.ClientID,
                 Code:      query.Code,
@@ -376,12 +376,12 @@ func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error <span class="cov10" 
                 return err
         }</span>
 
-        <span class="cov8" title="4">user, err := c.users.CreateIfNeeded(reqCtx, data.User.ID)
+        <span class="cov7" title="4">user, err := c.users.CreateIfNeeded(reqCtx, data.User.ID)
         if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov7" title="3">_, err = c.workosClient.UserManagement().UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
+        <span class="cov6" title="3">_, err = c.workosClient.UserManagement().UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
                 User:       data.User.ID,
                 ExternalID: user.ID.String(),
         })

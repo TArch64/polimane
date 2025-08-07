@@ -312,6 +312,68 @@ func TestApiLoginComplete(t *testing.T) {
 		mockUserManagement.AssertExpectations(t)
 		mockUsers.AssertExpectations(t)
 	})
+
+	t.Run("handles missing code parameter validation", func(t *testing.T) {
+		// Arrange
+		base.InitValidator()
+
+		controller := &Controller{
+			workosClient: &MockWorkosClient{
+				userManagement: &MockUserManagement{},
+			},
+			env: &env.Environment{
+				WorkOS: struct {
+					ClientID string `env:"BACKEND_WORKOS_CLIENT_ID,required=true"`
+					ApiKey   string `env:"BACKEND_WORKOS_API_KEY,required=true"`
+				}{
+					ClientID: "test-client-id",
+				},
+			},
+		}
+
+		// Create fiber app and request without code parameter
+		app := fiber.New()
+		app.Get("/complete", controller.apiLoginComplete)
+		req := httptest.NewRequest("GET", "/complete", nil) // No code parameter
+
+		// Act
+		resp, err := app.Test(req)
+
+		// Assert
+		assert.NoError(t, err)
+		assert.Equal(t, 400, resp.StatusCode) // Validation error should return 400
+	})
+
+	t.Run("handles empty code parameter validation", func(t *testing.T) {
+		// Arrange
+		base.InitValidator()
+
+		controller := &Controller{
+			workosClient: &MockWorkosClient{
+				userManagement: &MockUserManagement{},
+			},
+			env: &env.Environment{
+				WorkOS: struct {
+					ClientID string `env:"BACKEND_WORKOS_CLIENT_ID,required=true"`
+					ApiKey   string `env:"BACKEND_WORKOS_API_KEY,required=true"`
+				}{
+					ClientID: "test-client-id",
+				},
+			},
+		}
+
+		// Create fiber app and request with empty code parameter
+		app := fiber.New()
+		app.Get("/complete", controller.apiLoginComplete)
+		req := httptest.NewRequest("GET", "/complete?code=", nil) // Empty code parameter
+
+		// Act
+		resp, err := app.Test(req)
+
+		// Assert
+		assert.NoError(t, err)
+		assert.Equal(t, 400, resp.StatusCode) // Validation error should return 400
+	})
 }
 
 func TestLoginCompleteQuery(t *testing.T) {
