@@ -43,7 +43,7 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *Controller) updateUser(ctx context.Context, userID string, body *updateBody) error {
-	_, err := c.workosClient.UserManagement.UpdateUser(ctx, usermanagement.UpdateUserOpts{
+	_, err := c.workosClient.UserManagement().UpdateUser(ctx, usermanagement.UpdateUserOpts{
 		User:      userID,
 		FirstName: body.FirstName,
 		LastName:  body.LastName,
