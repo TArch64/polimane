@@ -12,7 +12,6 @@ import (
 
 	"polimane/backend/env"
 	"polimane/backend/model"
-	"polimane/backend/services/workos"
 )
 
 func TestApiLoginComplete(t *testing.T) {
@@ -40,8 +39,8 @@ func TestApiLoginComplete(t *testing.T) {
 		}
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			env: &env.Environment{
 				WorkOS: struct {
@@ -103,8 +102,8 @@ func TestApiLoginComplete(t *testing.T) {
 		mockUserManagement := &MockUserManagement{}
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			env: &env.Environment{
 				WorkOS: struct {
@@ -142,8 +141,8 @@ func TestApiLoginComplete(t *testing.T) {
 		expectedError := assert.AnError
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			env: &env.Environment{
 				WorkOS: struct {
@@ -188,8 +187,8 @@ func TestApiLoginComplete(t *testing.T) {
 		}
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			env: &env.Environment{
 				WorkOS: struct {
@@ -241,8 +240,8 @@ func TestApiLoginComplete(t *testing.T) {
 		}
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			env: &env.Environment{
 				WorkOS: struct {
@@ -301,8 +300,8 @@ func TestApiLoginComplete(t *testing.T) {
 		}
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			env: &env.Environment{
 				WorkOS: struct {

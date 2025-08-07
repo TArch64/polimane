@@ -97,7 +97,7 @@
     <div id="nav">
         <select id="files">
 
-            <option value="file0">polimane/backend/api/auth/controller.go (100.0%)</option>
+            <option value="file0">polimane/backend/api/auth/controller.go (0.0%)</option>
 
             <option value="file1">polimane/backend/api/auth/login.go (100.0%)</option>
 
@@ -125,13 +125,13 @@
 
             <option value="file13">polimane/backend/api/not_found.go (100.0%)</option>
 
-            <option value="file14">polimane/backend/api/ping/controller.go (100.0%)</option>
+            <option value="file14">polimane/backend/api/ping/controller.go (0.0%)</option>
 
-            <option value="file15">polimane/backend/api/ping/ping.go (100.0%)</option>
+            <option value="file15">polimane/backend/api/ping/ping.go (0.0%)</option>
 
             <option value="file16">polimane/backend/api/schemas/by_id.go (100.0%)</option>
 
-            <option value="file17">polimane/backend/api/schemas/controller.go (10.0%)</option>
+            <option value="file17">polimane/backend/api/schemas/controller.go (0.0%)</option>
 
             <option value="file18">polimane/backend/api/schemas/copy.go (100.0%)</option>
 
@@ -157,7 +157,7 @@
 
             <option value="file29">polimane/backend/api/users/auth_factors_list.go (100.0%)</option>
 
-            <option value="file30">polimane/backend/api/users/controller.go (7.7%)</option>
+            <option value="file30">polimane/backend/api/users/controller.go (0.0%)</option>
 
             <option value="file31">polimane/backend/api/users/email_verify.go (100.0%)</option>
 
@@ -237,11 +237,15 @@
 
             <option value="file69">polimane/backend/services/workos/authenticate_with_access_token.go (12.5%)</option>
 
-            <option value="file70">polimane/backend/services/workos/client.go (100.0%)</option>
+            <option value="file70">polimane/backend/services/workos/client.go (0.0%)</option>
 
             <option value="file71">polimane/backend/services/workos/get_error_code.go (100.0%)</option>
 
-            <option value="file72">polimane/backend/signal/provider.go (100.0%)</option>
+            <option value="file72">polimane/backend/services/workos/mfa.go (0.0%)</option>
+
+            <option value="file73">polimane/backend/services/workos/user_management.go (100.0%)</option>
+
+            <option value="file74">polimane/backend/signal/provider.go (100.0%)</option>
 
         </select>
     </div>
@@ -281,20 +285,20 @@ const groupPrefix = "auth"
 
 type ControllerOptions struct {
         fx.In
-        WorkosClient *workos.Client
+        WorkosClient workos.Client
         Env          *env.Environment
         Users        repositoryusers.Client
         Signals      *signal.Container
 }
 
 type Controller struct {
-        workosClient *workos.Client
+        workosClient workos.Client
         env          *env.Environment
         users        repositoryusers.Client
         signals      *signal.Container
 }
 
-func Provider(options ControllerOptions) base.Controller <span class="cov10" title="2">{
+func Provider(options ControllerOptions) base.Controller <span class="cov0" title="0">{
         return &amp;Controller{
                 workosClient: options.WorkosClient,
                 env:          options.Env,
@@ -303,14 +307,14 @@ func Provider(options ControllerOptions) base.Controller <span class="cov10" tit
         }
 }</span>
 
-func (c *Controller) Public(group fiber.Router) <span class="cov1" title="1">{
-        base.WithGroup(group, groupPrefix+"/login", func(group fiber.Router) </span><span class="cov1" title="1">{
+func (c *Controller) Public(group fiber.Router) <span class="cov0" title="0">{
+        base.WithGroup(group, groupPrefix+"/login", func(group fiber.Router) </span><span class="cov0" title="0">{
                 group.Get("", c.apiLogin)
                 group.Get("complete", c.apiLoginComplete)
         }</span>)
 }
 
-func (c *Controller) Private(group fiber.Router) <span class="cov1" title="1">{
+func (c *Controller) Private(group fiber.Router) <span class="cov0" title="0">{
         group = group.Group(groupPrefix)
         group.Post("logout", c.apiLogout)
 }</span>
@@ -324,7 +328,7 @@ import (
 )
 
 func (c *Controller) apiLogin(ctx *fiber.Ctx) error <span class="cov10" title="5">{
-        url, err := c.workosClient.UserManagement.GetAuthorizationURL(usermanagement.GetAuthorizationURLOpts{
+        url, err := c.workosClient.UserManagement().GetAuthorizationURL(usermanagement.GetAuthorizationURLOpts{
                 ClientID:    c.env.WorkOS.ClientID,
                 RedirectURI: c.env.ApiURL().JoinPath("api/auth/login/complete").String(),
                 Provider:    "authkit",
@@ -358,7 +362,7 @@ func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error <span class="cov10" 
         }</span>
 
         <span class="cov10" title="6">reqCtx := ctx.Context()
-        data, err := c.workosClient.UserManagement.AuthenticateWithCode(reqCtx, usermanagement.AuthenticateWithCodeOpts{
+        data, err := c.workosClient.UserManagement().AuthenticateWithCode(reqCtx, usermanagement.AuthenticateWithCodeOpts{
                 ClientID:  c.env.WorkOS.ClientID,
                 Code:      query.Code,
                 UserAgent: ctx.Get("User-Agent"),
@@ -373,7 +377,7 @@ func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error <span class="cov10" 
                 return err
         }</span>
 
-        <span class="cov6" title="3">_, err = c.workosClient.UserManagement.UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
+        <span class="cov6" title="3">_, err = c.workosClient.UserManagement().UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
                 User:       data.User.ID,
                 ExternalID: user.ID.String(),
         })
@@ -403,7 +407,7 @@ import (
 func (c *Controller) apiLogout(ctx *fiber.Ctx) error <span class="cov10" title="5">{
         session := GetSession(ctx)
 
-        err := c.workosClient.UserManagement.RevokeSession(ctx.Context(), usermanagement.RevokeSessionOpts{
+        err := c.workosClient.UserManagement().RevokeSession(ctx.Context(), usermanagement.RevokeSessionOpts{
                 SessionID: session.ID,
         })
 
@@ -445,14 +449,14 @@ type MiddlewareOptions struct {
         fx.In
         Signals      *signal.Container
         Env          *env.Environment
-        WorkosClient *workos.Client
+        WorkosClient workos.Client
         Users        repositoryusers.Client
 }
 
 type Middleware struct {
         userCache       cache.Cache[*model.User]
         workosUserCache cache.Cache[*usermanagement.User]
-        workosClient    *workos.Client
+        workosClient    workos.Client
         env             *env.Environment
         users           repositoryusers.Client
 }
@@ -537,7 +541,7 @@ func (m *Middleware) refreshToken(ctx *fiber.Ctx, token string) (*workos.AccessT
             class="cov0"
             title="0"
         >{
-        res, err := m.workosClient.UserManagement.AuthenticateWithRefreshToken(ctx.Context(), usermanagement.AuthenticateWithRefreshTokenOpts{
+        res, err := m.workosClient.UserManagement().AuthenticateWithRefreshToken(ctx.Context(), usermanagement.AuthenticateWithRefreshTokenOpts{
                 ClientID:     m.env.WorkOS.ClientID,
                 RefreshToken: token,
                 UserAgent:    ctx.Get("User-Agent"),
@@ -560,7 +564,7 @@ func (m *Middleware) getWorkosUser(ctx context.Context, accessTokenClaims *worko
             class="cov1"
             title="1"
         >{
-                user, err := m.workosClient.UserManagement.GetUser(ctx, usermanagement.GetUserOpts{
+                user, err := m.workosClient.UserManagement().GetUser(ctx, usermanagement.GetUserOpts{
                         User: accessTokenClaims.UserID,
                 })
 
@@ -908,13 +912,13 @@ import (
 
 type Controller struct{}
 
-func Provider() base.Controller <span class="cov8" title="1">{
+func Provider() base.Controller <span class="cov0" title="0">{
         return &amp;Controller{}
 }</span>
 
-func (c *Controller) Public(_ fiber.Router) {<span class="cov8" title="1">}</span>
+func (c *Controller) Public(_ fiber.Router) {<span class="cov0" title="0">}</span>
 
-func (c *Controller) Private(group fiber.Router) <span class="cov8" title="1">{
+func (c *Controller) Private(group fiber.Router) <span class="cov0" title="0">{
         group = group.Group("ping")
         group.Get("", c.apiPing)
 }</span>
@@ -924,7 +928,7 @@ func (c *Controller) Private(group fiber.Router) <span class="cov8" title="1">{
 
 import "github.com/gofiber/fiber/v2"
 
-func (c *Controller) apiPing(ctx *fiber.Ctx) error <span class="cov8" title="1">{
+func (c *Controller) apiPing(ctx *fiber.Ctx) error <span class="cov0" title="0">{
         return ctx.JSON(fiber.Map{"message": "pong"})
 }</span>
 </pre>
@@ -983,14 +987,14 @@ type Controller struct {
         s3      awss3.Client
 }
 
-func Provider(options ControllerOptions) base.Controller <span class="cov8" title="1">{
+func Provider(options ControllerOptions) base.Controller <span class="cov0" title="0">{
         return &amp;Controller{
                 schemas: options.Schemas,
                 s3:      options.S3,
         }
 }</span>
 
-func (c *Controller) Public(_ fiber.Router) {<span class="cov8" title="1">}</span>
+func (c *Controller) Public(_ fiber.Router) {<span class="cov0" title="0">}</span>
 
 func (c *Controller) Private(group fiber.Router) <span class="cov0" title="0">{
         base.WithGroup(group, "schemas", func(group fiber.Router) </span><span class="cov0" title="0">{
@@ -1455,7 +1459,7 @@ func (c *Controller) apiAuthFactorDelete(ctx *fiber.Ctx) error <span class="cov1
                 return err
         }</span>
 
-        <span class="cov8" title="4">err = c.workosClient.MFA.DeleteFactor(ctx.Context(), mfa.DeleteFactorOpts{
+        <span class="cov8" title="4">err = c.workosClient.MFA().DeleteFactor(ctx.Context(), mfa.DeleteFactorOpts{
                 FactorID: factorID,
         })
 
@@ -1491,7 +1495,7 @@ func (c *Controller) apiAuthFactorCreate(ctx *fiber.Ctx) (err error) <span class
                 return err
         }</span>
 
-        <span class="cov7" title="4">response, err := c.workosClient.MFA.VerifyChallenge(ctx.Context(), mfa.VerifyChallengeOpts{
+        <span class="cov7" title="4">response, err := c.workosClient.MFA().VerifyChallenge(ctx.Context(), mfa.VerifyChallengeOpts{
                 Code:        body.Code,
                 ChallengeID: body.ChallengeID,
         })
@@ -1504,7 +1508,7 @@ func (c *Controller) apiAuthFactorCreate(ctx *fiber.Ctx) (err error) <span class
                 return ErrInvalidAuthFactor
         }</span>
 
-        <span class="cov4" title="2">factor, err := c.workosClient.MFA.GetFactor(ctx.Context(), mfa.GetFactorOpts{
+        <span class="cov4" title="2">factor, err := c.workosClient.MFA().GetFactor(ctx.Context(), mfa.GetFactorOpts{
                 FactorID: response.Challenge.FactorID,
         })
 
@@ -1536,7 +1540,7 @@ type newAuthFactorResponse struct {
 func (c *Controller) apiAuthFactorsInit(ctx *fiber.Ctx) error <span class="cov10" title="4">{
         session := auth.GetSession(ctx)
 
-        response, err := c.workosClient.UserManagement.EnrollAuthFactor(ctx.Context(), usermanagement.EnrollAuthFactorOpts{
+        response, err := c.workosClient.UserManagement().EnrollAuthFactor(ctx.Context(), usermanagement.EnrollAuthFactorOpts{
                 User:       session.WorkosUser.ID,
                 Type:       mfa.TOTP,
                 TOTPIssuer: "Polimane",
@@ -1573,7 +1577,7 @@ type authFactorListItem struct {
 func (c *Controller) apiListAuthFactors(ctx *fiber.Ctx) error <span class="cov10" title="4">{
         user := auth.GetSessionUser(ctx)
 
-        factors, err := c.workosClient.UserManagement.ListAuthFactors(ctx.Context(), usermanagement.ListAuthFactorsOpts{
+        factors, err := c.workosClient.UserManagement().ListAuthFactors(ctx.Context(), usermanagement.ListAuthFactorsOpts{
                 User: user.WorkosID,
         })
 
@@ -1608,23 +1612,23 @@ const factorIdParam = "factorId"
 
 type ControllerOptions struct {
         fx.In
-        WorkosClient *workos.Client
+        WorkosClient workos.Client
         Signals      *signal.Container
 }
 
 type Controller struct {
-        workosClient *workos.Client
+        workosClient workos.Client
         signals      *signal.Container
 }
 
-func Provider(options ControllerOptions) base.Controller <span class="cov8" title="1">{
+func Provider(options ControllerOptions) base.Controller <span class="cov0" title="0">{
         return &amp;Controller{
                 workosClient: options.WorkosClient,
                 signals:      options.Signals,
         }
 }</span>
 
-func (c *Controller) Public(_ fiber.Router) {<span class="cov8" title="1">}</span>
+func (c *Controller) Public(_ fiber.Router) {<span class="cov0" title="0">}</span>
 
 func (c *Controller) Private(group fiber.Router) <span class="cov0" title="0">{
         base.WithGroup(group, "users/current", func(group fiber.Router) </span><span class="cov0" title="0">{
@@ -1678,7 +1682,7 @@ func (c *Controller) apiEmailVerify(ctx *fiber.Ctx) (err error) <span class="cov
 
         <span class="cov7" title="4">user := auth.GetSessionUser(ctx)
 
-        _, err = c.workosClient.UserManagement.VerifyEmail(ctx.Context(), usermanagement.VerifyEmailOpts{
+        _, err = c.workosClient.UserManagement().VerifyEmail(ctx.Context(), usermanagement.VerifyEmailOpts{
                 User: user.WorkosID,
                 Code: body.Code,
         })
@@ -1723,7 +1727,7 @@ func (c *Controller) apiEmailVerifyRetry(ctx *fiber.Ctx) (err error) <span class
 }
 
 func (c *Controller) sendEmailVerification(ctx context.Context, userID string) error <span class="cov10" title="9">{
-        _, err := c.workosClient.UserManagement.SendVerificationEmail(ctx, usermanagement.SendVerificationEmailOpts{
+        _, err := c.workosClient.UserManagement().SendVerificationEmail(ctx, usermanagement.SendVerificationEmailOpts{
                 User: userID,
         })
 
@@ -1776,7 +1780,7 @@ import (
 func (c *Controller) apiPasswordReset(ctx *fiber.Ctx) error <span class="cov10" title="3">{
         session := auth.GetSession(ctx)
 
-        _, err := c.workosClient.UserManagement.CreatePasswordReset(ctx.Context(), usermanagement.CreatePasswordResetOpts{
+        _, err := c.workosClient.UserManagement().CreatePasswordReset(ctx.Context(), usermanagement.CreatePasswordResetOpts{
                 Email: session.WorkosUser.Email,
         })
 
@@ -1846,7 +1850,7 @@ func (c *Controller) updateUser(ctx context.Context, userID string, body *update
             class="cov9"
             title="6"
         >{
-        _, err := c.workosClient.UserManagement.UpdateUser(ctx, usermanagement.UpdateUserOpts{
+        _, err := c.workosClient.UserManagement().UpdateUser(ctx, usermanagement.UpdateUserOpts{
                 User:      userID,
                 FirstName: body.FirstName,
                 LastName:  body.LastName,
@@ -2984,16 +2988,16 @@ type AccessTokenClaims struct {
         SessionID string
 }
 
-func (c *Client) AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*AccessTokenClaims, error) <span
+func (i *Impl) AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*AccessTokenClaims, error) <span
             class="cov10"
             title="3"
         >{
-        jwksURL, err := c.UserManagement.GetJWKSURL(c.env.WorkOS.ClientID)
+        jwksURL, err := i.UserManagement().GetJWKSURL(i.env.WorkOS.ClientID)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">keySet, err := c.jwk.Fetch(ctx, jwksURL.String())
+        <span class="cov0" title="0">keySet, err := i.jwk.Fetch(ctx, jwksURL.String())
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
@@ -3031,7 +3035,6 @@ func (c *Client) AuthenticateWithAccessToken(ctx context.Context, tokenStr strin
 
 import (
         "context"
-        "net/url"
 
         "github.com/workos/workos-go/v4/pkg/mfa"
         "github.com/workos/workos-go/v4/pkg/usermanagement"
@@ -3041,47 +3044,32 @@ import (
         "polimane/backend/services/jwk"
 )
 
-type UserManagement interface {
-        GetAuthorizationURL(opts usermanagement.GetAuthorizationURLOpts) (*url.URL, error)
-        AuthenticateWithCode(ctx context.Context, opts usermanagement.AuthenticateWithCodeOpts) (usermanagement.AuthenticateResponse, error)
-        UpdateUser(ctx context.Context, opts usermanagement.UpdateUserOpts) (usermanagement.User, error)
-        RevokeSession(ctx context.Context, opts usermanagement.RevokeSessionOpts) error
-        AuthenticateWithRefreshToken(ctx context.Context, opts usermanagement.AuthenticateWithRefreshTokenOpts) (usermanagement.RefreshAuthenticationResponse, error)
-        GetUser(ctx context.Context, opts usermanagement.GetUserOpts) (usermanagement.User, error)
-        EnrollAuthFactor(ctx context.Context, opts usermanagement.EnrollAuthFactorOpts) (usermanagement.EnrollAuthFactorResponse, error)
-        ListAuthFactors(ctx context.Context, opts usermanagement.ListAuthFactorsOpts) (usermanagement.ListAuthFactorsResponse, error)
-        VerifyEmail(ctx context.Context, opts usermanagement.VerifyEmailOpts) (usermanagement.UserResponse, error)
-        SendVerificationEmail(ctx context.Context, opts usermanagement.SendVerificationEmailOpts) (usermanagement.UserResponse, error)
-        CreatePasswordReset(ctx context.Context, opts usermanagement.CreatePasswordResetOpts) (usermanagement.PasswordReset, error)
-        GetJWKSURL(clientID string) (*url.URL, error)
-}
-
-type MFA interface {
-        DeleteFactor(ctx context.Context, opts mfa.DeleteFactorOpts) error
-        VerifyChallenge(ctx context.Context, opts mfa.VerifyChallengeOpts) (mfa.VerifyChallengeResponse, error)
-        GetFactor(ctx context.Context, opts mfa.GetFactorOpts) (mfa.Factor, error)
-}
-
 type ClientOptions struct {
         fx.In
         Env *env.Environment
         JWK jwk.Client
 }
 
-type Client struct {
-        UserManagement UserManagement
-        MFA            MFA
+type Client interface {
+        UserManagement() UserManagement
+        MFA() MFA
+        AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*AccessTokenClaims, error)
+}
+
+type Impl struct {
+        userManagement UserManagement
+        mfa            MFA
         env            *env.Environment
         jwk            jwk.Client
 }
 
-func Provider(options ClientOptions) *Client <span class="cov10" title="3">{
+func Provider(options ClientOptions) Client <span class="cov0" title="0">{
         usermanagement.SetAPIKey(options.Env.WorkOS.ApiKey)
         mfa.SetAPIKey(options.Env.WorkOS.ApiKey)
 
-        return &amp;Client{
-                UserManagement: usermanagement.DefaultClient,
-                MFA:            mfa.DefaultClient,
+        return &amp;Impl{
+                userManagement: usermanagement.DefaultClient,
+                mfa:            mfa.DefaultClient,
                 env:            options.Env,
                 jwk:            options.JWK,
         }
@@ -3117,7 +3105,55 @@ func GetErrorCode(httpErr workos_errors.HTTPError) string <span class="cov10" ti
 }
 </pre>
 
-    <pre class="file" id="file72" style="display: none">package signal
+    <pre class="file" id="file72" style="display: none">package workos
+
+import (
+        "context"
+
+        "github.com/workos/workos-go/v4/pkg/mfa"
+)
+
+type MFA interface {
+        DeleteFactor(ctx context.Context, opts mfa.DeleteFactorOpts) error
+        VerifyChallenge(ctx context.Context, opts mfa.VerifyChallengeOpts) (mfa.VerifyChallengeResponse, error)
+        GetFactor(ctx context.Context, opts mfa.GetFactorOpts) (mfa.Factor, error)
+}
+
+func (i *Impl) MFA() MFA <span class="cov0" title="0">{
+        return i.mfa
+}</span>
+</pre>
+
+    <pre class="file" id="file73" style="display: none">package workos
+
+import (
+        "context"
+        "net/url"
+
+        "github.com/workos/workos-go/v4/pkg/usermanagement"
+)
+
+type UserManagement interface {
+        GetAuthorizationURL(opts usermanagement.GetAuthorizationURLOpts) (*url.URL, error)
+        AuthenticateWithCode(ctx context.Context, opts usermanagement.AuthenticateWithCodeOpts) (usermanagement.AuthenticateResponse, error)
+        UpdateUser(ctx context.Context, opts usermanagement.UpdateUserOpts) (usermanagement.User, error)
+        RevokeSession(ctx context.Context, opts usermanagement.RevokeSessionOpts) error
+        AuthenticateWithRefreshToken(ctx context.Context, opts usermanagement.AuthenticateWithRefreshTokenOpts) (usermanagement.RefreshAuthenticationResponse, error)
+        GetUser(ctx context.Context, opts usermanagement.GetUserOpts) (usermanagement.User, error)
+        EnrollAuthFactor(ctx context.Context, opts usermanagement.EnrollAuthFactorOpts) (usermanagement.EnrollAuthFactorResponse, error)
+        ListAuthFactors(ctx context.Context, opts usermanagement.ListAuthFactorsOpts) (usermanagement.ListAuthFactorsResponse, error)
+        VerifyEmail(ctx context.Context, opts usermanagement.VerifyEmailOpts) (usermanagement.UserResponse, error)
+        SendVerificationEmail(ctx context.Context, opts usermanagement.SendVerificationEmailOpts) (usermanagement.UserResponse, error)
+        CreatePasswordReset(ctx context.Context, opts usermanagement.CreatePasswordResetOpts) (usermanagement.PasswordReset, error)
+        GetJWKSURL(clientID string) (*url.URL, error)
+}
+
+func (i *Impl) UserManagement() UserManagement <span class="cov10" title="3">{
+        return i.userManagement
+}</span>
+</pre>
+
+    <pre class="file" id="file74" style="display: none">package signal
 
 import (
         "github.com/maniartech/signals"

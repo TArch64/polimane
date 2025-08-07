@@ -21,7 +21,7 @@ func TestController_apiAuthFactorDelete(t *testing.T) {
 			workosClient: mockWorkosClient,
 		}
 
-		mockWorkosClient.MFA.(*MockWorkosMFA).On("DeleteFactor",
+		mockWorkosClient.MFA().(*MockWorkosMFA).On("DeleteFactor",
 			mock.Anything,
 			mfa.DeleteFactorOpts{
 				FactorID: "factor-123",
@@ -47,7 +47,7 @@ func TestController_apiAuthFactorDelete(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 200, resp.StatusCode)
-		mockWorkosClient.MFA.(*MockWorkosMFA).AssertExpectations(t)
+		mockWorkosClient.MFA().(*MockWorkosMFA).AssertExpectations(t)
 	})
 
 	t.Run("returns 400 when factor ID parameter is missing", func(t *testing.T) {
@@ -116,7 +116,7 @@ func TestController_apiAuthFactorDelete(t *testing.T) {
 			Message: "Factor not found",
 		}
 
-		mockWorkosClient.MFA.(*MockWorkosMFA).On("DeleteFactor",
+		mockWorkosClient.MFA().(*MockWorkosMFA).On("DeleteFactor",
 			mock.Anything,
 			mfa.DeleteFactorOpts{
 				FactorID: "factor-123",
@@ -142,7 +142,7 @@ func TestController_apiAuthFactorDelete(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 404, resp.StatusCode)
-		mockWorkosClient.MFA.(*MockWorkosMFA).AssertExpectations(t)
+		mockWorkosClient.MFA().(*MockWorkosMFA).AssertExpectations(t)
 	})
 
 	t.Run("uses correct factor ID from URL parameter", func(t *testing.T) {
@@ -153,7 +153,7 @@ func TestController_apiAuthFactorDelete(t *testing.T) {
 		}
 
 		// Verify that the specific factor ID from the URL is used
-		mockWorkosClient.MFA.(*MockWorkosMFA).On("DeleteFactor",
+		mockWorkosClient.MFA().(*MockWorkosMFA).On("DeleteFactor",
 			mock.Anything,
 			mfa.DeleteFactorOpts{
 				FactorID: "specific-factor-id-456", // Must match the URL parameter
@@ -179,7 +179,7 @@ func TestController_apiAuthFactorDelete(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 200, resp.StatusCode)
-		mockWorkosClient.MFA.(*MockWorkosMFA).AssertExpectations(t)
+		mockWorkosClient.MFA().(*MockWorkosMFA).AssertExpectations(t)
 	})
 
 	t.Run("handles unauthorized access error", func(t *testing.T) {
@@ -194,7 +194,7 @@ func TestController_apiAuthFactorDelete(t *testing.T) {
 			Message: "Factor belongs to different user",
 		}
 
-		mockWorkosClient.MFA.(*MockWorkosMFA).On("DeleteFactor",
+		mockWorkosClient.MFA().(*MockWorkosMFA).On("DeleteFactor",
 			mock.Anything,
 			mock.Anything).Return(unauthorizedError)
 
@@ -218,6 +218,6 @@ func TestController_apiAuthFactorDelete(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 401, resp.StatusCode)
-		mockWorkosClient.MFA.(*MockWorkosMFA).AssertExpectations(t)
+		mockWorkosClient.MFA().(*MockWorkosMFA).AssertExpectations(t)
 	})
 }

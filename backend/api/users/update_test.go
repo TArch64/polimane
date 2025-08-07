@@ -31,7 +31,7 @@ func TestController_apiUpdate(t *testing.T) {
 			signals:      signalsContainer,
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("UpdateUser",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("UpdateUser",
 			mock.Anything,
 			usermanagement.UpdateUserOpts{
 				User:      testUser.WorkosID,
@@ -40,7 +40,7 @@ func TestController_apiUpdate(t *testing.T) {
 				Email:     "updated@example.com",
 			}).Return(usermanagement.User{}, nil)
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("SendVerificationEmail",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("SendVerificationEmail",
 			mock.Anything,
 			usermanagement.SendVerificationEmailOpts{
 				User: testUser.WorkosID,
@@ -73,7 +73,7 @@ func TestController_apiUpdate(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 200, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("successfully updates user with only first name", func(t *testing.T) {
@@ -87,7 +87,7 @@ func TestController_apiUpdate(t *testing.T) {
 			signals:      signalsContainer,
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("UpdateUser",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("UpdateUser",
 			mock.Anything,
 			usermanagement.UpdateUserOpts{
 				User:      testUser.WorkosID,
@@ -121,7 +121,7 @@ func TestController_apiUpdate(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 200, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("returns 422 when no fields provided", func(t *testing.T) {
@@ -192,10 +192,10 @@ func TestController_apiUpdate(t *testing.T) {
 			signals:      signalsContainer,
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("UpdateUser",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("UpdateUser",
 			mock.Anything, mock.Anything).Return(usermanagement.User{}, nil)
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("SendVerificationEmail",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("SendVerificationEmail",
 			mock.Anything,
 			usermanagement.SendVerificationEmailOpts{
 				User: testUser.WorkosID,
@@ -226,7 +226,7 @@ func TestController_apiUpdate(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 200, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertCalled(t, "SendVerificationEmail", mock.Anything, mock.Anything)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertCalled(t, "SendVerificationEmail", mock.Anything, mock.Anything)
 	})
 
 	t.Run("handles updateUser error", func(t *testing.T) {
@@ -246,7 +246,7 @@ func TestController_apiUpdate(t *testing.T) {
 			Message: "WorkOS API error",
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("UpdateUser",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("UpdateUser",
 			mock.Anything, mock.Anything).Return(usermanagement.User{}, updateError)
 
 		app := fiber.New(fiber.Config{
@@ -274,7 +274,7 @@ func TestController_apiUpdate(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 500, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("handles sendEmailVerification error", func(t *testing.T) {
@@ -289,7 +289,7 @@ func TestController_apiUpdate(t *testing.T) {
 		}
 
 		// Mock updateUser to succeed
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("UpdateUser",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("UpdateUser",
 			mock.Anything, mock.Anything).Return(usermanagement.User{}, nil)
 
 		// Mock sendEmailVerification to fail
@@ -298,7 +298,7 @@ func TestController_apiUpdate(t *testing.T) {
 			Message: "Email verification failed",
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("SendVerificationEmail",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("SendVerificationEmail",
 			mock.Anything, mock.Anything).Return(usermanagement.UserResponse{}, emailError)
 
 		app := fiber.New(fiber.Config{
@@ -326,7 +326,7 @@ func TestController_apiUpdate(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 400, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 }
 
@@ -366,7 +366,7 @@ func TestController_updateUser(t *testing.T) {
 			Email:     "john@example.com",
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("UpdateUser",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("UpdateUser",
 			mock.Anything, expectedOpts).Return(usermanagement.User{}, nil)
 
 		// Act
@@ -374,7 +374,7 @@ func TestController_updateUser(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 }
 
@@ -390,7 +390,7 @@ func TestController_sendEmailVerification(t *testing.T) {
 			User: "user-123",
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("SendVerificationEmail",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("SendVerificationEmail",
 			mock.Anything, expectedOpts).Return(usermanagement.UserResponse{}, nil)
 
 		// Act
@@ -398,6 +398,6 @@ func TestController_sendEmailVerification(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 }

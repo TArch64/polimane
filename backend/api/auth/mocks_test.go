@@ -3,14 +3,14 @@ package auth
 import (
 	"context"
 	"net/url"
-	"time"
+
+	"polimane/backend/services/workos"
 
 	"github.com/maniartech/signals"
 	"github.com/stretchr/testify/mock"
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
 
 	"polimane/backend/model"
-	"polimane/backend/services/workos"
 )
 
 // MockUsersClient implements repositoryusers.Client for testing
@@ -32,6 +32,23 @@ func (m *MockUsersClient) ByID(ctx context.Context, id model.ID) (*model.User, e
 		return nil, args.Error(1)
 	}
 	return args.Get(0).(*model.User), args.Error(1)
+}
+
+type MockWorkosClient struct {
+	mock.Mock
+	userManagement *MockUserManagement
+}
+
+func (m *MockWorkosClient) UserManagement() workos.UserManagement {
+	return m.userManagement
+}
+
+func (m *MockWorkosClient) MFA() workos.MFA {
+	return nil
+}
+
+func (m *MockWorkosClient) AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*workos.AccessTokenClaims, error) {
+	return nil, nil
 }
 
 // MockUserManagement implements workos.UserManagement interface for testing
@@ -105,20 +122,6 @@ func (m *MockUserManagement) GetJWKSURL(clientID string) (*url.URL, error) {
 	return args.Get(0).(*url.URL), args.Error(1)
 }
 
-// MockWorkosClient for testing workos client functionality
-type MockWorkosClient struct {
-	mock.Mock
-	UserManagement *MockUserManagement
-}
-
-func (m *MockWorkosClient) AuthenticateWithAccessToken(ctx context.Context, token string) (*workos.AccessTokenClaims, error) {
-	args := m.Called(ctx, token)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*workos.AccessTokenClaims), args.Error(1)
-}
-
 // MockSignal implements signals.Signal for testing
 type MockSignal[T any] struct {
 	mock.Mock
@@ -152,32 +155,4 @@ func (m *MockSignal[T]) Len() int {
 func (m *MockSignal[T]) IsEmpty() bool {
 	args := m.Called()
 	return args.Bool(0)
-}
-
-// MockCache implements cache.Cache for testing
-type MockCache[T any] struct {
-	mock.Mock
-}
-
-func (m *MockCache[T]) Get(ctx context.Context, key string, loader func() (T, *time.Duration, error)) (T, error) {
-	args := m.Called(ctx, key, mock.AnythingOfType("func() (T, *time.Duration, error)"))
-	var zero T
-	if args.Get(0) == nil {
-		return zero, args.Error(1)
-	}
-	return args.Get(0).(T), args.Error(1)
-}
-
-func (m *MockCache[T]) Set(ctx context.Context, key string, value T, duration *time.Duration) {
-	m.Called(ctx, key, value, duration)
-}
-
-func (m *MockCache[T]) Invalidate(ctx context.Context, key string) error {
-	args := m.Called(ctx, key)
-	return args.Error(0)
-}
-
-func (m *MockCache[T]) InvalidateAll(ctx context.Context) error {
-	args := m.Called(ctx)
-	return args.Error(0)
 }

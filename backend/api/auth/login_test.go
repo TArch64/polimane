@@ -12,7 +12,6 @@ import (
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
 
 	"polimane/backend/env"
-	"polimane/backend/services/workos"
 )
 
 func TestApiLogin(t *testing.T) {
@@ -22,8 +21,8 @@ func TestApiLogin(t *testing.T) {
 		expectedURL, _ := url.Parse("https://api.workos.com/auth")
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			env: &env.Environment{
 				WorkOS: struct {
@@ -66,8 +65,8 @@ func TestApiLogin(t *testing.T) {
 		expectedError := assert.AnError
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			env: &env.Environment{
 				WorkOS: struct {
@@ -104,8 +103,8 @@ func TestApiLogin(t *testing.T) {
 		expectedURL, _ := url.Parse("https://api.workos.com/auth")
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			env: &env.Environment{
 				WorkOS: struct {
@@ -144,8 +143,8 @@ func TestApiLogin(t *testing.T) {
 		expectedURL, _ := url.Parse("https://api.workos.com/auth")
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			env: &env.Environment{
 				WorkOS: struct {
@@ -184,8 +183,8 @@ func TestApiLogin(t *testing.T) {
 		expectedURL, _ := url.Parse("https://test.workos.com/auth?param=value")
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			env: &env.Environment{
 				WorkOS: struct {

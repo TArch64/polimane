@@ -38,14 +38,14 @@ func TestController_apiAuthFactorCreate(t *testing.T) {
 			CreatedAt: "2023-01-01T12:00:00Z",
 		}
 
-		mockWorkosClient.MFA.(*MockWorkosMFA).On("VerifyChallenge",
+		mockWorkosClient.MFA().(*MockWorkosMFA).On("VerifyChallenge",
 			mock.Anything,
 			mfa.VerifyChallengeOpts{
 				Code:        "123456",
 				ChallengeID: "challenge-123",
 			}).Return(mockVerifyResponse, nil)
 
-		mockWorkosClient.MFA.(*MockWorkosMFA).On("GetFactor",
+		mockWorkosClient.MFA().(*MockWorkosMFA).On("GetFactor",
 			mock.Anything,
 			mfa.GetFactorOpts{
 				FactorID: "factor-123",
@@ -77,7 +77,7 @@ func TestController_apiAuthFactorCreate(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 200, resp.StatusCode)
-		mockWorkosClient.MFA.(*MockWorkosMFA).AssertExpectations(t)
+		mockWorkosClient.MFA().(*MockWorkosMFA).AssertExpectations(t)
 	})
 
 	t.Run("returns 400 when challengeId is missing", func(t *testing.T) {
@@ -153,7 +153,7 @@ func TestController_apiAuthFactorCreate(t *testing.T) {
 			Valid: false, // Invalid verification
 		}
 
-		mockWorkosClient.MFA.(*MockWorkosMFA).On("VerifyChallenge",
+		mockWorkosClient.MFA().(*MockWorkosMFA).On("VerifyChallenge",
 			mock.Anything,
 			mock.Anything).Return(mockVerifyResponse, nil)
 
@@ -183,7 +183,7 @@ func TestController_apiAuthFactorCreate(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 400, resp.StatusCode)
-		mockWorkosClient.MFA.(*MockWorkosMFA).AssertExpectations(t)
+		mockWorkosClient.MFA().(*MockWorkosMFA).AssertExpectations(t)
 	})
 
 	t.Run("handles VerifyChallenge error", func(t *testing.T) {
@@ -198,7 +198,7 @@ func TestController_apiAuthFactorCreate(t *testing.T) {
 			Message: "Invalid challenge",
 		}
 
-		mockWorkosClient.MFA.(*MockWorkosMFA).On("VerifyChallenge",
+		mockWorkosClient.MFA().(*MockWorkosMFA).On("VerifyChallenge",
 			mock.Anything,
 			mock.Anything).Return(mfa.VerifyChallengeResponse{}, verifyError)
 
@@ -228,7 +228,7 @@ func TestController_apiAuthFactorCreate(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 401, resp.StatusCode)
-		mockWorkosClient.MFA.(*MockWorkosMFA).AssertExpectations(t)
+		mockWorkosClient.MFA().(*MockWorkosMFA).AssertExpectations(t)
 	})
 
 	t.Run("handles GetFactor error", func(t *testing.T) {
@@ -250,11 +250,11 @@ func TestController_apiAuthFactorCreate(t *testing.T) {
 			Message: "Factor not found",
 		}
 
-		mockWorkosClient.MFA.(*MockWorkosMFA).On("VerifyChallenge",
+		mockWorkosClient.MFA().(*MockWorkosMFA).On("VerifyChallenge",
 			mock.Anything,
 			mock.Anything).Return(mockVerifyResponse, nil)
 
-		mockWorkosClient.MFA.(*MockWorkosMFA).On("GetFactor",
+		mockWorkosClient.MFA().(*MockWorkosMFA).On("GetFactor",
 			mock.Anything,
 			mfa.GetFactorOpts{
 				FactorID: "factor-123",
@@ -286,7 +286,7 @@ func TestController_apiAuthFactorCreate(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 404, resp.StatusCode)
-		mockWorkosClient.MFA.(*MockWorkosMFA).AssertExpectations(t)
+		mockWorkosClient.MFA().(*MockWorkosMFA).AssertExpectations(t)
 	})
 }
 

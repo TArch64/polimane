@@ -39,7 +39,7 @@ func TestController_apiListAuthFactors(t *testing.T) {
 			},
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("ListAuthFactors",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("ListAuthFactors",
 			mock.Anything,
 			usermanagement.ListAuthFactorsOpts{
 				User: testUser.WorkosID,
@@ -79,7 +79,7 @@ func TestController_apiListAuthFactors(t *testing.T) {
 		assert.Equal(t, "factor-456", responseFactors[1].Id)
 		assert.Equal(t, "2023-01-02T13:00:00Z", responseFactors[1].CreatedAt)
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("returns empty array when no auth factors exist", func(t *testing.T) {
@@ -95,7 +95,7 @@ func TestController_apiListAuthFactors(t *testing.T) {
 			Data: []mfa.Factor{}, // Empty array
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("ListAuthFactors",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("ListAuthFactors",
 			mock.Anything,
 			usermanagement.ListAuthFactorsOpts{
 				User: testUser.WorkosID,
@@ -130,7 +130,7 @@ func TestController_apiListAuthFactors(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.Len(t, responseFactors, 0)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("handles WorkOS error", func(t *testing.T) {
@@ -147,7 +147,7 @@ func TestController_apiListAuthFactors(t *testing.T) {
 			Message: "Service unavailable",
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("ListAuthFactors",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("ListAuthFactors",
 			mock.Anything,
 			usermanagement.ListAuthFactorsOpts{
 				User: testUser.WorkosID,
@@ -173,7 +173,7 @@ func TestController_apiListAuthFactors(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 500, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("uses correct user ID from session", func(t *testing.T) {
@@ -191,7 +191,7 @@ func TestController_apiListAuthFactors(t *testing.T) {
 		}
 
 		// Verify that the specific WorkOS user ID is used
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("ListAuthFactors",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("ListAuthFactors",
 			mock.Anything,
 			usermanagement.ListAuthFactorsOpts{
 				User: "specific-workos-user-id", // Must match the user's WorkOS ID
@@ -217,7 +217,7 @@ func TestController_apiListAuthFactors(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 200, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 }
 

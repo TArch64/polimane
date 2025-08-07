@@ -106,14 +106,27 @@ func (m *MockWorkosMFA) GetFactor(ctx context.Context, opts mfa.GetFactorOpts) (
 
 // MockWorkosClient mocks the WorkOS client
 type MockWorkosClient struct {
-	UserManagement workos.UserManagement
-	MFA            workos.MFA
+	mock.Mock
+	userManagement workos.UserManagement
+	mfa            workos.MFA
 }
 
-func NewMockWorkosClient() *workos.Client {
-	return &workos.Client{
-		UserManagement: &MockWorkosUserManagement{},
-		MFA:            &MockWorkosMFA{},
+func (m *MockWorkosClient) UserManagement() workos.UserManagement {
+	return m.userManagement
+}
+
+func (m *MockWorkosClient) MFA() workos.MFA {
+	return m.mfa
+}
+
+func (m *MockWorkosClient) AuthenticateWithAccessToken(_ context.Context, _ string) (*workos.AccessTokenClaims, error) {
+	return nil, nil
+}
+
+func NewMockWorkosClient() workos.Client {
+	return &MockWorkosClient{
+		userManagement: &MockWorkosUserManagement{},
+		mfa:            &MockWorkosMFA{},
 	}
 }
 

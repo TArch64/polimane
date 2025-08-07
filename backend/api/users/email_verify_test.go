@@ -32,7 +32,7 @@ func TestController_apiEmailVerify(t *testing.T) {
 			signals:      signalsContainer,
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("VerifyEmail",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("VerifyEmail",
 			mock.Anything,
 			usermanagement.VerifyEmailOpts{
 				User: testUser.WorkosID,
@@ -64,7 +64,7 @@ func TestController_apiEmailVerify(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 200, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("returns 400 when code is missing", func(t *testing.T) {
@@ -174,7 +174,7 @@ func TestController_apiEmailVerify(t *testing.T) {
 			RawBody: `{"code": "email_verification_code_expired"}`,
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("VerifyEmail",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("VerifyEmail",
 			mock.Anything,
 			usermanagement.VerifyEmailOpts{
 				User: testUser.WorkosID,
@@ -206,7 +206,7 @@ func TestController_apiEmailVerify(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 400, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("handles other WorkOS errors", func(t *testing.T) {
@@ -225,7 +225,7 @@ func TestController_apiEmailVerify(t *testing.T) {
 			Message: "Invalid verification code",
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("VerifyEmail",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("VerifyEmail",
 			mock.Anything,
 			usermanagement.VerifyEmailOpts{
 				User: testUser.WorkosID,
@@ -257,7 +257,7 @@ func TestController_apiEmailVerify(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 401, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("invalidates WorkOS user cache after successful verification", func(t *testing.T) {
@@ -271,7 +271,7 @@ func TestController_apiEmailVerify(t *testing.T) {
 			signals:      signalsContainer,
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("VerifyEmail",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("VerifyEmail",
 			mock.Anything,
 			mock.Anything).Return(usermanagement.UserResponse{}, nil)
 

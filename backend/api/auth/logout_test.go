@@ -11,7 +11,6 @@ import (
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
 
 	"polimane/backend/model"
-	"polimane/backend/services/workos"
 	"polimane/backend/signal"
 )
 
@@ -35,8 +34,8 @@ func TestApiLogout(t *testing.T) {
 		}
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			signals: &signal.Container{
 				InvalidateAuthCache: mockSignal,
@@ -93,8 +92,8 @@ func TestApiLogout(t *testing.T) {
 		}
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			signals: &signal.Container{},
 		}
@@ -139,8 +138,8 @@ func TestApiLogout(t *testing.T) {
 		}
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			signals: &signal.Container{
 				InvalidateAuthCache: mockSignal,
@@ -191,8 +190,8 @@ func TestApiLogout(t *testing.T) {
 		}
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			signals: &signal.Container{
 				InvalidateAuthCache: mockSignal,
@@ -242,8 +241,8 @@ func TestApiLogout(t *testing.T) {
 		}
 
 		controller := &Controller{
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 			signals: &signal.Container{
 				InvalidateAuthCache: mockSignal,

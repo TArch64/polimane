@@ -29,7 +29,7 @@ func TestController_apiEmailVerifyRetry(t *testing.T) {
 			signals:      signalsContainer,
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("SendVerificationEmail",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("SendVerificationEmail",
 			mock.Anything,
 			usermanagement.SendVerificationEmailOpts{
 				User: testUser.WorkosID,
@@ -55,7 +55,7 @@ func TestController_apiEmailVerifyRetry(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 200, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("handles WorkOS error", func(t *testing.T) {
@@ -74,7 +74,7 @@ func TestController_apiEmailVerifyRetry(t *testing.T) {
 			Message: "Email already verified",
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("SendVerificationEmail",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("SendVerificationEmail",
 			mock.Anything,
 			usermanagement.SendVerificationEmailOpts{
 				User: testUser.WorkosID,
@@ -100,7 +100,7 @@ func TestController_apiEmailVerifyRetry(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 400, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("uses user ID from session", func(t *testing.T) {
@@ -116,7 +116,7 @@ func TestController_apiEmailVerifyRetry(t *testing.T) {
 		}
 
 		// Verify that the specific WorkOS user ID is used
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("SendVerificationEmail",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("SendVerificationEmail",
 			mock.Anything,
 			usermanagement.SendVerificationEmailOpts{
 				User: "specific-workos-id", // Must match the user's WorkOS ID
@@ -142,7 +142,7 @@ func TestController_apiEmailVerifyRetry(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 200, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 }
 
@@ -158,7 +158,7 @@ func TestSendEmailVerification(t *testing.T) {
 			User: "user-123",
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("SendVerificationEmail",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("SendVerificationEmail",
 			mock.Anything, expectedOpts).Return(usermanagement.UserResponse{}, nil)
 
 		// Act
@@ -166,7 +166,7 @@ func TestSendEmailVerification(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("returns error when WorkOS call fails", func(t *testing.T) {
@@ -181,7 +181,7 @@ func TestSendEmailVerification(t *testing.T) {
 			Message: "Service unavailable",
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("SendVerificationEmail",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("SendVerificationEmail",
 			mock.Anything, mock.Anything).Return(usermanagement.UserResponse{}, workosError)
 
 		// Act
@@ -190,6 +190,6 @@ func TestSendEmailVerification(t *testing.T) {
 		// Assert
 		assert.Error(t, err)
 		assert.Equal(t, workosError, err)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 }

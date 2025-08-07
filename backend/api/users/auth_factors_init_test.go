@@ -30,7 +30,7 @@ func TestController_apiAuthFactorsInit(t *testing.T) {
 		// Mock response with empty values - the actual structure is complex
 		mockEnrollResponse := usermanagement.EnrollAuthFactorResponse{}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("EnrollAuthFactor",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("EnrollAuthFactor",
 			mock.Anything,
 			usermanagement.EnrollAuthFactorOpts{
 				User:       testWorkosUser.ID,
@@ -75,7 +75,7 @@ func TestController_apiAuthFactorsInit(t *testing.T) {
 		assert.Contains(t, responseBody, "secret")
 		assert.Contains(t, responseBody, "uri")
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("uses correct TOTP configuration parameters", func(t *testing.T) {
@@ -93,7 +93,7 @@ func TestController_apiAuthFactorsInit(t *testing.T) {
 		mockEnrollResponse := usermanagement.EnrollAuthFactorResponse{}
 
 		// Verify that the correct parameters are used for TOTP enrollment
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("EnrollAuthFactor",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("EnrollAuthFactor",
 			mock.Anything,
 			usermanagement.EnrollAuthFactorOpts{
 				User:       "specific-workos-id", // Should use WorkOS user ID
@@ -123,7 +123,7 @@ func TestController_apiAuthFactorsInit(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 200, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("handles WorkOS enrollment error", func(t *testing.T) {
@@ -141,7 +141,7 @@ func TestController_apiAuthFactorsInit(t *testing.T) {
 			Message: "User already has maximum auth factors",
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("EnrollAuthFactor",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("EnrollAuthFactor",
 			mock.Anything,
 			mock.Anything).Return(usermanagement.EnrollAuthFactorResponse{}, enrollError)
 
@@ -166,7 +166,7 @@ func TestController_apiAuthFactorsInit(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 400, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("accesses session WorkOS user correctly", func(t *testing.T) {
@@ -182,7 +182,7 @@ func TestController_apiAuthFactorsInit(t *testing.T) {
 		mockEnrollResponse := usermanagement.EnrollAuthFactorResponse{}
 
 		// Verify that session.WorkosUser is accessed for both ID and Email
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("EnrollAuthFactor",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("EnrollAuthFactor",
 			mock.Anything,
 			mock.MatchedBy(func(opts usermanagement.EnrollAuthFactorOpts) bool {
 				return opts.User == testWorkosUser.ID &&
@@ -212,7 +212,7 @@ func TestController_apiAuthFactorsInit(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 200, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 }
 

@@ -17,13 +17,13 @@ type AccessTokenClaims struct {
 	SessionID string
 }
 
-func (c *Client) AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*AccessTokenClaims, error) {
-	jwksURL, err := c.UserManagement.GetJWKSURL(c.env.WorkOS.ClientID)
+func (i *Impl) AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*AccessTokenClaims, error) {
+	jwksURL, err := i.UserManagement().GetJWKSURL(i.env.WorkOS.ClientID)
 	if err != nil {
 		return nil, err
 	}
 
-	keySet, err := c.jwk.Fetch(ctx, jwksURL.String())
+	keySet, err := i.jwk.Fetch(ctx, jwksURL.String())
 	if err != nil {
 		return nil, err
 	}

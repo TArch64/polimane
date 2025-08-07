@@ -25,7 +25,7 @@ func TestMiddlewareProvider(t *testing.T) {
 		// Arrange
 		signalsContainer := signal.Provider()
 		environment := &env.Environment{}
-		workosClient := &workos.Client{UserManagement: &MockUserManagement{}}
+		workosClient := &MockWorkosClient{userManagement: &MockUserManagement{}}
 		usersClient := &MockUsersClient{}
 
 		// Act
@@ -51,7 +51,7 @@ func TestMiddlewareProvider(t *testing.T) {
 		// The actual signal behavior is tested in separate signal tests
 		signalsContainer := signal.Provider()
 		environment := &env.Environment{}
-		workosClient := &workos.Client{UserManagement: &MockUserManagement{}}
+		workosClient := &MockWorkosClient{userManagement: &MockUserManagement{}}
 		usersClient := &MockUsersClient{}
 
 		middleware := MiddlewareProvider(MiddlewareOptions{
@@ -76,7 +76,7 @@ func TestMiddlewareHandler(t *testing.T) {
 		middleware := &Middleware{
 			userCache:       localcache.New[*model.User](cacheOptions...),
 			workosUserCache: localcache.New[*usermanagement.User](cacheOptions...),
-			workosClient:    &workos.Client{},
+			workosClient:    &MockWorkosClient{userManagement: &MockUserManagement{}},
 			env:             &env.Environment{},
 			users:           &MockUsersClient{},
 		}
@@ -111,7 +111,7 @@ func TestMiddlewareHandler(t *testing.T) {
 		middleware := &Middleware{
 			userCache:       localcache.New[*model.User](cacheOptions...),
 			workosUserCache: localcache.New[*usermanagement.User](cacheOptions...),
-			workosClient:    &workos.Client{},
+			workosClient:    &MockWorkosClient{userManagement: &MockUserManagement{}},
 			env:             &env.Environment{},
 			users:           &MockUsersClient{},
 		}
@@ -388,8 +388,8 @@ func TestGetWorkosUser(t *testing.T) {
 
 		middleware := &Middleware{
 			workosUserCache: localcache.New[*usermanagement.User](cacheOptions...),
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 		}
 
@@ -430,8 +430,8 @@ func TestGetWorkosUser(t *testing.T) {
 
 		middleware := &Middleware{
 			workosUserCache: localcache.New[*usermanagement.User](cacheOptions...),
-			workosClient: &workos.Client{
-				UserManagement: mockUserManagement,
+			workosClient: &MockWorkosClient{
+				userManagement: mockUserManagement,
 			},
 		}
 

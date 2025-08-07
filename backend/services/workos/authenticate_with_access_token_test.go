@@ -34,7 +34,7 @@ func TestClient_AuthenticateWithAccessToken_ErrorCases(t *testing.T) {
 	tests := []struct {
 		name          string
 		tokenStr      string
-		setupClient   func() *Client
+		setupClient   func() *Impl
 		expectedError string
 		shouldSkip    bool
 		skipReason    string
@@ -42,8 +42,8 @@ func TestClient_AuthenticateWithAccessToken_ErrorCases(t *testing.T) {
 		{
 			name:     "empty token string",
 			tokenStr: "",
-			setupClient: func() *Client {
-				return &Client{
+			setupClient: func() *Impl {
+				return &Impl{
 					env: &env.Environment{
 						WorkOS: struct {
 							ClientID string `env:"BACKEND_WORKOS_CLIENT_ID,required=true"`
@@ -63,8 +63,8 @@ func TestClient_AuthenticateWithAccessToken_ErrorCases(t *testing.T) {
 		{
 			name:     "invalid token format",
 			tokenStr: "invalid.token.format",
-			setupClient: func() *Client {
-				return &Client{
+			setupClient: func() *Impl {
+				return &Impl{
 					env: &env.Environment{
 						WorkOS: struct {
 							ClientID string `env:"BACKEND_WORKOS_CLIENT_ID,required=true"`
@@ -84,8 +84,8 @@ func TestClient_AuthenticateWithAccessToken_ErrorCases(t *testing.T) {
 		{
 			name:     "malformed JWT",
 			tokenStr: "not.a.jwt",
-			setupClient: func() *Client {
-				return &Client{
+			setupClient: func() *Impl {
+				return &Impl{
 					env: &env.Environment{
 						WorkOS: struct {
 							ClientID string `env:"BACKEND_WORKOS_CLIENT_ID,required=true"`
@@ -149,13 +149,13 @@ func TestClient_AuthenticateWithAccessToken_SessionIDExtraction(t *testing.T) {
 func TestClient_AuthenticateWithAccessToken_Requirements(t *testing.T) {
 	tests := []struct {
 		name        string
-		client      *Client
+		client      *Impl
 		expectPanic bool
 	}{
 		{
 			name: "client with nil UserManagement",
-			client: &Client{
-				UserManagement: nil,
+			client: &Impl{
+				userManagement: nil,
 				env: &env.Environment{
 					WorkOS: struct {
 						ClientID string `env:"BACKEND_WORKOS_CLIENT_ID,required=true"`
@@ -171,7 +171,7 @@ func TestClient_AuthenticateWithAccessToken_Requirements(t *testing.T) {
 		},
 		{
 			name: "client with nil environment",
-			client: &Client{
+			client: &Impl{
 				env: nil,
 				jwk: &jwk.Impl{},
 			},
@@ -179,7 +179,7 @@ func TestClient_AuthenticateWithAccessToken_Requirements(t *testing.T) {
 		},
 		{
 			name: "client with nil JWK interface",
-			client: &Client{
+			client: &Impl{
 				env: &env.Environment{
 					WorkOS: struct {
 						ClientID string `env:"BACKEND_WORKOS_CLIENT_ID,required=true"`

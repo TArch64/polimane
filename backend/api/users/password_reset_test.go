@@ -30,7 +30,7 @@ func TestController_apiPasswordReset(t *testing.T) {
 			signals:      signalsContainer,
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("CreatePasswordReset",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("CreatePasswordReset",
 			mock.Anything,
 			usermanagement.CreatePasswordResetOpts{
 				Email: testWorkosUser.Email,
@@ -57,7 +57,7 @@ func TestController_apiPasswordReset(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 200, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("handles WorkOS error", func(t *testing.T) {
@@ -77,7 +77,7 @@ func TestController_apiPasswordReset(t *testing.T) {
 			Message: "Invalid email",
 		}
 
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("CreatePasswordReset",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("CreatePasswordReset",
 			mock.Anything,
 			usermanagement.CreatePasswordResetOpts{
 				Email: testWorkosUser.Email,
@@ -104,7 +104,7 @@ func TestController_apiPasswordReset(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 400, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 
 	t.Run("uses email from WorkOS user in session", func(t *testing.T) {
@@ -121,7 +121,7 @@ func TestController_apiPasswordReset(t *testing.T) {
 		}
 
 		// Verify that the specific email from WorkOS user is used
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).On("CreatePasswordReset",
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).On("CreatePasswordReset",
 			mock.Anything,
 			usermanagement.CreatePasswordResetOpts{
 				Email: "specific@test.com", // Must match the WorkOS user email
@@ -148,6 +148,6 @@ func TestController_apiPasswordReset(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, 200, resp.StatusCode)
-		mockWorkosClient.UserManagement.(*MockWorkosUserManagement).AssertExpectations(t)
+		mockWorkosClient.UserManagement().(*MockWorkosUserManagement).AssertExpectations(t)
 	})
 }
