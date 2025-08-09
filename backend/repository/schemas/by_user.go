@@ -12,8 +12,8 @@ type ByUserOptions struct {
 	Select []string
 }
 
-func (c *Impl) ByUser(options *ByUserOptions) ([]*model.Schema, error) {
-	query := c.db.
+func (i *Impl) ByUser(options *ByUserOptions) ([]*model.Schema, error) {
+	query := i.db.
 		WithContext(options.Ctx).
 		Joins("JOIN user_schemas ON user_schemas.schema_id = schemas.id AND user_schemas.user_id = ?", options.User.ID)
 

@@ -13,15 +13,15 @@ type ByIDOptions struct {
 	Select   []string
 }
 
-func (c *Impl) ByID(options *ByIDOptions) (*model.Schema, error) {
+func (i *Impl) ByID(options *ByIDOptions) (*model.Schema, error) {
 	var err error
 
-	err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+	err = i.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
 	if err != nil {
 		return nil, err
 	}
 
-	query := c.db.WithContext(options.Ctx)
+	query := i.db.WithContext(options.Ctx)
 
 	if len(options.Select) > 0 {
 		query = query.Select(options.Select)

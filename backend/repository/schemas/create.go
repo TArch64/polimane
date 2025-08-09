@@ -16,16 +16,12 @@ type CreateOptions struct {
 	Content model.SchemaContent
 }
 
-func (c *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) {
+func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) {
 	if options.Palette == nil {
 		options.Palette = make(model.SchemaPalette, model.SchemaPaletteSize)
 	}
 
-	if options.Content == nil {
-		options.Content = make(model.SchemaContent, 0)
-	}
-
-	err = c.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
+	err = i.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
 		schema = &model.Schema{
 			Name:    options.Name,
 			Palette: options.Palette,
@@ -36,13 +32,13 @@ func (c *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) 
 			return err
 		}
 
-		return c.userSchemas.CreateTx(tx, options.User.ID, schema.ID)
+		return i.userSchemas.CreateTx(tx, options.User.ID, schema.ID)
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	c.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
+	i.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
 	return schema, nil
 }

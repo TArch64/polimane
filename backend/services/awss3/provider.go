@@ -17,6 +17,7 @@ type ClientOptions struct {
 
 type Client interface {
 	PutObject(ctx context.Context, params *s3.PutObjectInput, optFns ...Option) (*s3.PutObjectOutput, error)
+	DeleteObject(ctx context.Context, params *s3.DeleteObjectInput, optFns ...Option) (*s3.DeleteObjectOutput, error)
 }
 
 func Provider(options ClientOptions) Client {

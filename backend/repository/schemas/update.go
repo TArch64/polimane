@@ -13,13 +13,13 @@ type UpdateOptions struct {
 	Updates  *model.Schema
 }
 
-func (c *Impl) Update(options *UpdateOptions) (err error) {
-	err = c.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+func (i *Impl) Update(options *UpdateOptions) (err error) {
+	err = i.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
 	if err != nil {
 		return err
 	}
 
-	return c.db.
+	return i.db.
 		WithContext(options.Ctx).
 		Model(&model.Schema{
 			Identifiable: &model.Identifiable{

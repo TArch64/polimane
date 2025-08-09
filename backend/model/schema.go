@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"time"
 
 	"gorm.io/datatypes"
@@ -23,8 +24,12 @@ type Schema struct {
 	Users          []User        `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
 }
 
+func SchemaScreenshotKey(id ID) string {
+	return fmt.Sprintf("data/images/%s/schema.webp", id.String())
+}
+
 type SchemaPalette = datatypes.JSONSlice[string]
-type SchemaContent = datatypes.JSONSlice[*SchemaPattern]
+type SchemaContent = datatypes.JSONMap
 
 type SchemaPattern struct {
 	ID      string       `json:"id"`
