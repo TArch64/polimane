@@ -3,6 +3,7 @@ package schemas
 import (
 	"context"
 
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
@@ -13,7 +14,7 @@ type CreateOptions struct {
 	User    *model.User
 	Name    string
 	Palette model.SchemaPalette
-	Content model.SchemaContent
+	Content *model.SchemaContent
 }
 
 func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) {
@@ -21,11 +22,15 @@ func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) 
 		options.Palette = make(model.SchemaPalette, model.SchemaPaletteSize)
 	}
 
+	if options.Content == nil {
+		options.Content = i.createDefaultContent()
+	}
+
 	err = i.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
 		schema = &model.Schema{
 			Name:    options.Name,
-			Palette: options.Palette,
-			Content: options.Content,
+			Palette: datatypes.NewJSONType(options.Palette),
+			Content: datatypes.NewJSONType(options.Content),
 		}
 
 		if err = tx.Create(schema).Error; err != nil {
@@ -41,4 +46,16 @@ func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) 
 
 	i.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
 	return schema, nil
+}
+
+func (i *Impl) createDefaultContent() *model.SchemaContent {
+	return &model.SchemaContent{
+		Size: &model.SchemaContentSize{
+			Left:   25,
+			Top:    25,
+			Right:  24,
+			Bottom: 24,
+		},
+		Beads: make(map[string]string),
+	}
 }

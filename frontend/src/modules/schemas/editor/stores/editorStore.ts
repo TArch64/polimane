@@ -3,7 +3,6 @@ import { onScopeDispose, type Ref, ref, toRef } from 'vue';
 import type { ISchema } from '@/models';
 import { type HttpBody, useHttpClient } from '@/composables';
 import { useEditorHistory, useEditorSaveDispatcher } from '../composables';
-import { setSchemaRelations } from '../models';
 
 type UpdateSchemaRequest = Partial<Omit<ISchema, 'id'>>;
 
@@ -24,9 +23,6 @@ export const useEditorStore = defineStore('schemas/editor', () => {
 
   async function loadSchema(id: string): Promise<void> {
     schema.value = await http.get(['/schemas', id]);
-    schema.value.content ??= [];
-    setSchemaRelations(schema.value);
-
     await history.init();
     saveDispatcher.enable();
   }

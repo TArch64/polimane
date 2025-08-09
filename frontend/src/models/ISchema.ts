@@ -1,4 +1,10 @@
-import type { ISchemaPattern } from './ISchemaPattern';
+export type SchemaContentSize = Record<'top' | 'left' | 'right' | 'bottom', number>;
+export type SchemaBeedCoordinate = `${number}:${number}`;
+
+export interface ISchemaContent {
+  size: SchemaContentSize;
+  beads: Record<SchemaBeedCoordinate, string>;
+}
 
 export interface ISchema {
   id: string;
@@ -7,5 +13,6 @@ export interface ISchema {
   createdAt: string;
   updatedAt: string;
   screenshotedAt: string | null;
-  content: ISchemaPattern[];
+  screenshotPath: string | null;
+  content: ISchemaContent;
 }

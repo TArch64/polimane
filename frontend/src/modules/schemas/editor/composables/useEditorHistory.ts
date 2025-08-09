@@ -1,7 +1,6 @@
 import { computed, markRaw, reactive, ref, type Ref, shallowRef } from 'vue';
 import { watchDebounced } from '@vueuse/core';
 import type { ISchema } from '@/models';
-import { setSchemaRelations } from '@/modules/schemas/editor/models';
 import { compressObject, decompressObject } from '@/helpers';
 
 export interface IEditorHistory {
@@ -59,13 +58,11 @@ export function useEditorHistory(schema: Ref<ISchema>): IEditorHistory {
     cursor.value += shift;
     const compressed = history.value[cursor.value];
 
-    const newSchema = {
+    schema.value = {
       ...schema.value,
       content: await decompressObject<ISchema['content']>(compressed),
     };
 
-    setSchemaRelations(newSchema);
-    schema.value = newSchema;
     startWatcher();
   }
 

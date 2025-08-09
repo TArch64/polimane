@@ -364,13 +364,13 @@ func TestCollectUpdates(t *testing.T) {
 		// Assert
 		assert.NotNil(t, updates)
 		assert.Equal(t, "", updates.Name)
-		assert.Equal(t, model.SchemaPalette(palette), updates.Palette)
+		assert.Equal(t, model.TSchemaPalette(palette), updates.Palette)
 		assert.Nil(t, updates.Content)
 	})
 
 	t.Run("returns schema with content when content provided", func(t *testing.T) {
 		// Arrange
-		content := model.SchemaContent{
+		content := model.TSchemaContent{
 			&model.SchemaPattern{
 				ID:   "pattern1",
 				Name: "Test Pattern",
@@ -391,7 +391,7 @@ func TestCollectUpdates(t *testing.T) {
 
 	t.Run("returns schema with all fields when all provided", func(t *testing.T) {
 		// Arrange
-		content := model.SchemaContent{
+		content := model.TSchemaContent{
 			&model.SchemaPattern{
 				ID:   "pattern1",
 				Name: "Test Pattern",
@@ -411,7 +411,7 @@ func TestCollectUpdates(t *testing.T) {
 		// Assert
 		assert.NotNil(t, updates)
 		assert.Equal(t, "Test Schema", updates.Name)
-		assert.Equal(t, model.SchemaPalette(palette), updates.Palette)
+		assert.Equal(t, model.TSchemaPalette(palette), updates.Palette)
 		assert.Equal(t, content, updates.Content)
 	})
 
@@ -463,7 +463,7 @@ func TestCollectUpdates(t *testing.T) {
 func TestUpdateBody(t *testing.T) {
 	t.Run("has correct validation tags", func(t *testing.T) {
 		// This test verifies the struct definition
-		content := model.SchemaContent{
+		content := model.TSchemaContent{
 			&model.SchemaPattern{
 				ID:   "pattern1",
 				Name: "Test Pattern",

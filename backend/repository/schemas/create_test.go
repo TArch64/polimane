@@ -33,8 +33,8 @@ func TestCreate(t *testing.T) {
 			Ctx:     ctx,
 			User:    user,
 			Name:    "Test Schema",
-			Palette: model.SchemaPalette{"#ffffff", "#000000"},
-			Content: model.SchemaContent{&model.SchemaPattern{ID: "1", Name: "Pattern 1", Type: "square"}},
+			Palette: model.TSchemaPalette{"#ffffff", "#000000"},
+			Content: model.TSchemaContent{&model.SchemaPattern{ID: "1", Name: "Pattern 1", Type: "square"}},
 		})
 
 		require.NoError(t, err)

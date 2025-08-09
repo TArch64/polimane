@@ -24,6 +24,5 @@ func (c *Controller) apiCopy(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	schema.Content = nil
-	return ctx.JSON(schema)
+	return ctx.JSON(newListItem(schema))
 }

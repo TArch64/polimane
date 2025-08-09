@@ -86,8 +86,8 @@ func createTestSchema() *model.Schema {
 			ID: model.MustStringToID("650e8400-e29b-41d4-a716-446655440001"),
 		},
 		Name:    "Test Schema",
-		Palette: model.SchemaPalette{"#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF", "#888888"},
-		Content: model.SchemaContent{
+		Palette: model.TSchemaPalette{"#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF", "#888888"},
+		Content: model.TSchemaContent{
 			&model.SchemaPattern{
 				ID:   "pattern1",
 				Name: "Test Pattern",

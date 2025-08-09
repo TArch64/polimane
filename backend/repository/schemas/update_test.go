@@ -25,7 +25,7 @@ func TestUpdate(t *testing.T) {
 
 		updates := &model.Schema{
 			Name:    "Updated Schema",
-			Palette: model.SchemaPalette{"#000000", "#ffffff"},
+			Palette: model.TSchemaPalette{"#000000", "#ffffff"},
 		}
 
 		mock.ExpectBegin()

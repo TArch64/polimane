@@ -42,7 +42,7 @@ func (i *Impl) Copy(options *CopyOptions) (*model.Schema, error) {
 		Ctx:     options.Ctx,
 		User:    options.User,
 		Name:    makeCopyName(original.Name),
-		Palette: original.Palette,
-		Content: original.Content,
+		Palette: original.Palette.Data(),
+		Content: original.Content.Data(),
 	})
 }
