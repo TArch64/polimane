@@ -23,6 +23,7 @@ import {
   usePatternContextMenuActions,
 } from '@/modules/schemas/editor/composables';
 import { useModal } from '@/components/modal';
+import { useThemeVar } from '@/composables';
 import { RowAddModal } from '../../modals';
 import { GroupRenderer } from '../base';
 import CanvasPatternLabel from './CanvasPatternLabel.vue';
@@ -32,6 +33,9 @@ import CanvasPatternEmpty from './CanvasPatternEmpty.vue';
 const props = defineProps<{
   pattern: ISchemaPattern;
 }>();
+
+const colorDivider2 = useThemeVar('--color-divider-2');
+const roundedMd = useThemeVar('--rounded-md');
 
 const addModal = useModal(RowAddModal);
 
@@ -63,15 +67,15 @@ const contentGroupConfig = useNodeCentering(contentGroupRef, {
 });
 
 const borderConfig = useNodeConfigs<Konva.RectConfig>([
-  {
+  () => ({
     name: SCREENSHOT_IGNORE,
     x: 1,
     y: 1,
-    stroke: 'rgba(0, 0, 0, 0.1)',
+    stroke: colorDivider2.value,
     strokeWidth: 1,
-    cornerRadius: 8,
+    cornerRadius: roundedMd.value,
     dash: [10, 5],
-  },
+  }),
 
   useNodeFiller(contentGroupRef, {
     minSize: {

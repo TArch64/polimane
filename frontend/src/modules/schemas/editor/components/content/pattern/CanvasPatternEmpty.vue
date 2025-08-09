@@ -1,9 +1,9 @@
 <template>
-  <GroupRenderer>
+  <GroupRenderer :config="rootConfig">
     <KonvaRect :config="backgroundConfig" />
 
-    <CanvasStackH align="center" :gap="8" :config="stackConfig">
-      <CanvasIcon size="22" color="rgba(0, 0, 0, 0.8)">
+    <CanvasStackH ref="contentRef" align="center" :gap="8">
+      <CanvasIcon size="22" color="--color-primary">
         <PlusIcon />
       </CanvasIcon>
 
@@ -14,27 +14,50 @@
 
 <script setup lang="ts">
 import Konva from 'konva';
+import { computed } from 'vue';
 import { PlusIcon } from '@/components/icon';
+import { useThemeVar } from '@/composables';
+import {
+  SCREENSHOT_IGNORE,
+  useNodeConfigs,
+  useNodeFiller,
+  useNodeRef,
+} from '@/modules/schemas/editor/composables';
 import { CanvasIcon, CanvasStackH, GroupRenderer } from '../base';
 
-const backgroundConfig: Partial<Konva.GroupConfig> = {
-  stroke: 'rgba(0, 0, 0, 0.2)',
-  strokeWidth: 1,
-  cornerRadius: 8,
-  width: 156,
-  height: 32,
+const colorDivider = useThemeVar('--color-divider');
+const colorPrimary = useThemeVar('--color-primary');
+const colorBackground1 = useThemeVar('--color-background-1');
+const roundedMd = useThemeVar('--rounded-md');
+
+const contentRef = useNodeRef<Konva.Group>();
+
+const rootConfig: Partial<Konva.GroupConfig> = {
+  name: SCREENSHOT_IGNORE,
 };
 
-const stackConfig: Partial<Konva.GroupConfig> = {
-  x: 12,
-};
+const backgroundConfig = useNodeConfigs<Konva.RectConfig>([
+  () => ({
+    fill: colorBackground1.value,
+    stroke: colorDivider.value,
+    strokeWidth: 1,
+    cornerRadius: roundedMd.value,
+    offsetY: 3,
+    offsetX: 16,
+  }),
 
-const labelTextConfig: Partial<Konva.TextConfig> = {
+  useNodeFiller(contentRef, {
+    padding: {
+      vertical: 3,
+      horizontal: 12,
+    },
+  }),
+]);
+
+const labelTextConfig: Partial<Konva.TextConfig> = computed(() => ({
   text: 'Додати Рядок',
-  fill: 'rgba(0, 0, 0, 0.8)',
+  fill: colorPrimary.value,
   fontSize: 15,
-  height: 32,
-  offsetY: -1,
   verticalAlign: 'middle',
-};
+}));
 </script>

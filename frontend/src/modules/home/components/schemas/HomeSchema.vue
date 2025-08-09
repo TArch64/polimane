@@ -4,6 +4,7 @@
       :src="screenshotUrl"
       :alt="`Скріншот схеми ${schema.name}`"
       draggable="false"
+      decoding="async"
       class="home-schema__screenshot"
       v-if="screenshotUrl"
     >

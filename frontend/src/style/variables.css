@@ -5,7 +5,8 @@
   --color-primary: var(--color-black);
 
   --color-divider: color-mix(in srgb, var(--color-black), var(--color-white) 90%);
-  --color-hover-divider: color-mix(in srgb, var(--color-black), var(--color-white) 75%);
+  --color-divider-2: color-mix(in srgb, var(--color-black), var(--color-white) 75%);
+  --color-hover-divider: var(--color-divider-2);
 
   --color-background-1: var(--color-white);
   --color-background-2: color-mix(in srgb, var(--color-black), var(--color-white) 97%);
@@ -19,7 +20,9 @@
   --font-sm: 14px;
   --font-md: 16px;
 
+  --rounded-sm: 4px;
   --rounded-md: 8px;
+  --rounded-full: 9999px;
 
   --divider: 1px solid var(--color-divider);
 

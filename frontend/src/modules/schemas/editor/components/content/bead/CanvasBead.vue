@@ -1,42 +1,70 @@
 <template>
-  <KonvaRect
-    :config
+  <GroupRenderer
     ref="rootRef"
     @click="beadsStore.paint(bead)"
-    @mousemove="onMouseMove"
-  />
+    @mouseenter="tryPaint"
+    @mouseleave="tryPaint"
+    @mousemove="tryPaint"
+  >
+    <KonvaRect :config="backgroundConfig" />
+    <KonvaRect ref="beadRef" :config="beadConfig" />
+  </GroupRenderer>
 </template>
 
 <script setup lang="ts">
 import Konva from 'konva';
 import { computed } from 'vue';
-import type { ISchemaBead, ISchemaRow } from '@/models';
-import { useNodeConfigs, useNodeCursor, useNodeRef } from '@/modules/schemas/editor/composables';
+import type { ISchemaBead, SchemaRow } from '@/models';
+import {
+  useNodeConfigs,
+  useNodeCursor,
+  useNodeFiller,
+  useNodeRef,
+} from '@/modules/schemas/editor/composables';
 import { useBeadsStore, usePaletteStore } from '@/modules/schemas/editor/stores';
+import { useThemeVar } from '@/composables';
+import { GroupRenderer } from '../base';
 
 const props = defineProps<{
-  row: ISchemaRow;
+  row: SchemaRow;
   bead: ISchemaBead;
 }>();
+
+const colorBackground2 = useThemeVar('--color-background-2');
+const colorBackground3 = useThemeVar('--color-background-3');
+const roundedFull = useThemeVar('--rounded-full');
 
 const paletteStore = usePaletteStore();
 const beadsStore = useBeadsStore(() => props.row);
 
-const config = useNodeConfigs<Konva.RectConfig>([
-  {
+const rootRef = useNodeRef<Konva.Rect>();
+const beadRef = useNodeRef<Konva.Rect>();
+
+useNodeCursor(rootRef, 'crosshair');
+
+const backgroundConfig = useNodeConfigs<Konva.RectConfig>([
+  () => ({
+    fill: colorBackground2.value,
+  }),
+
+  useNodeFiller(beadRef, {
+    padding: 0.5,
+  }),
+]);
+
+const beadConfig = useNodeConfigs<Konva.RectConfig>([
+  () => ({
     width: 14,
     height: 14,
-    cornerRadius: 4,
-  },
+    cornerRadius: roundedFull.value,
+  }),
+
   computed(() => ({
-    fill: props.bead.color || 'rgba(0, 0, 0, 0.05)',
+    fill: props.bead.color || colorBackground3.value,
   })),
 ]);
 
-const rootRef = useNodeRef<Konva.Rect>();
-useNodeCursor(rootRef, 'crosshair');
-
-function onMouseMove() {
+function tryPaint() {
   if (paletteStore.isPainting) {
     beadsStore.paint(props.bead);
   }
