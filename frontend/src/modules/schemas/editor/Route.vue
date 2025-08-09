@@ -1,26 +1,15 @@
 <template>
   <EditorHeader />
-
-  <template v-if="patternsStore.hasPatterns">
-    <EditorCanvas class="editor__fill" />
-    <EditorPalette />
-  </template>
-
-  <EditorEmpty class="editor__fill" v-else />
+  <EditorCanvas class="editor__fill" />
+  <EditorPalette />
 </template>
 
 <script lang="ts" setup>
 import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
 import { destroyStore, lazyDestroyStore } from '@/helpers';
-import {
-  disposeBeadsStores,
-  disposeRowsStores,
-  useEditorStore,
-  usePaletteStore,
-  usePatternsStore,
-} from './stores';
-import { EditorCanvas, EditorEmpty, EditorHeader, EditorPalette } from './components';
+import { useEditorStore, usePaletteStore } from './stores';
+import { EditorCanvas, EditorHeader, EditorPalette } from './components';
 
 defineProps<{
   schemaId: string;
@@ -34,16 +23,12 @@ defineOptions({
 
   beforeRouteLeave: async (_, __, next) => {
     lazyDestroyStore(useEditorStore);
-    lazyDestroyStore(usePatternsStore);
-    disposeBeadsStores();
-    disposeRowsStores();
     lazyDestroyStore(usePaletteStore);
     next();
   },
 });
 
 const editorStore = useEditorStore();
-const patternsStore = usePatternsStore();
 
 useEventListener(window, 'beforeunload', (event) => {
   if (editorStore.hasUnsavedChanges) {
