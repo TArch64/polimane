@@ -14,7 +14,8 @@ type CreateOptions struct {
 	User    *model.User
 	Name    string
 	Palette model.SchemaPalette
-	Content *model.SchemaContent
+	Size    *model.SchemaSize
+	Beads   model.SchemaBeads
 }
 
 func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) {
@@ -22,15 +23,25 @@ func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) 
 		options.Palette = make(model.SchemaPalette, model.SchemaPaletteSize)
 	}
 
-	if options.Content == nil {
-		options.Content = i.createDefaultContent()
+	if options.Size == nil {
+		options.Size = &model.SchemaSize{
+			Left:   25,
+			Top:    25,
+			Right:  24,
+			Bottom: 24,
+		}
+	}
+
+	if options.Beads == nil {
+		options.Beads = make(model.SchemaBeads)
 	}
 
 	err = i.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
 		schema = &model.Schema{
 			Name:    options.Name,
 			Palette: datatypes.NewJSONType(options.Palette),
-			Content: datatypes.NewJSONType(options.Content),
+			Size:    datatypes.NewJSONType(options.Size),
+			Beads:   datatypes.NewJSONType(options.Beads),
 		}
 
 		if err = tx.Create(schema).Error; err != nil {
@@ -46,16 +57,4 @@ func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) 
 
 	i.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
 	return schema, nil
-}
-
-func (i *Impl) createDefaultContent() *model.SchemaContent {
-	return &model.SchemaContent{
-		Size: &model.SchemaContentSize{
-			Left:   25,
-			Top:    25,
-			Right:  24,
-			Bottom: 24,
-		},
-		Beads: make(map[string]string),
-	}
 }

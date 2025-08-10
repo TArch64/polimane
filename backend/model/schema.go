@@ -17,7 +17,8 @@ type Schema struct {
 	*Timestamps
 	Name           string         `gorm:"not null;index;size:255" json:"name"`
 	Palette        TSchemaPalette `gorm:"not null;type:json" json:"palette,omitempty"`
-	Content        TSchemaContent `gorm:"not null;type:json" json:"content,omitempty"`
+	Size           TSchemaSize    `gorm:"not null;type:json" json:"size,omitempty"`
+	Beads          TSchemaBeads   `gorm:"not null;type:json" json:"beads,omitempty"`
 	ScreenshotedAt *time.Time     `json:"screenshotedAt"`
 	Users          []User         `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
 }
@@ -35,19 +36,17 @@ func SchemaScreenshotKey(id ID) string {
 	return fmt.Sprintf("data/images/%s/schema.webp", id.String())
 }
 
-type SchemaPalette []string
 type TSchemaPalette = datatypes.JSONType[SchemaPalette]
+type TSchemaSize = datatypes.JSONType[*SchemaSize]
+type TSchemaBeads = datatypes.JSONType[SchemaBeads]
 
-type TSchemaContent = datatypes.JSONType[*SchemaContent]
+type SchemaPalette []string
 
-type SchemaContent struct {
-	Size  *SchemaContentSize `json:"size"`
-	Beads map[string]string
-}
+type SchemaBeads map[string]string
 
-type SchemaContentSize struct {
-	Left   uint8 `json:"left"`
-	Top    uint8 `json:"top"`
-	Right  uint8 `json:"right"`
-	Bottom uint8 `json:"bottom"`
+type SchemaSize struct {
+	Left   uint8 `validate:"required,gte=0,lte=255" json:"left"`
+	Top    uint8 `validate:"required,gte=0,lte=255" json:"top"`
+	Right  uint8 `validate:"required,gte=0,lte=255" json:"right"`
+	Bottom uint8 `validate:"required,gte=0,lte=255" json:"bottom"`
 }

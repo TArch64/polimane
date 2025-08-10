@@ -11,9 +11,10 @@ import (
 )
 
 type updateBody struct {
-	Name    string               `json:"name" validate:"omitempty,min=1"`
-	Palette model.SchemaPalette  `json:"palette" validate:"omitempty,len=9,dive,omitempty,iscolor"`
-	Content *model.SchemaContent `json:"content" validate:"omitempty,dive,required"`
+	Name    string              `json:"name" validate:"omitempty,min=1"`
+	Palette model.SchemaPalette `json:"palette" validate:"omitempty,len=9,dive,omitempty,iscolor"`
+	Size    *model.SchemaSize   `json:"size" validate:"omitempty"`
+	Beads   model.SchemaBeads   `json:"beads" validate:"omitempty,dive,required"`
 }
 
 func collectUpdates(body *updateBody) *model.Schema {
@@ -25,14 +26,19 @@ func collectUpdates(body *updateBody) *model.Schema {
 		updates.Name = body.Name
 	}
 
-	if body.Content != nil {
-		changed = true
-		updates.Content = datatypes.NewJSONType(body.Content)
-	}
-
 	if body.Palette != nil {
 		changed = true
 		updates.Palette = datatypes.NewJSONType(body.Palette)
+	}
+
+	if body.Size != nil {
+		changed = true
+		updates.Size = datatypes.NewJSONType(body.Size)
+	}
+
+	if body.Beads != nil {
+		changed = true
+		updates.Beads = datatypes.NewJSONType(body.Beads)
 	}
 
 	if changed {

@@ -43,6 +43,7 @@ func (i *Impl) Copy(options *CopyOptions) (*model.Schema, error) {
 		User:    options.User,
 		Name:    makeCopyName(original.Name),
 		Palette: original.Palette.Data(),
-		Content: original.Content.Data(),
+		Size:    original.Size.Data(),
+		Beads:   original.Beads.Data(),
 	})
 }
