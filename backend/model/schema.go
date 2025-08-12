@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"gorm.io/datatypes"
+	t "gorm.io/datatypes"
 )
 
 const (
@@ -15,12 +15,12 @@ const (
 type Schema struct {
 	*Identifiable
 	*Timestamps
-	Name           string         `gorm:"not null;index;size:255" json:"name"`
-	Palette        TSchemaPalette `gorm:"not null;type:json" json:"palette,omitempty"`
-	Size           TSchemaSize    `gorm:"not null;type:json" json:"size,omitempty"`
-	Beads          TSchemaBeads   `gorm:"not null;type:json" json:"beads,omitempty"`
-	ScreenshotedAt *time.Time     `json:"screenshotedAt"`
-	Users          []User         `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
+	Name           string                    `gorm:"not null;index;size:255" json:"name"`
+	Palette        t.JSONType[SchemaPalette] `gorm:"not null;type:json" json:"palette,omitempty"`
+	Size           t.JSONType[*SchemaSize]   `gorm:"not null;type:json" json:"size,omitempty"`
+	Beads          t.JSONType[SchemaBeads]   `gorm:"not null;type:json" json:"beads,omitempty"`
+	ScreenshotedAt *time.Time                `json:"screenshotedAt"`
+	Users          []User                    `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
 }
 
 func (s *Schema) ScreenshotPath() *string {
@@ -35,10 +35,6 @@ func (s *Schema) ScreenshotPath() *string {
 func SchemaScreenshotKey(id ID) string {
 	return fmt.Sprintf("data/images/%s/schema.webp", id.String())
 }
-
-type TSchemaPalette = datatypes.JSONType[SchemaPalette]
-type TSchemaSize = datatypes.JSONType[*SchemaSize]
-type TSchemaBeads = datatypes.JSONType[SchemaBeads]
 
 type SchemaPalette []string
 
