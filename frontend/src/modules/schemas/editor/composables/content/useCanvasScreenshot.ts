@@ -22,10 +22,15 @@ export function useCanvasScreenshot() {
     return layer;
   }
 
-  function generateScreenshot(): string {
+  function generateScreenshot(): string | null {
     const layer = buildScreenshotLayer();
+    const contentRect = new NodeRect(layer.getClientRect());
 
-    const layerRect = new NodeRect(layer.getClientRect()).delta({
+    if (contentRect.isBlank) {
+      return null;
+    }
+
+    const targetRect = contentRect.delta({
       x: -20,
       y: -20,
       width: 40,
@@ -33,7 +38,7 @@ export function useCanvasScreenshot() {
     });
 
     return layer.toDataURL({
-      ...layerRect.toJSON(),
+      ...targetRect.toJSON(),
       mimeType: 'image/webp',
       pixelRatio: window.devicePixelRatio,
     });
@@ -56,8 +61,7 @@ export function useCanvasScreenshot() {
   }
 
   editorStore.onSaved(async () => {
-    if (needScreenshot()) {
-      await editorStore.updateScreenshot(generateScreenshot());
-    }
+    const source = needScreenshot() ? generateScreenshot() : null;
+    if (source) await editorStore.updateScreenshot(source);
   });
 }
