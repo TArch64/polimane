@@ -1,11 +1,11 @@
 import Konva from 'konva';
 import { NodeRect } from '@/models';
-import { useEditorStore } from '../../stores';
-import { useCanvasStage } from './useCanvasStage';
+import { useEditorStore } from '../stores';
+import { useCanvasStage } from './content';
 
 export const SCREENSHOT_IGNORE = 'ignore-on-screenshot';
 
-export function useCanvasScreenshot() {
+export function useEditorScreenshot() {
   const editorStore = useEditorStore();
   const stage = useCanvasStage();
 

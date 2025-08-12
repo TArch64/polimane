@@ -27,11 +27,10 @@ import { useDebounceFn, useElementSize } from '@vueuse/core';
 import Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import {
-  provideNodeContextMenu,
   useCanvasNavigation,
-  useCanvasScreenshot,
   useCanvasStage,
   useCanvasZoom,
+  useEditorScreenshot,
   useNodeRef,
 } from '../composables';
 import { useEditorStore, usePaletteStore } from '../stores';
@@ -76,8 +75,7 @@ const layerConfig: Konva.LayerConfig = {
   opacity: 0,
 };
 
-provideNodeContextMenu(stageRef);
-useCanvasScreenshot();
+useEditorScreenshot();
 const canvasZoom = useCanvasZoom();
 const canvasNavigation = useCanvasNavigation();
 

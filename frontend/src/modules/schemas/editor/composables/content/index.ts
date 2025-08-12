@@ -1,7 +1,6 @@
 export * from './useCanvasZoom';
 export * from './useCanvasNavigation';
 export * from './useCanvasStage';
-export * from './useCanvasScreenshot';
 export * from './useNodeCentering';
 export * from './useNodeConfigs';
 export * from './useNodeRef';
