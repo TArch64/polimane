@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue';
+import { reactive, ref, type UnwrapRef } from 'vue';
 import { useAsyncState } from '@vueuse/core';
 
 export interface IAsyncDataOptions<V> {
@@ -7,15 +7,22 @@ export interface IAsyncDataOptions<V> {
   immediate?: boolean;
 }
 
-export interface IAsyncData<V> {
-  data: V;
+export type OptimisticModify<D> = (data: D) => D;
+
+export interface IAsyncData<D> {
+  data: D;
   load: () => Promise<void>;
+  makeOptimisticUpdate: (transform: OptimisticModify<D>) => void;
+  setOptimisticUpdate: (data: D) => void;
+  commitOptimisticUpdate: () => void;
+  rollbackOptimisticUpdate: () => void;
   isInitial: boolean;
   isLoading: boolean;
 }
 
 export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
   const isInitial = ref(true);
+  let temp: UnwrapRef<D> | null = null;
 
   const { state: data, isLoading, execute } = useAsyncState(() => {
     return options
@@ -31,5 +38,32 @@ export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
     await execute();
   }
 
-  return reactive({ data, isInitial, isLoading, load }) as IAsyncData<D>;
+  function setOptimisticUpdate(optimisticData: D): void {
+    temp = data.value;
+    data.value = optimisticData as UnwrapRef<D>;
+  }
+
+  function makeOptimisticUpdate(transform: OptimisticModify<D>): void {
+    setOptimisticUpdate(transform(data.value as D));
+  }
+
+  function commitOptimisticUpdate(): void {
+    temp = null;
+  }
+
+  function rollbackOptimisticUpdate(): void {
+    data.value = temp!;
+    temp = null;
+  }
+
+  return reactive({
+    data,
+    isInitial,
+    isLoading,
+    load,
+    setOptimisticUpdate,
+    makeOptimisticUpdate,
+    commitOptimisticUpdate,
+    rollbackOptimisticUpdate,
+  }) as IAsyncData<D>;
 }

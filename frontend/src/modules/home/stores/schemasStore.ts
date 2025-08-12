@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import { computed } from 'vue';
-import { useAsyncData, useHttpClient } from '@/composables';
+import { computed, nextTick } from 'vue';
+import { useAsyncData, useHttpClient, useRouteTransition } from '@/composables';
 import type { ISchema } from '@/models';
 
 export type SchemaListItem = Omit<ISchema, 'beads' | 'size'>;
@@ -11,6 +11,7 @@ export interface ICreateSchemaInput {
 }
 
 export const useSchemasStore = defineStore('schemas/list', () => {
+  const routeTransition = useRouteTransition();
   const http = useHttpClient();
 
   const schemas = useAsyncData({
@@ -25,8 +26,23 @@ export const useSchemasStore = defineStore('schemas/list', () => {
   }
 
   async function deleteSchema(deletingSchema: ISchema): Promise<void> {
-    await http.delete(['/schemas', deletingSchema.id]);
-    schemas.data = schemas.data.filter((schema) => schema.id !== deletingSchema.id);
+    routeTransition.start(() => {
+      schemas.makeOptimisticUpdate((schemas) => {
+        return schemas.filter((schema) => schema.id !== deletingSchema.id);
+      });
+      return nextTick();
+    });
+
+    try {
+      await http.delete(['/schemas', deletingSchema.id]);
+      schemas.commitOptimisticUpdate();
+    } catch (error) {
+      routeTransition.start(() => {
+        schemas.rollbackOptimisticUpdate();
+        return nextTick();
+      });
+      throw error;
+    }
   }
 
   async function copySchema(copyingSchema: ISchema): Promise<SchemaListItem> {
