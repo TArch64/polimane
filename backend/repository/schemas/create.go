@@ -25,10 +25,10 @@ func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) 
 
 	if options.Size == nil {
 		options.Size = &model.SchemaSize{
-			Left:   25,
-			Top:    25,
-			Right:  24,
-			Bottom: 24,
+			Left:   50,
+			Right:  49,
+			Top:    15,
+			Bottom: 14,
 		}
 	}
 
