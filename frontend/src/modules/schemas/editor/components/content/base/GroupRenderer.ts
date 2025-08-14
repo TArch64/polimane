@@ -4,26 +4,24 @@ import {
   getCurrentInstance,
   h,
   type PropType,
-  resolveComponent,
   type Slot,
   type SlotsType,
   type VNode,
-  type VNodeProps,
 } from 'vue';
 import Konva from 'konva';
-import type { IKonvaNodeHolder, KonvaGroup } from 'vue-konva';
 import { useDebounceFn } from '@vueuse/core';
 import type { InferComponentProps, MaybeArray } from '@/types';
-import { useNodeListener, useNodeRef } from '@/modules/schemas/editor/composables';
+import { useNodeRef } from '@/modules/schemas/editor/composables';
 import { NodeRect } from '@/models';
 import { getClientRect } from '@/modules/schemas/editor/helpers';
+import { type IKonvaNodeHolder, KonvaGroup } from '../konva';
 
 export interface IGroupLayoutEvent {
   clientRect: NodeRect;
   nodes: Konva.Node[];
 }
 
-type GroupProps = InferComponentProps<KonvaGroup> & VNodeProps & Record<string, unknown>;
+type GroupProps = InferComponentProps<typeof KonvaGroup>;
 
 const PROXY_PROPS = [
   'onMouseout',
@@ -53,8 +51,6 @@ export const GroupRenderer = defineComponent({
   }>,
 
   setup(props, ctx) {
-    const KonvaGroup = resolveComponent('KonvaGroup');
-
     const instance = getCurrentInstance();
     const groupRef = useNodeRef<Konva.Group>();
     let nodes: Konva.Node[] = [];
@@ -169,8 +165,6 @@ export const GroupRenderer = defineComponent({
       await updateSize();
     }
 
-    useNodeListener(groupRef, 'layoutUpdate', updateSize);
-
     ctx.expose({
       getNode: () => groupRef.value,
     });
@@ -179,12 +173,15 @@ export const GroupRenderer = defineComponent({
       const groupProps: GroupProps = {
         ref: groupRef,
         config: props.config,
+        // @ts-expect-error untyped Konva instance
         onVnodeMounted: onMounted,
+        // @ts-expect-error untyped Konva instance
         onVnodeUpdated: onUpdated,
       };
 
       for (const proxyProp of PROXY_PROPS) {
         const prop = instance?.vnode.props?.[proxyProp];
+        // @ts-expect-error untyped Konva instance
         if (prop) groupProps[proxyProp] = prop;
       }
 
@@ -196,6 +193,5 @@ export const GroupRenderer = defineComponent({
 declare module 'konva/lib/Node' {
   export interface NodeEventMap {
     layout: IGroupLayoutEvent;
-    layoutUpdate: null;
   }
 }
