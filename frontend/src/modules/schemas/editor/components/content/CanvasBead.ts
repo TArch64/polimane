@@ -9,28 +9,27 @@ export interface ICanvasBeadProps {
   color: string | null;
 }
 
+const BASE_CONFIG: Partial<Konva.RectConfig> = {
+  name: SCREENSHOT_IGNORE,
+  width: BEAD_SIZE - 2,
+  height: BEAD_SIZE - 2,
+  cornerRadius: getThemeVar('--rounded-full'),
+  fill: getThemeVar('--color-background-3'),
+};
+
 export const CanvasBead: FunctionalComponent<ICanvasBeadProps> = (props) => {
   const KonvaRect = resolveComponent('KonvaRect');
 
-  const backgroundConfig: Partial<Konva.RectConfig> = {
-    x: props.offset[0],
-    y: props.offset[1],
-    width: BEAD_SIZE,
-    height: BEAD_SIZE,
-  };
-
-  const contentConfig: Partial<Konva.RectConfig> = {
-    name: props.color ? undefined : SCREENSHOT_IGNORE,
+  const config: Partial<Konva.RectConfig> = {
+    ...BASE_CONFIG,
     x: props.offset[0] + 1,
     y: props.offset[1] + 1,
-    width: BEAD_SIZE - 2,
-    height: BEAD_SIZE - 2,
-    cornerRadius: getThemeVar('--rounded-full'),
-    fill: props.color ?? getThemeVar('--color-background-3'),
   };
 
-  return [
-    h(KonvaRect, { config: backgroundConfig }),
-    h(KonvaRect, { config: contentConfig }),
-  ];
+  if (props.color) {
+    config.name = undefined;
+    config.fill = props.color;
+  }
+
+  return h(KonvaRect, { config });
 };
