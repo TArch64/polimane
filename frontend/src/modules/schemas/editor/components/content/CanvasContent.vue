@@ -17,6 +17,7 @@ import Konva from 'konva';
 import { computed } from 'vue';
 import {
   useNodeCentering,
+  useNodeCursor,
   useNodeListener,
   useNodeRef,
 } from '@/modules/schemas/editor/composables';
@@ -52,4 +53,5 @@ function paint(event: Konva.KonvaEventObject<MouseEvent>) {
 }
 
 useNodeListener(rootRef, 'mousemove', paint, { isActive });
+useNodeCursor(rootRef, 'crosshair');
 </script>
