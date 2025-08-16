@@ -1,10 +1,9 @@
-import { type FunctionalComponent, h } from 'vue';
+import { type FunctionalComponent, h, resolveComponent } from 'vue';
 import Konva from 'konva';
 import { getThemeVar } from '@/composables';
 import { SCREENSHOT_IGNORE } from '../../composables';
 import { BEAD_SIZE, type BeadPosition } from './useBeadsGrid';
 import { GroupRenderer } from './base';
-import { KonvaRect } from './konva';
 
 export interface ICanvasBeadProps {
   offset: BeadPosition;
@@ -12,6 +11,8 @@ export interface ICanvasBeadProps {
 }
 
 export const CanvasBead: FunctionalComponent<ICanvasBeadProps> = (props) => {
+  const KonvaRect = resolveComponent('KonvaRect');
+
   const groupConfig: Partial<Konva.GroupConfig> = {
     name: props.color ? undefined : SCREENSHOT_IGNORE,
     x: props.offset[0],

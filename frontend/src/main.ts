@@ -3,6 +3,7 @@ import './style/main.css';
 import './polyfills';
 import { createApp, h, shallowRef } from 'vue';
 import { createPinia } from 'pinia';
+import VueKonva from 'vue-konva';
 import { configure as configureProgress } from 'nprogress';
 import { sentryPlugin } from '@/plugins';
 import { ContextMenuPlugin } from './components/contextMenu';
@@ -32,6 +33,8 @@ app.use(httpClientPlugin, {
 app.use(ModalPlugin);
 app.use(ConfirmPlugin);
 app.use(ContextMenuPlugin);
+
+app.use(VueKonva, { prefix: 'Konva' });
 
 app.use(sentryPlugin, {
   dsn: import.meta.env.FRONTEND_PUBLIC_SENTRY_DSN || '',

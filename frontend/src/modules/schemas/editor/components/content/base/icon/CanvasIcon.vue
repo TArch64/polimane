@@ -10,7 +10,6 @@
 import { computed, type Slot, toRef, toRefs } from 'vue';
 import Konva from 'konva';
 import { useNodeRef } from '@/modules/schemas/editor/composables';
-import { KonvaImage } from '../../konva';
 import { useIconSource } from './useIconSource';
 import { useIconImage } from './useIconImage';
 

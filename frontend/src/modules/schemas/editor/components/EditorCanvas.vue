@@ -34,7 +34,7 @@ import {
   useNodeRef,
 } from '../composables';
 import { useEditorStore, usePaletteStore } from '../stores';
-import { CanvasContent, type IGroupLayoutEvent, KonvaLayer, KonvaStage } from './content';
+import { CanvasContent, type IGroupLayoutEvent } from './content';
 
 const editorStore = useEditorStore();
 const paletteStore = usePaletteStore();

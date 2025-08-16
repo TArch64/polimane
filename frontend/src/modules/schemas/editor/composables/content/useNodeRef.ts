@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import { computed, type Ref, type ShallowRef, shallowRef } from 'vue';
-import type { IKonvaNodeHolder } from '@/modules/schemas/editor/components/content/konva';
+import type { IKonvaNodeHolder } from 'vue-konva';
 
 type MaybeNode = Konva.Node | null;
 export type KonvaNodeRef<N extends MaybeNode = MaybeNode> = Ref<N, IKonvaNodeHolder<Exclude<N, null>> | null>;
