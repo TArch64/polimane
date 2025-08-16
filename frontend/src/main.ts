@@ -12,7 +12,6 @@ import { ModalPlugin } from './components/modal';
 import { httpClientPlugin } from './composables';
 import App from './App.vue';
 import { router } from './router';
-import { useLoaderStore } from './stores';
 
 configureProgress({
   showSpinner: false,
@@ -47,7 +46,3 @@ if (import.meta.env.DEV) {
 }
 
 app.mount('#app');
-
-app.runWithContext(() => {
-  useLoaderStore().show();
-});

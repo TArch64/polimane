@@ -36,10 +36,6 @@ import {
 import { useEditorStore, usePaletteStore } from '../stores';
 import { CanvasContent, type IGroupLayoutEvent } from './content';
 
-const emit = defineEmits<{
-  rendered: [];
-}>();
-
 const editorStore = useEditorStore();
 const paletteStore = usePaletteStore();
 
@@ -49,8 +45,15 @@ const wrapperSize = useElementSize(wrapperRef);
 const isReady = computed(() => !!wrapperSize.width.value && !!wrapperSize.height.value);
 
 const setRendered = useDebounceFn(async (event: Konva.KonvaEventObject<IGroupLayoutEvent>) => {
-  event.currentTarget.getStage()?.off('layout', setRendered);
-  emit('rendered');
+  const stage = event.currentTarget as Konva.Stage;
+
+  stage.off('layout', setRendered);
+
+  stage.findOne(`#${layerConfig.id}`)!.to({
+    opacity: 1,
+    duration: 0.3,
+    easing: Konva.Easings.EaseOut,
+  });
 }, 100);
 
 const stageRef = useNodeRef<Konva.Stage>(useCanvasStage());
@@ -69,6 +72,7 @@ watch(stageRef, (stage) => {
 
 const layerConfig: Konva.LayerConfig = {
   id: 'editor-layer',
+  opacity: 0,
 };
 
 useEditorScreenshot();
