@@ -11,19 +11,18 @@
       @wheel="onWheel"
       @mousedown="togglePainting"
       @mouseup="togglePainting"
-      @layout="setRendered"
       v-if="isReady"
     >
       <KonvaLayer :config="layerConfig">
-        <CanvasContent />
+        <CanvasContent :stage-config="config" />
       </KonvaLayer>
     </KonvaStage>
   </main>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { useDebounceFn, useElementSize } from '@vueuse/core';
+import { computed, nextTick, ref, watch } from 'vue';
+import { useElementSize } from '@vueuse/core';
 import Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import {
@@ -34,39 +33,33 @@ import {
   useNodeRef,
 } from '../composables';
 import { useEditorStore, usePaletteStore } from '../stores';
-import { CanvasContent, type IGroupLayoutEvent } from './content';
+import { CanvasContent } from './content';
 
 const editorStore = useEditorStore();
 const paletteStore = usePaletteStore();
 
 const wrapperRef = ref<HTMLElement | null>(null);
-const wrapperSize = useElementSize(wrapperRef);
-
-const isReady = computed(() => !!wrapperSize.width.value && !!wrapperSize.height.value);
-
-const setRendered = useDebounceFn(async (event: Konva.KonvaEventObject<IGroupLayoutEvent>) => {
-  const stage = event.currentTarget as Konva.Stage;
-
-  stage.off('layout', setRendered);
-
-  stage.findOne(`#${layerConfig.id}`)!.to({
-    opacity: 1,
-    duration: 0.3,
-    easing: Konva.Easings.EaseOut,
-  });
-}, 100);
+const { width: canvasWidth, height: canvasHeight } = useElementSize(wrapperRef);
+const isReady = computed(() => !!canvasWidth.value && !!canvasHeight.value);
 
 const stageRef = useNodeRef<Konva.Stage>(useCanvasStage());
 
 const config = computed(() => ({
-  width: wrapperSize.width.value,
-  height: wrapperSize.height.value,
+  width: canvasWidth.value,
+  height: canvasHeight.value,
 }));
 
-watch(stageRef, (stage) => {
+watch(stageRef, async (stage) => {
   if (stage) {
     stage.content.querySelector<HTMLElement>('canvas')!.tabIndex = 0;
-    stage.on('layout', setRendered);
+
+    await nextTick();
+
+    stage.findOne(`#${layerConfig.id}`)!.to({
+      opacity: 1,
+      duration: 0.3,
+      easing: Konva.Easings.EaseOut,
+    });
   }
 });
 

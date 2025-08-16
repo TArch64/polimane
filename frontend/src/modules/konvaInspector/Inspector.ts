@@ -40,19 +40,10 @@ export class Inspector {
   }
 
   useStage(stage: Konva.Stage | null): void {
-    if (this.stage) {
-      this.stage.off('layout', this.refreshInspectorTree);
-    }
-
     this.stage = stage;
 
     if (stage) {
       this.highlight.useStage(stage);
-
-      stage.on('layout', () => {
-        this.refreshInspectorTree();
-        this.refreshInspectorState();
-      });
     }
 
     this.refreshInspectorState();

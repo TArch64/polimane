@@ -1,5 +1,5 @@
 <template>
-  <GroupRenderer
+  <KonvaGroup
     :config
     ref="rootRef"
     @mousedown="paint"
@@ -9,22 +9,20 @@
       :key="sector"
       :grid="grid.value"
     />
-  </GroupRenderer>
+  </KonvaGroup>
 </template>
 
 <script setup lang="ts">
 import Konva from 'konva';
 import { computed } from 'vue';
-import {
-  useNodeCentering,
-  useNodeCursor,
-  useNodeListener,
-  useNodeRef,
-} from '@/modules/schemas/editor/composables';
+import { useNodeCursor, useNodeListener, useNodeRef } from '@/modules/schemas/editor/composables';
 import { useEditorStore, usePaletteStore } from '@/modules/schemas/editor/stores';
-import { GroupRenderer } from './base';
-import { useBeadsGrid } from './useBeadsGrid';
+import { BEAD_SIZE, useBeadsGrid } from './useBeadsGrid';
 import { CanvasBeadGrid } from './CanvasBeadGrid';
+
+const props = defineProps<{
+  stageConfig: Required<Pick<Konva.StageConfig, 'width' | 'height'>>;
+}>();
 
 const editorStore = useEditorStore();
 const paletteStore = usePaletteStore();
@@ -32,7 +30,17 @@ const paletteStore = usePaletteStore();
 const sectors = useBeadsGrid();
 
 const rootRef = useNodeRef<Konva.Group>();
-const config = useNodeCentering(rootRef, { padding: 30 });
+
+function calcContentY(): number {
+  const contentHeight = (editorStore.schema.size.top + editorStore.schema.size.bottom) * BEAD_SIZE;
+  const stageHeight = props.stageConfig.height;
+  return (stageHeight - contentHeight) / 2;
+}
+
+const config: Partial<Konva.GroupConfig> = {
+  y: calcContentY(),
+};
+
 const isActive = computed(() => paletteStore.isPainting);
 
 function paint(event: Konva.KonvaEventObject<MouseEvent>) {

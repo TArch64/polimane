@@ -12,7 +12,7 @@ export class InspectorTree {
   private collectNodeTree(node: Konva.Node): CustomInspectorNode {
     const inspectorNode: CustomInspectorNode = {
       id: node._id.toString(),
-      label: node.className || node.nodeType,
+      label: this.getNodeLabel(node),
     };
 
     if (node instanceof Konva.Container) {
@@ -22,5 +22,11 @@ export class InspectorTree {
     }
 
     return inspectorNode;
+  }
+
+  private getNodeLabel(node: Konva.Node): string {
+    if (node.id()) return `#${node.id()}`;
+    if (node.name()) return `.${node.name()}`;
+    return node.className || node.nodeType;
   }
 }
