@@ -7,7 +7,7 @@ import { BEAD_SIZE, type BeadOffset } from './useBeadsGrid';
 
 export interface ICanvasBeadProps {
   offset: BeadOffset;
-  position: SchemaBeedCoordinate;
+  coord: SchemaBeedCoordinate;
   color: string | null;
 }
 
@@ -24,7 +24,7 @@ export const CanvasBead: FunctionalComponent<ICanvasBeadProps> = (props) => {
 
   const config: Partial<Konva.RectConfig> = {
     ...BASE_CONFIG,
-    $position: props.position,
+    $position: props.coord,
     x: props.offset[0] + 1,
     y: props.offset[1] + 1,
   };

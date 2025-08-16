@@ -7,7 +7,7 @@ export const BEAD_SIZE = 16;
 export type BeadOffset = [x: number, y: number];
 
 export interface IBeadsGridItem {
-  position: SchemaBeedCoordinate;
+  coord: SchemaBeedCoordinate;
   offset: BeadOffset;
 }
 
@@ -38,7 +38,7 @@ export function useBeadsGrid(): IBeadsGrid[] {
         const offsetY = initialOffsetY + (absoluteY * BEAD_SIZE);
 
         yield {
-          position: `${x}:${y}`,
+          coord: `${x}:${y}`,
           offset: [offsetX, offsetY],
         };
       }

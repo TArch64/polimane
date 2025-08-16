@@ -16,14 +16,14 @@ export const CanvasBeadGrid = defineComponent({
 
   setup(props) {
     const editorStore = useEditorStore();
-    const getColor = (pos: SchemaBeedCoordinate) => editorStore.schema.beads[pos] ?? null;
+    const getColor = (coord: SchemaBeedCoordinate) => editorStore.schema.beads[coord] ?? null;
     const beads = computed(() => Array.from(props.grid));
 
     return () => beads.value.map((item) => {
       return h(CanvasBead, {
         offset: item.offset,
-        position: item.position,
-        color: getColor(item.position),
+        coord: item.coord,
+        color: getColor(item.coord),
       });
     });
   },
