@@ -40,7 +40,7 @@ usePageClass('app--common-layout');
 <style scoped>
 @layer components {
   :global(.app--common-layout) {
-    background-color: var(--color-background-2);
+    --app-background-color: var(--color-background-2);
   }
 
   .common-layout__content {

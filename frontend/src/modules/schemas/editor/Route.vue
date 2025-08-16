@@ -1,6 +1,6 @@
 <template>
   <EditorHeader />
-  <EditorCanvas class="editor__fill" />
+  <EditorCanvas class="editor__fill" @rendered="loaderStore.hide" />
   <EditorPalette />
 </template>
 
@@ -8,6 +8,7 @@
 import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
 import { destroyStore, lazyDestroyStore } from '@/helpers';
+import { useLoaderStore } from '@/stores';
 import { useEditorStore, usePaletteStore } from './stores';
 import { EditorCanvas, EditorHeader, EditorPalette } from './components';
 
@@ -17,9 +18,12 @@ defineProps<{
 
 defineOptions({
   beforeRouteEnter: definePreload<'schema-editor'>(async (route) => {
-    const store = useEditorStore();
-    await store.loadSchema(route.params.schemaId);
-  }),
+    const loaderStore = useLoaderStore();
+    const editorStore = useEditorStore();
+
+    loaderStore.show();
+    await editorStore.loadSchema(route.params.schemaId);
+  }, { appLoader: true }),
 
   beforeRouteLeave: async (_, __, next) => {
     lazyDestroyStore(useEditorStore);
@@ -28,6 +32,7 @@ defineOptions({
   },
 });
 
+const loaderStore = useLoaderStore();
 const editorStore = useEditorStore();
 
 useEventListener(window, 'beforeunload', (event) => {
@@ -41,7 +46,7 @@ useEventListener(window, 'beforeunload', (event) => {
 <style scoped>
 @layer page {
   :global(.app--schema-editor) {
-    background-color: var(--color-background-2);
+    --app-background-color: var(--color-background-2);
     overflow: hidden;
   }
 
