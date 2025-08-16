@@ -1,13 +1,14 @@
 import { computed, type ComputedRef } from 'vue';
+import type { SchemaBeedCoordinate } from '@/models';
 import { useEditorStore } from '../../stores';
 
 export const BEAD_SIZE = 16;
 
-export type BeadPosition = [x: number, y: number];
+export type BeadOffset = [x: number, y: number];
 
 export interface IBeadsGridItem {
-  position: BeadPosition;
-  offset: BeadPosition;
+  position: SchemaBeedCoordinate;
+  offset: BeadOffset;
 }
 
 export type BeadGridGenerator = Generator<IBeadsGridItem, void, unknown>;
@@ -37,7 +38,7 @@ export function useBeadsGrid(): IBeadsGrid[] {
         const offsetY = initialOffsetY + (absoluteY * BEAD_SIZE);
 
         yield {
-          position: [x, y],
+          position: `${x}:${y}`,
           offset: [offsetX, offsetY],
         };
       }
