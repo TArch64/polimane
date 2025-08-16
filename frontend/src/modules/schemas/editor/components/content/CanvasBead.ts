@@ -24,6 +24,7 @@ export const CanvasBead: FunctionalComponent<ICanvasBeadProps> = (props) => {
 
   const config: Partial<Konva.RectConfig> = {
     ...BASE_CONFIG,
+    $position: props.position,
     x: props.offset[0] + 1,
     y: props.offset[1] + 1,
   };
