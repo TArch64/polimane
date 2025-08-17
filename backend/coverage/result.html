@@ -195,7 +195,7 @@
 
             <option value="file48">polimane/backend/repository/schemas/create.go (100.0%)</option>
 
-            <option value="file49">polimane/backend/repository/schemas/delete.go (94.7%)</option>
+            <option value="file49">polimane/backend/repository/schemas/delete.go (100.0%)</option>
 
             <option value="file50">polimane/backend/repository/schemas/update.go (100.0%)</option>
 
@@ -2464,7 +2464,7 @@ type DeleteOptions struct {
         SchemaID model.ID
 }
 
-func (i *Impl) Delete(options *DeleteOptions) (err error) <span class="cov10" title="6">{
+func (i *Impl) Delete(options *DeleteOptions) (err error) <span class="cov10" title="8">{
         err = i.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
         if err != nil </span><span class="cov1" title="1">{
                 return err
@@ -2472,8 +2472,8 @@ func (i *Impl) Delete(options *DeleteOptions) (err error) <span class="cov10" ti
 
         <span
             class="cov9"
-            title="5"
-        >err = i.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error </span><span class="cov9" title="5">{
+            title="7"
+        >err = i.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error </span><span class="cov9" title="7">{
                 if err = tx.Delete(&amp;model.Schema{}, options.SchemaID).Error; err != nil </span><span
             class="cov1"
             title="1"
@@ -2481,25 +2481,25 @@ func (i *Impl) Delete(options *DeleteOptions) (err error) <span class="cov10" ti
                         return err
                 }</span>
 
-                <span class="cov7" title="4">if err = i.userSchemas.DeleteTx(tx, options.User.ID, options.SchemaID); err != nil </span><span
+                <span class="cov8" title="6">if err = i.userSchemas.DeleteTx(tx, options.User.ID, options.SchemaID); err != nil </span><span
             class="cov1"
             title="1"
         >{
                         return err
                 }</span>
 
-                <span class="cov6" title="3">return i.deleteScreenshot(options.Ctx, options.SchemaID)</span>
+                <span class="cov7" title="5">return i.deleteScreenshot(options.Ctx, options.SchemaID)</span>
         })
 
-        <span class="cov9" title="5">if err != nil </span><span class="cov6" title="3">{
+        <span class="cov9" title="7">if err != nil </span><span class="cov7" title="4">{
                 return err
         }</span>
 
-        <span class="cov4" title="2">i.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
+        <span class="cov5" title="3">i.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
         return nil</span>
 }
 
-func (i *Impl) deleteScreenshot(ctx context.Context, schemaId model.ID) error <span class="cov6" title="3">{
+func (i *Impl) deleteScreenshot(ctx context.Context, schemaId model.ID) error <span class="cov7" title="5">{
         key := model.SchemaScreenshotKey(schemaId)
 
         _, err := i.s3.DeleteObject(ctx, &amp;s3.DeleteObjectInput{
@@ -2508,11 +2508,11 @@ func (i *Impl) deleteScreenshot(ctx context.Context, schemaId model.ID) error <s
         })
 
         var notFound *types.NotFound
-        if errors.As(err, &amp;notFound) </span><span class="cov0" title="0">{
+        if errors.As(err, &amp;notFound) </span><span class="cov1" title="1">{
                 return nil
         }</span>
 
-        <span class="cov6" title="3">return err</span>
+        <span class="cov7" title="4">return err</span>
 }
 </pre>
 
