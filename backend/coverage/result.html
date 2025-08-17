@@ -183,7 +183,7 @@
 
             <option value="file42">polimane/backend/model/identifiable.go (100.0%)</option>
 
-            <option value="file43">polimane/backend/model/schema.go (0.0%)</option>
+            <option value="file43">polimane/backend/model/schema.go (100.0%)</option>
 
             <option value="file44">polimane/backend/repository/schemas/by_id.go (100.0%)</option>
 
@@ -2147,18 +2147,18 @@ import (
 
 type ID = pgtype.UUID
 
-func StringToID(str string) (ID, error) <span class="cov10" title="11">{
+func StringToID(str string) (ID, error) <span class="cov10" title="17">{
         id := pgtype.UUID{}
         err := id.Scan(str)
         return id, err
 }</span>
 
-func MustStringToID(str string) ID <span class="cov7" title="5">{
+func MustStringToID(str string) ID <span class="cov8" title="11">{
         id, err := StringToID(str)
-        if err != nil </span><span class="cov5" title="3">{
+        if err != nil </span><span class="cov4" title="3">{
                 panic(err)</span>
         }
-        <span class="cov3" title="2">return id</span>
+        <span class="cov7" title="8">return id</span>
 }
 
 type Identifiable struct {
@@ -2191,16 +2191,16 @@ type Schema struct {
         Users          []User                    `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
 }
 
-func (s *Schema) ScreenshotPath() *string <span class="cov0" title="0">{
-        if s.ScreenshotedAt == nil </span><span class="cov0" title="0">{
+func (s *Schema) ScreenshotPath() *string <span class="cov7" title="3">{
+        if s.ScreenshotedAt == nil </span><span class="cov1" title="1">{
                 return nil
         }</span>
-        <span class="cov0" title="0">path := SchemaScreenshotKey(s.ID)
+        <span class="cov4" title="2">path := SchemaScreenshotKey(s.ID)
         path += "?v=" + strconv.FormatInt(s.ScreenshotedAt.Unix(), 10)
         return &amp;path</span>
 }
 
-func SchemaScreenshotKey(id ID) string <span class="cov0" title="0">{
+func SchemaScreenshotKey(id ID) string <span class="cov10" title="5">{
         return fmt.Sprintf("data/images/%s/schema.webp", id.String())
 }</span>
 
