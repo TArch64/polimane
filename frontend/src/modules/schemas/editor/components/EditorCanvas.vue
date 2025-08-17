@@ -13,7 +13,7 @@
       @mouseup="togglePainting"
       v-if="isReady"
     >
-      <KonvaLayer :config="layerConfig">
+      <KonvaLayer ref="layerRef" :config="layerConfig">
         <CanvasContent :stage-config="config" />
       </KonvaLayer>
     </KonvaStage>
@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
-import { useElementSize } from '@vueuse/core';
+import { useDebounceFn, useElementSize } from '@vueuse/core';
 import Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import {
@@ -43,6 +43,7 @@ const { width: canvasWidth, height: canvasHeight } = useElementSize(wrapperRef);
 const isReady = computed(() => !!canvasWidth.value && !!canvasHeight.value);
 
 const stageRef = useNodeRef<Konva.Stage>(useCanvasStage());
+const layerRef = useNodeRef<Konva.Layer>();
 
 const config = computed(() => ({
   width: canvasWidth.value,
@@ -55,7 +56,7 @@ watch(stageRef, async (stage) => {
 
     await nextTick();
 
-    stage.findOne(`#${layerConfig.id}`)!.to({
+    layerRef.value.to({
       opacity: 1,
       duration: 0.3,
       easing: Konva.Easings.EaseOut,
@@ -72,10 +73,27 @@ useEditorScreenshot();
 const canvasZoom = useCanvasZoom();
 const canvasNavigation = useCanvasNavigation();
 
+let isLayerCachingEnabled = false;
+
+function enableLayerCaching(): void {
+  if (!isLayerCachingEnabled) {
+    layerRef.value.cache();
+    isLayerCachingEnabled = true;
+  }
+}
+
+const disableLayerCaching = useDebounceFn(() => {
+  layerRef.value.clearCache();
+  isLayerCachingEnabled = false;
+  console.log('clear cache');
+}, 100);
+
 function onWheel(event: KonvaEventObject<WheelEvent, Konva.Stage>): void {
+  enableLayerCaching();
   event.evt.preventDefault();
   event.evt.ctrlKey ? canvasZoom.zoom(event) : canvasNavigation.navigate(event);
   event.currentTarget.batchDraw();
+  disableLayerCaching();
 }
 
 function onKeydown(event: KeyboardEvent) {
