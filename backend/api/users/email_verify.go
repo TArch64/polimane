@@ -33,7 +33,7 @@ func (c *Controller) apiEmailVerify(ctx *fiber.Ctx) (err error) {
 		Code: body.Code,
 	})
 
-	var httpError workos_errors.HTTPError
+	var httpError *workos_errors.HTTPError
 	if errors.As(err, &httpError) && workos.GetErrorCode(httpError) == workos.CodeEmailVerificationCodeExpired {
 		return ErrEmailVerificationCodeExpired
 	}

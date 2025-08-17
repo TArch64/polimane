@@ -119,52 +119,6 @@ func TestController_apiUpdate(t *testing.T) {
 		mockSchemas.AssertExpectations(t)
 	})
 
-	t.Run("updates schema content successfully", func(t *testing.T) {
-		// Arrange
-		mockSchemas := &MockSchemasClient{}
-		mockS3 := &MockS3Client{}
-		testUser := createTestUser()
-		testSchemaID := model.MustStringToID("650e8400-e29b-41d4-a716-446655440001")
-
-		controller := &Controller{
-			schemas: mockSchemas,
-			s3:      mockS3,
-		}
-
-		// Initialize validator
-		base.InitValidator()
-
-		app := fiber.New(fiber.Config{
-			ErrorHandler: base.ErrorHandler,
-		})
-
-		app.Patch("/schemas/:schemaId", func(c *fiber.Ctx) error {
-			// Set up session user
-			auth.SetSession(c, &auth.UserSession{
-				ID:   "session-123",
-				User: testUser,
-			})
-			return controller.apiUpdate(c)
-		})
-
-		mockSchemas.On("Update", mock.MatchedBy(func(options *repositoryschemas.UpdateOptions) bool {
-			return options.User == testUser && options.SchemaID == testSchemaID
-		})).Return(nil)
-
-		jsonBody := `{"content":[{"id":"pattern1","name":"Test Pattern","type":"square","content":[{"id":"row1","content":[{"id":"bead1","color":"#FF0000"}]}]}]}`
-		req := httptest.NewRequest("PATCH", "/schemas/"+testSchemaID.String(), strings.NewReader(jsonBody))
-		req.Header.Set("Content-Type", "application/json")
-
-		// Act
-		resp, err := app.Test(req)
-
-		// Assert
-		assert.NoError(t, err)
-		assert.Equal(t, 200, resp.StatusCode)
-
-		mockSchemas.AssertExpectations(t)
-	})
-
 	t.Run("returns error for empty updates", func(t *testing.T) {
 		// Arrange
 		mockSchemas := &MockSchemasClient{}
@@ -349,8 +303,7 @@ func TestCollectUpdates(t *testing.T) {
 		// Assert
 		assert.NotNil(t, updates)
 		assert.Equal(t, "Test Schema", updates.Name)
-		assert.Nil(t, updates.Content)
-		assert.Nil(t, updates.Palette)
+		assert.True(t, updates.Palette.Data() == nil)
 	})
 
 	t.Run("returns schema with palette when palette provided", func(t *testing.T) {
@@ -364,55 +317,7 @@ func TestCollectUpdates(t *testing.T) {
 		// Assert
 		assert.NotNil(t, updates)
 		assert.Equal(t, "", updates.Name)
-		assert.Equal(t, model.TSchemaPalette(palette), updates.Palette)
-		assert.Nil(t, updates.Content)
-	})
-
-	t.Run("returns schema with content when content provided", func(t *testing.T) {
-		// Arrange
-		content := model.TSchemaContent{
-			&model.SchemaPattern{
-				ID:   "pattern1",
-				Name: "Test Pattern",
-				Type: model.SchemaPatternSquare,
-			},
-		}
-		body := &updateBody{Content: content}
-
-		// Act
-		updates := collectUpdates(body)
-
-		// Assert
-		assert.NotNil(t, updates)
-		assert.Equal(t, "", updates.Name)
-		assert.Nil(t, updates.Palette)
-		assert.Equal(t, content, updates.Content)
-	})
-
-	t.Run("returns schema with all fields when all provided", func(t *testing.T) {
-		// Arrange
-		content := model.TSchemaContent{
-			&model.SchemaPattern{
-				ID:   "pattern1",
-				Name: "Test Pattern",
-				Type: model.SchemaPatternSquare,
-			},
-		}
-		palette := []string{"#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF", "#888888"}
-		body := &updateBody{
-			Name:    "Test Schema",
-			Palette: palette,
-			Content: content,
-		}
-
-		// Act
-		updates := collectUpdates(body)
-
-		// Assert
-		assert.NotNil(t, updates)
-		assert.Equal(t, "Test Schema", updates.Name)
-		assert.Equal(t, model.TSchemaPalette(palette), updates.Palette)
-		assert.Equal(t, content, updates.Content)
+		assert.NotNil(t, updates.Palette)
 	})
 
 	t.Run("returns nil when no updates provided", func(t *testing.T) {
@@ -437,17 +342,6 @@ func TestCollectUpdates(t *testing.T) {
 		assert.Nil(t, updates)
 	})
 
-	t.Run("handles nil content", func(t *testing.T) {
-		// Arrange
-		body := &updateBody{Content: nil}
-
-		// Act
-		updates := collectUpdates(body)
-
-		// Assert
-		assert.Nil(t, updates)
-	})
-
 	t.Run("handles nil palette", func(t *testing.T) {
 		// Arrange
 		body := &updateBody{Palette: nil}
@@ -463,23 +357,14 @@ func TestCollectUpdates(t *testing.T) {
 func TestUpdateBody(t *testing.T) {
 	t.Run("has correct validation tags", func(t *testing.T) {
 		// This test verifies the struct definition
-		content := model.TSchemaContent{
-			&model.SchemaPattern{
-				ID:   "pattern1",
-				Name: "Test Pattern",
-				Type: model.SchemaPatternSquare,
-			},
-		}
 		palette := []string{"#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF", "#888888"}
 
 		body := updateBody{
 			Name:    "Test",
 			Palette: palette,
-			Content: content,
 		}
 
 		assert.Equal(t, "Test", body.Name)
-		assert.Equal(t, palette, body.Palette)
-		assert.Equal(t, content, body.Content)
+		assert.Equal(t, model.SchemaPalette(palette), body.Palette)
 	})
 }

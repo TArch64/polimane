@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/stretchr/testify/assert"
 	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -24,6 +25,10 @@ func TestDelete(t *testing.T) {
 
 		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(nil)
 		mockUserSchemas.On("DeleteTx", tmock.Anything, userID, schemaID).Return(nil)
+
+		// Access the S3 mock through the client
+		s3Mock := client.s3.(*MockS3Client)
+		s3Mock.On("DeleteObject", tmock.Anything, tmock.Anything, tmock.Anything).Return(&s3.DeleteObjectOutput{}, nil)
 
 		mock.ExpectBegin()
 		mock.ExpectExec(`DELETE FROM "schemas"`).
@@ -71,6 +76,10 @@ func TestDelete(t *testing.T) {
 
 		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(nil)
 		mockUserSchemas.On("DeleteTx", tmock.Anything, userID, schemaID).Return(nil)
+
+		// Access the S3 mock through the client
+		s3Mock := client.s3.(*MockS3Client)
+		s3Mock.On("DeleteObject", tmock.Anything, tmock.Anything, tmock.Anything).Return(&s3.DeleteObjectOutput{}, nil)
 
 		mock.ExpectBegin()
 		mock.ExpectExec(`DELETE FROM "schemas"`).
@@ -139,6 +148,10 @@ func TestDelete(t *testing.T) {
 
 		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(nil)
 		mockUserSchemas.On("DeleteTx", tmock.Anything, userID, schemaID).Return(nil)
+
+		// Access the S3 mock through the client
+		s3Mock := client.s3.(*MockS3Client)
+		s3Mock.On("DeleteObject", tmock.Anything, tmock.Anything, tmock.Anything).Return(&s3.DeleteObjectOutput{}, nil)
 
 		mock.ExpectBegin()
 		mock.ExpectExec(`DELETE FROM "schemas"`).

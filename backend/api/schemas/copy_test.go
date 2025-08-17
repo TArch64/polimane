@@ -68,8 +68,6 @@ func TestController_apiCopy(t *testing.T) {
 
 		assert.Equal(t, copiedSchema.ID, responseSchema.ID)
 		assert.Equal(t, copiedSchema.Name, responseSchema.Name)
-		// Content should be nil in response (as per the implementation)
-		assert.Nil(t, responseSchema.Content)
 
 		mockSchemas.AssertExpectations(t)
 	})
@@ -192,56 +190,4 @@ func TestController_apiCopy(t *testing.T) {
 		mockSchemas.AssertExpectations(t)
 	})
 
-	t.Run("sets content to nil in response", func(t *testing.T) {
-		// Arrange
-		mockSchemas := &MockSchemasClient{}
-		mockS3 := &MockS3Client{}
-		testUser := createTestUser()
-		originalSchema := createTestSchema()
-		copiedSchema := createTestSchema()
-		copiedSchema.ID = model.MustStringToID("750e8400-e29b-41d4-a716-446655440002")
-
-		controller := &Controller{
-			schemas: mockSchemas,
-			s3:      mockS3,
-		}
-
-		app := fiber.New(fiber.Config{
-			ErrorHandler: base.ErrorHandler,
-		})
-
-		app.Post("/schemas/:schemaId/copy", func(c *fiber.Ctx) error {
-			// Set up session user
-			auth.SetSession(c, &auth.UserSession{
-				ID:   "session-123",
-				User: testUser,
-			})
-			return controller.apiCopy(c)
-		})
-
-		mockSchemas.On("Copy", mock.MatchedBy(func(options *repositoryschemas.CopyOptions) bool {
-			return options.User == testUser && options.SchemaID == originalSchema.ID
-		})).Return(copiedSchema, nil)
-
-		req := httptest.NewRequest("POST", "/schemas/"+originalSchema.ID.String()+"/copy", nil)
-
-		// Act
-		resp, err := app.Test(req)
-
-		// Assert
-		assert.NoError(t, err)
-		assert.Equal(t, 200, resp.StatusCode)
-
-		body, err := io.ReadAll(resp.Body)
-		assert.NoError(t, err)
-
-		var responseSchema model.Schema
-		err = json.Unmarshal(body, &responseSchema)
-		assert.NoError(t, err)
-
-		// Verify content is explicitly set to nil
-		assert.Nil(t, responseSchema.Content)
-
-		mockSchemas.AssertExpectations(t)
-	})
 }

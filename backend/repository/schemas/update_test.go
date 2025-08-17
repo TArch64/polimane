@@ -7,6 +7,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/datatypes"
 
 	"polimane/backend/model"
 )
@@ -23,9 +24,10 @@ func TestUpdate(t *testing.T) {
 
 		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(nil)
 
+		palette := model.SchemaPalette{"#000000", "#ffffff"}
 		updates := &model.Schema{
 			Name:    "Updated Schema",
-			Palette: model.TSchemaPalette{"#000000", "#ffffff"},
+			Palette: datatypes.NewJSONType(palette),
 		}
 
 		mock.ExpectBegin()

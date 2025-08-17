@@ -15,7 +15,7 @@ type httpErrorRawBody struct {
 	Code string `json:"code"`
 }
 
-func GetErrorCode(httpErr workos_errors.HTTPError) string {
+func GetErrorCode(httpErr *workos_errors.HTTPError) string {
 	var rawBody httpErrorRawBody
 	if err := json.Unmarshal([]byte(httpErr.RawBody), &rawBody); err != nil {
 		return CodeUnknownError

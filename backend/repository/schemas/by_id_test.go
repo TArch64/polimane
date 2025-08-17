@@ -24,10 +24,12 @@ func setupTest(t *testing.T) (*Impl, *MockUserSchemas, sqlmock.Sqlmock, func()) 
 	require.NoError(t, err)
 
 	mockUserSchemas := &MockUserSchemas{}
+	mockS3 := &MockS3Client{}
 	client := &Impl{
 		db:          gormDB,
 		userSchemas: mockUserSchemas,
 		signals:     signal.Provider(),
+		s3:          mockS3,
 	}
 
 	cleanup := func() {

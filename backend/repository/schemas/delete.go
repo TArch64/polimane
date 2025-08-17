@@ -52,7 +52,7 @@ func (i *Impl) deleteScreenshot(ctx context.Context, schemaId model.ID) error {
 		Bucket: &awsconfig.S3Bucket,
 	})
 
-	var notFound types.NotFound
+	var notFound *types.NotFound
 	if errors.As(err, &notFound) {
 		return nil
 	}

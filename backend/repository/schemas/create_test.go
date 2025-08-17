@@ -25,7 +25,7 @@ func TestCreate(t *testing.T) {
 
 		mock.ExpectBegin()
 		mock.ExpectQuery(`INSERT INTO "schemas"`).
-			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "Test Schema", sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "Test Schema", sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow("550e8400-e29b-41d4-a716-446655440001"))
 		mock.ExpectCommit()
 
@@ -33,25 +33,27 @@ func TestCreate(t *testing.T) {
 			Ctx:     ctx,
 			User:    user,
 			Name:    "Test Schema",
-			Palette: model.TSchemaPalette{"#ffffff", "#000000"},
-			Content: model.TSchemaContent{&model.SchemaPattern{ID: "1", Name: "Pattern 1", Type: "square"}},
+			Palette: model.SchemaPalette{"#ffffff", "#000000"},
+			Size:    &model.SchemaSize{Left: 0, Top: 0, Right: 100, Bottom: 100},
+			Beads:   model.SchemaBeads{"1": "#ffffff", "2": "#000000"},
 		})
 
 		require.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.Equal(t, "Test Schema", result.Name)
 		assert.NotNil(t, result.Palette)
-		assert.NotNil(t, result.Content)
+		assert.NotNil(t, result.Size)
+		assert.NotNil(t, result.Beads)
 		assert.NoError(t, mock.ExpectationsWereMet())
 		mockUserSchemas.AssertExpectations(t)
 	})
 
-	t.Run("with nil palette and content", func(t *testing.T) {
+	t.Run("with nil palette, size and beads", func(t *testing.T) {
 		mockUserSchemas.On("CreateTx", tmock.Anything, userID, tmock.Anything).Return(nil)
 
 		mock.ExpectBegin()
 		mock.ExpectQuery(`INSERT INTO "schemas"`).
-			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "Test Schema", sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "Test Schema", sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow("550e8400-e29b-41d4-a716-446655440001"))
 		mock.ExpectCommit()
 
@@ -60,16 +62,18 @@ func TestCreate(t *testing.T) {
 			User:    user,
 			Name:    "Test Schema",
 			Palette: nil,
-			Content: nil,
+			Size:    nil,
+			Beads:   nil,
 		})
 
 		require.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.Equal(t, "Test Schema", result.Name)
 		assert.NotNil(t, result.Palette)
-		assert.NotNil(t, result.Content)
-		assert.Len(t, result.Palette, model.SchemaPaletteSize)
-		assert.Len(t, result.Content, 0)
+		assert.NotNil(t, result.Size)
+		assert.NotNil(t, result.Beads)
+		assert.Len(t, result.Palette.Data(), model.SchemaPaletteSize)
+		assert.Len(t, result.Beads.Data(), 0)
 		assert.NoError(t, mock.ExpectationsWereMet())
 		mockUserSchemas.AssertExpectations(t)
 	})

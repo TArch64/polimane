@@ -108,7 +108,7 @@ func TestGetErrorCode(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GetErrorCode(tt.httpError)
+			result := GetErrorCode(&tt.httpError)
 			assert.Equal(t, tt.expectedCode, result)
 		})
 	}
