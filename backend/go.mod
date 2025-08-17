@@ -1,6 +1,6 @@
 module polimane/backend
 
-go 1.24.1
+go 1.25.0
 
 require (
 	ariga.io/atlas-provider-gorm v0.5.6
