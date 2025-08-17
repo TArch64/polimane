@@ -1,5 +1,5 @@
 export type SchemaContentSize = Record<'top' | 'left' | 'right' | 'bottom', number>;
-export type SchemaBeedCoordinate = `${number}:${number}`;
+export type SchemaBeedCoord = `${number}:${number}`;
 
 export interface ISchema {
   id: string;
@@ -10,5 +10,5 @@ export interface ISchema {
   screenshotedAt: string | null;
   screenshotPath: string | null;
   size: SchemaContentSize;
-  beads: Record<SchemaBeedCoordinate, string>;
+  beads: Record<SchemaBeedCoord, string>;
 }

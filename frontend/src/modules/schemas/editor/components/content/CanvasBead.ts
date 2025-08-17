@@ -1,13 +1,13 @@
 import { type FunctionalComponent, h, resolveComponent } from 'vue';
 import Konva from 'konva';
 import { getThemeVar } from '@/composables';
-import type { SchemaBeedCoordinate } from '@/models';
+import type { SchemaBeedCoord } from '@/models';
 import { SCREENSHOT_IGNORE } from '../../composables';
 import { BEAD_SIZE, type BeadOffset } from './useBeadsGrid';
 
 export interface ICanvasBeadProps {
   offset: BeadOffset;
-  coord: SchemaBeedCoordinate;
+  coord: SchemaBeedCoord;
   color: string | null;
 }
 

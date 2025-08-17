@@ -1,5 +1,5 @@
 import { computed, type ComputedRef } from 'vue';
-import type { SchemaBeedCoordinate } from '@/models';
+import type { SchemaBeedCoord } from '@/models';
 import { useEditorStore } from '../../stores';
 
 export const BEAD_SIZE = 16;
@@ -7,7 +7,7 @@ export const BEAD_SIZE = 16;
 export type BeadOffset = [x: number, y: number];
 
 export interface IBeadsGridItem {
-  coord: SchemaBeedCoordinate;
+  coord: SchemaBeedCoord;
   offset: BeadOffset;
 }
 
