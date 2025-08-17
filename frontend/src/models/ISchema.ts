@@ -1,5 +1,11 @@
-export type SchemaContentSize = Record<'top' | 'left' | 'right' | 'bottom', number>;
+export type SchemaSizeDirection = 'top' | 'left' | 'right' | 'bottom';
+export type SchemaSize = Record<SchemaSizeDirection, number>;
+
 export type SchemaBeedCoord = `${number}:${number}`;
+
+export function parseSchemaBeedCoord(coord: SchemaBeedCoord): [number, number] {
+  return coord.split(':').map(Number) as [number, number];
+}
 
 export interface ISchema {
   id: string;
@@ -9,6 +15,6 @@ export interface ISchema {
   updatedAt: string;
   screenshotedAt: string | null;
   screenshotPath: string | null;
-  size: SchemaContentSize;
+  size: SchemaSize;
   beads: Record<SchemaBeedCoord, string>;
 }

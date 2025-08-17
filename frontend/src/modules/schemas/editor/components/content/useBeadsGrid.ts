@@ -11,12 +11,9 @@ export interface IBeadsGridItem {
   offset: BeadOffset;
 }
 
-export type BeadGridGenerator = Generator<IBeadsGridItem, void, unknown>;
-export type BeadGridSector = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
-
 export interface IBeadsGrid {
-  sector: BeadGridSector;
-  grid: ComputedRef<BeadGridGenerator>;
+  sector: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
+  grid: ComputedRef<IBeadsGridItem[]>;
 }
 
 export function useBeadsGrid(): IBeadsGrid[] {
@@ -26,7 +23,7 @@ export function useBeadsGrid(): IBeadsGrid[] {
   const right = computed(() => editorStore.schema.size.right);
   const bottom = computed(() => editorStore.schema.size.bottom);
 
-  function* grid(fromX: number, toX: number, fromY: number, toY: number): BeadGridGenerator {
+  function* grid(fromX: number, toX: number, fromY: number, toY: number): Generator<IBeadsGridItem, void, unknown> {
     const initialOffsetX = (right.value - left.value) * BEAD_SIZE;
     const initialOffsetY = (bottom.value - top.value) * BEAD_SIZE;
 
@@ -48,19 +45,19 @@ export function useBeadsGrid(): IBeadsGrid[] {
   return [
     {
       sector: 'topLeft',
-      grid: computed(() => grid(left.value, -1, top.value, -1)),
+      grid: computed(() => Array.from(grid(left.value, 0, top.value, 0))),
     },
     {
       sector: 'topRight',
-      grid: computed(() => grid(0, right.value, top.value, -1)),
+      grid: computed(() => Array.from(grid(1, right.value, top.value, 0))),
     },
     {
       sector: 'bottomLeft',
-      grid: computed(() => grid(left.value, -1, 0, bottom.value)),
+      grid: computed(() => Array.from(grid(left.value, 0, 1, bottom.value))),
     },
     {
       sector: 'bottomRight',
-      grid: computed(() => grid(0, right.value, 0, bottom.value)),
+      grid: computed(() => Array.from(grid(1, right.value, 1, bottom.value))),
     },
   ];
 }

@@ -1,6 +1,6 @@
 <template>
   <CanvasBead
-    v-for="bead of beads"
+    v-for="bead of grid"
     :key="bead.coord"
     :offset="bead.offset"
     :coord="bead.coord"
@@ -9,15 +9,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
 import { useBeadsStore } from '../../stores';
 import { CanvasBead } from './CanvasBead';
-import type { BeadGridGenerator } from './useBeadsGrid';
+import type { IBeadsGridItem } from './useBeadsGrid';
 
-const props = defineProps<{
-  grid: BeadGridGenerator;
+defineProps<{
+  grid: IBeadsGridItem[];
 }>();
 
 const beadsStore = useBeadsStore();
-const beads = computed(() => Array.from(props.grid));
 </script>
