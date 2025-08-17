@@ -85,7 +85,6 @@ function enableLayerCaching(): void {
 const disableLayerCaching = useDebounceFn(() => {
   layerRef.value.clearCache();
   isLayerCachingEnabled = false;
-  console.log('clear cache');
 }, 100);
 
 function onWheel(event: KonvaEventObject<WheelEvent, Konva.Stage>): void {
