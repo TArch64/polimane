@@ -13,11 +13,16 @@
       <SavingIcon />
     </Button>
 
-    <Button icon :disabled="!editorStore.canUndo" @click="editorStore.undo">
+    <Button icon :disabled="!editorStore.canUndo" title="Відмінити зміни" @click="editorStore.undo">
       <CornerUpLeftIcon />
     </Button>
 
-    <Button icon :disabled="!editorStore.canRedo" @click="editorStore.redo">
+    <Button
+      icon
+      :disabled="!editorStore.canRedo"
+      title="Повернути назад зміни"
+      @click="editorStore.redo"
+    >
       <CornerUpRightIcon />
     </Button>
 
@@ -86,6 +91,16 @@ const SavingIcon = computed((): IconComponent => {
     return SaveIcon;
   }
   return CheckmarkCircleIcon;
+});
+
+const savingTitle = computed((): string => {
+  if (editorStore.isSaving) {
+    return 'Зміни зберігаються прямо зараз';
+  }
+  if (editorStore.hasUnsavedChanges) {
+    return 'Є незбережені зміни';
+  }
+  return 'Всі зміни збережено';
 });
 
 const isSaveDisabled = computed(() => {

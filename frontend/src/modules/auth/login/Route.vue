@@ -1,15 +1,15 @@
 <template>
   <div class="auth">
     <h1>
-      Welcome
+      Привіт!
     </h1>
 
     <p class="auth__description">
-      To process your login, please click the button below to open the authentication popup
+      Щоб увійти в твій акаунт натисни кнопк внизу яка відкриє вікно авторизації
     </p>
 
     <Button variant="primary" @click="popup.open">
-      Log In
+      Увійти
     </Button>
   </div>
 </template>

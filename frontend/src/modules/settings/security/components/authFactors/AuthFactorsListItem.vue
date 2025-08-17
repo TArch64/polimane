@@ -4,6 +4,7 @@
       <Button
         icon
         danger
+        title="Видалити"
         :style="deleteConfirm.anchorStyle"
         @click="deleteIntent"
       >

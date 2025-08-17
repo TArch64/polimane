@@ -1,6 +1,6 @@
 <template>
   <div class="context-menu-group__title-row">
-    <Button icon @click="$emit('close-group')">
+    <Button icon title="Назад" @click="$emit('close-group')">
       <ArrowBackIcon />
     </Button>
 

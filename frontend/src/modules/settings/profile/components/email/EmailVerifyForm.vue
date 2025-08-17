@@ -18,7 +18,13 @@
       v-model="form.data.code"
     >
       <template #append>
-        <Button icon size="sm" :disabled="retryVerification.isActive" @click="retryVerification">
+        <Button
+          icon
+          size="sm"
+          title="Відправити код знову"
+          :disabled="retryVerification.isActive"
+          @click="retryVerification"
+        >
           <RepeatIcon size="16" />
         </Button>
       </template>
