@@ -11,3 +11,4 @@ export * from './ObjectCompressor';
 export * from './newArray';
 export * from './object';
 export * from './buildUrl';
+export * from './padding';

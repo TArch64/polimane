@@ -24,7 +24,7 @@
 import { DropdownAction } from '../dropdown';
 import { Button } from '../button';
 import { ArrowBackIcon } from '../icon';
-import type { ContextGroupModel, IContextMenuAction } from './model';
+import { ContextActionModel, type ContextGroupModel } from './model';
 import ContextMenuTitle from './ContextMenuTitle.vue';
 
 defineProps<{
@@ -32,7 +32,7 @@ defineProps<{
 }>();
 
 defineEmits<{
-  'action': [action: IContextMenuAction];
+  'action': [action: ContextActionModel];
   'close-group': [];
 }>();
 </script>
