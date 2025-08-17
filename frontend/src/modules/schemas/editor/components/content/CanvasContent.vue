@@ -38,8 +38,15 @@ function calcContentY(): number {
   return (stageHeight - contentHeight) / 2;
 }
 
+function calcContentX(): number {
+  const contentWidth = (editorStore.schema.size.left + editorStore.schema.size.right) * BEAD_SIZE;
+  const stageWidth = props.stageConfig.width;
+  return (stageWidth - contentWidth) / 2;
+}
+
 const config: Partial<Konva.GroupConfig> = {
   y: calcContentY(),
+  x: calcContentX(),
 };
 
 const isActive = computed(() => paletteStore.isPainting);
