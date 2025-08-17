@@ -143,7 +143,7 @@
 
             <option value="file22">polimane/backend/api/schemas/list.go (100.0%)</option>
 
-            <option value="file23">polimane/backend/api/schemas/update.go (86.7%)</option>
+            <option value="file23">polimane/backend/api/schemas/update.go (100.0%)</option>
 
             <option value="file24">polimane/backend/api/schemas/update_screenshot.go (100.0%)</option>
 
@@ -1201,54 +1201,54 @@ type updateBody struct {
         Beads   model.SchemaBeads   `json:"beads" validate:"omitempty,dive,required"`
 }
 
-func collectUpdates(body *updateBody) *model.Schema <span class="cov10" title="9">{
+func collectUpdates(body *updateBody) *model.Schema <span class="cov10" title="13">{
         changed := false
         updates := &amp;model.Schema{}
 
-        if len(body.Name) &gt; 0 </span><span class="cov5" title="3">{
+        if len(body.Name) &gt; 0 </span><span class="cov6" title="5">{
                 changed = true
                 updates.Name = body.Name
         }</span>
 
-        <span class="cov10" title="9">if body.Palette != nil </span><span class="cov3" title="2">{
+        <span class="cov10" title="13">if body.Palette != nil </span><span class="cov5" title="4">{
                 changed = true
                 updates.Palette = datatypes.NewJSONType(body.Palette)
         }</span>
 
-        <span class="cov10" title="9">if body.Size != nil </span><span class="cov0" title="0">{
+        <span class="cov10" title="13">if body.Size != nil </span><span class="cov4" title="3">{
                 changed = true
                 updates.Size = datatypes.NewJSONType(body.Size)
         }</span>
 
-        <span class="cov10" title="9">if body.Beads != nil </span><span class="cov0" title="0">{
+        <span class="cov10" title="13">if body.Beads != nil </span><span class="cov4" title="3">{
                 changed = true
                 updates.Beads = datatypes.NewJSONType(body.Beads)
         }</span>
 
-        <span class="cov10" title="9">if changed </span><span class="cov7" title="5">{
+        <span class="cov10" title="13">if changed </span><span class="cov8" title="9">{
                 return updates
         }</span>
 
-        <span class="cov6" title="4">return nil</span>
+        <span class="cov5" title="4">return nil</span>
 }
 
-func (c *Controller) apiUpdate(ctx *fiber.Ctx) error <span class="cov8" title="6">{
+func (c *Controller) apiUpdate(ctx *fiber.Ctx) error <span class="cov8" title="8">{
         schemaId, err := base.GetParamID(ctx, schemaIdParam)
         if err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov7" title="5">var body updateBody
+        <span class="cov7" title="7">var body updateBody
         if err = base.ParseBody(ctx, &amp;body); err != nil </span><span class="cov1" title="1">{
                 return err
         }</span>
 
-        <span class="cov6" title="4">updates := collectUpdates(&amp;body)
+        <span class="cov7" title="6">updates := collectUpdates(&amp;body)
         if updates == nil </span><span class="cov1" title="1">{
                 return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
         }</span>
 
-        <span class="cov5" title="3">err = c.schemas.Update(&amp;repositoryschemas.UpdateOptions{
+        <span class="cov6" title="5">err = c.schemas.Update(&amp;repositoryschemas.UpdateOptions{
                 Ctx:      ctx.Context(),
                 User:     auth.GetSessionUser(ctx),
                 SchemaID: schemaId,
@@ -1259,7 +1259,7 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) error <span class="cov8" title="6
                 return err
         }</span>
 
-        <span class="cov3" title="2">return base.NewSuccessResponse(ctx)</span>
+        <span class="cov5" title="4">return base.NewSuccessResponse(ctx)</span>
 }
 </pre>
 
