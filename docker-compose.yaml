@@ -44,16 +44,18 @@ services:
 
   db:
     <<: *common
-    build: ./ci/dev/postgres
+    build: ./ci/dev/database
+    environment:
+      COCKROACH_ARGS: start-single-node --insecure
     ports:
-    - "5432:5432"
+    - "26257:26257"
     volumes:
-    - postgres_data:/var/lib/postgresql/data
+    - cockroach_data:/cockroach/cockroach-data
 
 volumes:
   bun_cache:
     driver: local
   gomod_cache:
     driver: local
-  postgres_data:
+  cockroach_data:
     driver: local
