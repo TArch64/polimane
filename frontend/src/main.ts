@@ -1,7 +1,7 @@
 import './style/main.css';
 
 import './polyfills';
-import { createApp, h, shallowRef } from 'vue';
+import { createApp, h } from 'vue';
 import { createPinia } from 'pinia';
 import VueKonva from 'vue-konva';
 import { configure as configureProgress } from 'nprogress';
@@ -16,8 +16,6 @@ import { router } from './router';
 configureProgress({
   showSpinner: false,
 });
-
-window.__KONVA_STAGE_REF__ = shallowRef(null);
 
 const app = createApp({
   render: () => h(App),
@@ -39,10 +37,5 @@ app.use(VueKonva, { prefix: 'Konva' });
 app.use(sentryPlugin, {
   dsn: import.meta.env.FRONTEND_PUBLIC_SENTRY_DSN || '',
 });
-
-if (import.meta.env.DEV) {
-  const m = await import('./modules/konvaInspector');
-  app.use(m.konvaInspectorPlugin);
-}
 
 app.mount('#app');

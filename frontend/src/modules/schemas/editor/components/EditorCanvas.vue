@@ -26,8 +26,8 @@ import { useDebounceFn, useElementSize } from '@vueuse/core';
 import Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import {
+  provideCanvasStage,
   useCanvasNavigation,
-  useCanvasStage,
   useCanvasZoom,
   useEditorScreenshot,
   useNodeRef,
@@ -42,8 +42,10 @@ const wrapperRef = ref<HTMLElement | null>(null);
 const { width: canvasWidth, height: canvasHeight } = useElementSize(wrapperRef);
 const isReady = computed(() => !!canvasWidth.value && !!canvasHeight.value);
 
-const stageRef = useNodeRef<Konva.Stage>(useCanvasStage());
+const stageRef = useNodeRef<Konva.Stage>();
 const layerRef = useNodeRef<Konva.Layer>();
+
+provideCanvasStage(stageRef);
 
 const config = computed(() => ({
   width: canvasWidth.value,
