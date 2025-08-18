@@ -14,7 +14,7 @@ type updateBody struct {
 	Name    string              `json:"name" validate:"omitempty,min=1"`
 	Palette model.SchemaPalette `json:"palette" validate:"omitempty,len=9,dive,omitempty,iscolor"`
 	Size    *model.SchemaSize   `json:"size" validate:"omitempty"`
-	Beads   model.SchemaBeads   `json:"beads" validate:"omitempty,dive,required"`
+	Beads   model.SchemaBeads   `json:"beads" validate:"omitempty,dive,required,iscolor"`
 }
 
 func collectUpdates(body *updateBody) *model.Schema {
