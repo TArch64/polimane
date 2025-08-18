@@ -9,11 +9,21 @@
       Едітор
     </Button>
 
-    <Button icon :disabled="isSaveDisabled" @click="editorStore.save">
+    <Button
+      icon
+      :disabled="isSaveDisabled"
+      :title="savingTitle"
+      @click="editorStore.save"
+    >
       <SavingIcon />
     </Button>
 
-    <Button icon :disabled="!editorStore.canUndo" title="Відмінити зміни" @click="editorStore.undo">
+    <Button
+      icon
+      :disabled="!editorStore.canUndo"
+      title="Відмінити зміни"
+      @click="editorStore.undo"
+    >
       <CornerUpLeftIcon />
     </Button>
 
