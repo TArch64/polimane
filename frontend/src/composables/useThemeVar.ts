@@ -42,7 +42,6 @@ export function getThemeVar(name: string): string | number {
 export function useThemeVar(nameRef: MaybeRefOrGetter<PxVars>): ComputedRef<number>;
 export function useThemeVar(nameRef: MaybeRefOrGetter<ColorVars | string>): ComputedRef<string>;
 export function useThemeVar(nameRef: MaybeRefOrGetter<string>): ComputedRef<string | number> {
-  if (!cache.value) updateCache();
   return computed(() => getThemeVar(toValue(nameRef)));
 }
 
