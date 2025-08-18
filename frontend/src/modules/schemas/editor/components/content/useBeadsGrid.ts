@@ -24,15 +24,13 @@ export function useBeadsGrid(): IBeadsGrid[] {
   const bottom = computed(() => editorStore.schema.size.bottom);
 
   function* grid(fromX: number, toX: number, fromY: number, toY: number): Generator<IBeadsGridItem, void, unknown> {
-    const initialOffsetX = (right.value - left.value) * BEAD_SIZE;
-    const initialOffsetY = (bottom.value - top.value) * BEAD_SIZE;
+    const initialOffsetX = -left.value * BEAD_SIZE;
+    const initialOffsetY = -top.value * BEAD_SIZE;
 
     for (let x = fromX; x <= toX; x++) {
       for (let y = fromY; y <= toY; y++) {
-        const absoluteX = left.value + x;
-        const absoluteY = top.value + y;
-        const offsetX = initialOffsetX + (absoluteX * BEAD_SIZE);
-        const offsetY = initialOffsetY + (absoluteY * BEAD_SIZE);
+        const offsetX = initialOffsetX + (x * BEAD_SIZE);
+        const offsetY = initialOffsetY + (y * BEAD_SIZE);
 
         yield {
           coord: `${x}:${y}`,

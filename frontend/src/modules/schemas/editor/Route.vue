@@ -8,7 +8,7 @@
 import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
 import { destroyStore, lazyDestroyStore } from '@/helpers';
-import { useEditorStore, usePaletteStore } from './stores';
+import { useBeadsStore, useEditorStore, usePaletteStore } from './stores';
 import { EditorCanvas, EditorHeader, EditorPalette } from './components';
 
 defineProps<{
@@ -24,6 +24,7 @@ defineOptions({
   beforeRouteLeave: async (_, __, next) => {
     lazyDestroyStore(useEditorStore);
     lazyDestroyStore(usePaletteStore);
+    lazyDestroyStore(useBeadsStore);
     next();
   },
 });
