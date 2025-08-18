@@ -8,7 +8,7 @@ interface IPopoverShiftProps {
 
 function getOffsetX(rect: NodeRect, padding: IPadding): number {
   if (rect.left < padding.left) {
-    return padding.left;
+    return padding.left - Math.max(rect.left, 0);
   }
 
   const offset = window.innerWidth - rect.right - padding.right;
@@ -17,7 +17,7 @@ function getOffsetX(rect: NodeRect, padding: IPadding): number {
 
 function getOffsetY(rect: NodeRect, padding: IPadding): number {
   if (rect.top < padding.top) {
-    return padding.top;
+    return padding.top - Math.max(rect.top, 0);
   }
 
   const offset = window.innerHeight - rect.bottom - padding.bottom;
