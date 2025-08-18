@@ -1,17 +1,16 @@
-import { type MaybeRefOrGetter } from 'vue';
 import Konva from 'konva';
-import { useNodeListener } from './useNodeListener';
-import { useNodeStage } from './useNodeStage';
+import { type MaybeRefOrGetter } from 'vue';
+import { useCanvasStage } from './useCanvasStage';
+import { useNodeHover } from './useNodeHover';
 
 export function useNodeCursor(nodeRef: MaybeRefOrGetter<Konva.Node>, cursor: string) {
-  const stage = useNodeStage(nodeRef);
+  const stage = useCanvasStage();
 
   function setCursor(cursor: string) {
-    if (stage.value) {
-      stage.value.container().style.cursor = cursor;
-    }
+    stage.value?.container().style.setProperty('cursor', cursor);
   }
 
-  useNodeListener(nodeRef, 'mouseover', () => setCursor(cursor));
-  useNodeListener(nodeRef, 'mouseout', () => setCursor('default'));
+  useNodeHover(nodeRef, (isHovered) => {
+    isHovered ? setCursor(cursor) : setCursor('default');
+  });
 }

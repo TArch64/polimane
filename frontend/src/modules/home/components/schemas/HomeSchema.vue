@@ -71,7 +71,7 @@ useContextMenu({
       async onAction() {
         const created = await schemasStore.copySchema(props.schema);
 
-        router.push({
+        await router.push({
           name: 'schema-editor',
           params: {
             schemaId: created.id,

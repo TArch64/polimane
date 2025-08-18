@@ -8,7 +8,7 @@ x-common: &common
 services:
   nginx:
     <<: *common
-    image: nginx:1.27-alpine
+    image: nginx:1.29-alpine
     volumes:
     - ./ci/dev/nginx/nginx.conf:/etc/nginx/nginx.conf
     - ./ci/dev/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
@@ -44,16 +44,18 @@ services:
 
   db:
     <<: *common
-    build: ./ci/dev/postgres
+    build: ./ci/dev/database
+    environment:
+      COCKROACH_ARGS: start-single-node --insecure
     ports:
-    - "5432:5432"
+    - "26257:26257"
     volumes:
-    - postgres_data:/var/lib/postgresql/data
+    - cockroach_data:/cockroach/cockroach-data
 
 volumes:
   bun_cache:
     driver: local
   gomod_cache:
     driver: local
-  postgres_data:
+  cockroach_data:
     driver: local

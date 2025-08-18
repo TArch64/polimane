@@ -170,7 +170,7 @@ func TestController_apiEmailVerify(t *testing.T) {
 		}
 
 		// Create a mock HTTP error that represents expired code
-		expiredCodeError := workos_errors.HTTPError{
+		expiredCodeError := &workos_errors.HTTPError{
 			RawBody: `{"code": "email_verification_code_expired"}`,
 		}
 

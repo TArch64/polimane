@@ -11,63 +11,58 @@
       @wheel="onWheel"
       @mousedown="togglePainting"
       @mouseup="togglePainting"
-      @layout="setRendered"
       v-if="isReady"
     >
-      <KonvaLayer :config="layerConfig">
-        <CanvasContent />
+      <KonvaLayer ref="layerRef" :config="layerConfig">
+        <CanvasContent :stage-config="config" />
       </KonvaLayer>
     </KonvaStage>
   </main>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useDebounceFn, useElementSize } from '@vueuse/core';
 import Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
 import {
-  provideNodeContextMenu,
+  provideCanvasStage,
   useCanvasNavigation,
-  useCanvasScreenshot,
-  useCanvasStage,
   useCanvasZoom,
+  useEditorScreenshot,
   useNodeRef,
 } from '../composables';
 import { useEditorStore, usePaletteStore } from '../stores';
-import { CanvasContent, type IGroupLayoutEvent } from './content';
+import { CanvasContent } from './content';
 
 const editorStore = useEditorStore();
 const paletteStore = usePaletteStore();
 
 const wrapperRef = ref<HTMLElement | null>(null);
-const wrapperSize = useElementSize(wrapperRef);
+const { width: canvasWidth, height: canvasHeight } = useElementSize(wrapperRef);
+const isReady = computed(() => !!canvasWidth.value && !!canvasHeight.value);
 
-const isReady = computed(() => !!wrapperSize.width.value && !!wrapperSize.height.value);
+const stageRef = useNodeRef<Konva.Stage>();
+const layerRef = useNodeRef<Konva.Layer>();
 
-const setRendered = useDebounceFn(async (event: Konva.KonvaEventObject<IGroupLayoutEvent>) => {
-  const stage = event.currentTarget as Konva.Stage;
-
-  stage.off('layout', setRendered);
-
-  stage.findOne(`#${layerConfig.id}`)!.to({
-    opacity: 1,
-    duration: 0.3,
-    easing: Konva.Easings.EaseOut,
-  });
-}, 100);
-
-const stageRef = useNodeRef<Konva.Stage>(useCanvasStage());
+provideCanvasStage(stageRef);
 
 const config = computed(() => ({
-  width: wrapperSize.width.value,
-  height: wrapperSize.height.value,
+  width: canvasWidth.value,
+  height: canvasHeight.value,
 }));
 
-watch(stageRef, (stage) => {
+watch(stageRef, async (stage) => {
   if (stage) {
     stage.content.querySelector<HTMLElement>('canvas')!.tabIndex = 0;
-    stage.on('layout', setRendered);
+
+    await nextTick();
+
+    layerRef.value.to({
+      opacity: 1,
+      duration: 0.3,
+      easing: Konva.Easings.EaseOut,
+    });
   }
 });
 
@@ -76,15 +71,30 @@ const layerConfig: Konva.LayerConfig = {
   opacity: 0,
 };
 
-provideNodeContextMenu(stageRef);
-useCanvasScreenshot();
+useEditorScreenshot();
 const canvasZoom = useCanvasZoom();
 const canvasNavigation = useCanvasNavigation();
 
+let isLayerCachingEnabled = false;
+
+function enableLayerCaching(): void {
+  if (!isLayerCachingEnabled) {
+    layerRef.value.cache();
+    isLayerCachingEnabled = true;
+  }
+}
+
+const disableLayerCaching = useDebounceFn(() => {
+  layerRef.value.clearCache();
+  isLayerCachingEnabled = false;
+}, 100);
+
 function onWheel(event: KonvaEventObject<WheelEvent, Konva.Stage>): void {
+  enableLayerCaching();
   event.evt.preventDefault();
   event.evt.ctrlKey ? canvasZoom.zoom(event) : canvasNavigation.navigate(event);
   event.currentTarget.batchDraw();
+  disableLayerCaching();
 }
 
 function onKeydown(event: KeyboardEvent) {

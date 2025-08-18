@@ -1,27 +1,61 @@
 <template>
-  <CanvasStackV ref="stackRef" :config="stackConfig" :gap="16">
-    <CanvasPattern
-      v-for="pattern of editorStore.schema.content"
-      :key="pattern.id"
-      :pattern
+  <KonvaGroup
+    :config
+    ref="rootRef"
+    @mousedown="paint"
+  >
+    <CanvasBeadGrid
+      v-for="{ sector, grid } of sectors"
+      :key="sector"
+      :grid="grid.value"
     />
-  </CanvasStackV>
+  </KonvaGroup>
 </template>
 
 <script setup lang="ts">
 import Konva from 'konva';
-import { useEditorStore } from '@/modules/schemas/editor/stores';
-import { useNodeCentering, useNodeRef } from '../../composables';
-import { CanvasStackV } from './base';
-import { CanvasPattern } from './pattern';
+import { computed } from 'vue';
+import { useNodeCursor, useNodeListener, useNodeRef } from '../../composables';
+import { useBeadsStore, useEditorStore, usePaletteStore } from '../../stores';
+import { BEAD_SIZE, useBeadsGrid } from './useBeadsGrid';
+import CanvasBeadGrid from './CanvasBeadGrid.vue';
+
+const props = defineProps<{
+  stageConfig: Required<Pick<Konva.StageConfig, 'width' | 'height'>>;
+}>();
 
 const editorStore = useEditorStore();
-const stackRef = useNodeRef<Konva.Group>();
+const paletteStore = usePaletteStore();
+const beadsStore = useBeadsStore();
 
-const stackConfig = useNodeCentering(stackRef, {
-  padding: {
-    horizontal: 20,
-    vertical: 16,
-  },
-});
+const sectors = useBeadsGrid();
+
+const rootRef = useNodeRef<Konva.Group>();
+
+function calcContentY(): number {
+  const contentHeight = (editorStore.schema.size.top + editorStore.schema.size.bottom) * BEAD_SIZE;
+  const stageHeight = props.stageConfig.height;
+  return (stageHeight - contentHeight) / 2;
+}
+
+function calcContentX(): number {
+  const contentWidth = (editorStore.schema.size.left + editorStore.schema.size.right) * BEAD_SIZE;
+  const stageWidth = props.stageConfig.width;
+  return (stageWidth - contentWidth) / 2;
+}
+
+const config: Partial<Konva.GroupConfig> = {
+  y: calcContentY(),
+  x: calcContentX(),
+};
+
+const isActive = computed(() => paletteStore.isPainting);
+
+function paint(event: Konva.KonvaEventObject<MouseEvent>) {
+  const position = event.target.getAttr('$position');
+  if (position) beadsStore.paint(position);
+}
+
+useNodeListener(rootRef, 'mousemove', paint, { isActive });
+useNodeCursor(rootRef, 'crosshair');
 </script>

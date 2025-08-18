@@ -2,6 +2,7 @@
   <Button
     icon
     size="none"
+    title="Очитити"
     class="color-eraser"
     :class="classes"
     @click="activate"

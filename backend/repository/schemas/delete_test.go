@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/stretchr/testify/assert"
 	tmock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -24,6 +26,10 @@ func TestDelete(t *testing.T) {
 
 		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(nil)
 		mockUserSchemas.On("DeleteTx", tmock.Anything, userID, schemaID).Return(nil)
+
+		// Access the S3 mock through the client
+		s3Mock := client.s3.(*MockS3Client)
+		s3Mock.On("DeleteObject", tmock.Anything, tmock.Anything, tmock.Anything).Return(&s3.DeleteObjectOutput{}, nil)
 
 		mock.ExpectBegin()
 		mock.ExpectExec(`DELETE FROM "schemas"`).
@@ -71,6 +77,10 @@ func TestDelete(t *testing.T) {
 
 		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(nil)
 		mockUserSchemas.On("DeleteTx", tmock.Anything, userID, schemaID).Return(nil)
+
+		// Access the S3 mock through the client
+		s3Mock := client.s3.(*MockS3Client)
+		s3Mock.On("DeleteObject", tmock.Anything, tmock.Anything, tmock.Anything).Return(&s3.DeleteObjectOutput{}, nil)
 
 		mock.ExpectBegin()
 		mock.ExpectExec(`DELETE FROM "schemas"`).
@@ -140,6 +150,10 @@ func TestDelete(t *testing.T) {
 		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(nil)
 		mockUserSchemas.On("DeleteTx", tmock.Anything, userID, schemaID).Return(nil)
 
+		// Access the S3 mock through the client
+		s3Mock := client.s3.(*MockS3Client)
+		s3Mock.On("DeleteObject", tmock.Anything, tmock.Anything, tmock.Anything).Return(&s3.DeleteObjectOutput{}, nil)
+
 		mock.ExpectBegin()
 		mock.ExpectExec(`DELETE FROM "schemas"`).
 			WithArgs(schemaID).
@@ -155,5 +169,67 @@ func TestDelete(t *testing.T) {
 		assert.Error(t, err)
 		assert.NoError(t, mock.ExpectationsWereMet())
 		mockUserSchemas.AssertExpectations(t)
+	})
+
+	t.Run("s3 delete object not found error is ignored", func(t *testing.T) {
+		client, mockUserSchemas, mock, cleanup := setupTest(t)
+		defer cleanup()
+
+		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(nil)
+		mockUserSchemas.On("DeleteTx", tmock.Anything, userID, schemaID).Return(nil)
+
+		// Access the S3 mock through the client
+		s3Mock := client.s3.(*MockS3Client)
+		message := "Not Found"
+		notFoundError := &types.NotFound{Message: &message}
+		s3Mock.On("DeleteObject", tmock.Anything, tmock.Anything, tmock.Anything).Return(&s3.DeleteObjectOutput{}, notFoundError)
+
+		mock.ExpectBegin()
+		mock.ExpectExec(`DELETE FROM "schemas"`).
+			WithArgs(schemaID).
+			WillReturnResult(sqlmock.NewResult(0, 1))
+		mock.ExpectCommit()
+
+		err := client.Delete(&DeleteOptions{
+			Ctx:      ctx,
+			User:     user,
+			SchemaID: schemaID,
+		})
+
+		require.NoError(t, err)
+		assert.NoError(t, mock.ExpectationsWereMet())
+		mockUserSchemas.AssertExpectations(t)
+		s3Mock.AssertExpectations(t)
+	})
+
+	t.Run("s3 delete object other error is returned", func(t *testing.T) {
+		client, mockUserSchemas, mock, cleanup := setupTest(t)
+		defer cleanup()
+
+		mockUserSchemas.On("HasAccess", ctx, userID, schemaID).Return(nil)
+		mockUserSchemas.On("DeleteTx", tmock.Anything, userID, schemaID).Return(nil)
+
+		// Access the S3 mock through the client
+		s3Mock := client.s3.(*MockS3Client)
+		s3Error := assert.AnError
+		s3Mock.On("DeleteObject", tmock.Anything, tmock.Anything, tmock.Anything).Return(&s3.DeleteObjectOutput{}, s3Error)
+
+		mock.ExpectBegin()
+		mock.ExpectExec(`DELETE FROM "schemas"`).
+			WithArgs(schemaID).
+			WillReturnResult(sqlmock.NewResult(0, 1))
+		mock.ExpectRollback()
+
+		err := client.Delete(&DeleteOptions{
+			Ctx:      ctx,
+			User:     user,
+			SchemaID: schemaID,
+		})
+
+		assert.Error(t, err)
+		assert.Equal(t, s3Error, err)
+		assert.NoError(t, mock.ExpectationsWereMet())
+		mockUserSchemas.AssertExpectations(t)
+		s3Mock.AssertExpectations(t)
 	})
 }

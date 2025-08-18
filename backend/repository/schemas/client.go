@@ -6,6 +6,7 @@ import (
 
 	"polimane/backend/model"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
+	"polimane/backend/services/awss3"
 	"polimane/backend/signal"
 )
 
@@ -23,12 +24,14 @@ type ClientOptions struct {
 	DB          *gorm.DB
 	UserSchemas repositoryuserschemas.Client
 	Signals     *signal.Container
+	S3          awss3.Client
 }
 
 type Impl struct {
 	db          *gorm.DB
 	userSchemas repositoryuserschemas.Client
 	signals     *signal.Container
+	s3          awss3.Client
 }
 
 var _ Client = (*Impl)(nil)
@@ -38,5 +41,6 @@ func Provider(options ClientOptions) Client {
 		db:          options.DB,
 		userSchemas: options.UserSchemas,
 		signals:     options.Signals,
+		s3:          options.S3,
 	}
 }

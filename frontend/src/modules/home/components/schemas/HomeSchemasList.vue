@@ -23,6 +23,7 @@ const schemasStore = useSchemasStore();
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     align-content: start;
+    align-items: end;
     gap: 20px;
     padding: 12px;
   }

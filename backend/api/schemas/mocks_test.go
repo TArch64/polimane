@@ -5,6 +5,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/stretchr/testify/mock"
+	t "gorm.io/datatypes"
 
 	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
@@ -70,6 +71,14 @@ func (m *MockS3Client) PutObject(ctx context.Context, params *s3.PutObjectInput,
 	return args.Get(0).(*s3.PutObjectOutput), args.Error(1)
 }
 
+func (m *MockS3Client) DeleteObject(ctx context.Context, params *s3.DeleteObjectInput, optFns ...func(*s3.Options)) (*s3.DeleteObjectOutput, error) {
+	args := m.Called(ctx, params, optFns)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*s3.DeleteObjectOutput), args.Error(1)
+}
+
 // Helper function to create test user
 func createTestUser() *model.User {
 	return &model.User{
@@ -81,26 +90,17 @@ func createTestUser() *model.User {
 
 // Helper function to create test schema
 func createTestSchema() *model.Schema {
+	palette := model.SchemaPalette{"#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF", "#888888"}
+	size := &model.SchemaSize{Left: 0, Top: 0, Right: 100, Bottom: 100}
+	beads := model.SchemaBeads{"1": "#FF0000", "2": "#00FF00"}
+
 	return &model.Schema{
 		Identifiable: &model.Identifiable{
 			ID: model.MustStringToID("650e8400-e29b-41d4-a716-446655440001"),
 		},
 		Name:    "Test Schema",
-		Palette: model.SchemaPalette{"#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF", "#888888"},
-		Content: model.SchemaContent{
-			&model.SchemaPattern{
-				ID:   "pattern1",
-				Name: "Test Pattern",
-				Type: model.SchemaPatternSquare,
-				Content: []*model.SchemaRow{
-					{
-						ID: "row1",
-						Content: []model.SchemaBead{
-							{ID: "bead1", Color: "#FF0000"},
-						},
-					},
-				},
-			},
-		},
+		Palette: t.NewJSONType(palette),
+		Size:    t.NewJSONType(size),
+		Beads:   t.NewJSONType(beads),
 	}
 }

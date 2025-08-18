@@ -1,3 +1,1 @@
-export * from './schema';
-export * from './pattern';
-export * from './row';
+export { default as SchemaRenameModal } from './SchemaRenameModal.vue';

@@ -5,7 +5,6 @@ import (
 	"io"
 	"os"
 
-	_ "ariga.io/atlas-go-sdk/recordriver"
 	"ariga.io/atlas-provider-gorm/gormschema"
 
 	"polimane/backend/model"

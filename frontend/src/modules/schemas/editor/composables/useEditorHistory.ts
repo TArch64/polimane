@@ -1,8 +1,9 @@
 import { computed, markRaw, reactive, ref, type Ref, shallowRef } from 'vue';
 import { watchDebounced } from '@vueuse/core';
 import type { ISchema } from '@/models';
-import { setSchemaRelations } from '@/modules/schemas/editor/models';
-import { compressObject, decompressObject } from '@/helpers';
+import { ObjectCompressor } from '@/helpers';
+
+type HistoryRecord = Pick<ISchema, 'beads' | 'size'>;
 
 export interface IEditorHistory {
   canUndo: boolean;
@@ -15,6 +16,7 @@ export interface IEditorHistory {
 
 export function useEditorHistory(schema: Ref<ISchema>): IEditorHistory {
   let stopWatcher: VoidFunction;
+  const objectCompressor = ObjectCompressor.typed<HistoryRecord>();
 
   const history = shallowRef<Blob[]>([]);
   const cursor = ref(-1);
@@ -27,13 +29,20 @@ export function useEditorHistory(schema: Ref<ISchema>): IEditorHistory {
       history.value = history.value.slice(0, cursor.value + 1);
     }
 
-    const blob = markRaw(await compressObject(schema.value.content));
+    const blob = markRaw(await objectCompressor.compress({
+      beads: schema.value.beads,
+      size: schema.value.size,
+    }));
+
     history.value = [...history.value, blob].slice(-30);
     cursor.value = history.value.length - 1;
   }
 
   function startWatcher(): void {
-    stopWatcher = watchDebounced(() => schema.value.content, commit, {
+    stopWatcher = watchDebounced([
+      () => schema.value.beads,
+      () => schema.value.size,
+    ], commit, {
       deep: true,
       debounce: 200,
     });
@@ -59,13 +68,11 @@ export function useEditorHistory(schema: Ref<ISchema>): IEditorHistory {
     cursor.value += shift;
     const compressed = history.value[cursor.value];
 
-    const newSchema = {
+    schema.value = {
       ...schema.value,
-      content: await decompressObject<ISchema['content']>(compressed),
+      ...await objectCompressor.decompress(compressed),
     };
 
-    setSchemaRelations(newSchema);
-    schema.value = newSchema;
     startWatcher();
   }
 

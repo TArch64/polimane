@@ -6,7 +6,7 @@
           {{ title }}
         </h1>
 
-        <Button icon class="modal__close" @click="close">
+          <Button icon title="Закрити" class="modal__close" @click="close">
           <CloseIcon size="24" />
         </Button>
       </header>

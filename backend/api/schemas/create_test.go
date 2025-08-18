@@ -70,8 +70,6 @@ func TestController_apiCreate(t *testing.T) {
 
 		assert.Equal(t, testSchema.ID, responseSchema.ID)
 		assert.Equal(t, testSchema.Name, responseSchema.Name)
-		// Content should be nil in response (as per the implementation)
-		assert.Nil(t, responseSchema.Content)
 
 		mockSchemas.AssertExpectations(t)
 	})
@@ -289,7 +287,6 @@ func TestController_apiCreate(t *testing.T) {
 		assert.NoError(t, err)
 
 		// Verify content is explicitly set to nil
-		assert.Nil(t, responseSchema.Content)
 
 		mockSchemas.AssertExpectations(t)
 	})

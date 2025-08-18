@@ -71,7 +71,7 @@ func TestCopy(t *testing.T) {
 		mockUserSchemas.On("CreateTx", tmock.Anything, userID, tmock.Anything).Return(nil)
 		mock.ExpectBegin()
 		mock.ExpectQuery(`INSERT INTO "schemas"`).
-			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "Original Schema (1)", sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "Original Schema (1)", sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow("550e8400-e29b-41d4-a716-446655440002"))
 		mock.ExpectCommit()
 

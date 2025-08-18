@@ -1,2 +1,0 @@
---blank
-select 1;

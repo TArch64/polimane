@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
-	"fmt"
 	"strings"
 	"time"
 
@@ -56,8 +55,7 @@ func (c *Controller) apiUpdateScreenshot(ctx *fiber.Ctx) error {
 }
 
 func (c *Controller) uploadScreenshot(ctx context.Context, schemaId model.ID, src string) error {
-	key := fmt.Sprintf("data/images/%s/schema.webp", schemaId.String())
-
+	key := model.SchemaScreenshotKey(schemaId)
 	dataBase64 := src[strings.IndexByte(src, ',')+1:]
 	data, err := base64.StdEncoding.DecodeString(dataBase64)
 	if err != nil {

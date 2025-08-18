@@ -11,7 +11,7 @@
 
   <Dropdown>
     <template #activator="{ activatorStyle, open }">
-      <Button icon :style="activatorStyle" @click="open">
+      <Button icon title="Профіль" :style="activatorStyle" @click="open">
         <PersonFillIcon />
       </Button>
     </template>
@@ -23,7 +23,7 @@
     />
   </Dropdown>
 
-  <Button icon :to="settingsProfileRoute">
+  <Button icon title="Налаштування" :to="settingsProfileRoute">
     <SettingsIcon />
   </Button>
 </template>

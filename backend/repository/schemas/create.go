@@ -3,6 +3,7 @@ package schemas
 import (
 	"context"
 
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
@@ -13,36 +14,47 @@ type CreateOptions struct {
 	User    *model.User
 	Name    string
 	Palette model.SchemaPalette
-	Content model.SchemaContent
+	Size    *model.SchemaSize
+	Beads   model.SchemaBeads
 }
 
-func (c *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) {
+func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) {
 	if options.Palette == nil {
 		options.Palette = make(model.SchemaPalette, model.SchemaPaletteSize)
 	}
 
-	if options.Content == nil {
-		options.Content = make(model.SchemaContent, 0)
+	if options.Size == nil {
+		options.Size = &model.SchemaSize{
+			Left:   50,
+			Right:  49,
+			Top:    15,
+			Bottom: 14,
+		}
 	}
 
-	err = c.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
+	if options.Beads == nil {
+		options.Beads = make(model.SchemaBeads)
+	}
+
+	err = i.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
 		schema = &model.Schema{
 			Name:    options.Name,
-			Palette: options.Palette,
-			Content: options.Content,
+			Palette: datatypes.NewJSONType(options.Palette),
+			Size:    datatypes.NewJSONType(options.Size),
+			Beads:   datatypes.NewJSONType(options.Beads),
 		}
 
 		if err = tx.Create(schema).Error; err != nil {
 			return err
 		}
 
-		return c.userSchemas.CreateTx(tx, options.User.ID, schema.ID)
+		return i.userSchemas.CreateTx(tx, options.User.ID, schema.ID)
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	c.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
+	i.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
 	return schema, nil
 }

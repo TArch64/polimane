@@ -11,6 +11,7 @@
     <Button
       :to="homeRoute"
       :prepend-icon="ArrowBackIcon"
+      title="Назад"
       class="common-layout-top-bar__back-button"
       v-else
     >

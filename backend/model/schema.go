@@ -1,44 +1,48 @@
 package model
 
 import (
+	"fmt"
+	"strconv"
 	"time"
 
-	"gorm.io/datatypes"
+	t "gorm.io/datatypes"
 )
 
 const (
 	SchemaPaletteSize = 9
-
-	SchemaPatternSquare  = "square"
-	SchemaPatternDiamond = "diamond"
 )
 
 type Schema struct {
 	*Identifiable
 	*Timestamps
-	Name           string        `gorm:"not null;index;size:255" json:"name"`
-	Palette        SchemaPalette `gorm:"not null;type:json" json:"palette,omitempty"`
-	Content        SchemaContent `gorm:"not null;type:json" json:"content,omitempty"`
-	ScreenshotedAt *time.Time    `json:"screenshotedAt"`
-	Users          []User        `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
+	Name           string                    `gorm:"not null;index;size:255" json:"name"`
+	Palette        t.JSONType[SchemaPalette] `gorm:"not null;type:json" json:"palette,omitempty"`
+	Size           t.JSONType[*SchemaSize]   `gorm:"not null;type:json" json:"size,omitempty"`
+	Beads          t.JSONType[SchemaBeads]   `gorm:"not null;type:json" json:"beads,omitempty"`
+	ScreenshotedAt *time.Time                `json:"screenshotedAt"`
+	Users          []User                    `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
 }
 
-type SchemaPalette = datatypes.JSONSlice[string]
-type SchemaContent = datatypes.JSONSlice[*SchemaPattern]
-
-type SchemaPattern struct {
-	ID      string       `json:"id"`
-	Name    string       `json:"name"`
-	Type    string       `json:"type"`
-	Content []*SchemaRow `json:"content"`
+func (s *Schema) ScreenshotPath() *string {
+	if s.ScreenshotedAt == nil {
+		return nil
+	}
+	path := SchemaScreenshotKey(s.ID)
+	path += "?v=" + strconv.FormatInt(s.ScreenshotedAt.Unix(), 10)
+	return &path
 }
 
-type SchemaRow struct {
-	ID      string       `json:"id"`
-	Content []SchemaBead `json:"content"`
+func SchemaScreenshotKey(id ID) string {
+	return fmt.Sprintf("data/images/%s/schema.webp", id.String())
 }
 
-type SchemaBead struct {
-	ID    string `json:"id"`
-	Color string `json:"color"`
+type SchemaPalette []string
+
+type SchemaBeads map[string]string
+
+type SchemaSize struct {
+	Left   uint8 `validate:"required,gte=0,lte=255" json:"left"`
+	Top    uint8 `validate:"required,gte=0,lte=255" json:"top"`
+	Right  uint8 `validate:"required,gte=0,lte=255" json:"right"`
+	Bottom uint8 `validate:"required,gte=0,lte=255" json:"bottom"`
 }

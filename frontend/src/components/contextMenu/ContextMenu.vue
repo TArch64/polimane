@@ -5,6 +5,7 @@
     view-transition-name="context-menu"
     :control="menu.control"
     :class="classes"
+    v-popover-shift
   >
     <ContextMenuGroup
       v-if="menu.openedGroup"
@@ -27,6 +28,7 @@ import { computed, nextTick, onMounted } from 'vue';
 import { onClickOutside } from '@vueuse/core';
 import { NodeRect } from '@/models';
 import { useDomRef, useRouteTransition } from '@/composables';
+import { vPopoverShift } from '@/directives';
 import { DropdownMenu } from '../dropdown';
 import type { ContextActionModel, ContextGroupModel, ContextMenuModel } from './model';
 import ContextMenuTop from './ContextMenuTop.vue';
