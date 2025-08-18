@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { parseSchemaBeedCoord, type SchemaBeedCoord, type SchemaSizeDirection } from '@/models';
+import { parseSchemaBeadCoord, type SchemaBeadCoord, type SchemaSizeDirection } from '@/models';
 import { useEditorStore } from './editorStore';
 import { usePaletteStore } from './paletteStore';
 
@@ -7,12 +7,12 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
   const editorStore = useEditorStore();
   const paletteStore = usePaletteStore();
 
-  function getColor(coord: SchemaBeedCoord) {
+  function getColor(coord: SchemaBeadCoord) {
     return editorStore.schema.beads[coord] ?? null;
   }
 
-  function checkExtendingPaint(coord: SchemaBeedCoord): SchemaSizeDirection[] {
-    const [x, y] = parseSchemaBeedCoord(coord);
+  function checkExtendingPaint(coord: SchemaBeadCoord): SchemaSizeDirection[] {
+    const [x, y] = parseSchemaBeadCoord(coord);
     const size = editorStore.schema.size;
     const directions: SchemaSizeDirection[] = [];
 
@@ -45,7 +45,7 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     }
   }
 
-  function paint(coord: SchemaBeedCoord) {
+  function paint(coord: SchemaBeadCoord) {
     if (paletteStore.activeColor) {
       editorStore.schema.beads[coord] = paletteStore.activeColor;
 

@@ -1,9 +1,9 @@
 export type SchemaSizeDirection = 'top' | 'left' | 'right' | 'bottom';
 export type SchemaSize = Record<SchemaSizeDirection, number>;
 
-export type SchemaBeedCoord = `${number}:${number}`;
+export type SchemaBeadCoord = `${number}:${number}`;
 
-export function parseSchemaBeedCoord(coord: SchemaBeedCoord): [number, number] {
+export function parseSchemaBeadCoord(coord: SchemaBeadCoord): [number, number] {
   return coord.split(':').map(Number) as [number, number];
 }
 
@@ -16,5 +16,5 @@ export interface ISchema {
   screenshotedAt: string | null;
   screenshotPath: string | null;
   size: SchemaSize;
-  beads: Record<SchemaBeedCoord, string>;
+  beads: Record<SchemaBeadCoord, string>;
 }
