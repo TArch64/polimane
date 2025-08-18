@@ -30,6 +30,6 @@ data "cockroach_connection_string" "app" {
   id       = cockroach_cluster.app.id
   sql_user = cockroach_sql_user.app.name
   password = cockroach_sql_user.app.password
-  database = "defaultdb"
+  database = "polimane"
   os       = "LINUX"
 }
