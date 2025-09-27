@@ -19,7 +19,7 @@ const previewSchema = ref<ISchema | null>(null);
 const previewRef = useDomRef<SVGSVGElement>();
 const serializer = new XMLSerializer();
 
-async function generateScreenshot(): Promise<string | null> {
+async function generateScreenshot(): Promise<string> {
   previewSchema.value = structuredClone(toRaw(editorStore.schema));
   await nextTick();
 

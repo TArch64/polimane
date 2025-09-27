@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { onScopeDispose, type Ref, ref, toRef } from 'vue';
+import { createEventHook } from '@vueuse/core';
 import type { ISchema } from '@/models';
 import { type HttpBody, useHttpClient } from '@/composables';
 import { useEditorHistory, useEditorSaveDispatcher } from '../composables';
@@ -15,6 +16,7 @@ export const useEditorStore = defineStore('schemas/editor', () => {
   const schema: Ref<ISchema> = ref(null!);
 
   const history = useEditorHistory(schema);
+  const screenshotedHook = createEventHook<[screenshot: string]>();
 
   const saveDispatcher = useEditorSaveDispatcher(schema, async (patch) => {
     await http.patch<HttpBody, UpdateSchemaRequest>(['/schemas', schema.value.id], patch);
@@ -37,6 +39,7 @@ export const useEditorStore = defineStore('schemas/editor', () => {
   async function updateScreenshot(src: string): Promise<void> {
     await http.patch<HttpBody, IUpdateScreenshotRequest>(['/schemas', schema.value.id, 'screenshot'], { src });
     schema.value.screenshotedAt = new Date().toISOString();
+    await screenshotedHook.trigger(src);
   }
 
   onScopeDispose(async () => {
@@ -54,6 +57,7 @@ export const useEditorStore = defineStore('schemas/editor', () => {
     isSaving: toRef(saveDispatcher, 'isSaving'),
     save: saveDispatcher.flush,
     onSaved: saveDispatcher.onSaved,
+    onScreenshoted: screenshotedHook.on,
     undo: history.undo,
     canUndo: toRef(history, 'canUndo'),
     redo: history.redo,
