@@ -1,4 +1,4 @@
-import { computed, type ComputedRef, type MaybeRefOrGetter, toValue } from 'vue';
+import { computed, type ComputedRef, type MaybeRefOrGetter, reactive, toValue } from 'vue';
 import { type ISchema, type SchemaBeadCoord, serializeSchemaBeadCoord } from '@/models';
 
 export const BEAD_SIZE = 12;
@@ -10,7 +10,7 @@ export interface IBeadsGridItem {
   offset: BeadOffset;
 }
 
-export interface IBeadsGrid {
+export interface IBeadsSector {
   sector: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
   grid: ComputedRef<IBeadsGridItem[]>;
 }
@@ -19,7 +19,17 @@ export interface IBeadsGridOptions {
   filter?: (coord: SchemaBeadCoord) => boolean;
 }
 
-export function useBeadsGrid(schemaRef: MaybeRefOrGetter<ISchema>, options: IBeadsGridOptions = {}): IBeadsGrid[] {
+export interface IBeadsGrid {
+  sectors: IBeadsSector[];
+  gridSize: {
+    minX: number;
+    minY: number;
+    width: number;
+    height: number;
+  };
+}
+
+export function useBeadsGrid(schemaRef: MaybeRefOrGetter<ISchema>, options: IBeadsGridOptions = {}): IBeadsGrid {
   const filter = options.filter ?? (() => true);
 
   const size = computed(() => toValue(schemaRef).size);
@@ -30,6 +40,11 @@ export function useBeadsGrid(schemaRef: MaybeRefOrGetter<ISchema>, options: IBea
 
   const initialOffsetX = -left.value * BEAD_SIZE;
   const initialOffsetY = -top.value * BEAD_SIZE;
+
+  const minOffsetX = computed(() => initialOffsetX + (left.value * BEAD_SIZE));
+  const minOffsetY = computed(() => initialOffsetY + (top.value * BEAD_SIZE));
+  const width = computed(() => (right.value - left.value + 1) * BEAD_SIZE);
+  const height = computed(() => (bottom.value - top.value + 1) * BEAD_SIZE);
 
   function* grid(fromX: number, toX: number, fromY: number, toY: number): Generator<IBeadsGridItem, void, unknown> {
     for (let x = fromX; x <= toX; x++) {
@@ -46,22 +61,31 @@ export function useBeadsGrid(schemaRef: MaybeRefOrGetter<ISchema>, options: IBea
     }
   }
 
-  return [
-    {
-      sector: 'topLeft',
-      grid: computed(() => Array.from(grid(left.value, 0, top.value, 0))),
-    },
-    {
-      sector: 'topRight',
-      grid: computed(() => Array.from(grid(1, right.value, top.value, 0))),
-    },
-    {
-      sector: 'bottomLeft',
-      grid: computed(() => Array.from(grid(left.value, 0, 1, bottom.value))),
-    },
-    {
-      sector: 'bottomRight',
-      grid: computed(() => Array.from(grid(1, right.value, 1, bottom.value))),
-    },
-  ];
+  return {
+    sectors: [
+      {
+        sector: 'topLeft',
+        grid: computed(() => Array.from(grid(left.value, 0, top.value, 0))),
+      },
+      {
+        sector: 'topRight',
+        grid: computed(() => Array.from(grid(1, right.value, top.value, 0))),
+      },
+      {
+        sector: 'bottomLeft',
+        grid: computed(() => Array.from(grid(left.value, 0, 1, bottom.value))),
+      },
+      {
+        sector: 'bottomRight',
+        grid: computed(() => Array.from(grid(1, right.value, 1, bottom.value))),
+      },
+    ],
+
+    gridSize: reactive({
+      minX: minOffsetX,
+      minY: minOffsetY,
+      width,
+      height,
+    }),
+  };
 }

@@ -33,7 +33,7 @@ const viewBox = computed(() => [
   height.value,
 ].join(' '));
 
-const sectors = useBeadsGrid(() => props.schema, {
+const { sectors } = useBeadsGrid(() => props.schema, {
   filter: (coord) => coord in props.schema.beads,
 });
 </script>

@@ -4,6 +4,8 @@
     ref="rootRef"
     @mousedown="paint"
   >
+    <KonvaRect :config="backgroundConfig" />
+
     <CanvasSector
       v-for="{ sector, grid } of sectors"
       :key="sector"
@@ -15,6 +17,7 @@
 <script setup lang="ts">
 import Konva from 'konva';
 import { computed } from 'vue';
+import { useThemeVar } from '@/composables';
 import {
   BEAD_SIZE,
   useBeadsGrid,
@@ -33,7 +36,9 @@ const editorStore = useEditorStore();
 const paletteStore = usePaletteStore();
 const beadsStore = useBeadsStore();
 
-const sectors = useBeadsGrid(() => editorStore.schema);
+const colorBackground2 = useThemeVar('--color-background-2');
+
+const { sectors, gridSize } = useBeadsGrid(() => editorStore.schema);
 
 const rootRef = useNodeRef<Konva.Group>();
 
@@ -53,6 +58,14 @@ const config: Partial<Konva.GroupConfig> = {
   y: calcContentY(),
   x: calcContentX(),
 };
+
+const backgroundConfig: Partial<Konva.RectConfig> = computed(() => ({
+  x: gridSize.minX,
+  y: gridSize.minY,
+  width: gridSize.width,
+  height: gridSize.height,
+  fill: colorBackground2.value,
+}));
 
 const isActive = computed(() => paletteStore.isPainting);
 
