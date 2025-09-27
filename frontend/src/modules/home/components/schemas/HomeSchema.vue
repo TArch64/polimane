@@ -91,6 +91,7 @@ useContextMenu({
 @layer page {
   .home-schema {
     overflow: clip;
+    box-shadow: var(--box-shadow);
   }
 
   .home-schema__screenshot {
