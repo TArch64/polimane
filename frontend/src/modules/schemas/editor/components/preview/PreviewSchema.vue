@@ -1,5 +1,18 @@
 <template>
-  <svg xmlns="http://www.w3.org/2000/svg" :viewBox :width :height>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    :viewBox
+    :width
+    :height
+  >
+    <rect
+      x="0"
+      y="0"
+      :width
+      :height
+      :fill="schema.backgroundColor"
+    />
+
     <PreviewSector
       v-for="{ sector, grid } of sectors"
       :key="sector"

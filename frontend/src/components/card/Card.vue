@@ -66,10 +66,15 @@ const classes = computed(() => [
 <style scoped>
 @layer components {
   .card {
-    padding: 8px 12px;
+    padding: var(--card-padding-top) var(--card-padding-right) var(--card-padding-bottom) var(--card-padding-left);
     background-color: var(--card-background);
     border: var(--divider);
     border-radius: var(--rounded-md);
+
+    --card-padding-top: 8px;
+    --card-padding-bottom: 8px;
+    --card-padding-left: 12px;
+    --card-padding-right: 12px;
   }
 
   .card--variant-main {

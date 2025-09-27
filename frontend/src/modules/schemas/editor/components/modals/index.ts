@@ -1,1 +1,1 @@
-export { default as SchemaRenameModal } from './SchemaRenameModal.vue';
+export { default as SchemaEditModal } from './SchemaEditModal.vue';

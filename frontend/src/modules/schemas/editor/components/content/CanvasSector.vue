@@ -5,6 +5,7 @@
     :offset="bead.offset"
     :coord="bead.coord"
     :color="beadsStore.getColor(bead.coord)"
+    :emptyColor="beadsStore.emptyColor"
   />
 </template>
 

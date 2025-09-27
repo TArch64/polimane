@@ -10,12 +10,13 @@ import (
 )
 
 type CreateOptions struct {
-	Ctx     context.Context
-	User    *model.User
-	Name    string
-	Palette model.SchemaPalette
-	Size    *model.SchemaSize
-	Beads   model.SchemaBeads
+	Ctx             context.Context
+	User            *model.User
+	Name            string
+	BackgroundColor string
+	Palette         model.SchemaPalette
+	Size            *model.SchemaSize
+	Beads           model.SchemaBeads
 }
 
 func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) {
@@ -38,10 +39,11 @@ func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) 
 
 	err = i.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
 		schema = &model.Schema{
-			Name:    options.Name,
-			Palette: datatypes.NewJSONType(options.Palette),
-			Size:    datatypes.NewJSONType(options.Size),
-			Beads:   datatypes.NewJSONType(options.Beads),
+			Name:            options.Name,
+			BackgroundColor: options.BackgroundColor,
+			Palette:         datatypes.NewJSONType(options.Palette),
+			Size:            datatypes.NewJSONType(options.Size),
+			Beads:           datatypes.NewJSONType(options.Beads),
 		}
 
 		if err = tx.Create(schema).Error; err != nil {

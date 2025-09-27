@@ -39,11 +39,12 @@ func (i *Impl) Copy(options *CopyOptions) (*model.Schema, error) {
 	}
 
 	return i.Create(&CreateOptions{
-		Ctx:     options.Ctx,
-		User:    options.User,
-		Name:    makeCopyName(original.Name),
-		Palette: original.Palette.Data(),
-		Size:    original.Size.Data(),
-		Beads:   original.Beads.Data(),
+		Ctx:             options.Ctx,
+		User:            options.User,
+		Name:            makeCopyName(original.Name),
+		BackgroundColor: original.BackgroundColor,
+		Palette:         original.Palette.Data(),
+		Size:            original.Size.Data(),
+		Beads:           original.Beads.Data(),
 	})
 }

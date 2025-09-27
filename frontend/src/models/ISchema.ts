@@ -17,6 +17,7 @@ export interface ISchema {
   palette: string[];
   createdAt: string;
   updatedAt: string;
+  backgroundColor: string;
   screenshotedAt: string | null;
   screenshotPath: string | null;
   size: SchemaSize;

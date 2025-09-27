@@ -17,7 +17,6 @@
 <script setup lang="ts">
 import Konva from 'konva';
 import { computed } from 'vue';
-import { useThemeVar } from '@/composables';
 import {
   BEAD_SIZE,
   useBeadsGrid,
@@ -35,8 +34,6 @@ const props = defineProps<{
 const editorStore = useEditorStore();
 const paletteStore = usePaletteStore();
 const beadsStore = useBeadsStore();
-
-const colorBackground2 = useThemeVar('--color-background-2');
 
 const { sectors, gridSize } = useBeadsGrid(() => editorStore.schema);
 
@@ -64,7 +61,7 @@ const backgroundConfig: Partial<Konva.RectConfig> = computed(() => ({
   y: gridSize.minY,
   width: gridSize.width,
   height: gridSize.height,
-  fill: colorBackground2.value,
+  fill: editorStore.schema.backgroundColor,
 }));
 
 const isActive = computed(() => paletteStore.isPainting);

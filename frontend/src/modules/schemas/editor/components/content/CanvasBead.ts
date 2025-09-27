@@ -8,13 +8,13 @@ export interface ICanvasBeadProps {
   offset: BeadOffset;
   coord: SchemaBeadCoord;
   color: string | null;
+  emptyColor: string;
 }
 
 const BASE_BEAD_CONFIG: Partial<Konva.RectConfig> = {
   width: BEAD_SIZE - 2,
   height: BEAD_SIZE - 2,
   cornerRadius: getThemeVar('--rounded-full'),
-  fill: getThemeVar('--color-background-3'),
 };
 
 export const CanvasBead: FunctionalComponent<ICanvasBeadProps> = (props) => {
@@ -26,7 +26,7 @@ export const CanvasBead: FunctionalComponent<ICanvasBeadProps> = (props) => {
       $position: props.coord,
       x: props.offset[0] + 1,
       y: props.offset[1] + 1,
-      fill: props.color ? props.color : BASE_BEAD_CONFIG.fill!,
+      fill: props.color ? props.color : props.emptyColor,
     } satisfies Partial<Konva.RectConfig>,
   });
 };

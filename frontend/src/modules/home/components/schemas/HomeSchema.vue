@@ -1,5 +1,5 @@
 <template>
-  <Card ref="cardRef" interactable :binding="cardBinding">
+  <Card ref="cardRef" class="home-schema" interactable :binding="cardBinding">
     <img
       :src="screenshotUrl"
       :alt="`Скріншот схеми ${schema.name}`"
@@ -89,13 +89,19 @@ useContextMenu({
 
 <style scoped>
 @layer page {
+  .home-schema {
+    overflow: clip;
+  }
+
   .home-schema__screenshot {
-    width: 100%;
+    display: block;
     aspect-ratio: 16 / 9;
     object-fit: contain;
     object-position: center;
     border-bottom: var(--divider);
-    margin-bottom: 4px;
+    margin: calc(0px - var(--card-padding-top)) calc(0px - var(--card-padding-right)) 8px calc(0px - var(--card-padding-left));
+    width: calc(100% + var(--card-padding-left) + var(--card-padding-right));
+    background-color: v-bind("schema.backgroundColor");
   }
 }
 </style>
