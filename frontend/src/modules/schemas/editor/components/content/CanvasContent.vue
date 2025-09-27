@@ -15,9 +15,14 @@
 <script setup lang="ts">
 import Konva from 'konva';
 import { computed } from 'vue';
-import { useNodeCursor, useNodeListener, useNodeRef } from '../../composables';
+import {
+  BEAD_SIZE,
+  useBeadsGrid,
+  useNodeCursor,
+  useNodeListener,
+  useNodeRef,
+} from '../../composables';
 import { useBeadsStore, useEditorStore, usePaletteStore } from '../../stores';
-import { BEAD_SIZE, useBeadsGrid } from './useBeadsGrid';
 import CanvasBeadGrid from './CanvasBeadGrid.vue';
 
 const props = defineProps<{

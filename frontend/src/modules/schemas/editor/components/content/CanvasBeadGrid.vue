@@ -10,8 +10,8 @@
 
 <script lang="ts" setup>
 import { useBeadsStore } from '../../stores';
+import type { IBeadsGridItem } from '../../composables';
 import { CanvasBead } from './CanvasBead';
-import type { IBeadsGridItem } from './useBeadsGrid';
 
 defineProps<{
   grid: IBeadsGridItem[];

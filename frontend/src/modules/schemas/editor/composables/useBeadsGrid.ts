@@ -1,6 +1,6 @@
 import { computed, type ComputedRef } from 'vue';
 import type { SchemaBeadCoord } from '@/models';
-import { useEditorStore } from '../../stores';
+import { useEditorStore } from '../stores';
 
 export const BEAD_SIZE = 12;
 

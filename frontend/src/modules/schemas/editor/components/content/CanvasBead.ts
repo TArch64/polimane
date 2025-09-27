@@ -2,8 +2,7 @@ import { type FunctionalComponent, h, resolveComponent } from 'vue';
 import Konva from 'konva';
 import { getThemeVar } from '@/composables';
 import type { SchemaBeadCoord } from '@/models';
-import { SCREENSHOT_IGNORE } from '../../composables';
-import { BEAD_SIZE, type BeadOffset } from './useBeadsGrid';
+import { BEAD_SIZE, type BeadOffset, SCREENSHOT_IGNORE } from '../../composables';
 
 export interface ICanvasBeadProps {
   offset: BeadOffset;
@@ -44,7 +43,7 @@ export const CanvasBead: FunctionalComponent<ICanvasBeadProps> = (props) => {
   };
 
   if (props.color) {
-    beadConfig.name = undefined;
+    delete beadConfig.name;
     beadConfig.fill = props.color;
   }
 
