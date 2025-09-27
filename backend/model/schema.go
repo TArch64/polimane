@@ -27,13 +27,18 @@ func (s *Schema) ScreenshotPath() *string {
 	if s.ScreenshotedAt == nil {
 		return nil
 	}
-	path := SchemaScreenshotKey(s.ID)
-	path += "?v=" + strconv.FormatInt(s.ScreenshotedAt.Unix(), 10)
+	path := schemaScreenshotPath(s.ID)
+	path += "?v="
+	path += strconv.FormatInt(s.ScreenshotedAt.Unix(), 10)
 	return &path
 }
 
+func schemaScreenshotPath(id ID) string {
+	return fmt.Sprintf("images/%s/schema.svg", id.String())
+}
+
 func SchemaScreenshotKey(id ID) string {
-	return fmt.Sprintf("data/images/%s/schema.webp", id.String())
+	return "data/" + schemaScreenshotPath(id)
 }
 
 type SchemaPalette []string

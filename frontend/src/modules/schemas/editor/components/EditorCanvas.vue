@@ -25,13 +25,7 @@ import { computed, nextTick, ref, watch } from 'vue';
 import { useDebounceFn, useElementSize } from '@vueuse/core';
 import Konva from 'konva';
 import type { KonvaEventObject } from 'konva/lib/Node';
-import {
-  provideCanvasStage,
-  useCanvasNavigation,
-  useCanvasZoom,
-  useEditorScreenshot,
-  useNodeRef,
-} from '../composables';
+import { provideCanvasStage, useCanvasNavigation, useCanvasZoom, useNodeRef } from '../composables';
 import { useEditorStore, usePaletteStore } from '../stores';
 import { CanvasContent } from './content';
 
@@ -71,7 +65,6 @@ const layerConfig: Konva.LayerConfig = {
   opacity: 0,
 };
 
-useEditorScreenshot();
 const canvasZoom = useCanvasZoom();
 const canvasNavigation = useCanvasNavigation();
 

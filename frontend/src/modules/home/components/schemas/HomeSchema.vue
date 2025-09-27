@@ -15,6 +15,7 @@
 
 <script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router';
+import { computed } from 'vue';
 import { Card } from '@/components/card';
 import type { ISchema } from '@/models';
 import { makeBinding } from '@/components/binding';
@@ -23,7 +24,7 @@ import { useDomRef } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { CopyIcon, TrashIcon } from '@/components/icon';
 import { useSchemasStore } from '@/modules/home/stores';
-import { useCdnUrl } from '@/composables/useCdnUrl';
+import { buildCdnUrl } from '@/helpers/buildCdnUrl';
 
 const props = defineProps<{
   schema: ISchema;
@@ -40,16 +41,7 @@ const cardBinding = makeBinding(RouterLink, () => ({
   },
 }));
 
-const screenshotUrl = useCdnUrl(() => {
-  if (!props.schema.screenshotedAt) {
-    return null;
-  }
-
-  return {
-    path: ['images', props.schema.id, 'schema.webp'],
-    params: { v: new Date(props.schema.screenshotedAt).getTime() },
-  };
-});
+const screenshotUrl = computed(() => buildCdnUrl(props.schema.screenshotPath));
 
 const deleteConfirm = useConfirm({
   danger: true,

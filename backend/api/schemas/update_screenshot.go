@@ -1,9 +1,7 @@
 package schemas
 
 import (
-	"bytes"
 	"context"
-	"encoding/base64"
 	"strings"
 	"time"
 
@@ -20,7 +18,7 @@ import (
 )
 
 type apiUpdateScreenshotBody struct {
-	Src string `json:"src" validate:"required,url,startswith=data:image/webp;base64"`
+	Src string `json:"src" validate:"required"`
 }
 
 func (c *Controller) apiUpdateScreenshot(ctx *fiber.Ctx) error {
@@ -56,18 +54,13 @@ func (c *Controller) apiUpdateScreenshot(ctx *fiber.Ctx) error {
 
 func (c *Controller) uploadScreenshot(ctx context.Context, schemaId model.ID, src string) error {
 	key := model.SchemaScreenshotKey(schemaId)
-	dataBase64 := src[strings.IndexByte(src, ',')+1:]
-	data, err := base64.StdEncoding.DecodeString(dataBase64)
-	if err != nil {
-		return err
-	}
 
-	_, err = c.s3.PutObject(ctx, &s3.PutObjectInput{
+	_, err := c.s3.PutObject(ctx, &s3.PutObjectInput{
 		Key:         &key,
 		Bucket:      &awsconfig.S3Bucket,
 		ACL:         types.ObjectCannedACLPrivate,
-		Body:        bytes.NewReader(data),
-		ContentType: aws.String("image/webp"),
+		Body:        strings.NewReader(src),
+		ContentType: aws.String("image/svg+xml"),
 	})
 
 	return err

@@ -1,6 +1,5 @@
-import { computed, type ComputedRef } from 'vue';
-import type { SchemaBeadCoord } from '@/models';
-import { useEditorStore } from '../stores';
+import { computed, type ComputedRef, type MaybeRefOrGetter, toValue } from 'vue';
+import { type ISchema, type SchemaBeadCoord, serializeSchemaBeadCoord } from '@/models';
 
 export const BEAD_SIZE = 12;
 
@@ -16,12 +15,18 @@ export interface IBeadsGrid {
   grid: ComputedRef<IBeadsGridItem[]>;
 }
 
-export function useBeadsGrid(): IBeadsGrid[] {
-  const editorStore = useEditorStore();
-  const left = computed(() => -editorStore.schema.size.left);
-  const top = computed(() => -editorStore.schema.size.top);
-  const right = computed(() => editorStore.schema.size.right);
-  const bottom = computed(() => editorStore.schema.size.bottom);
+export interface IBeadsGridOptions {
+  filter?: (coord: SchemaBeadCoord) => boolean;
+}
+
+export function useBeadsGrid(schemaRef: MaybeRefOrGetter<ISchema>, options: IBeadsGridOptions = {}): IBeadsGrid[] {
+  const filter = options.filter ?? (() => true);
+
+  const size = computed(() => toValue(schemaRef).size);
+  const left = computed(() => -size.value.left);
+  const top = computed(() => -size.value.top);
+  const right = computed(() => size.value.right);
+  const bottom = computed(() => size.value.bottom);
 
   const initialOffsetX = -left.value * BEAD_SIZE;
   const initialOffsetY = -top.value * BEAD_SIZE;
@@ -29,13 +34,14 @@ export function useBeadsGrid(): IBeadsGrid[] {
   function* grid(fromX: number, toX: number, fromY: number, toY: number): Generator<IBeadsGridItem, void, unknown> {
     for (let x = fromX; x <= toX; x++) {
       for (let y = fromY; y <= toY; y++) {
+        const coord = serializeSchemaBeadCoord(x, y);
+
+        if (!filter(coord)) continue;
+
         const offsetX = initialOffsetX + (x * BEAD_SIZE);
         const offsetY = initialOffsetY + (y * BEAD_SIZE);
 
-        yield {
-          coord: `${x}:${y}`,
-          offset: [offsetX, offsetY],
-        };
+        yield { coord, offset: [offsetX, offsetY] };
       }
     }
   }

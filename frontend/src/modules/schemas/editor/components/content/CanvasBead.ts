@@ -2,7 +2,7 @@ import { type FunctionalComponent, h, resolveComponent } from 'vue';
 import Konva from 'konva';
 import { getThemeVar } from '@/composables';
 import type { SchemaBeadCoord } from '@/models';
-import { BEAD_SIZE, type BeadOffset, SCREENSHOT_IGNORE } from '../../composables';
+import { BEAD_SIZE, type BeadOffset } from '../../composables';
 
 export interface ICanvasBeadProps {
   offset: BeadOffset;
@@ -11,14 +11,12 @@ export interface ICanvasBeadProps {
 }
 
 const BASE_BACKGROUND_CONFIG: Partial<Konva.RectConfig> = {
-  name: SCREENSHOT_IGNORE,
   width: BEAD_SIZE,
   height: BEAD_SIZE,
   fill: getThemeVar('--color-background-2'),
 };
 
 const BASE_BEAD_CONFIG: Partial<Konva.RectConfig> = {
-  name: SCREENSHOT_IGNORE,
   width: BEAD_SIZE - 2,
   height: BEAD_SIZE - 2,
   cornerRadius: getThemeVar('--rounded-full'),
@@ -40,12 +38,8 @@ export const CanvasBead: FunctionalComponent<ICanvasBeadProps> = (props) => {
     $position: props.coord,
     x: props.offset[0] + 1,
     y: props.offset[1] + 1,
+    fill: props.color ? props.color : BASE_BEAD_CONFIG.fill!,
   };
-
-  if (props.color) {
-    delete beadConfig.name;
-    beadConfig.fill = props.color;
-  }
 
   return [
     h(KonvaRect, { config: backgroundConfig }),

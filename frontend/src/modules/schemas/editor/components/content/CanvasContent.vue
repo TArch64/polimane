@@ -4,7 +4,7 @@
     ref="rootRef"
     @mousedown="paint"
   >
-    <CanvasBeadGrid
+    <CanvasSector
       v-for="{ sector, grid } of sectors"
       :key="sector"
       :grid="grid.value"
@@ -23,7 +23,7 @@ import {
   useNodeRef,
 } from '../../composables';
 import { useBeadsStore, useEditorStore, usePaletteStore } from '../../stores';
-import CanvasBeadGrid from './CanvasBeadGrid.vue';
+import CanvasSector from './CanvasSector.vue';
 
 const props = defineProps<{
   stageConfig: Required<Pick<Konva.StageConfig, 'width' | 'height'>>;
@@ -33,7 +33,7 @@ const editorStore = useEditorStore();
 const paletteStore = usePaletteStore();
 const beadsStore = useBeadsStore();
 
-const sectors = useBeadsGrid();
+const sectors = useBeadsGrid(() => editorStore.schema);
 
 const rootRef = useNodeRef<Konva.Group>();
 
