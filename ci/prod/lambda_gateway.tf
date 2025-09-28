@@ -19,7 +19,7 @@ resource "aws_apigatewayv2_api" "lambda_api" {
       "Cookie"
     ]
     allow_credentials = true
-    expose_headers = ["*"]
+    expose_headers = ["X-New-Access-Token", "X-New-Refresh-Token"]
   }
 }
 
