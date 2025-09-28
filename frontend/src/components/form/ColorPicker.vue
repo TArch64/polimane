@@ -1,25 +1,20 @@
 <template>
-  <LabeledContent :label>
-    <span
-      class="color-picker__control"
-      :class="controlClasses"
-    >
-      <input
-        type="color"
-        class="color-picker__input"
-        v-model="model"
-      />
-    </span>
+  <LabeledContent :label v-if="label">
+    <Picker />
   </LabeledContent>
+
+  <Picker v-else />
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, type FunctionalComponent, h } from 'vue';
 import LabeledContent from './LabeledContent.vue';
 
-defineProps<{
-  label: string;
-}>();
+withDefaults(defineProps<{
+  label?: string;
+}>(), {
+  label: '',
+});
 
 const model = defineModel<string>({ required: true });
 
@@ -27,6 +22,20 @@ const controlClasses = computed(() => {
   const modifier = model.value ? 'value' : 'empty';
   return `color-picker__control--${modifier}`;
 });
+
+const Picker: FunctionalComponent = () => h('span', {
+  class: ['color-picker__control', controlClasses.value],
+}, [
+  h('input', {
+    type: 'color',
+    class: 'color-picker__input',
+    value: model.value,
+
+    onInput: (event: Event) => {
+      model.value = (event.target as HTMLInputElement).value;
+    },
+  }),
+]);
 </script>
 
 <style scoped>
@@ -48,10 +57,11 @@ const controlClasses = computed(() => {
     background-size: cover;
   }
 
-  .color-picker__input {
-    visibility: hidden;
+  :deep(.color-picker__input) {
+    opacity: 0;
     width: 100%;
     height: 100%;
+    cursor: inherit;
   }
 }
 </style>
