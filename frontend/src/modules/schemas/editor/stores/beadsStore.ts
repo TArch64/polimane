@@ -3,14 +3,12 @@ import { computed } from 'vue';
 import { contrastWCAG21 } from 'colorjs.io/fn';
 import { parseSchemaBeadCoord, type SchemaBeadCoord, type SchemaSizeDirection } from '@/models';
 import { useEditorStore } from './editorStore';
-import { usePaletteStore } from './paletteStore';
 
 const BEAD_EMPTY_LIGHT = 'rgba(0, 0, 0, 0.1)';
 const BEAD_EMPTY_DARK = 'rgba(255, 255, 255, 0.1)';
 
 export const useBeadsStore = defineStore('schemas/editor/beads', () => {
   const editorStore = useEditorStore();
-  const paletteStore = usePaletteStore();
 
   function getColor(coord: SchemaBeadCoord) {
     return editorStore.schema.beads[coord] ?? null;
@@ -50,9 +48,9 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     }
   }
 
-  function paint(coord: SchemaBeadCoord) {
-    if (paletteStore.activeColor) {
-      editorStore.schema.beads[coord] = paletteStore.activeColor;
+  function paint(coord: SchemaBeadCoord, color: string | null) {
+    if (color) {
+      editorStore.schema.beads[coord] = color;
 
       const extendingDirections = checkExtendingPaint(coord);
       if (extendingDirections.length) extendSchemaSize(extendingDirections);

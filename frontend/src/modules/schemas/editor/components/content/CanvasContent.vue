@@ -68,7 +68,10 @@ const isActive = computed(() => paletteStore.isPainting);
 
 function paint(event: Konva.KonvaEventObject<MouseEvent>) {
   const position = event.target.getAttr('$position');
-  if (position) beadsStore.paint(position);
+  if (!position) return;
+
+  const color = event.evt.buttons === 1 ? paletteStore.activeColor : null;
+  beadsStore.paint(position, color);
 }
 
 useNodeListener(rootRef, 'mousemove', paint, { isActive });
