@@ -1,7 +1,7 @@
 import { type Component, inject, type InjectionKey, provide } from 'vue';
-import type { Modal } from './Modal';
+import type { ModalModel } from './ModalModel';
 
-const PROVIDER = Symbol('ActiveModal') as InjectionKey<Modal>;
+const PROVIDER = Symbol('ActiveModal') as InjectionKey<ModalModel>;
 
-export const provideActiveModal = (modal: Modal) => provide(PROVIDER, modal);
-export const useActiveModal = <R = null>() => inject(PROVIDER) as Modal<Component, R>;
+export const provideActiveModal = (modal: ModalModel) => provide(PROVIDER, modal);
+export const useActiveModal = <R = null>() => inject(PROVIDER) as ModalModel<Component, R>;

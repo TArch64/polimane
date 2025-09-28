@@ -54,6 +54,12 @@
       />
 
       <DropdownAction
+        title="Зберегти як PDF"
+        :icon="FileTextIcon"
+        @click="exportModal.open()"
+      />
+
+      <DropdownAction
         danger
         title="Видалити"
         :icon="TrashIcon"
@@ -72,6 +78,7 @@ import {
   CheckmarkCircleIcon,
   CornerUpLeftIcon,
   CornerUpRightIcon,
+  FileTextIcon,
   type IconComponent,
   LoaderIcon,
   MoreHorizontalIcon,
@@ -86,12 +93,13 @@ import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
 import { useEditorStore } from '../stores';
-import { SchemaEditModal } from './modals';
+import { SchemaEditModal, SchemaExportModal } from './modals';
 
 const router = useRouter();
 const editorStore = useEditorStore();
 
 const renameModal = useModal(SchemaEditModal);
+const exportModal = useModal(SchemaExportModal);
 
 const SavingIcon = computed((): IconComponent => {
   if (editorStore.isSaving) {
