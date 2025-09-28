@@ -40,13 +40,29 @@ func Provider(options ServerOptions) (*fiber.App, error) {
 		app.Use(options.Sentry.Handler)
 	}
 
-	app.Use(helmet.New())
+	app.Use(helmet.New(helmet.Config{
+		XSSProtection: "1; mode=block",
+
+		ContentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https://api.workos.com; frame-src 'none';",
+
+		HSTSMaxAge:            31536000,
+		HSTSExcludeSubdomains: false,
+		HSTSPreloadEnabled:    true,
+
+		ContentTypeNosniff: "nosniff",
+		XFrameOptions:      "SAMEORIGIN",
+		ReferrerPolicy:     "no-referrer",
+
+		CrossOriginEmbedderPolicy: "require-corp",
+		CrossOriginOpenerPolicy:   "same-origin",
+		CrossOriginResourcePolicy: "same-origin",
+	}))
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     options.Env.AppURL().String(),
-		AllowHeaders:     "Origin, Content-Type, Accept, Authorization, X-Refresh-Token, X-Requested-With, X-CSRF-Token, Cookie",
-		AllowMethods:     "*",
-		ExposeHeaders:    "*",
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization, X-Refresh-Token, X-Requested-With",
+		AllowMethods:     "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+		ExposeHeaders:    "X-New-Access-Token, X-New-Refresh-Token",
 		AllowCredentials: true,
 	}))
 

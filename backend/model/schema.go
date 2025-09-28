@@ -15,25 +15,31 @@ const (
 type Schema struct {
 	*Identifiable
 	*Timestamps
-	Name           string                    `gorm:"not null;index;size:255" json:"name"`
-	Palette        t.JSONType[SchemaPalette] `gorm:"not null;type:json" json:"palette,omitempty"`
-	Size           t.JSONType[*SchemaSize]   `gorm:"not null;type:json" json:"size,omitempty"`
-	Beads          t.JSONType[SchemaBeads]   `gorm:"not null;type:json" json:"beads,omitempty"`
-	ScreenshotedAt *time.Time                `json:"screenshotedAt"`
-	Users          []User                    `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
+	Name            string                    `gorm:"not null;index;size:255" json:"name"`
+	Palette         t.JSONType[SchemaPalette] `gorm:"not null;type:json" json:"palette,omitempty"`
+	Size            t.JSONType[*SchemaSize]   `gorm:"not null;type:json" json:"size,omitempty"`
+	Beads           t.JSONType[SchemaBeads]   `gorm:"not null;type:json" json:"beads,omitempty"`
+	BackgroundColor string                    `gorm:"not null;size:30;default:#f8f8f8" json:"backgroundColor"`
+	ScreenshotedAt  *time.Time                `json:"screenshotedAt"`
+	Users           []User                    `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
 }
 
 func (s *Schema) ScreenshotPath() *string {
 	if s.ScreenshotedAt == nil {
 		return nil
 	}
-	path := SchemaScreenshotKey(s.ID)
-	path += "?v=" + strconv.FormatInt(s.ScreenshotedAt.Unix(), 10)
+	path := schemaScreenshotPath(s.ID)
+	path += "?v="
+	path += strconv.FormatInt(s.ScreenshotedAt.Unix(), 10)
 	return &path
 }
 
+func schemaScreenshotPath(id ID) string {
+	return fmt.Sprintf("images/%s/schema.svg", id.String())
+}
+
 func SchemaScreenshotKey(id ID) string {
-	return fmt.Sprintf("data/images/%s/schema.webp", id.String())
+	return "data/" + schemaScreenshotPath(id)
 }
 
 type SchemaPalette []string

@@ -48,14 +48,20 @@
       </template>
 
       <DropdownAction
-        title="Переназвати Схему"
-        :icon="EditIcon"
+        title="Налаштування"
+        :icon="SettingsIcon"
         @click="renameModal.open()"
       />
 
       <DropdownAction
+        title="Зберегти як PDF"
+        :icon="FileTextIcon"
+        @click="exportModal.open()"
+      />
+
+      <DropdownAction
         danger
-        title="Видалити Схему"
+        title="Видалити"
         :icon="TrashIcon"
         @click="deleteSchema"
       />
@@ -72,11 +78,12 @@ import {
   CheckmarkCircleIcon,
   CornerUpLeftIcon,
   CornerUpRightIcon,
-  EditIcon,
+  FileTextIcon,
   type IconComponent,
   LoaderIcon,
   MoreHorizontalIcon,
   SaveIcon,
+  SettingsIcon,
   TrashIcon,
 } from '@/components/icon';
 import { useAsyncAction, useProgressBar } from '@/composables';
@@ -86,12 +93,13 @@ import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
 import { useEditorStore } from '../stores';
-import { SchemaRenameModal } from './modals';
+import { SchemaEditModal, SchemaExportModal } from './modals';
 
 const router = useRouter();
 const editorStore = useEditorStore();
 
-const renameModal = useModal(SchemaRenameModal);
+const renameModal = useModal(SchemaEditModal);
+const exportModal = useModal(SchemaExportModal);
 
 const SavingIcon = computed((): IconComponent => {
   if (editorStore.isSaving) {

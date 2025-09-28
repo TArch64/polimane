@@ -77,7 +77,7 @@ function onDblClick(): void {
   }
 
   .color-list__item--empty {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='%23f8f8f8'/%3E%3Cline x1='0' y1='0' x2='100%25' y2='100%25' stroke='%23dddddd' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-image: url("@/assets/emptyColor.svg");
     background-size: cover;
   }
 

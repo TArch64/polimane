@@ -1,5 +1,5 @@
 import { defineComponent, h, type PropType } from 'vue';
-import type { Modal } from './Modal';
+import type { ModalModel } from './ModalModel';
 import { provideActiveModal } from './useActiveModal';
 
 export const ModalRender = defineComponent({
@@ -7,7 +7,7 @@ export const ModalRender = defineComponent({
 
   props: {
     modal: {
-      type: Object as PropType<Modal>,
+      type: Object as PropType<ModalModel>,
       required: true,
     },
   },

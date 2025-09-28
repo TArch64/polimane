@@ -1,5 +1,5 @@
 <template>
-  <Card ref="cardRef" interactable :binding="cardBinding">
+  <Card ref="cardRef" class="home-schema" interactable :binding="cardBinding">
     <img
       :src="screenshotUrl"
       :alt="`Скріншот схеми ${schema.name}`"
@@ -15,6 +15,7 @@
 
 <script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router';
+import { computed } from 'vue';
 import { Card } from '@/components/card';
 import type { ISchema } from '@/models';
 import { makeBinding } from '@/components/binding';
@@ -23,7 +24,7 @@ import { useDomRef } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { CopyIcon, TrashIcon } from '@/components/icon';
 import { useSchemasStore } from '@/modules/home/stores';
-import { useCdnUrl } from '@/composables/useCdnUrl';
+import { buildCdnUrl } from '@/helpers/buildCdnUrl';
 
 const props = defineProps<{
   schema: ISchema;
@@ -40,16 +41,7 @@ const cardBinding = makeBinding(RouterLink, () => ({
   },
 }));
 
-const screenshotUrl = useCdnUrl(() => {
-  if (!props.schema.screenshotedAt) {
-    return null;
-  }
-
-  return {
-    path: ['images', props.schema.id, 'schema.webp'],
-    params: { v: new Date(props.schema.screenshotedAt).getTime() },
-  };
-});
+const screenshotUrl = computed(() => buildCdnUrl(props.schema.screenshotPath));
 
 const deleteConfirm = useConfirm({
   danger: true,
@@ -97,13 +89,20 @@ useContextMenu({
 
 <style scoped>
 @layer page {
+  .home-schema {
+    overflow: clip;
+    box-shadow: var(--box-shadow);
+  }
+
   .home-schema__screenshot {
-    width: 100%;
+    display: block;
     aspect-ratio: 16 / 9;
     object-fit: contain;
     object-position: center;
     border-bottom: var(--divider);
-    margin-bottom: 4px;
+    margin: calc(0px - var(--card-padding-top)) calc(0px - var(--card-padding-right)) 8px calc(0px - var(--card-padding-left));
+    width: calc(100% + var(--card-padding-left) + var(--card-padding-right));
+    background-color: v-bind("schema.backgroundColor");
   }
 }
 </style>

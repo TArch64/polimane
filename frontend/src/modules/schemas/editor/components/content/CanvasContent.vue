@@ -4,7 +4,9 @@
     ref="rootRef"
     @mousedown="paint"
   >
-    <CanvasBeadGrid
+    <KonvaRect :config="backgroundConfig" />
+
+    <CanvasSector
       v-for="{ sector, grid } of sectors"
       :key="sector"
       :grid="grid.value"
@@ -15,10 +17,15 @@
 <script setup lang="ts">
 import Konva from 'konva';
 import { computed } from 'vue';
-import { useNodeCursor, useNodeListener, useNodeRef } from '../../composables';
+import {
+  BEAD_SIZE,
+  useBeadsGrid,
+  useNodeCursor,
+  useNodeListener,
+  useNodeRef,
+} from '../../composables';
 import { useBeadsStore, useEditorStore, usePaletteStore } from '../../stores';
-import { BEAD_SIZE, useBeadsGrid } from './useBeadsGrid';
-import CanvasBeadGrid from './CanvasBeadGrid.vue';
+import CanvasSector from './CanvasSector.vue';
 
 const props = defineProps<{
   stageConfig: Required<Pick<Konva.StageConfig, 'width' | 'height'>>;
@@ -28,7 +35,7 @@ const editorStore = useEditorStore();
 const paletteStore = usePaletteStore();
 const beadsStore = useBeadsStore();
 
-const sectors = useBeadsGrid();
+const { sectors, gridSize } = useBeadsGrid(() => editorStore.schema);
 
 const rootRef = useNodeRef<Konva.Group>();
 
@@ -49,11 +56,22 @@ const config: Partial<Konva.GroupConfig> = {
   x: calcContentX(),
 };
 
+const backgroundConfig: Partial<Konva.RectConfig> = computed(() => ({
+  x: gridSize.minX,
+  y: gridSize.minY,
+  width: gridSize.width,
+  height: gridSize.height,
+  fill: editorStore.schema.backgroundColor,
+}));
+
 const isActive = computed(() => paletteStore.isPainting);
 
 function paint(event: Konva.KonvaEventObject<MouseEvent>) {
   const position = event.target.getAttr('$position');
-  if (position) beadsStore.paint(position);
+  if (!position) return;
+
+  const color = event.evt.buttons === 1 ? paletteStore.activeColor : null;
+  beadsStore.paint(position, color);
 }
 
 useNodeListener(rootRef, 'mousemove', paint, { isActive });

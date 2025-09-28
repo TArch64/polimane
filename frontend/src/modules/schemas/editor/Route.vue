@@ -2,14 +2,23 @@
   <EditorHeader />
   <EditorCanvas class="editor__fill" />
   <EditorPalette />
+  <EditorScreenshotController />
 </template>
 
 <script lang="ts" setup>
+import './colorLib';
+
 import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
 import { destroyStore, lazyDestroyStore } from '@/helpers';
 import { useBeadsStore, useEditorStore, usePaletteStore } from './stores';
-import { EditorCanvas, EditorHeader, EditorPalette } from './components';
+import {
+  EditorCanvas,
+  EditorHeader,
+  EditorPalette,
+  EditorScreenshotController,
+} from './components';
+import { useEditorBackgroundRenderer } from './composables';
 
 defineProps<{
   schemaId: string;
@@ -30,6 +39,7 @@ defineOptions({
 });
 
 const editorStore = useEditorStore();
+useEditorBackgroundRenderer();
 
 useEventListener(window, 'beforeunload', (event) => {
   if (editorStore.hasUnsavedChanges) {
@@ -42,7 +52,7 @@ useEventListener(window, 'beforeunload', (event) => {
 <style scoped>
 @layer page {
   :global(.app--schema-editor) {
-    background-color: var(--color-background-2);
+    background-color: var(--editor-background-color);
     overflow: hidden;
   }
 

@@ -7,12 +7,12 @@ import {
   reactive,
 } from 'vue';
 import { newId } from '@/helpers';
-import { type AnyModal, Modal } from './Modal';
+import { type AnyModalModel, ModalModel } from './ModalModel';
 
 const PROVIDER = Symbol('ModalPlugin') as InjectionKey<ModalPlugin>;
 
 interface IModalPluginState {
-  modals: AnyModal[];
+  modals: AnyModalModel[];
 }
 
 export class ModalPlugin {
@@ -28,17 +28,17 @@ export class ModalPlugin {
     modals: [],
   });
 
-  get openedModal(): AnyModal | null {
+  get openedModal(): AnyModalModel | null {
     return this.state.modals.find((modal) => modal.isOpened) ?? null;
   }
 
-  create<C extends Component, R = null>(component: C): Modal<C, R> {
-    const modal = new Modal<C, R>(newId(), markRaw(component));
+  create<C extends Component, R = null>(component: C): ModalModel<C, R> {
+    const modal = new ModalModel<C, R>(newId(), markRaw(component));
     this.state.modals.push(modal);
     return modal;
   }
 
-  remove(modal: AnyModal): void {
+  remove(modal: AnyModalModel): void {
     const index = this.state.modals.findIndex((m) => m.id === modal.id);
     this.state.modals.splice(index, 1);
   }

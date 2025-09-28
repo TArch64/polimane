@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body" v-if="openedModal">
-    <ModalRender :key="openedModal.id" :modal="openedModal as Modal" />
+    <ModalRender :key="openedModal.id" :modal="openedModal as ModalModel" />
   </Teleport>
 </template>
 
@@ -9,11 +9,11 @@ import { nextTick, type Ref, ref, watch } from 'vue';
 import { useRouteTransition } from '@/composables';
 import { ModalPlugin } from './ModalPlugin';
 import { ModalRender } from './ModalRender';
-import type { Modal } from './Modal';
+import type { ModalModel } from './ModalModel';
 
 const plugin = ModalPlugin.inject();
 const routeTransition = useRouteTransition();
-const openedModal: Ref<Modal | null> = ref(null);
+const openedModal: Ref<ModalModel | null> = ref(null);
 
 watch(() => plugin.openedModal?.id, () => {
   routeTransition.start(async () => {

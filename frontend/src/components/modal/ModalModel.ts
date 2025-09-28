@@ -9,9 +9,9 @@ interface IModalState<P> {
 
 export type ModalCloseCallback = () => MaybePromise<void>;
 
-export type AnyModal = Modal<Component, SafeAny, SafeAny>;
+export type AnyModalModel = ModalModel<Component, SafeAny, SafeAny>;
 
-export class Modal<C extends Component = Component, R = null, P = InferComponentProps<C>> {
+export class ModalModel<C extends Component = Component, R = null, P = InferComponentProps<C>> {
   private state: IModalState<P> = reactive({
     isOpened: false,
     props: null,

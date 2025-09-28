@@ -17,7 +17,12 @@
         </main>
 
         <footer class="modal__footer">
-          <Button variant="primary" type="submit" :loading>
+          <Button
+            variant="primary"
+            type="submit"
+            :loading
+            :disabled="saveDisabled"
+          >
             {{ saveButton }}
           </Button>
         </footer>
@@ -39,10 +44,12 @@ withDefaults(defineProps<{
   title: string;
   width?: number;
   saveButton?: string;
+  saveDisabled?: boolean;
   loading?: boolean;
 }>(), {
   width: ModalWidth.MD,
   saveButton: 'Зберегти',
+  saveDisabled: false,
 });
 
 defineEmits<{

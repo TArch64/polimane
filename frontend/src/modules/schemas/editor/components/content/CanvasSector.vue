@@ -5,13 +5,14 @@
     :offset="bead.offset"
     :coord="bead.coord"
     :color="beadsStore.getColor(bead.coord)"
+    :emptyColor="beadsStore.emptyColor"
   />
 </template>
 
 <script lang="ts" setup>
 import { useBeadsStore } from '../../stores';
+import type { IBeadsGridItem } from '../../composables';
 import { CanvasBead } from './CanvasBead';
-import type { IBeadsGridItem } from './useBeadsGrid';
 
 defineProps<{
   grid: IBeadsGridItem[];
