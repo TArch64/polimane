@@ -7,6 +7,7 @@ import (
 	"polimane/backend/api/base"
 	repositoryschemas "polimane/backend/repository/schemas"
 	"polimane/backend/services/awss3"
+	"polimane/backend/services/awssqs"
 )
 
 const schemaIdParam = "schemaId"
@@ -15,17 +16,20 @@ type ControllerOptions struct {
 	fx.In
 	Schemas repositoryschemas.Client
 	S3      awss3.Client
+	SQS     awssqs.Client
 }
 
 type Controller struct {
 	schemas repositoryschemas.Client
 	s3      awss3.Client
+	sqs     awssqs.Client
 }
 
 func Provider(options ControllerOptions) base.Controller {
 	return &Controller{
 		schemas: options.Schemas,
 		s3:      options.S3,
+		sqs:     options.SQS,
 	}
 }
 

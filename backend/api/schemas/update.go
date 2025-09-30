@@ -8,6 +8,8 @@ import (
 	"polimane/backend/api/base"
 	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
+	"polimane/backend/services/awssqs"
+	"polimane/backend/worker/events"
 )
 
 type updateBody struct {
@@ -75,6 +77,20 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
 		User:     auth.GetSessionUser(ctx),
 		SchemaID: schemaId,
 		Updates:  updates,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	err = c.sqs.Send(ctx.Context(), &awssqs.SendOptions{
+		Queue:           events.QueueDebounced,
+		Event:           events.EventSchemaScreenshot,
+		DeduplicationId: schemaId.String(),
+
+		Body: events.SchemaScreenshotBody{
+			SchemaID: schemaId,
+		},
 	})
 
 	if err != nil {

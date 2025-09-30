@@ -5,6 +5,19 @@ x-common: &common
   stdin_open: true
   stop_grace_period: 1s
 
+x-backend-common: &backend-common
+  <<: *common
+  image: polimane-backend
+  build:
+    context: .
+    dockerfile: ./ci/dev/backend/Dockerfile
+  volumes:
+  - ./backend:/app
+  - gomod_cache:/go/pkg/mod
+  depends_on:
+  - db
+  - sqs
+
 services:
   nginx:
     <<: *common
@@ -31,16 +44,12 @@ services:
     - bun_cache:/root/.bun/install/cache
 
   backend:
-    <<: *common
-    build:
-      context: .
-      dockerfile: ./ci/dev/backend/Dockerfile
-    command: make dev
-    volumes:
-    - ./backend:/app
-    - gomod_cache:/go/pkg/mod
-    depends_on:
-    - db
+    <<: *backend-common
+    command: make dev_api
+
+  worker:
+    <<: *backend-common
+    command: make dev_worker
 
   db:
     <<: *common
@@ -51,6 +60,15 @@ services:
     - "26257:26257"
     volumes:
     - cockroach_data:/cockroach/cockroach-data
+
+  sqs:
+    <<: *common
+    image: softwaremill/elasticmq-native
+    volumes:
+    - ./ci/dev/sqs/elasticmq.conf:/opt/elasticmq.conf
+    ports:
+    - "9324:9324"
+    - "9325:9325"
 
 volumes:
   bun_cache:
