@@ -1,0 +1,12 @@
+<svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 {{ .Width }} {{ .Height }}"
+        width="{{ .Width }}"
+        height="{{ .Height }}"
+>
+    <rect x="0" y="0" width="{{ .Width }}" height="{{ .Height }}" fill="{{ .BackgroundColor }}" />
+    {{- range beadsGrid . .SizeLeft 0 .SizeTop 0 }}{{ .Render }}{{ end -}}
+    {{- range beadsGrid . 1 .SizeRight .SizeTop 0 }}{{ .Render }}{{ end -}}
+    {{- range beadsGrid . .SizeLeft 0 1 .SizeBottom }}{{ .Render }}{{ end -}}
+    {{- range beadsGrid . 1 .SizeRight 1 .SizeBottom }}{{ .Render }}{{ end -}}
+</svg>

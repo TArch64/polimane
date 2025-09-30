@@ -25,6 +25,7 @@ import (
 	"polimane/backend/services/sentry"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
+	"polimane/backend/views"
 )
 
 func Controller(f any) any {
@@ -54,6 +55,7 @@ func main() {
 			awsconfig.Provider,
 			awss3.Provider,
 			awssqs.Provider,
+			views.Provider,
 
 			// repositories
 			repositoryuserschemas.Provider,
