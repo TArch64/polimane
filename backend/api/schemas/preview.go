@@ -27,8 +27,9 @@ func (c *Controller) apiPreview(ctx *fiber.Ctx) error {
 	}
 
 	content, err := c.renderer.Render(&views.RenderOptions{
-		View: views.TemplateSchemaPreview,
-		Data: templates.NewSchemaPreviewData(schema),
+		View:   views.TemplateSchemaPreview,
+		Data:   templates.NewSchemaPreviewData(schema),
+		Minify: true,
 	})
 
 	if err != nil {
