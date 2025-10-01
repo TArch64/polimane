@@ -1,4 +1,4 @@
-.PHONY: dev db_migration_new db_migration_blank db_rehash_migrations db_migrate prod test
+.PHONY: dev_api dev_worker db_migration_new db_migration_blank db_rehash_migrations db_migrate prod_api prod_worker test
 
 MAKEFLAGS += --no-print-directory
 ldflags = '-linkmode external -extldflags "-static -Wl,-unresolved-symbols=ignore-all"'
@@ -41,8 +41,14 @@ test_coverage: cgo_envs
 	go tool cover -html=coverage/result.out -o coverage/result.html
 	go tool cover -func=coverage/result.out
 
-prod: cgo_envs
+prod_api: cgo_envs
 	GOOS=linux GOARCH=arm64 \
-	go build -tags "prod" -o "$(out_dir)/bootstrap" -ldflags $(ldflags) main.go
+	go build -tags "prod" -o "$(out_dir)/bootstrap" -ldflags $(ldflags) main_api.go
+	zip -j "$(out_dir)/bootstrap.zip" "$(out_dir)/bootstrap"
+	rm "$(out_dir)/bootstrap"
+
+prod_worker: cgo_envs
+	GOOS=linux GOARCH=arm64 \
+	go build -tags "prod" -o "$(out_dir)/bootstrap" -ldflags $(ldflags) main_worker.go
 	zip -j "$(out_dir)/bootstrap.zip" "$(out_dir)/bootstrap"
 	rm "$(out_dir)/bootstrap"

@@ -7,10 +7,10 @@ import (
 	"log"
 	"time"
 
-	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
 	"go.uber.org/fx"
 
 	"polimane/backend/services/awssqs"
+	"polimane/backend/worker/events"
 	"polimane/backend/worker/queue"
 )
 
@@ -47,10 +47,7 @@ func watchQueue(
 ) {
 	log.Println("registered queue:", q.Name())
 
-	var messages []types.Message
-	var err error
-	messagesChan := make(chan *types.Message, 100)
-
+	messagesChan := make(chan *events.Message, 100)
 	go controller.Process(ctx, q, messagesChan)
 
 	for {
@@ -63,7 +60,7 @@ func watchQueue(
 		}
 
 		time.Sleep(1 * time.Second)
-		messages, err = client.Receive(ctx, q.Name())
+		messages, err := client.Receive(ctx, q.Name())
 
 		if err != nil {
 			log.Println("error receiving message:", err)
@@ -74,7 +71,12 @@ func watchQueue(
 			log.Printf("received %d messages from %s\n", len(messages), q.Name())
 
 			for _, message := range messages {
-				messagesChan <- &message
+				messagesChan <- &events.Message{
+					Body:          *message.Body,
+					ReceiptHandle: *message.ReceiptHandle,
+					EventType:     *message.MessageAttributes["EventType"].StringValue,
+					OnEnd:         func() {},
+				}
 			}
 		}
 	}

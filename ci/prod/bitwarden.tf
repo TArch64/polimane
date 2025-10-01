@@ -63,3 +63,8 @@ data "bitwarden_secret" "backend_workos_api_key" {
   key             = "backend_workos_api_key"
   organization_id = data.bitwarden_project.app.organization_id
 }
+
+data "bitwarden_secret" "backend_sqs_base_url" {
+  key             = "backend_sqs_base_url"
+  organization_id = data.bitwarden_project.app.organization_id
+}

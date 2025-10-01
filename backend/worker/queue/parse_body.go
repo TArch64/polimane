@@ -3,9 +3,9 @@ package queue
 import (
 	"encoding/json"
 
-	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
+	"polimane/backend/worker/events"
 )
 
-func ParseBody[B any](message *types.Message, dest *B) error {
-	return json.Unmarshal([]byte(*message.Body), dest)
+func ParseBody[B any](message *events.Message, dest *B) error {
+	return json.Unmarshal([]byte(message.Body), dest)
 }

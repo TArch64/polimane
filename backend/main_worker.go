@@ -15,6 +15,7 @@ import (
 	"polimane/backend/services/osenv"
 	"polimane/backend/services/osfs"
 	"polimane/backend/services/schemascreenshot"
+	"polimane/backend/services/sentry"
 	"polimane/backend/signal"
 	"polimane/backend/views"
 	"polimane/backend/worker"
@@ -42,7 +43,7 @@ func main() {
 			bitwarden.Provider,
 			env.Provider,
 			db.Provider,
-			// sentry.Provider,
+			sentry.Provider,
 			awsconfig.Provider,
 			awss3.Provider,
 			awssqs.Provider,

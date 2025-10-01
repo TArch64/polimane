@@ -3,10 +3,10 @@ package queue
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
+	"polimane/backend/worker/events"
 )
 
-type EventProcessor = func(ctx context.Context, message *types.Message) error
+type EventProcessor = func(ctx context.Context, message *events.Message) error
 
 func (b *Base) HandleEvent(group string, processor EventProcessor) {
 	if b.events == nil {

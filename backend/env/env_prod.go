@@ -18,6 +18,7 @@ func loadEnvs(instance *Environment, bitwardenClient bitwarden.Client) error {
 		"BACKEND_DATABASE_URL",
 		"BACKEND_WORKOS_CLIENT_ID",
 		"BACKEND_WORKOS_API_KEY",
+		"BACKEND_SQS_BASE_URL",
 	})
 
 	if err != nil {

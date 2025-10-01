@@ -20,6 +20,7 @@ resource "null_resource" "lambda_build" {
       BUILD_DOCKERFILE = abspath("${path.root}/build/backend.Dockerfile")
       BUILD_CONTEXT = local.lambda_sources_dir
       BUILD_DIST    = local.lambda_build_dir
+      BUILD_TARGET  = "api"
     }
   }
 }

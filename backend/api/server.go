@@ -36,9 +36,7 @@ func Provider(options ServerOptions) (*fiber.App, error) {
 	options.Options.Configure(&config)
 	app := fiber.New(config)
 
-	if options.Sentry.Handler != nil {
-		app.Use(options.Sentry.Handler)
-	}
+	app.Use(getErrorHandlerMiddleware())
 
 	app.Use(helmet.New(helmet.Config{
 		XSSProtection: "1; mode=block",

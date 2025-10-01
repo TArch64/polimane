@@ -3,12 +3,12 @@ package queue
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
+	"polimane/backend/worker/events"
 )
 
 type Interface interface {
 	Name() string
-	Process(ctx context.Context, message *types.Message) error
+	Process(ctx context.Context, message *events.Message) error
 }
 
 type Base struct {

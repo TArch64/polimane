@@ -4,15 +4,14 @@ import (
 	"context"
 	"errors"
 
-	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
+	"polimane/backend/worker/events"
 )
 
-func (b *Base) Process(ctx context.Context, message *types.Message) error {
-	eventType := message.MessageAttributes["EventType"].StringValue
-	processor := b.events[*eventType]
+func (b *Base) Process(ctx context.Context, message *events.Message) error {
+	processor := b.events[message.EventType]
 
 	if processor == nil {
-		return errors.New("no processor found for event type: " + *eventType)
+		return errors.New("no processor found for event type: " + message.EventType)
 	}
 
 	return processor(ctx, message)

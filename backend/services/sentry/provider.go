@@ -2,8 +2,6 @@ package sentry
 
 import (
 	"github.com/getsentry/sentry-go"
-	sentryfiber "github.com/getsentry/sentry-go/fiber"
-	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 
 	"polimane/backend/base"
@@ -16,13 +14,13 @@ type Options struct {
 }
 
 type Container struct {
-	Handler fiber.Handler
+	IsInitialized bool
 }
 
 func Provider(options Options) (*Container, error) {
 	config := options.Env.Sentry
 	if len(config.Dsn) == 0 {
-		return &Container{Handler: nil}, nil
+		return &Container{}, nil
 	}
 
 	err := sentry.Init(sentry.ClientOptions{
@@ -35,10 +33,5 @@ func Provider(options Options) (*Container, error) {
 		return nil, base.TagError("sentry", err)
 	}
 
-	sentryHandler := sentryfiber.New(sentryfiber.Options{
-		Repanic:         true,
-		WaitForDelivery: true,
-	})
-
-	return &Container{Handler: sentryHandler}, nil
+	return &Container{IsInitialized: true}, nil
 }
