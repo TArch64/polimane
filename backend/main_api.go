@@ -22,6 +22,7 @@ import (
 	"polimane/backend/services/jwk"
 	"polimane/backend/services/osenv"
 	"polimane/backend/services/osfs"
+	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/services/sentry"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
@@ -56,6 +57,7 @@ func main() {
 			awss3.Provider,
 			awssqs.Provider,
 			views.Provider,
+			schemascreenshot.Provider,
 
 			// repositories
 			repositoryuserschemas.Provider,

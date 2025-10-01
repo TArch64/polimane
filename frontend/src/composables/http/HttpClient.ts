@@ -97,7 +97,7 @@ export class HttpClient {
       method: config.method,
       body,
       headers: {
-        'Content-Type': responseType === 'text' ? 'application/json' : 'text/plain',
+        'Content-Type': responseType === 'text' ? 'text/plain' : 'application/json',
       },
     });
 

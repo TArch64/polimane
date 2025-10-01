@@ -69,7 +69,7 @@ function onDblClick(): void {
   }
 
   .color-list__item--active {
-    border-color: var(--color-primary);
+    outline: solid 1px v-bind("model");
   }
 
   .color-list__item--value {

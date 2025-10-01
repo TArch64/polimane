@@ -14,9 +14,11 @@ type UpdateOptions struct {
 }
 
 func (i *Impl) Update(options *UpdateOptions) (err error) {
-	err = i.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
-	if err != nil {
-		return err
+	if options.User != nil {
+		err = i.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+		if err != nil {
+			return err
+		}
 	}
 
 	return i.db.

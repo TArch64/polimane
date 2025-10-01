@@ -34,6 +34,10 @@ func (s *Schema) ScreenshotPath() *string {
 	return &path
 }
 
+func (s *Schema) ScreenshotKey() string {
+	return SchemaScreenshotKey(s.ID)
+}
+
 func schemaScreenshotPath(id ID) string {
 	return fmt.Sprintf("images/%s/schema.svg", id.String())
 }

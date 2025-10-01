@@ -1,6 +1,8 @@
 package schemas
 
 import (
+	"context"
+
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/datatypes"
 
@@ -9,6 +11,7 @@ import (
 	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
 	"polimane/backend/services/awssqs"
+	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/worker/events"
 )
 
@@ -24,12 +27,12 @@ func collectUpdates(body *updateBody) *model.Schema {
 	changed := false
 	updates := &model.Schema{}
 
-	if len(body.Name) > 0 {
+	if body.Name != "" {
 		changed = true
 		updates.Name = body.Name
 	}
 
-	if len(body.BackgroundColor) > 0 {
+	if body.BackgroundColor != "" {
 		changed = true
 		updates.BackgroundColor = body.BackgroundColor
 	}
@@ -56,8 +59,35 @@ func collectUpdates(body *updateBody) *model.Schema {
 	return nil
 }
 
+func (c *Controller) updateScreenshot(ctx context.Context, schemaID model.ID, needImmediateUpdate bool) error {
+	if !needImmediateUpdate {
+		return c.sqs.Send(ctx, &awssqs.SendOptions{
+			Queue:           events.QueueDebounced,
+			Event:           events.EventSchemaScreenshot,
+			DeduplicationId: schemaID.String(),
+
+			Body: events.SchemaScreenshotBody{
+				SchemaID: schemaID,
+			},
+		})
+	}
+
+	schema, err := c.schemas.ByID(&repositoryschemas.ByIDOptions{
+		Ctx:      ctx,
+		SchemaID: schemaID,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return c.schemaScreenshot.Screenshot(ctx, &schemascreenshot.ScreenshotOptions{
+		Schema: schema,
+	})
+}
+
 func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
-	schemaId, err := base.GetParamID(ctx, schemaIdParam)
+	schemaID, err := base.GetParamID(ctx, schemaIdParam)
 	if err != nil {
 		return err
 	}
@@ -75,7 +105,7 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
 	err = c.schemas.Update(&repositoryschemas.UpdateOptions{
 		Ctx:      ctx.Context(),
 		User:     auth.GetSessionUser(ctx),
-		SchemaID: schemaId,
+		SchemaID: schemaID,
 		Updates:  updates,
 	})
 
@@ -83,17 +113,8 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	err = c.sqs.Send(ctx.Context(), &awssqs.SendOptions{
-		Queue:           events.QueueDebounced,
-		Event:           events.EventSchemaScreenshot,
-		DeduplicationId: schemaId.String(),
-
-		Body: events.SchemaScreenshotBody{
-			SchemaID: schemaId,
-		},
-	})
-
-	if err != nil {
+	needImmediateScreenshotUpdate := body.BackgroundColor != ""
+	if err = c.updateScreenshot(ctx.Context(), schemaID, needImmediateScreenshotUpdate); err != nil {
 		return err
 	}
 
