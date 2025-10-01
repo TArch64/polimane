@@ -1,20 +1,20 @@
 <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 {{ .Width }} {{ .Height }}"
-        width="{{ .Width }}"
-        height="{{ .Height }}"
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 {{ .Width }} {{ .Height }}"
+  width="{{ .Width }}"
+  height="{{ .Height }}"
 >
-    <rect x="0" y="0" width="{{ .Width }}" height="{{ .Height }}" fill="{{ .BackgroundColor }}" />
-
-    {{- range beadsGrid . .SizeLeft 0 .SizeTop 0 }}
-        <rect
-                width="{{ $.ShapeSize }}"
-                height="{{ $.ShapeSize }}"
-                rx="{{ $.ShapeSize }}"
-                ry="{{ $.ShapeSize }}"
-                x="{{ .OffsetX }}"
-                y="{{ .OffsetY }}"
-                fill="{{ .Color }}"
-        />
-    {{ end -}}
+  <rect x="0" y="0" width="{{ .Width }}" height="{{ .Height }}" fill="{{ .BackgroundColor }}" />
+  <defs>
+    <rect
+      id="schema-bead"
+      width="{{ .ShapeSize }}"
+      height="{{ .ShapeSize }}"
+      rx="{{ .ShapeSize }}"
+      ry="{{ .ShapeSize }}"
+    />
+  </defs>
+  {{- range beadsGrid . .SizeLeft 0 .SizeTop 0 }}
+    <use href="#schema-bead" x="{{ .OffsetX }}" y="{{ .OffsetY }}" fill="{{ .Color }}" />
+  {{ end -}}
 </svg>

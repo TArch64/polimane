@@ -2,7 +2,7 @@ import { buildUrl, type UrlParams, type UrlPath } from '@/helpers';
 import { HttpError } from './HttpError';
 import type { HttpMiddleware, HttpMiddlewareExecutor } from './HttpMiddlewareExecutor';
 
-export type HttpBody = object;
+export type HttpBody = object | string;
 
 export interface IHttpClientOptions {
   baseUrl: string;
@@ -11,6 +11,7 @@ export interface IHttpClientOptions {
 
 export interface IHttpRequestConfig {
   meta?: Record<string, unknown>;
+  responseType?: 'json' | 'text';
 }
 
 interface IRequestConfig<
@@ -90,11 +91,14 @@ export class HttpClient {
     B extends HttpBody,
   >(config: IRequestConfig<P, B>): Promise<R> {
     const body = config.body ? JSON.stringify(config.body) : undefined;
+    const responseType = config.responseType ?? 'json';
 
     const request = new Request(this.buildUrl(config), {
       method: config.method,
       body,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': responseType === 'text' ? 'application/json' : 'text/plain',
+      },
     });
 
     await this.middlewareExecutor.callBeforeRequestInterceptor(request);
@@ -105,7 +109,7 @@ export class HttpClient {
     }
 
     await this.middlewareExecutor.callResponseSuccessInterceptor(response);
-    return response.json();
+    return response[responseType]();
   }
 
   private buildUrl(config: IRequestConfig): URL {

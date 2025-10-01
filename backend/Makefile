@@ -10,10 +10,10 @@ cgo_envs:
 	go env -w CC=musl-gcc
 
 dev_api: cgo_envs
-	gow -e=go,mod run -tags "dev" -ldflags $(ldflags) main_api.go
+	gow -e=go,mod,tmpl run -tags "dev" -ldflags $(ldflags) main_api.go
 
 dev_worker: cgo_envs
-	gow -e=go,mod run -tags "dev" -ldflags $(ldflags) main_worker.go
+	gow -e=go,mod,tmpl run -tags "dev" -ldflags $(ldflags) main_worker.go
 
 db_new_migration:
 	atlas migrate diff $(name) --env $(env)

@@ -2,6 +2,7 @@ export type SchemaSizeDirection = 'top' | 'left' | 'right' | 'bottom';
 export type SchemaSize = Record<SchemaSizeDirection, number>;
 
 export type SchemaBeadCoord = `${number}:${number}`;
+export type SchemaBeads = Record<SchemaBeadCoord, string>;
 
 export function serializeSchemaBeadCoord(x: number, y: number): SchemaBeadCoord {
   return `${x}:${y}`;
@@ -21,5 +22,5 @@ export interface ISchema {
   screenshotedAt: string | null;
   screenshotPath: string | null;
   size: SchemaSize;
-  beads: Record<SchemaBeadCoord, string>;
+  beads: SchemaBeads;
 }
