@@ -1,3 +1,4 @@
+import { addBreadcrumb } from '@sentry/vue';
 import { buildUrl, type UrlParams, type UrlPath } from '@/helpers';
 import { HttpError } from './HttpError';
 import type { HttpMiddleware, HttpMiddlewareExecutor } from './HttpMiddlewareExecutor';
@@ -102,14 +103,28 @@ export class HttpClient {
     });
 
     await this.middlewareExecutor.callBeforeRequestInterceptor(request);
-    const response = await fetch(request);
+    try {
+      const response = await fetch(request);
 
-    if (!response.ok) {
-      return this.handleError(response, config);
+      if (!response.ok) {
+        await this.handleError(response, config);
+      }
+
+      await this.middlewareExecutor.callResponseSuccessInterceptor(response);
+      return response[responseType]();
+    } catch (error) {
+      addBreadcrumb({
+        type: 'http-error',
+        level: 'error',
+        message: 'HTTP request failed',
+        data: {
+          exception: error,
+          requestBody: body,
+        },
+      });
+
+      throw error;
     }
-
-    await this.middlewareExecutor.callResponseSuccessInterceptor(response);
-    return response[responseType]();
   }
 
   private buildUrl(config: IRequestConfig): URL {
