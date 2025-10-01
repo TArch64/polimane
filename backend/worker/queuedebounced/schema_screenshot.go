@@ -24,9 +24,7 @@ func (q *Queue) ProcessSchemaScreenshot(ctx context.Context, message *events.Mes
 		return err
 	}
 
-	err = q.schemaScreenshot.Screenshot(ctx, &schemascreenshot.ScreenshotOptions{
+	return q.schemaScreenshot.Screenshot(ctx, &schemascreenshot.ScreenshotOptions{
 		Schema: schema,
 	})
-
-	return nil
 }
