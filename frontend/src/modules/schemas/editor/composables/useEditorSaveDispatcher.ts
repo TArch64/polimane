@@ -4,7 +4,7 @@ import type { ISchema } from '@/models';
 import { combineStopHandles, getObjectKeys } from '@/helpers';
 import type { SafeAny } from '@/types';
 
-const SAVE_TIMEOUT = 2000;
+const SAVE_TIMEOUT = 30_000;
 
 export interface IEditorSaveDispatcher {
   hasUnsavedChanges: boolean;
