@@ -1,9 +1,8 @@
-.PHONY: dev_api dev_worker db_migration_new db_migration_blank db_rehash_migrations db_migrate prod_api prod_worker test
+.PHONY: dev_api dev_worker db_migration_new db_migration_blank db_rehash_migrations db_migrate prod_api prod_worker
 
 MAKEFLAGS += --no-print-directory
 ldflags = '-linkmode external -extldflags "-static -Wl,-unresolved-symbols=ignore-all"'
 env ?= dev
-test_pattern ?= ./...
 
 cgo_envs:
 	go env -w CGO_ENABLED=1
@@ -32,14 +31,6 @@ execute_with_retry:
 		echo "Retrying..."; \
 		sleep $(interval); \
 	done
-
-test: cgo_envs
-	go test -tags "test" -ldflags $(ldflags) $(test_pattern)
-
-test_coverage: cgo_envs
-	go test -tags "test" -coverprofile=coverage/result.out -covermode=atomic -ldflags $(ldflags) $(test_pattern)
-	go tool cover -html=coverage/result.out -o coverage/result.html
-	go tool cover -func=coverage/result.out
 
 prod_api: cgo_envs
 	GOOS=linux GOARCH=arm64 \
