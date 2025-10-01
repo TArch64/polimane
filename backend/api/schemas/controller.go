@@ -8,7 +8,6 @@ import (
 
 	"polimane/backend/api/base"
 	repositoryschemas "polimane/backend/repository/schemas"
-	"polimane/backend/services/awss3"
 	"polimane/backend/services/awssqs"
 	"polimane/backend/views"
 )
@@ -18,7 +17,6 @@ const schemaIdParam = "schemaId"
 type ControllerOptions struct {
 	fx.In
 	Schemas          repositoryschemas.Client
-	S3               awss3.Client
 	SQS              awssqs.Client
 	Renderer         views.Renderer
 	SchemaScreenshot schemascreenshot.Interface
