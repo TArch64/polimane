@@ -70,6 +70,7 @@ function onDblClick(): void {
 
   .color-list__item--active {
     outline: solid 1px v-bind("model");
+    outline-offset: 1px;
   }
 
   .color-list__item--value {
