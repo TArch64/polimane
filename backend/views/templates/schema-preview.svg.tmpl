@@ -14,7 +14,7 @@
       ry="{{ .ShapeSize }}"
     />
   </defs>
-  {{- range beadsGrid . .SizeLeft 0 .SizeTop 0 }}
+    {{- range beadsGrid . }}
     <use href="#schema-bead" x="{{ .OffsetX }}" y="{{ .OffsetY }}" fill="{{ .Color }}" />
   {{ end -}}
 </svg>

@@ -13,9 +13,8 @@ type SchemaBead struct {
 	OffsetY int
 }
 
-func beadsGrid(data *templates.SchemaPreviewData, fromX, toX, fromY, toY int) chan *SchemaBead {
-	totalItems := (toX - fromX + 1) * (toY - fromY + 1)
-	bufferSize := min(totalItems/20, 100)
+func beadsGrid(data *templates.SchemaPreviewData) chan *SchemaBead {
+	bufferSize := min(len(data.Beads)/20, 100)
 	ch := make(chan *SchemaBead, bufferSize)
 
 	initialOffsetX := -data.SizeLeft * int(data.BeadSize)
