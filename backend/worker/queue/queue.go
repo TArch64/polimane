@@ -14,3 +14,9 @@ type Interface interface {
 type Base struct {
 	events map[string]EventProcessor
 }
+
+func NewBase() *Base {
+	return &Base{
+		events: make(map[string]EventProcessor),
+	}
+}

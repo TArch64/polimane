@@ -23,7 +23,7 @@ type ProviderOptions struct {
 
 func Provider(options ProviderOptions) queue.Interface {
 	q := &Queue{
-		Base:             &queue.Base{},
+		Base:             queue.NewBase(),
 		schemas:          options.Schemas,
 		schemaScreenshot: options.SchemaScreenshot,
 	}
