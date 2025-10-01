@@ -15,10 +15,6 @@ export interface IBeadsSector {
   grid: ComputedRef<IBeadsGridItem[]>;
 }
 
-export interface IBeadsGridOptions {
-  filter?: (coord: SchemaBeadCoord) => boolean;
-}
-
 export interface IBeadsGrid {
   sectors: IBeadsSector[];
   gridSize: {
@@ -29,9 +25,7 @@ export interface IBeadsGrid {
   };
 }
 
-export function useBeadsGrid(schemaRef: MaybeRefOrGetter<ISchema>, options: IBeadsGridOptions = {}): IBeadsGrid {
-  const filter = options.filter ?? (() => true);
-
+export function useBeadsGrid(schemaRef: MaybeRefOrGetter<ISchema>): IBeadsGrid {
   const size = computed(() => toValue(schemaRef).size);
   const left = computed(() => -size.value.left);
   const top = computed(() => -size.value.top);
@@ -50,9 +44,6 @@ export function useBeadsGrid(schemaRef: MaybeRefOrGetter<ISchema>, options: IBea
     for (let x = fromX; x <= toX; x++) {
       for (let y = fromY; y <= toY; y++) {
         const coord = serializeSchemaBeadCoord(x, y);
-
-        if (!filter(coord)) continue;
-
         const offsetX = initialOffsetX + (x * BEAD_SIZE);
         const offsetY = initialOffsetY + (y * BEAD_SIZE);
 

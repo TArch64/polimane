@@ -28,6 +28,7 @@ resource "aws_lambda_function" "lambda" {
       BACKEND_DATABASE_CERT_SID    = bitwarden_secret.backend_database_cert.id,
       BACKEND_WORKOS_CLIENT_ID_SID = data.bitwarden_secret.backend_workos_client_id.id,
       BACKEND_WORKOS_API_KEY_SID   = data.bitwarden_secret.backend_workos_api_key.id,
+      BACKEND_SQS_BASE_URL_SID = data.bitwarden_secret.backend_sqs_base_url.id,
     }
   }
 

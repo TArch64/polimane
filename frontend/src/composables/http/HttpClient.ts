@@ -1,8 +1,9 @@
+import { addBreadcrumb } from '@sentry/vue';
 import { buildUrl, type UrlParams, type UrlPath } from '@/helpers';
 import { HttpError } from './HttpError';
 import type { HttpMiddleware, HttpMiddlewareExecutor } from './HttpMiddlewareExecutor';
 
-export type HttpBody = object;
+export type HttpBody = object | string;
 
 export interface IHttpClientOptions {
   baseUrl: string;
@@ -11,6 +12,7 @@ export interface IHttpClientOptions {
 
 export interface IHttpRequestConfig {
   meta?: Record<string, unknown>;
+  responseType?: 'json' | 'text';
 }
 
 interface IRequestConfig<
@@ -90,22 +92,39 @@ export class HttpClient {
     B extends HttpBody,
   >(config: IRequestConfig<P, B>): Promise<R> {
     const body = config.body ? JSON.stringify(config.body) : undefined;
+    const responseType = config.responseType ?? 'json';
 
     const request = new Request(this.buildUrl(config), {
       method: config.method,
       body,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': responseType === 'text' ? 'text/plain' : 'application/json',
+      },
     });
 
     await this.middlewareExecutor.callBeforeRequestInterceptor(request);
-    const response = await fetch(request);
+    try {
+      const response = await fetch(request);
 
-    if (!response.ok) {
-      return this.handleError(response, config);
+      if (!response.ok) {
+        await this.handleError(response, config);
+      }
+
+      await this.middlewareExecutor.callResponseSuccessInterceptor(response);
+      return response[responseType]();
+    } catch (error) {
+      addBreadcrumb({
+        type: 'http-error',
+        level: 'error',
+        message: 'HTTP request failed',
+        data: {
+          exception: error,
+          requestBody: body,
+        },
+      });
+
+      throw error;
     }
-
-    await this.middlewareExecutor.callResponseSuccessInterceptor(response);
-    return response.json();
   }
 
   private buildUrl(config: IRequestConfig): URL {

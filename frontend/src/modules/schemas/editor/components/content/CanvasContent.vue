@@ -28,7 +28,7 @@ import { useBeadsStore, useEditorStore, usePaletteStore } from '../../stores';
 import CanvasSector from './CanvasSector.vue';
 
 const props = defineProps<{
-  stageConfig: Required<Pick<Konva.StageConfig, 'width' | 'height'>>;
+  stageConfig: Partial<Konva.StageConfig>;
 }>();
 
 const editorStore = useEditorStore();
@@ -41,13 +41,13 @@ const rootRef = useNodeRef<Konva.Group>();
 
 function calcContentY(): number {
   const contentHeight = (editorStore.schema.size.top + editorStore.schema.size.bottom) * BEAD_SIZE;
-  const stageHeight = props.stageConfig.height;
+  const stageHeight = props.stageConfig.height!;
   return (stageHeight - contentHeight) / 2;
 }
 
 function calcContentX(): number {
   const contentWidth = (editorStore.schema.size.left + editorStore.schema.size.right) * BEAD_SIZE;
-  const stageWidth = props.stageConfig.width;
+  const stageWidth = props.stageConfig.width!;
   return (stageWidth - contentWidth) / 2;
 }
 

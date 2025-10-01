@@ -1,4 +1,4 @@
-FROM golang:1.25-bookworm
+FROM golang:1.25-bookworm AS base
 
 WORKDIR /app
 
@@ -16,5 +16,14 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 COPY . /app
 
+
+FROM base AS api
+
 RUN --mount=type=cache,target=/go/pkg/mod \
-    make prod out_dir=/app/dist
+    make prod_api out_dir=/app/dist
+
+
+FROM base AS worker
+
+RUN --mount=type=cache,target=/go/pkg/mod \
+    make prod_worker out_dir=/app/dist

@@ -1,6 +1,7 @@
 <template>
   <Modal title="Налаштування Схеми" @save="save">
     <TextField
+      required
       class="form-field"
       variant="control"
       placeholder="Назва"

@@ -44,7 +44,7 @@ const model = defineModel<string>({
   required: true,
 
   set: (value) => {
-    if (isDirty.value) {
+    if (isDirty.value && inputRef.value) {
       inputRef.value.validity.customError
         ? inputRef.value.setCustomValidity('')
         : inputRef.value.reportValidity();
@@ -57,19 +57,21 @@ const slots = defineSlots<{
   append?: Slot;
 }>();
 
-const inputRef = ref<HTMLInputElement>(null!);
+const inputRef = ref<HTMLInputElement | null>(null);
 const isDirty = ref(false);
 
 const containerClasses = computed(() => `text-field__container--variant-${props.variant}`);
 
 function onBlur() {
   isDirty.value = true;
-  inputRef.value.reportValidity();
+  inputRef.value?.reportValidity();
 }
 
 function setError(message: string) {
-  inputRef.value.setCustomValidity(message);
-  inputRef.value.reportValidity();
+  if (inputRef.value) {
+    inputRef.value.setCustomValidity(message);
+    inputRef.value.reportValidity();
+  }
 }
 
 defineExpose({ setError });

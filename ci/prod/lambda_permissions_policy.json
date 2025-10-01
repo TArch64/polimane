@@ -9,6 +9,17 @@
         "s3:DeleteObject"
       ],
       "Resource": "arn:aws:s3:::polimane-prod/data/*"
+    },
+    {
+      "Sid": "SQS",
+      "Effect": "Allow",
+      "Action": [
+        "sqs:SendMessage",
+        "sqs:DeleteMessage",
+        "sqs:ReceiveMessage",
+        "sqs:GetQueueAttributes"
+      ],
+      "Resource": "arn:aws:sqs:eu-central-1:708789309252:polimane-*"
     }
   ]
 }

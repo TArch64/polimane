@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 func OptionsProvider() *Options {
@@ -17,6 +18,10 @@ func OptionsProvider() *Options {
 			config.EnablePrintRoutes = true
 		},
 	}
+}
+
+func getErrorHandlerMiddleware() fiber.Handler {
+	return recover.New()
 }
 
 func Start(app *fiber.App) error {

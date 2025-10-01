@@ -2,7 +2,6 @@
   <EditorHeader />
   <EditorCanvas class="editor__fill" />
   <EditorPalette />
-  <EditorScreenshotController />
 </template>
 
 <script lang="ts" setup>
@@ -12,12 +11,7 @@ import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
 import { destroyStore, lazyDestroyStore } from '@/helpers';
 import { useBeadsStore, useEditorStore, usePaletteStore } from './stores';
-import {
-  EditorCanvas,
-  EditorHeader,
-  EditorPalette,
-  EditorScreenshotController,
-} from './components';
+import { EditorCanvas, EditorHeader, EditorPalette } from './components';
 import { useEditorBackgroundRenderer } from './composables';
 
 defineProps<{

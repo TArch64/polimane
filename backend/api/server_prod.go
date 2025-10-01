@@ -10,6 +10,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	sentryfiber "github.com/getsentry/sentry-go/fiber"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 )
@@ -21,6 +22,13 @@ func OptionsProvider() *Options {
 			config.DisableStartupMessage = true
 		},
 	}
+}
+
+func getErrorHandlerMiddleware() fiber.Handler {
+	return sentryfiber.New(sentryfiber.Options{
+		Repanic:         true,
+		WaitForDelivery: true,
+	})
 }
 
 func runHandler(ctx context.Context, handler http.Handler, req events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) {

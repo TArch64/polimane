@@ -33,6 +33,7 @@ type Environment struct {
 		Region          string `env:"BACKEND_AWS_DEFAULT_REGION"`
 		AccessKeyID     string `env:"BACKEND_AWS_ACCESS_KEY_ID"`
 		SecretAccessKey string `env:"BACKEND_AWS_SECRET_ACCESS_KEY"`
+		SQSBaseURL      string `env:"BACKEND_SQS_BASE_URL,required=true"`
 	}
 }
 

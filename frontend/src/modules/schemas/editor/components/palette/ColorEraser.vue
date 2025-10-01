@@ -48,7 +48,8 @@ const classes = computed(() => ({
   }
 
   .color-eraser--active {
-    background-color: color-mix(in srgb, var(--button-base-color), transparent 80%);
+    outline: var(--color-primary) solid 1px;
+    outline-offset: 1px;
   }
 
   .color-eraser__icon {
