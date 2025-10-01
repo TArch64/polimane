@@ -22,6 +22,10 @@ func (r *RendererImpl) load(view string) (*template.Template, error) {
 	r.cacheMutex.Lock()
 	defer r.cacheMutex.Unlock()
 
+	if tmpl, ok := r.cache[view]; ok {
+		return tmpl, nil
+	}
+
 	name := fmt.Sprintf("templates/%s.tmpl", view)
 
 	source, err := templatesFS.ReadFile(name)
