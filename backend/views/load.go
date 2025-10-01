@@ -12,9 +12,15 @@ import (
 var templatesFS embed.FS
 
 func (r *RendererImpl) load(view string) (*template.Template, error) {
+	r.cacheMutex.RLock()
 	if tmpl, ok := r.cache[view]; ok {
+		r.cacheMutex.RUnlock()
 		return tmpl, nil
 	}
+	r.cacheMutex.RUnlock()
+
+	r.cacheMutex.Lock()
+	defer r.cacheMutex.Unlock()
 
 	name := fmt.Sprintf("templates/%s.tmpl", view)
 

@@ -1,13 +1,17 @@
 package views
 
-import "html/template"
+import (
+	"html/template"
+	"sync"
+)
 
 type Renderer interface {
 	Render(options *RenderOptions) (string, error)
 }
 
 type RendererImpl struct {
-	cache map[string]*template.Template
+	cache      map[string]*template.Template
+	cacheMutex *sync.RWMutex
 }
 
 func Provider() Renderer {
@@ -18,6 +22,7 @@ func Provider() Renderer {
 	}
 
 	return &RendererImpl{
-		cache: make(map[string]*template.Template, templatesCount),
+		cache:      make(map[string]*template.Template, templatesCount),
+		cacheMutex: &sync.RWMutex{},
 	}
 }
