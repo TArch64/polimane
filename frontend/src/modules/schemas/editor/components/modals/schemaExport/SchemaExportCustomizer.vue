@@ -49,17 +49,17 @@ const updateBackgroundColor = useDebounceFn((color: string) => {
 
 const updateColor = useDebounceFn((index: number, color: string) => {
   const colorModel = colors[index]!;
-  const updatingSchema = structuredClone(model.value);
+  const beads = structuredClone(model.value.beads);
 
-  for (const coord_ in updatingSchema.beads) {
+  for (const coord_ in beads) {
     const coord = coord_ as SchemaBeadCoord;
-    if (updatingSchema.beads[coord] === colorModel.current) {
-      updatingSchema.beads[coord] = color;
+    if (beads[coord] === colorModel.current) {
+      beads[coord] = color;
     }
   }
 
   colorModel.current = color;
-  model.value = updatingSchema;
+  model.value = { ...model.value, beads };
 }, 0);
 </script>
 
