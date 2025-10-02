@@ -37,8 +37,9 @@ export function useBeadsGrid(schemaRef: MaybeRefOrGetter<ISchema>): IBeadsGrid {
 
   const minOffsetX = computed(() => initialOffsetX + (left.value * BEAD_SIZE));
   const minOffsetY = computed(() => initialOffsetY + (top.value * BEAD_SIZE));
-  const width = computed(() => (right.value - left.value + 1) * BEAD_SIZE);
-  const height = computed(() => (bottom.value - top.value + 1) * BEAD_SIZE);
+
+  const width = computed(() => (size.value.left + size.value.right) * BEAD_SIZE);
+  const height = computed(() => (size.value.top + size.value.bottom) * BEAD_SIZE);
 
   function* grid(fromX: number, toX: number, fromY: number, toY: number): Generator<IBeadsGridItem, void, unknown> {
     for (let x = fromX; x <= toX; x++) {

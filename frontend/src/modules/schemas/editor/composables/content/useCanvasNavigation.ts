@@ -1,19 +1,16 @@
-import type { KonvaEventObject } from 'konva/lib/Node';
-import Konva from 'konva';
+import type { ICanvasZoom } from './useCanvasZoom';
 
 export interface ICanvasNavigation {
-  navigate: (kEvent: KonvaEventObject<WheelEvent, Konva.Stage>) => void;
+  navigate: (event: WheelEvent) => void;
 }
 
-export function useCanvasNavigation(): ICanvasNavigation {
-  function navigate(kEvent: KonvaEventObject<WheelEvent, Konva.Stage>): void {
-    const { evt: event, currentTarget: stage } = kEvent;
-    const currentPos = stage.position();
+export function useCanvasNavigation(zoom: ICanvasZoom): ICanvasNavigation {
+  function navigate(event: WheelEvent): void {
+    const svg = event.currentTarget as SVGSVGElement;
+    const viewBox = svg.viewBox.baseVal;
 
-    stage.position({
-      x: currentPos.x - event.deltaX,
-      y: currentPos.y - event.deltaY,
-    });
+    viewBox.x += (event.deltaX / zoom.scale);
+    viewBox.y += (event.deltaY / zoom.scale);
   }
 
   return { navigate };

@@ -6,13 +6,12 @@ type SchemaPreviewData struct {
 	Width  uint
 	Height uint
 
-	BeadSize  uint8
-	ShapeSize uint8
+	OffsetX int
+	OffsetY int
 
-	SizeTop    int
-	SizeRight  int
-	SizeBottom int
-	SizeLeft   int
+	BeadSize    uint8
+	ShapeCenter uint8
+	ShapeRadius uint8
 
 	Beads           model.SchemaBeads
 	BackgroundColor string
@@ -25,16 +24,15 @@ func NewSchemaPreviewData(schema *model.Schema) *SchemaPreviewData {
 	beads := schema.Beads.Data()
 
 	return &SchemaPreviewData{
-		Width:  (uint(size.Left) + uint(size.Right) + 2) * beadSize,
-		Height: (uint(size.Top) + uint(size.Bottom) + 2) * beadSize,
+		Width:  (uint(size.Left) + uint(size.Right)) * beadSize,
+		Height: (uint(size.Top) + uint(size.Bottom)) * beadSize,
 
-		BeadSize:  beadSize,
-		ShapeSize: beadSize - 2,
+		OffsetX: int(size.Left) * beadSize,
+		OffsetY: int(size.Top) * beadSize,
 
-		SizeTop:    -int(size.Top),
-		SizeRight:  int(size.Right),
-		SizeBottom: int(size.Bottom),
-		SizeLeft:   -int(size.Left),
+		BeadSize:    beadSize,
+		ShapeCenter: beadSize / 2,
+		ShapeRadius: (beadSize / 2) - 1,
 
 		Beads:           beads,
 		BackgroundColor: schema.BackgroundColor,

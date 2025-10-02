@@ -1,40 +1,35 @@
-import type { KonvaEventObject } from 'konva/lib/Node';
-import Konva from 'konva';
+import { reactive, type Ref, ref } from 'vue';
 
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 10;
 
-export interface ICanvasZoom {
-  zoom: (kEvent: KonvaEventObject<WheelEvent, Konva.Stage>) => void;
+export interface ICanvasZoomOptions {
+  wrapperRect: Ref<DOMRect | null>;
 }
 
-export function useCanvasZoom(): ICanvasZoom {
-  function zoom(kEvent: KonvaEventObject<WheelEvent, Konva.Stage>): void {
-    const { evt: event, currentTarget: stage } = kEvent;
+export interface ICanvasZoom {
+  scale: number;
+  zoom: (event: WheelEvent) => void;
+}
 
-    const oldScale = stage.scaleX();
-    const pointer = stage.getPointerPosition()!;
+export function useCanvasZoom(options: ICanvasZoomOptions): ICanvasZoom {
+  const scale = ref(1);
 
-    const mousePointTo = {
-      x: (pointer.x - stage.x()) / oldScale,
-      y: (pointer.y - stage.y()) / oldScale,
-    };
+  function zoom(event: WheelEvent): void {
+    const svg = event.currentTarget as SVGSVGElement;
+    const viewBox = svg.viewBox.baseVal;
+
+    const mousePointToX = (event.clientX / scale.value) + viewBox.x;
+    const mousePointToY = (event.clientY / scale.value) + viewBox.y;
 
     const scaleFactor = 1 - event.deltaY * 0.01;
-    const newScale = Math.min(Math.max(oldScale * scaleFactor, MIN_ZOOM), MAX_ZOOM);
+    scale.value = Math.min(Math.max(scale.value * scaleFactor, MIN_ZOOM), MAX_ZOOM);
 
-    stage.scale({
-      x: newScale,
-      y: newScale,
-    });
-
-    const newPos = {
-      x: pointer.x - mousePointTo.x * newScale,
-      y: pointer.y - mousePointTo.y * newScale,
-    };
-
-    stage.position(newPos);
+    viewBox.x = mousePointToX - (event.clientX / scale.value);
+    viewBox.y = mousePointToY - (event.clientY / scale.value);
+    viewBox.width = options.wrapperRect.value!.width / scale.value;
+    viewBox.height = options.wrapperRect.value!.height / scale.value;
   }
 
-  return { zoom };
+  return reactive({ zoom, scale });
 }

@@ -9,16 +9,13 @@ import (
 
 type SchemaBead struct {
 	Color   string
-	OffsetX int
-	OffsetY int
+	CenterX int
+	CenterY int
 }
 
 func beadsGrid(data *templates.SchemaPreviewData) chan *SchemaBead {
 	bufferSize := min(len(data.Beads)/20, 100)
 	ch := make(chan *SchemaBead, bufferSize)
-
-	initialOffsetX := -data.SizeLeft * int(data.BeadSize)
-	initialOffsetY := -data.SizeTop * int(data.BeadSize)
 
 	go func() {
 		defer close(ch)
@@ -29,8 +26,8 @@ func beadsGrid(data *templates.SchemaPreviewData) chan *SchemaBead {
 			y, _ := strconv.Atoi(parts[1])
 
 			ch <- &SchemaBead{
-				OffsetX: initialOffsetX + (x * int(data.BeadSize)),
-				OffsetY: initialOffsetY + (y * int(data.BeadSize)),
+				CenterX: data.OffsetX + (x * int(data.BeadSize)) + int(data.ShapeCenter),
+				CenterY: data.OffsetY + (y * int(data.BeadSize)) + int(data.ShapeCenter),
 				Color:   color,
 			}
 		}

@@ -1,82 +1,60 @@
 <template>
   <main
     ref="wrapperRef"
-    class="editor-canvas"
     @contextmenu.prevent
     @keydown="onKeydown"
   >
-    <KonvaStage
-      :config
-      ref="stageRef"
+    <svg
+      :viewBox
+      ref="canvasRef"
+      tabindex="0"
+      class="editor-canvas__svg"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMidYMin slice"
+      :width="wrapperRect.width"
+      :height="wrapperRect.height"
       @wheel="onWheel"
       @mousedown="togglePainting"
       @mouseup="togglePainting"
-      v-if="isReady"
+      v-if="wrapperRect"
     >
-      <KonvaLayer ref="layerRef" :config="layerConfig">
-        <CanvasContent :stage-config="config" />
-      </KonvaLayer>
-    </KonvaStage>
+      <CanvasContent :wrapperRect />
+    </svg>
   </main>
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue';
-import { useDebounceFn, useElementSize } from '@vueuse/core';
-import Konva from 'konva';
-import type { KonvaEventObject } from 'konva/lib/Node';
-import { provideCanvasStage, useCanvasNavigation, useCanvasZoom, useNodeRef } from '../composables';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import { useEditorStore, usePaletteStore } from '../stores';
+import { useCanvasNavigation, useCanvasZoom } from '../composables';
 import { CanvasContent } from './content';
 
 const editorStore = useEditorStore();
 const paletteStore = usePaletteStore();
 
+const canvasRef = ref<SVGSVGElement | null>(null);
 const wrapperRef = ref<HTMLElement | null>(null);
-const { width: canvasWidth, height: canvasHeight } = useElementSize(wrapperRef);
-const isReady = computed(() => !!canvasWidth.value && !!canvasHeight.value);
+const wrapperRect = ref<DOMRect | null>(null);
 
-const stageRef = useNodeRef<Konva.Stage>();
-const layerRef = useNodeRef<Konva.Layer>();
+const viewBox = computed(() => [
+  0,
+  0,
+  wrapperRect.value!.width,
+  wrapperRect.value!.height,
+].join(' '));
 
-provideCanvasStage(stageRef);
-
-const config = computed((): Partial<Konva.StageConfig> => ({
-  width: canvasWidth.value,
-  height: canvasHeight.value,
-}));
-
-watch(stageRef, async (stage) => {
-  if (stage) {
-    stage.content.querySelector<HTMLElement>('canvas')!.tabIndex = 0;
-
-    await nextTick();
-
-    layerRef.value.to({
-      opacity: 1,
-      duration: 0.3,
-      easing: Konva.Easings.EaseOut,
-    });
-
-    layerRef.value.cache();
-  }
+onMounted(async () => {
+  wrapperRect.value = wrapperRef.value!.getBoundingClientRect();
+  await nextTick();
+  canvasRef.value!.focus();
 });
 
-const layerConfig: Konva.LayerConfig = {
-  id: 'editor-layer',
-  opacity: 0,
-};
+const canvasZoom = useCanvasZoom({ wrapperRect });
+const canvasNavigation = useCanvasNavigation(canvasZoom);
 
-const canvasZoom = useCanvasZoom();
-const canvasNavigation = useCanvasNavigation();
-
-const debouncedCacheLayer = useDebounceFn(() => layerRef.value.cache(), 100);
-
-function onWheel(event: KonvaEventObject<WheelEvent, Konva.Stage>): void {
-  event.evt.preventDefault();
-  event.evt.ctrlKey ? canvasZoom.zoom(event) : canvasNavigation.navigate(event);
-  event.currentTarget.batchDraw();
-  debouncedCacheLayer();
+function onWheel(event: WheelEvent): void {
+  event.preventDefault();
+  event.ctrlKey ? canvasZoom.zoom(event) : canvasNavigation.navigate(event);
 }
 
 function onKeydown(event: KeyboardEvent) {
@@ -88,19 +66,16 @@ function onKeydown(event: KeyboardEvent) {
   event.shiftKey ? editorStore.redo() : editorStore.undo();
 }
 
-function togglePainting(event: Konva.KonvaEventObject<MouseEvent>) {
-  if (event.evt.buttons > 1) return;
-  paletteStore.setPainting(event.evt.buttons === 1);
+function togglePainting(event: MouseEvent) {
+  if (event.buttons > 1) return;
+  paletteStore.setPainting(event.buttons === 1);
 }
-
-watch(() => editorStore.schema, async () => {
-  await nextTick();
-  layerRef.value.cache();
-}, { deep: true });
 </script>
 
 <style scoped>
-.editor-canvas:deep(canvas) {
-  outline: none;
+@layer page {
+  .editor-canvas__svg {
+    outline: none !important;
+  }
 }
 </style>
