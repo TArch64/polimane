@@ -1,34 +1,35 @@
 <template>
-  <KonvaGroup
-    :config
-    ref="rootRef"
+  <g
+    class="canvas-content"
+    :transform="gTransform"
     @mousedown="paint"
+    v-on="listeners"
   >
-    <KonvaRect :config="backgroundConfig" />
+    <rect
+      opacity="0"
+      :x="gridSize.minX"
+      :y="gridSize.minY"
+      :width="gridSize.width"
+      :height="gridSize.height"
+    />
 
     <CanvasSector
       v-for="{ sector, grid } of sectors"
       :key="sector"
       :grid="grid.value"
     />
-  </KonvaGroup>
+  </g>
 </template>
 
 <script setup lang="ts">
-import Konva from 'konva';
 import { computed } from 'vue';
-import {
-  BEAD_SIZE,
-  useBeadsGrid,
-  useNodeCursor,
-  useNodeListener,
-  useNodeRef,
-} from '../../composables';
+import type { SchemaBeadCoord } from '@/models';
+import { useBeadsGrid } from '../../composables';
 import { useBeadsStore, useEditorStore, usePaletteStore } from '../../stores';
 import CanvasSector from './CanvasSector.vue';
 
 const props = defineProps<{
-  stageConfig: Partial<Konva.StageConfig>;
+  wrapperRect: DOMRect;
 }>();
 
 const editorStore = useEditorStore();
@@ -37,43 +38,31 @@ const beadsStore = useBeadsStore();
 
 const { sectors, gridSize } = useBeadsGrid(() => editorStore.schema);
 
-const rootRef = useNodeRef<Konva.Group>();
+const gTransform = computed(() => {
+  const y = (props.wrapperRect.height - gridSize.height) / 2;
+  const x = (props.wrapperRect.width - gridSize.width) / 2;
 
-function calcContentY(): number {
-  const contentHeight = (editorStore.schema.size.top + editorStore.schema.size.bottom) * BEAD_SIZE;
-  const stageHeight = props.stageConfig.height!;
-  return (stageHeight - contentHeight) / 2;
-}
+  return `translate(${x}, ${y})`;
+});
 
-function calcContentX(): number {
-  const contentWidth = (editorStore.schema.size.left + editorStore.schema.size.right) * BEAD_SIZE;
-  const stageWidth = props.stageConfig.width!;
-  return (stageWidth - contentWidth) / 2;
-}
-
-const config: Partial<Konva.GroupConfig> = {
-  y: calcContentY(),
-  x: calcContentX(),
-};
-
-const backgroundConfig: Partial<Konva.RectConfig> = computed(() => ({
-  x: gridSize.minX,
-  y: gridSize.minY,
-  width: gridSize.width,
-  height: gridSize.height,
-  fill: editorStore.schema.backgroundColor,
-}));
-
-const isActive = computed(() => paletteStore.isPainting);
-
-function paint(event: Konva.KonvaEventObject<MouseEvent>) {
-  const position = event.target.getAttr('$position');
+function paint(event: MouseEvent) {
+  const target = event.target as HTMLElement;
+  const position = target.getAttribute('coord');
   if (!position) return;
 
-  const color = event.evt.buttons === 1 ? paletteStore.activeColor : null;
-  beadsStore.paint(position, color);
+  const color = event.buttons === 1 ? paletteStore.activeColor : null;
+  beadsStore.paint(position as SchemaBeadCoord, color);
 }
 
-useNodeListener(rootRef, 'mousemove', paint, { isActive });
-useNodeCursor(rootRef, 'crosshair');
+const listeners = computed(() => {
+  return paletteStore.isPainting ? { mousemove: paint } : {};
+});
 </script>
+
+<style scoped>
+@layer page {
+  .canvas-content:hover {
+    cursor: crosshair;
+  }
+}
+</style>
