@@ -7,12 +7,12 @@
     <svg
       :viewBox
       ref="canvasRef"
+      tabindex="0"
       class="editor-canvas__svg"
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMin slice"
       :width="wrapperRect.width"
       :height="wrapperRect.height"
-      tabindex="0"
       @wheel="onWheel"
       @mousedown="togglePainting"
       @mouseup="togglePainting"
