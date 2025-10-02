@@ -38,12 +38,12 @@ const beadsStore = useBeadsStore();
 
 const { sectors, gridSize } = useBeadsGrid(() => editorStore.schema);
 
-const gTransform = computed(() => {
+const gTransform = (() => {
   const y = (props.wrapperRect.height - gridSize.height) / 2;
   const x = (props.wrapperRect.width - gridSize.width) / 2;
 
   return `translate(${x}, ${y})`;
-});
+})();
 
 function paint(event: MouseEvent) {
   const target = event.target as HTMLElement;
