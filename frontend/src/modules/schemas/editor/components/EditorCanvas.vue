@@ -6,10 +6,13 @@
   >
     <svg
       :viewBox
+      ref="canvasRef"
+      class="editor-canvas__svg"
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMin slice"
       :width="wrapperRect.width"
       :height="wrapperRect.height"
+      tabindex="0"
       @wheel="onWheel"
       @mousedown="togglePainting"
       @mouseup="togglePainting"
@@ -21,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import { useEditorStore, usePaletteStore } from '../stores';
 import { useCanvasNavigation, useCanvasZoom } from '../composables';
 import { CanvasContent } from './content';
@@ -29,6 +32,7 @@ import { CanvasContent } from './content';
 const editorStore = useEditorStore();
 const paletteStore = usePaletteStore();
 
+const canvasRef = ref<SVGSVGElement | null>(null);
 const wrapperRef = ref<HTMLElement | null>(null);
 const wrapperRect = ref<DOMRect | null>(null);
 
@@ -39,8 +43,10 @@ const viewBox = computed(() => [
   wrapperRect.value!.height,
 ].join(' '));
 
-onMounted(() => {
+onMounted(async () => {
   wrapperRect.value = wrapperRef.value!.getBoundingClientRect();
+  await nextTick();
+  canvasRef.value!.focus();
 });
 
 const canvasZoom = useCanvasZoom({ wrapperRect });
@@ -65,3 +71,11 @@ function togglePainting(event: MouseEvent) {
   paletteStore.setPainting(event.buttons === 1);
 }
 </script>
+
+<style scoped>
+@layer page {
+  .editor-canvas__svg {
+    outline: none !important;
+  }
+}
+</style>
