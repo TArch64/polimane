@@ -76,8 +76,6 @@ export function useBeadPainting(options: IBeadPaintingOptions) {
   }
 
   function onMousedown(event: MouseEvent) {
-    if (event.shiftKey) return;
-
     if (event.buttons === 1) {
       paletteStore.setPainting(true);
       paint(event, paletteStore.activeColor);
