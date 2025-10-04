@@ -7,6 +7,10 @@ import { useEditorStore } from './editorStore';
 const BEAD_EMPTY_LIGHT = 'rgba(0, 0, 0, 0.1)';
 const BEAD_EMPTY_DARK = 'rgba(255, 255, 255, 0.1)';
 
+export enum PaintEffect {
+  EXTENDED = 'extend',
+}
+
 export const useBeadsStore = defineStore('schemas/editor/beads', () => {
   const editorStore = useEditorStore();
 
@@ -48,18 +52,29 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     }
   }
 
-  function paint(coord: SchemaBeadCoord, color: string | null) {
+  function paint(coord: SchemaBeadCoord, color: string | null): PaintEffect | null {
+    if (getColor(coord) === color) {
+      return null;
+    }
+
     if (color) {
       editorStore.schema.beads[coord] = color;
 
       const extendingDirections = checkExtendingPaint(coord);
-      if (extendingDirections.length) extendSchemaSize(extendingDirections);
-      return;
+
+      if (extendingDirections.length) {
+        extendSchemaSize(extendingDirections);
+        return PaintEffect.EXTENDED;
+      }
+
+      return null;
     }
 
     if (editorStore.schema.beads[coord]) {
       delete editorStore.schema.beads[coord];
     }
+
+    return null;
   }
 
   const emptyColor = computed(() => {
@@ -67,5 +82,5 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     return contrast < 4.5 ? BEAD_EMPTY_LIGHT : BEAD_EMPTY_DARK;
   });
 
-  return { getColor, paint, emptyColor };
+  return { paint, emptyColor };
 });
