@@ -16,7 +16,10 @@
       @wheel="onWheel"
       v-if="wrapperRect"
     >
-      <CanvasContent :wrapperRect />
+      <CanvasContent
+        :canvasZoom
+        :wrapperRect
+      />
     </svg>
   </main>
 </template>

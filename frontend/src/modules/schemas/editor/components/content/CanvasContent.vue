@@ -1,38 +1,75 @@
 <template>
+  <defs>
+    <pattern
+      x="0"
+      y="0"
+      id="editorEmptyBeads"
+      patternUnits="userSpaceOnUse"
+      :width="BEAD_SIZE"
+      :height="BEAD_SIZE"
+    >
+      <circle
+        :cx="BEAD_CENTER"
+        :cy="BEAD_CENTER"
+        :r="BEAD_RADIUS"
+        :fill="beadsStore.emptyColor"
+      />
+    </pattern>
+  </defs>
+
   <g :transform class="canvas-content" v-on="listeners">
     <rect
-      opacity="0"
-      :x="gridSize.minX"
-      :y="gridSize.minY"
-      :width="gridSize.width"
-      :height="gridSize.height"
+      ref="backgroundRectRef"
+      fill="url(#editorEmptyBeads)"
+      :x="beadsGrid.size.minX"
+      :y="beadsGrid.size.minY"
+      :width="beadsGrid.size.width"
+      :height="beadsGrid.size.height"
     />
 
-    <CanvasSector
-      v-for="{ sector, grid } of sectors"
-      :key="sector"
-      :grid="grid.value"
+    <CanvasBead
+      v-for="bead of beadsGrid.beads"
+      :key="bead.coord"
+      :offset="bead.offset"
+      :coord="bead.coord"
+      :color="bead.color"
     />
   </g>
 </template>
 
 <script setup lang="ts">
-import { useBeadPainting, useBeadsGrid } from '../../composables';
-import { useEditorStore } from '../../stores';
-import CanvasSector from './CanvasSector.vue';
+import { ref } from 'vue';
+import {
+  BEAD_CENTER,
+  BEAD_RADIUS,
+  BEAD_SIZE,
+  type ICanvasZoom,
+  useBeadPainting,
+  useBeadsGrid,
+} from '../../composables';
+import { useBeadsStore, useEditorStore } from '../../stores';
+import { CanvasBead } from './CanvasBead';
 
 const props = defineProps<{
   wrapperRect: DOMRect;
+  canvasZoom: ICanvasZoom;
 }>();
 
+const backgroundRectRef = ref<SVGRectElement>(null!);
+
+const beadsStore = useBeadsStore();
 const editorStore = useEditorStore();
 
-const listeners = useBeadPainting();
-const { sectors, gridSize } = useBeadsGrid(() => editorStore.schema);
+const listeners = useBeadPainting({
+  backgroundRectRef,
+  canvasZoom: props.canvasZoom,
+});
+
+const beadsGrid = useBeadsGrid(() => editorStore.schema);
 
 const transform = (() => {
-  const y = (props.wrapperRect.height - gridSize.height) / 2;
-  const x = (props.wrapperRect.width - gridSize.width) / 2;
+  const y = (props.wrapperRect.height - beadsGrid.size.height) / 2;
+  const x = (props.wrapperRect.width - beadsGrid.size.width) / 2;
 
   return `translate(${x}, ${y})`;
 })();

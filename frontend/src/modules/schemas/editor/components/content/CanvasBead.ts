@@ -1,26 +1,19 @@
-import { type FunctionalComponent, h, type SVGAttributes } from 'vue';
+import { type FunctionalComponent, h } from 'vue';
 import type { SchemaBeadCoord } from '@/models';
-import { BEAD_SIZE, type BeadOffset } from '../../composables';
+import { BEAD_CENTER, BEAD_RADIUS, type BeadOffset } from '../../composables';
 
 export interface ICanvasBeadProps {
   offset: BeadOffset;
   coord: SchemaBeadCoord;
   color: string | null;
-  emptyColor: string;
 }
-
-const CENTER = BEAD_SIZE / 2;
-
-const BASE_BEAD_CONFIG: Partial<SVGAttributes> = {
-  r: CENTER - 1,
-};
 
 export const CanvasBead: FunctionalComponent<ICanvasBeadProps> = (props) => {
   return h('circle', {
-    ...BASE_BEAD_CONFIG,
+    r: BEAD_RADIUS,
     coord: props.coord,
-    cx: props.offset[0] + 1 + CENTER,
-    cy: props.offset[1] + 1 + CENTER,
-    fill: props.color ? props.color : props.emptyColor,
+    fill: props.color,
+    cx: props.offset[0] + BEAD_CENTER,
+    cy: props.offset[1] + BEAD_CENTER,
   });
 };

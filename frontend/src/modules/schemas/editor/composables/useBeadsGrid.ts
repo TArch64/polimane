@@ -1,23 +1,21 @@
-import { computed, type ComputedRef, type MaybeRefOrGetter, reactive, toValue } from 'vue';
-import { type ISchema, type SchemaBeadCoord, serializeSchemaBeadCoord } from '@/models';
+import { computed, type MaybeRefOrGetter, reactive, toValue } from 'vue';
+import { type ISchema, parseSchemaBeadCoord, type SchemaBeadCoord } from '@/models';
 
 export const BEAD_SIZE = 12;
+export const BEAD_CENTER = BEAD_SIZE / 2;
+export const BEAD_RADIUS = BEAD_CENTER - 1;
 
 export type BeadOffset = [x: number, y: number];
 
 export interface IBeadsGridItem {
   coord: SchemaBeadCoord;
   offset: BeadOffset;
-}
-
-export interface IBeadsSector {
-  sector: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
-  grid: ComputedRef<IBeadsGridItem[]>;
+  color: string;
 }
 
 export interface IBeadsGrid {
-  sectors: IBeadsSector[];
-  gridSize: {
+  beads: IBeadsGridItem[];
+  size: {
     minX: number;
     minY: number;
     width: number;
@@ -26,58 +24,44 @@ export interface IBeadsGrid {
 }
 
 export function useBeadsGrid(schemaRef: MaybeRefOrGetter<ISchema>): IBeadsGrid {
-  const size = computed(() => toValue(schemaRef).size);
-  const left = computed(() => -size.value.left);
-  const top = computed(() => -size.value.top);
-  const right = computed(() => size.value.right);
-  const bottom = computed(() => size.value.bottom);
+  const schema = computed(() => toValue(schemaRef));
+  const left = computed(() => schema.value.size.left);
+  const top = computed(() => schema.value.size.top);
+  const right = computed(() => schema.value.size.right);
+  const bottom = computed(() => schema.value.size.bottom);
 
-  const initialOffsetX = -left.value * BEAD_SIZE;
-  const initialOffsetY = -top.value * BEAD_SIZE;
+  const initialOffsetX = left.value * BEAD_SIZE;
+  const initialOffsetY = top.value * BEAD_SIZE;
 
-  const minOffsetX = computed(() => initialOffsetX + (left.value * BEAD_SIZE));
-  const minOffsetY = computed(() => initialOffsetY + (top.value * BEAD_SIZE));
+  const minOffsetX = computed(() => initialOffsetX - (left.value * BEAD_SIZE));
+  const minOffsetY = computed(() => initialOffsetY - (top.value * BEAD_SIZE));
 
-  const width = computed(() => (size.value.left + size.value.right) * BEAD_SIZE);
-  const height = computed(() => (size.value.top + size.value.bottom) * BEAD_SIZE);
+  const width = computed(() => (left.value + right.value) * BEAD_SIZE);
+  const height = computed(() => (top.value + bottom.value) * BEAD_SIZE);
 
-  function* grid(fromX: number, toX: number, fromY: number, toY: number): Generator<IBeadsGridItem, void, unknown> {
-    for (let x = fromX; x <= toX; x++) {
-      for (let y = fromY; y <= toY; y++) {
-        const coord = serializeSchemaBeadCoord(x, y);
-        const offsetX = initialOffsetX + (x * BEAD_SIZE);
-        const offsetY = initialOffsetY + (y * BEAD_SIZE);
+  const beads = computed(() => (
+    Object.entries(schema.value.beads).map(([coord_, color]): IBeadsGridItem => {
+      const coord = coord_ as SchemaBeadCoord;
+      const [x, y] = parseSchemaBeadCoord(coord);
+      const offsetX = initialOffsetX + (x * BEAD_SIZE);
+      const offsetY = initialOffsetY + (y * BEAD_SIZE);
 
-        yield { coord, offset: [offsetX, offsetY] };
-      }
-    }
-  }
+      return {
+        coord,
+        offset: [offsetX, offsetY],
+        color,
+      };
+    })
+  ));
 
-  return {
-    sectors: [
-      {
-        sector: 'topLeft',
-        grid: computed(() => Array.from(grid(left.value, 0, top.value, 0))),
-      },
-      {
-        sector: 'topRight',
-        grid: computed(() => Array.from(grid(1, right.value, top.value, 0))),
-      },
-      {
-        sector: 'bottomLeft',
-        grid: computed(() => Array.from(grid(left.value, 0, 1, bottom.value))),
-      },
-      {
-        sector: 'bottomRight',
-        grid: computed(() => Array.from(grid(1, right.value, 1, bottom.value))),
-      },
-    ],
+  return reactive({
+    beads,
 
-    gridSize: reactive({
+    size: {
       minX: minOffsetX,
       minY: minOffsetY,
       width,
       height,
-    }),
-  };
+    },
+  });
 }

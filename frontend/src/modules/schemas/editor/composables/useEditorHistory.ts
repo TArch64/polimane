@@ -66,7 +66,7 @@ export function useEditorHistory(schema: Ref<ISchema>): IEditorHistory {
 
     stopWatcher();
     cursor.value += shift;
-    const compressed = history.value[cursor.value];
+    const compressed = history.value[cursor.value]!;
 
     schema.value = {
       ...schema.value,
