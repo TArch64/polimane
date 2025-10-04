@@ -14,39 +14,43 @@
       :width="wrapperRect.width"
       :height="wrapperRect.height"
       @wheel="onWheel"
-      @mousedown="togglePainting"
-      @mouseup="togglePainting"
       v-if="wrapperRect"
     >
-      <CanvasContent :wrapperRect />
+      <CanvasContent
+        :canvasZoom
+        :wrapperRect
+      />
     </svg>
   </main>
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue';
-import { useEditorStore, usePaletteStore } from '../stores';
+import { nextTick, onMounted, ref } from 'vue';
+import { useEditorStore } from '../stores';
 import { useCanvasNavigation, useCanvasZoom } from '../composables';
 import { CanvasContent } from './content';
 
 const editorStore = useEditorStore();
-const paletteStore = usePaletteStore();
 
 const canvasRef = ref<SVGSVGElement | null>(null);
+
 const wrapperRef = ref<HTMLElement | null>(null);
 const wrapperRect = ref<DOMRect | null>(null);
 
-const viewBox = computed(() => [
-  0,
-  0,
-  wrapperRect.value!.width,
-  wrapperRect.value!.height,
-].join(' '));
+const viewBox = ref('');
 
 onMounted(async () => {
   wrapperRect.value = wrapperRef.value!.getBoundingClientRect();
+
+  viewBox.value = [
+    0,
+    0,
+    wrapperRect.value.width,
+    wrapperRect.value.height,
+  ].join(' ');
+
   await nextTick();
-  canvasRef.value!.focus();
+  canvasRef.value?.focus();
 });
 
 const canvasZoom = useCanvasZoom({ wrapperRect });
@@ -64,11 +68,6 @@ function onKeydown(event: KeyboardEvent) {
 
   event.preventDefault();
   event.shiftKey ? editorStore.redo() : editorStore.undo();
-}
-
-function togglePainting(event: MouseEvent) {
-  if (event.buttons > 1) return;
-  paletteStore.setPainting(event.buttons === 1);
 }
 </script>
 

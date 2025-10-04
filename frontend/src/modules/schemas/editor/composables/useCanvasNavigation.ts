@@ -4,13 +4,13 @@ export interface ICanvasNavigation {
   navigate: (event: WheelEvent) => void;
 }
 
-export function useCanvasNavigation(zoom: ICanvasZoom): ICanvasNavigation {
+export function useCanvasNavigation(canvasZoom: ICanvasZoom): ICanvasNavigation {
   function navigate(event: WheelEvent): void {
     const svg = event.currentTarget as SVGSVGElement;
     const viewBox = svg.viewBox.baseVal;
 
-    viewBox.x += (event.deltaX / zoom.scale);
-    viewBox.y += (event.deltaY / zoom.scale);
+    viewBox.x += (event.deltaX / canvasZoom.scale);
+    viewBox.y += (event.deltaY / canvasZoom.scale);
   }
 
   return { navigate };
