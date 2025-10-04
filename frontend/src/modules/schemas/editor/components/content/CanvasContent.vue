@@ -1,10 +1,5 @@
 <template>
-  <g
-    class="canvas-content"
-    :transform="gTransform"
-    @mousedown="paint"
-    v-on="listeners"
-  >
+  <g :transform class="canvas-content" v-on="listeners">
     <rect
       opacity="0"
       :x="gridSize.minX"
@@ -22,10 +17,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { SchemaBeadCoord } from '@/models';
-import { useBeadsGrid } from '../../composables';
-import { useBeadsStore, useEditorStore, usePaletteStore } from '../../stores';
+import { useBeadPainting, useBeadsGrid } from '../../composables';
+import { useEditorStore } from '../../stores';
 import CanvasSector from './CanvasSector.vue';
 
 const props = defineProps<{
@@ -33,30 +26,16 @@ const props = defineProps<{
 }>();
 
 const editorStore = useEditorStore();
-const paletteStore = usePaletteStore();
-const beadsStore = useBeadsStore();
 
+const listeners = useBeadPainting();
 const { sectors, gridSize } = useBeadsGrid(() => editorStore.schema);
 
-const gTransform = (() => {
+const transform = (() => {
   const y = (props.wrapperRect.height - gridSize.height) / 2;
   const x = (props.wrapperRect.width - gridSize.width) / 2;
 
   return `translate(${x}, ${y})`;
 })();
-
-function paint(event: MouseEvent) {
-  const target = event.target as HTMLElement;
-  const position = target.getAttribute('coord');
-  if (!position) return;
-
-  const color = event.buttons === 1 ? paletteStore.activeColor : null;
-  beadsStore.paint(position as SchemaBeadCoord, color);
-}
-
-const listeners = computed(() => {
-  return paletteStore.isPainting ? { mousemove: paint } : {};
-});
 </script>
 
 <style scoped>
