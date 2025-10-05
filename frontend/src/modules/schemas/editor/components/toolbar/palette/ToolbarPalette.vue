@@ -1,25 +1,21 @@
 <template>
-  <Card as="section" class="palette">
-    <ColorList :size="store.palette.length + 1">
-      <ColorItem
-        v-for="(_, index) of store.palette"
-        :key="index"
-        :active="activeColorIndex === index"
-        @update:active="activeColorIndex = index"
-        v-model="store.palette[index]"
-      />
+  <section class="color-list">
+    <ColorItem
+      v-for="(_, index) of store.palette"
+      :key="index"
+      :active="activeColorIndex === index"
+      @update:active="activeColorIndex = index"
+      v-model="store.palette[index]!"
+    />
 
-      <ColorEraser />
-    </ColorList>
-  </Card>
+    <ColorEraser />
+  </section>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useEventListener } from '@vueuse/core';
 import { type ActiveToolId, usePaletteStore } from '@/modules/schemas/editor/stores';
-import { Card } from '@/components/card';
-import ColorList from './ColorList.vue';
 import ColorEraser from './ColorEraser.vue';
 import ColorItem from './ColorItem.vue';
 
@@ -42,15 +38,10 @@ useEventListener('keydown', (event) => {
 
 <style scoped>
 @layer page {
-  .palette {
-    position: fixed;
-    top: 8px;
-    right: 8px;
-    padding: 8px;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    z-index: 10;
+  .color-list {
+    display: grid;
+    gap: 6px;
+    grid-template-columns: repeat(2, var(--color-button-size));
     --color-button-size: 20px;
   }
 }

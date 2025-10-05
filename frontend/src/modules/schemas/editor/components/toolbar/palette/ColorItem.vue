@@ -60,6 +60,8 @@ function onDblClick(): void {
   .color-list__item {
     padding: 0;
     border: var(--divider);
+    width: var(--color-button-size);
+    height: var(--color-button-size);
     transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
     will-change: background-color, border-color;
 
