@@ -1,7 +1,7 @@
 import { computed, ref, type Ref } from 'vue';
 import { type IPoint, type SchemaBeadCoord, serializeSchemaBeadCoord } from '@/models';
 import { createAnimatedFrame } from '@/helpers';
-import { PaintEffect, useBeadsStore, useEditorStore, usePaletteStore } from '../stores';
+import { PaintEffect, useBeadsStore, useEditorStore, useToolsStore } from '../stores';
 import { BEAD_CENTER, BEAD_RADIUS, BEAD_SIZE } from './useBeadsGrid';
 import type { ICanvasZoom } from './useCanvasZoom';
 
@@ -17,7 +17,7 @@ export interface BeadPainting {
 
 export function useBeadPainting(options: IBeadPaintingOptions) {
   const editorStore = useEditorStore();
-  const paletteStore = usePaletteStore();
+  const paletteStore = useToolsStore();
   const beadsStore = useBeadsStore();
 
   const isPainting = ref(false);

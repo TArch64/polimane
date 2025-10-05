@@ -51,8 +51,8 @@ function onDblClick(): void {
 <style scoped>
 @layer page {
   .color-palette__spot {
-    width: var(--color-button-size);
-    height: var(--color-button-size);
+    width: var(--toolbar-button-size);
+    height: var(--toolbar-button-size);
   }
 
   .color-palette__spot-picker {
