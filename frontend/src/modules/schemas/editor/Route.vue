@@ -47,14 +47,16 @@ useEventListener(window, 'beforeunload', (event) => {
 <style scoped>
 @property --editor-background-color {
   syntax: '<color>';
-  inherits: false;
+  inherits: true;
   initial-value: #F8F8F8;
 }
 
 @layer page {
   :global(.app--schema-editor) {
-    background-color: var(--editor-background-color);
     overflow: hidden;
+    background-color: var(--editor-background-color);
+    transition: background-color 0.15s ease-out;
+    will-change: background-color;
   }
 
   .editor__fill {
