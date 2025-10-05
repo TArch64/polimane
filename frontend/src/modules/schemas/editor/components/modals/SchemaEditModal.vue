@@ -17,9 +17,9 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
+import { useEditorStore } from '@editor/stores';
 import { Modal, useActiveModal } from '@/components/modal';
 import { ColorPicker, TextField } from '@/components/form';
-import { useEditorStore } from '@/modules/schemas/editor/stores';
 
 const editorStore = useEditorStore();
 const modal = useActiveModal();

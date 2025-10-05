@@ -13,6 +13,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': Bun.fileURLToPath(new URL('./src', import.meta.url)),
+      '@editor': Bun.fileURLToPath(new URL('./src/modules/schemas/editor', import.meta.url)),
     },
   },
 

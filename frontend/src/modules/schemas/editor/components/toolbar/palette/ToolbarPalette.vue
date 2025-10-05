@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useEventListener } from '@vueuse/core';
-import { type ActiveToolId, usePaletteStore } from '@/modules/schemas/editor/stores';
+import { type ActiveToolId, usePaletteStore } from '@editor/stores';
 import ColorEraser from './ColorEraser.vue';
 import ColorItem from './ColorItem.vue';
 

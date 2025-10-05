@@ -27,8 +27,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { usePaletteStore } from '@editor/stores';
 import { Button } from '@/components/button';
-import { usePaletteStore } from '@/modules/schemas/editor/stores';
 
 const store = usePaletteStore();
 const activate = () => store.activateTool('eraser');
