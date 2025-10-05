@@ -1,4 +1,4 @@
-import { computed, type Ref } from 'vue';
+import { computed, ref, type Ref } from 'vue';
 import { type IPoint, type SchemaBeadCoord, serializeSchemaBeadCoord } from '@/models';
 import { createAnimatedFrame } from '@/helpers';
 import { PaintEffect, useBeadsStore, useEditorStore, usePaletteStore } from '../stores';
@@ -20,6 +20,7 @@ export function useBeadPainting(options: IBeadPaintingOptions) {
   const paletteStore = usePaletteStore();
   const beadsStore = useBeadsStore();
 
+  const isPainting = ref(false);
   let backgroundRect: DOMRect | null = null;
 
   function inCircle(mouse: IPoint, circle: IPoint, radius: number) {
@@ -75,13 +76,13 @@ export function useBeadPainting(options: IBeadPaintingOptions) {
   });
 
   function onMouseup() {
-    paletteStore.setPainting(false);
+    isPainting.value = false;
     backgroundRect = null;
   }
 
   function onMousedown(event: MouseEvent) {
     if (event.buttons === 1) {
-      paletteStore.setPainting(true);
+      isPainting.value = true;
       paint(event, paletteStore.activeColor);
       addEventListener('mouseup', onMouseup, { once: true });
     }
@@ -92,12 +93,12 @@ export function useBeadPainting(options: IBeadPaintingOptions) {
   }
 
   function onMousemove(event: MouseEvent) {
-    if (event.shiftKey || !paletteStore.isPainting) return;
+    if (event.shiftKey || !isPainting.value) return;
     paint(event, paletteStore.activeColor);
   }
 
   return computed((): BeadPainting => ({
     mousedown: onMousedown,
-    ...(paletteStore.isPainting ? { mousemove: onMousemove } : {}),
+    ...(isPainting.value ? { mousemove: onMousemove } : {}),
   }));
 }
