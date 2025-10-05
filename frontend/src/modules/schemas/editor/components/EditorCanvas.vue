@@ -5,7 +5,6 @@
     @keydown="onKeydown"
   >
     <svg
-      :viewBox
       ref="canvasRef"
       tabindex="0"
       class="editor-canvas__svg"
@@ -13,6 +12,7 @@
       preserveAspectRatio="xMidYMin slice"
       :width="wrapperRect.width"
       :height="wrapperRect.height"
+      :viewBox="viewBoxAttr"
       @wheel="onWheel"
       v-if="wrapperRect"
     >
@@ -25,9 +25,10 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, reactive, ref } from 'vue';
 import { useEditorStore } from '../stores';
 import { useCanvasNavigation, useCanvasZoom } from '../composables';
+import type { IViewBox } from '../types';
 import { CanvasContent } from './content';
 
 const editorStore = useEditorStore();
@@ -37,24 +38,29 @@ const canvasRef = ref<SVGSVGElement | null>(null);
 const wrapperRef = ref<HTMLElement | null>(null);
 const wrapperRect = ref<DOMRect | null>(null);
 
-const viewBox = ref('');
+const viewBox = reactive<IViewBox>({
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+});
+
+const viewBoxAttr = computed(() => {
+  const { height, width, x, y } = viewBox;
+  return `${x} ${y} ${width} ${height}`;
+});
 
 onMounted(async () => {
   wrapperRect.value = wrapperRef.value!.getBoundingClientRect();
-
-  viewBox.value = [
-    0,
-    0,
-    wrapperRect.value.width,
-    wrapperRect.value.height,
-  ].join(' ');
+  viewBox.width = wrapperRect.value.width;
+  viewBox.height = wrapperRect.value.height;
 
   await nextTick();
   canvasRef.value?.focus();
 });
 
-const canvasZoom = useCanvasZoom({ wrapperRect });
-const canvasNavigation = useCanvasNavigation(canvasZoom);
+const canvasZoom = useCanvasZoom({ wrapperRect, viewBox });
+const canvasNavigation = useCanvasNavigation({ canvasZoom, viewBox });
 
 function onWheel(event: WheelEvent): void {
   event.preventDefault();
