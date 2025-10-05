@@ -1,93 +1,57 @@
 <template>
-  <Button
-    size="none"
-    class="color-list__item"
-    :class="classes"
-    @click.stop="onClick"
-    @dblclick.stop="onDblClick"
-  >
-    <input
-      ref="pickerRef"
-      type="color"
-      class="color-list__item-picker"
-      v-model="model"
-    >
+  <Button size="none" class="color-item" :class="classes">
+    <slot />
   </Button>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, type Slot } from 'vue';
 import { Button } from '@/components/button';
 
-const isActive = defineModel<boolean>('active', { required: true });
+const props = defineProps<{
+  color: string;
+  active: boolean;
+}>();
 
-const model = defineModel<string>({
-  required: true,
-
-  set: (value) => {
-    isActive.value = true;
-    return value;
-  },
-});
-
-const pickerRef = ref<HTMLInputElement>(null!);
+defineSlots<{
+  default: Slot;
+}>();
 
 const classes = computed(() => {
-  const modifier = model.value ? 'value' : 'empty';
+  const modifier = props.color ? 'value' : 'empty';
 
   return [
-    { 'color-list__item--active': isActive.value },
-    `color-list__item--${modifier}`,
+    `color-item--${modifier}`,
+    { 'color-item--active': props.active },
   ];
 });
-
-function onClick(): void {
-  if (!model.value) {
-    pickerRef.value.click();
-    return;
-  }
-
-  isActive.value = true;
-}
-
-function onDblClick(): void {
-  if (model.value) pickerRef.value.click();
-}
 </script>
 
 <style scoped>
 @layer page {
-  .color-list__item {
+  .color-item {
     padding: 0;
     border: var(--divider);
-    width: var(--color-button-size);
-    height: var(--color-button-size);
     transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
     will-change: background-color, border-color;
 
-    &:hover:not(.color-list__item--active) {
+    &:hover:not(.color-item--active) {
       border-color: var(--color-hover-divider);
     }
   }
 
-  .color-list__item--active {
-    outline: solid 1px v-bind("model");
+  .color-item--active {
+    outline: solid 1px v-bind("color");
     outline-offset: 1px;
   }
 
-  .color-list__item--value {
-    background-color: v-bind("model");
+  .color-item--value {
+    background-color: v-bind("color");
   }
 
-  .color-list__item--empty {
+  .color-item--empty {
     background-image: url("@/assets/emptyColor.svg");
-    background-size: cover;
-  }
-
-  .color-list__item-picker {
-    visibility: hidden;
-    width: 100%;
-    height: 100%;
+    background-size: 100% 100%;
   }
 }
 </style>

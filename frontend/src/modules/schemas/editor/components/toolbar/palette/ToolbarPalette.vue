@@ -1,30 +1,45 @@
 <template>
-  <section class="color-list">
-    <ColorItem
-      v-for="(_, index) of store.palette"
-      :key="index"
-      :active="activeColorIndex === index"
-      @update:active="activeColorIndex = index"
-      v-model="store.palette[index]!"
-    />
+  <ColorItem
+    active
+    :color="store.activeColor"
+    class="toolbar-palette"
+    @click="open"
+  />
 
-    <ColorEraser />
-  </section>
+  <Teleport to="body">
+    <FadeTransition>
+      <ColorPalette
+        popover="auto"
+        ref="paletteRef"
+        class="toolbar-palette__floating"
+        @toggle="isOpened = $event.newState === 'open'"
+        v-if="isOpened"
+      />
+    </FadeTransition>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { usePaletteStore } from '@editor/stores';
 import { useEventListener } from '@vueuse/core';
-import { type ActiveToolId, usePaletteStore } from '@editor/stores';
-import ColorEraser from './ColorEraser.vue';
+import { nextTick, ref } from 'vue';
+import { useDomRef } from '@/composables';
+import { FadeTransition } from '@/components/transition';
 import ColorItem from './ColorItem.vue';
+import ColorPalette from './ColorPalette.vue';
 
 const store = usePaletteStore();
 
-const activeColorIndex = computed({
-  get: (): number => store.activeToolId === 'eraser' ? -1 : store.activeToolId,
-  set: (index: ActiveToolId) => store.activateTool(index),
-});
+const isOpened = ref(false);
+const paletteRef = useDomRef<HTMLElement>();
+
+async function open(): Promise<void> {
+  if (!isOpened.value) {
+    isOpened.value = true;
+    await nextTick();
+    paletteRef.value.showPopover();
+  }
+}
 
 useEventListener('keydown', (event) => {
   if (!event.metaKey) return;
@@ -32,17 +47,23 @@ useEventListener('keydown', (event) => {
 
   event.preventDefault();
   const index = Number(event.code.replace('Digit', ''));
-  activeColorIndex.value = index === 0 ? 'eraser' : index - 1;
+  store.activateTool(index === 0 ? 'eraser' : index - 1);
 });
 </script>
 
 <style scoped>
 @layer page {
-  .color-list {
-    display: grid;
-    gap: 6px;
-    grid-template-columns: repeat(2, var(--color-button-size));
-    --color-button-size: 20px;
+  .toolbar-palette {
+    width: 40px;
+    height: 23px;
+    border-radius: 4px;
+    anchor-name: --toolbar-palette;
+  }
+
+  .toolbar-palette__floating {
+    position-anchor: --toolbar-palette;
+    position-area: right span-y-end;
+    margin: -16px 0 0 16px;
   }
 }
 </style>
