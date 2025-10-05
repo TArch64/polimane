@@ -20,18 +20,18 @@
 
     <Button
       icon
-      :disabled="!editorStore.canUndo"
+      :disabled="!historyStore.canUndo"
       title="Відмінити зміни"
-      @click="editorStore.undo"
+      @click="historyStore.undo"
     >
       <CornerUpLeftIcon />
     </Button>
 
     <Button
       icon
-      :disabled="!editorStore.canRedo"
+      :disabled="!historyStore.canRedo"
       title="Повернути назад зміни"
-      @click="editorStore.redo"
+      @click="historyStore.redo"
     >
       <CornerUpRightIcon />
     </Button>
@@ -92,10 +92,11 @@ import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
-import { useEditorStore } from '../stores';
+import { useEditorStore, useHistoryStore } from '../stores';
 import { SchemaEditModal, SchemaExportModal } from './modals';
 
 const router = useRouter();
+const historyStore = useHistoryStore();
 const editorStore = useEditorStore();
 
 const renameModal = useModal(SchemaEditModal);

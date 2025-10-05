@@ -26,12 +26,12 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, reactive, ref } from 'vue';
-import { useEditorStore } from '../stores';
+import { useHistoryStore } from '../stores';
 import { useCanvasNavigation, useCanvasZoom } from '../composables';
 import type { IViewBox } from '../types';
 import { CanvasContent } from './content';
 
-const editorStore = useEditorStore();
+const historyStore = useHistoryStore();
 
 const canvasRef = ref<SVGSVGElement | null>(null);
 
@@ -73,7 +73,7 @@ function onKeydown(event: KeyboardEvent) {
   }
 
   event.preventDefault();
-  event.shiftKey ? editorStore.redo() : editorStore.undo();
+  event.shiftKey ? historyStore.redo() : historyStore.undo();
 }
 </script>
 

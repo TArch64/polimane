@@ -10,7 +10,7 @@ import './colorLib';
 import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
 import { destroyStore, lazyDestroyStore } from '@/helpers';
-import { useBeadsStore, useEditorStore, usePaletteStore } from './stores';
+import { useBeadsStore, useEditorStore, useHistoryStore, usePaletteStore } from './stores';
 import { EditorCanvas, EditorHeader, EditorToolbar } from './components';
 import { useEditorBackgroundRenderer } from './composables';
 
@@ -26,6 +26,7 @@ defineOptions({
 
   beforeRouteLeave: async (_, __, next) => {
     lazyDestroyStore(useEditorStore);
+    lazyDestroyStore(useHistoryStore);
     lazyDestroyStore(usePaletteStore);
     lazyDestroyStore(useBeadsStore);
     next();
@@ -44,6 +45,12 @@ useEventListener(window, 'beforeunload', (event) => {
 </script>
 
 <style scoped>
+@property --editor-background-color {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #F8F8F8;
+}
+
 @layer page {
   :global(.app--schema-editor) {
     background-color: var(--editor-background-color);

@@ -1,5 +1,4 @@
 export * from './useEditorSaveDispatcher';
-export * from './useEditorHistory';
 export * from './useBeadsGrid';
 export * from './useEditorBackgroundRenderer';
 export * from './useCanvasZoom';
