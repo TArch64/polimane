@@ -8,10 +8,12 @@
 import { computed, type Slot } from 'vue';
 import { Button } from '@/components/button';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   color: string;
-  active: boolean;
-}>();
+  active?: boolean;
+}>(), {
+  active: false,
+});
 
 defineSlots<{
   default: Slot;

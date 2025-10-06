@@ -13,6 +13,7 @@
         :cy="BEAD_CENTER"
         :r="BEAD_RADIUS"
         :fill="beadsStore.emptyColor"
+        class="canvas-content__background-bead"
       />
     </pattern>
   </defs>
@@ -79,6 +80,10 @@ const transform = (() => {
 @layer page {
   .canvas-content:hover {
     cursor: crosshair;
+  }
+
+  .canvas-content__background-bead {
+    transition: fill 0.15s ease-out;
   }
 }
 </style>

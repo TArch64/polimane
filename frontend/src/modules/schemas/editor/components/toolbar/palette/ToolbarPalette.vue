@@ -1,6 +1,6 @@
 <template>
   <ColorItem
-    :active="isActive"
+    v-bind="attrs"
     :color="store.palette[lastActiveColorId]!"
     class="toolbar-palette"
     @click="open"
@@ -22,17 +22,17 @@
 
 <script setup lang="ts">
 import { useToolsStore } from '@editor/stores';
-import { computed, nextTick, ref } from 'vue';
+import { computed, nextTick, ref, useAttrs } from 'vue';
 import { type HotKeyDef, useHotKeys } from '@editor/composables';
 import { useDomRef } from '@/composables';
 import { FadeTransition } from '@/components/transition';
 import ColorItem from './ColorItem.vue';
 import ColorPalette from './ColorPalette.vue';
 
+const attrs = useAttrs();
 const store = useToolsStore();
 
 const lastActiveColorId = ref(store.activeColorId);
-const isActive = computed(() => store.activeColorId !== -1);
 
 const activeColor = computed({
   get: () => lastActiveColorId.value,
@@ -72,7 +72,7 @@ useHotKeys(
   .toolbar-palette__floating {
     position-anchor: --toolbar-palette;
     position-area: right span-y-end;
-    margin: -16px 0 0 16px;
+    margin: -16px 0 0 8px;
   }
 }
 </style>
