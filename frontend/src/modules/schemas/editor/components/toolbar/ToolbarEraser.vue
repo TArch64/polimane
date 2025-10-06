@@ -20,6 +20,7 @@
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
+        transform="translate(0, 1)"
         d="M12 2.5C8.5 6.5 6.5 9 6.5 12C6.5 15.5 9 18 12 18C15 18 17.5 15.5 17.5 12C17.5 9 15.5 6.5 12 2.5Z"
       />
 
@@ -58,8 +59,9 @@ useHotKeys({
 <style scoped>
 @layer page {
   .color-eraser {
-    padding: 2px;
     aspect-ratio: 1;
+    border: var(--divider);
+    padding: 1px;
     --button-background: color-mix(in srgb, var(--button-base-color), transparent 90%);
   }
 
