@@ -22,7 +22,7 @@ const store = useToolsStore();
 const activate = () => store.activateTool('eraser');
 
 const classes = computed(() => ({
-  'color-eraser--active': store.activeToolId === 'eraser',
+  'color-eraser--active': store.isEraser,
 }));
 
 useHotKeys({

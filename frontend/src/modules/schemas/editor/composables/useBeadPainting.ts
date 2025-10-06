@@ -17,7 +17,7 @@ export interface BeadPainting {
 
 export function useBeadPainting(options: IBeadPaintingOptions) {
   const editorStore = useEditorStore();
-  const paletteStore = useToolsStore();
+  const toolsStore = useToolsStore();
   const beadsStore = useBeadsStore();
 
   const isPainting = ref(false);
@@ -83,7 +83,7 @@ export function useBeadPainting(options: IBeadPaintingOptions) {
   function onMousedown(event: MouseEvent) {
     if (event.buttons === 1) {
       isPainting.value = true;
-      paint(event, paletteStore.activeColor);
+      paint(event, toolsStore.isEraser ? null : toolsStore.activeColor);
       addEventListener('mouseup', onMouseup, { once: true });
     }
 
@@ -94,7 +94,7 @@ export function useBeadPainting(options: IBeadPaintingOptions) {
 
   function onMousemove(event: MouseEvent) {
     if (event.shiftKey || !isPainting.value) return;
-    paint(event, paletteStore.activeColor);
+    paint(event, toolsStore.isEraser ? null : toolsStore.activeColor);
   }
 
   return computed((): BeadPainting => ({

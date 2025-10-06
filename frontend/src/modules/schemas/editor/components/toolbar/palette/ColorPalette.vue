@@ -1,10 +1,14 @@
 <template>
-  <Card :as="ToolbarGrid" class="color-palette">
+  <Card
+    :as="ToolbarGrid"
+    ref="rootRef"
+    class="color-palette"
+  >
     <ColorPaletteSpot
-      v-for="(_, index) of store.palette"
+      v-for="(color, index) of store.palette"
       :key="index"
-      :active="activeColorIndex === index"
-      @update:active="activeColorIndex = index"
+      :active="color === store.activeColor"
+      @update:active="store.activateColor(color)"
       v-model="store.palette[index]!"
     />
   </Card>
@@ -12,15 +16,20 @@
 
 <script setup lang="ts">
 import { useToolsStore } from '@editor/stores';
+import { onClickOutside } from '@vueuse/core';
 import { Card } from '@/components/card';
+import { useDomRef } from '@/composables';
 import ToolbarGrid from '../ToolbarGrid.vue';
 import ColorPaletteSpot from './ColorPaletteSpot.vue';
 
-const activeColorIndex = defineModel<number>({
-  required: true,
-});
+const emit = defineEmits<{
+  close: [];
+}>();
 
+const rootRef = useDomRef<HTMLElement>();
 const store = useToolsStore();
+
+onClickOutside(rootRef, () => emit('close'));
 </script>
 
 <style scoped>

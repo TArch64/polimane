@@ -1,7 +1,7 @@
 <template>
   <ColorItem
     v-bind="attrs"
-    :color="store.palette[lastActiveColorId]!"
+    :color="store.activeColor"
     class="toolbar-palette"
     @click="open"
   />
@@ -9,11 +9,10 @@
   <Teleport to="body">
     <FadeTransition>
       <ColorPalette
-        popover="auto"
+        popover="manual"
         ref="paletteRef"
         class="toolbar-palette__floating"
-        @toggle="isOpened = $event.newState === 'open'"
-        v-model="activeColor"
+        @close="isOpened = false"
         v-if="isOpened"
       />
     </FadeTransition>
@@ -22,7 +21,7 @@
 
 <script setup lang="ts">
 import { useToolsStore } from '@editor/stores';
-import { computed, nextTick, ref, useAttrs } from 'vue';
+import { nextTick, ref, useAttrs } from 'vue';
 import { type HotKeyDef, useHotKeys } from '@editor/composables';
 import { useDomRef } from '@/composables';
 import { FadeTransition } from '@/components/transition';
@@ -32,33 +31,21 @@ import ColorPalette from './ColorPalette.vue';
 const attrs = useAttrs();
 const store = useToolsStore();
 
-const lastActiveColorId = ref(store.activeColorId);
-
-const activeColor = computed({
-  get: () => lastActiveColorId.value,
-
-  set: (index: number) => {
-    store.activateTool(index);
-    lastActiveColorId.value = index;
-  },
-});
-
 const isOpened = ref(false);
 const paletteRef = useDomRef<HTMLElement>();
 
 async function open(): Promise<void> {
   if (!isOpened.value) {
     isOpened.value = true;
-    store.activateTool(lastActiveColorId.value);
     await nextTick();
     paletteRef.value.showPopover();
   }
 }
 
 useHotKeys(
-  store.palette.slice(0, 9).map((_, index): HotKeyDef => [
+  store.palette.slice(0, 9).map((color, index): HotKeyDef => [
     `Meta_${index + 1}`,
-    () => activeColor.value = index,
+    () => store.activateColor(color),
   ]),
 );
 </script>
