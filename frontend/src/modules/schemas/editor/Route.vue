@@ -57,6 +57,7 @@ useEventListener(window, 'beforeunload', (event) => {
     background-color: var(--editor-background-color);
     transition: background-color 0.15s ease-out;
     will-change: background-color;
+    --editor-ui-padding: 12px;
   }
 
   .editor__fill {

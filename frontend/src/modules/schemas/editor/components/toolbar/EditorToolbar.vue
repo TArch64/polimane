@@ -1,5 +1,5 @@
 <template>
-  <Card as="aside" class="editor-toolbar">
+  <Card as="aside" ref="toolbarRef" class="editor-toolbar">
     <ToolbarEraser />
     <ToolbarTool />
 
@@ -15,12 +15,23 @@
 
 <script setup lang="ts">
 import { useToolsStore } from '@editor/stores';
+import { useElementBounding } from '@vueuse/core';
+import { computed } from 'vue';
 import { Card } from '@/components/card';
+import { useDomRef } from '@/composables';
 import { ToolbarPalette } from './palette';
 import { ToolbarEraser, ToolbarTool } from './tools';
 import ToolbarBackgroundColor from './ToolbarBackgroundColor.vue';
 
 const store = useToolsStore();
+
+const toolbarRef = useDomRef<HTMLElement>();
+
+const toolbarSize = useElementBounding(toolbarRef, {
+  windowScroll: false,
+});
+
+const toolbarTopShift = computed(() => `${toolbarSize.height.value / 2}px`);
 </script>
 
 <style scoped>
@@ -33,8 +44,9 @@ const store = useToolsStore();
 @layer page {
   .editor-toolbar {
     position: fixed;
-    top: 62px;
-    left: 8px;
+    /* can't use translate since it breaks popover position */
+    top: calc(50% - v-bind("toolbarTopShift"));
+    left: var(--editor-ui-padding);
     z-index: 10;
     display: flex;
     flex-direction: column;

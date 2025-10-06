@@ -147,8 +147,8 @@ useProgressBar(deleteSchema);
 @layer page {
   .editor-header {
     position: fixed;
-    top: 8px;
-    left: 8px;
+    top: var(--editor-ui-padding);
+    left: var(--editor-ui-padding);
     z-index: 10;
     display: flex;
     align-items: center;
