@@ -18,7 +18,7 @@ import (
 type updateBody struct {
 	Name            string              `json:"name" validate:"omitempty,min=1"`
 	BackgroundColor string              `json:"backgroundColor" validate:"omitempty,iscolor,max=30"`
-	Palette         model.SchemaPalette `json:"palette" validate:"omitempty,len=9,dive,omitempty,iscolor"`
+	Palette         model.SchemaPalette `json:"palette" validate:"omitempty,len=8,dive,omitempty,iscolor"`
 	Size            *model.SchemaSize   `json:"size" validate:"omitempty"`
 	Beads           model.SchemaBeads   `json:"beads" validate:"omitempty,dive,required,iscolor"`
 }

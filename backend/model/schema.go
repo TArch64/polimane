@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	SchemaPaletteSize = 9
+	SchemaPaletteSize = 8
 )
 
 type Schema struct {
