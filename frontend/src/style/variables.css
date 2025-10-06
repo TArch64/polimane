@@ -4,8 +4,8 @@
   --color-danger: #E7000B;
   --color-primary: var(--color-black);
 
-  --color-divider: color-mix(in srgb, var(--color-black), var(--color-white) 90%);
-  --color-divider-2: color-mix(in srgb, var(--color-black), var(--color-white) 75%);
+  --color-divider: color-mix(in srgb, var(--color-black), var(--color-white) 80%);
+  --color-divider-2: color-mix(in srgb, var(--color-black), var(--color-white) 60%);
   --color-hover-divider: var(--color-divider-2);
 
   --color-background-1: var(--color-white);

@@ -41,6 +41,7 @@ const store = useToolsStore();
     align-items: center;
     gap: 8px;
     padding: 8px 6px;
+    --toolbar-button-size: 28px;
   }
 
   .editor-toolbar__color {
@@ -48,15 +49,17 @@ const store = useToolsStore();
     padding-top: 4px;
     padding-bottom: calc(var(--toolbar-button-size) / 2);
     padding-right: calc(var(--toolbar-button-size) / 2);
+    --toolbar-button-size: 24px;
   }
 
   .editor-toolbar__color-background {
-    transition: translate 150ms;
-    will-change: translate;
+    transition: translate 150ms, scale 150ms;
+    will-change: translate, scale;
 
     &:last-child,
     &:has(+ .editor-toolbar__color-foreground--leave-active) {
       translate: 25% 25%;
+      scale: calc(30 / 24);
     }
   }
 

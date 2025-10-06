@@ -8,11 +8,15 @@
       :width="BEAD_SIZE"
       :height="BEAD_SIZE"
     >
-      <circle
-        :cx="BEAD_CENTER"
-        :cy="BEAD_CENTER"
-        :r="BEAD_RADIUS"
+      <rect
+        x="0"
+        y="0"
+        :width="BEAD_SIZE"
+        :height="BEAD_SIZE"
         :fill="beadsStore.emptyColor"
+        fill-opacity="0.2"
+        :stroke="beadsStore.emptyColor"
+        stroke-width="0.5"
         class="canvas-content__background-bead"
       />
     </pattern>
@@ -40,14 +44,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import {
-  BEAD_CENTER,
-  BEAD_RADIUS,
-  BEAD_SIZE,
-  type ICanvasZoom,
-  useBeadPainting,
-  useBeadsGrid,
-} from '../../composables';
+import { BEAD_SIZE, type ICanvasZoom, useBeadPainting, useBeadsGrid } from '../../composables';
 import { useBeadsStore, useEditorStore } from '../../stores';
 import { CanvasBead } from './CanvasBead';
 
