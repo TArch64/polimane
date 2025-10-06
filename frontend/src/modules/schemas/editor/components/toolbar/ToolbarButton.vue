@@ -37,15 +37,12 @@ const classes = computed(() => ({
     width: var(--toolbar-button-size);
     height: var(--toolbar-button-size);
     padding: 0;
-    border: var(--divider);
-    color: var(--color-primary);
     transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
     will-change: background-color, border-color;
   }
 
   .toolbar-button--active {
-    outline: solid 1px var(--color-primary);
-    outline-offset: 1px;
+    --button-background: var(--button-hover-background);
   }
 }
 </style>

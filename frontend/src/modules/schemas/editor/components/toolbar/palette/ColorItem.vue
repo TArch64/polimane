@@ -1,5 +1,5 @@
 <template>
-  <ToolbarButton :active :class="classes">
+  <ToolbarButton class="color-item" :active :class="classes">
     <slot />
   </ToolbarButton>
 </template>
@@ -27,9 +27,19 @@ const classes = computed(() => {
 
 <style scoped>
 @layer page {
+  .color-item {
+    border: var(--divider);
+  }
+
+  .toolbar-button--active {
+    border-color: var(--color-divider);
+    outline: solid 1px var(--color-primary);
+    outline-offset: 1px;
+  }
+
   .color-item--value {
     --button-background: v-bind("color");
-    --button-hover-background: color-mix(in srgb, v-bind("color"), white 20%);
+    --button-hover-background: color-mix(in srgb, v-bind("color"), var(--color-white) 20%);
   }
 
   .color-item--empty {

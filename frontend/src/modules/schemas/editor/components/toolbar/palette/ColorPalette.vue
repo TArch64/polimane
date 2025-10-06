@@ -36,7 +36,7 @@ onClickOutside(rootRef, () => emit('close'));
 <style scoped>
 @layer page {
   .color-palette {
-    padding: 6px 8px;
+    padding: 8px;
   }
 }
 </style>

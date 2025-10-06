@@ -1,7 +1,6 @@
 <template>
   <ToolbarButton
     title="Очитити"
-    class="color-eraser"
     :active="store.isEraser"
     @click="activate"
   >
@@ -22,12 +21,3 @@ useHotKeys({
   Meta_0: activate,
 });
 </script>
-
-<style scoped>
-@layer page {
-  .color-eraser {
-    padding: 1px;
-    --button-background: color-mix(in srgb, var(--button-base-color), transparent 90%);
-  }
-}
-</style>

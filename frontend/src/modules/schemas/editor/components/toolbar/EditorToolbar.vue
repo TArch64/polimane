@@ -39,7 +39,7 @@ const store = useToolsStore();
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     padding: 8px 6px;
     --toolbar-button-size: 28px;
   }

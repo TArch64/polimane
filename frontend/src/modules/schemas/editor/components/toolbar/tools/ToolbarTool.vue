@@ -1,6 +1,6 @@
 <template>
   <ToolbarButton
-    class="toolbar-tool"
+    title="Бісер"
     :active="store.isBead"
     @click="store.activateTool('bead')"
   >
