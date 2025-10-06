@@ -4,3 +4,4 @@ export * from './useEditorBackgroundRenderer';
 export * from './useCanvasZoom';
 export * from './useCanvasNavigation';
 export * from './useBeadPainting';
+export * from './useHotKeys';

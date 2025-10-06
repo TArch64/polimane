@@ -40,6 +40,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useToolsStore } from '@editor/stores';
+import { useHotKeys } from '@editor/composables';
 import { Button } from '@/components/button';
 
 const store = useToolsStore();
@@ -48,6 +49,10 @@ const activate = () => store.activateTool('eraser');
 const classes = computed(() => ({
   'color-eraser--active': store.activeToolId === 'eraser',
 }));
+
+useHotKeys({
+  Meta_0: activate,
+});
 </script>
 
 <style scoped>

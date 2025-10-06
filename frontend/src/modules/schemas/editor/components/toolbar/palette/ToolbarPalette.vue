@@ -22,8 +22,8 @@
 
 <script setup lang="ts">
 import { useToolsStore } from '@editor/stores';
-import { useEventListener } from '@vueuse/core';
 import { computed, nextTick, ref } from 'vue';
+import { type HotKeyDef, useHotKeys } from '@editor/composables';
 import { useDomRef } from '@/composables';
 import { FadeTransition } from '@/components/transition';
 import ColorItem from './ColorItem.vue';
@@ -55,15 +55,12 @@ async function open(): Promise<void> {
   }
 }
 
-useEventListener('keydown', (event) => {
-  if (!event.metaKey) return;
-  if (!event.code.startsWith('Digit')) return;
-  if (event.code === 'Digit0') return;
-
-  event.preventDefault();
-  const index = Number(event.code.replace('Digit', ''));
-  activeColor.value = index - 1;
-});
+useHotKeys(
+  store.palette.slice(0, 9).map((_, index): HotKeyDef => [
+    `Meta_${index + 1}`,
+    () => activeColor.value = index,
+  ]),
+);
 </script>
 
 <style scoped>
