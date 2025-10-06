@@ -1,22 +1,26 @@
 <template>
   <Card as="aside" class="editor-toolbar">
-    <ToolbarGrid>
-      <ToolbarEraser />
-    </ToolbarGrid>
+    <ToolbarEraser />
+    <ToolbarTool />
 
     <div class="editor-toolbar__color">
       <ToolbarBackgroundColor class="editor-toolbar__color-background" />
-      <ToolbarPalette class="editor-toolbar__color-foreground" />
+
+      <Transition name="editor-toolbar__color-foreground-" :duration="150">
+        <ToolbarPalette class="editor-toolbar__color-foreground" v-if="!store.isEraser" />
+      </Transition>
     </div>
   </Card>
 </template>
 
 <script setup lang="ts">
+import { useToolsStore } from '@editor/stores';
 import { Card } from '@/components/card';
 import { ToolbarPalette } from './palette';
-import ToolbarEraser from './ToolbarEraser.vue';
+import { ToolbarEraser, ToolbarTool } from './tools';
 import ToolbarBackgroundColor from './ToolbarBackgroundColor.vue';
-import ToolbarGrid from './ToolbarGrid.vue';
+
+const store = useToolsStore();
 </script>
 
 <style scoped>
@@ -31,32 +35,47 @@ import ToolbarGrid from './ToolbarGrid.vue';
     position: fixed;
     top: 62px;
     left: 8px;
-    width: calc(var(--toolbar-button-size) * 2 + 12px);
     z-index: 10;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 8px;
     padding: 8px 6px;
   }
 
   .editor-toolbar__color {
     position: relative;
+    padding-top: 4px;
     padding-bottom: calc(var(--toolbar-button-size) / 2);
     padding-right: calc(var(--toolbar-button-size) / 2);
-    align-self: center;
   }
 
   .editor-toolbar__color-background {
-    width: var(--toolbar-button-size);
-    height: var(--toolbar-button-size);
+    transition: translate 150ms;
+    will-change: translate;
+
+    &:last-child,
+    &:has(+ .editor-toolbar__color-foreground--leave-active) {
+      translate: 25% 25%;
+    }
   }
 
-  :deep(.editor-toolbar__color-foreground) {
+  .editor-toolbar__color-foreground {
     position: absolute;
     top: calc(var(--toolbar-button-size) - (var(--toolbar-button-size) / 2));
     left: calc(var(--toolbar-button-size) - (var(--toolbar-button-size) / 2));
-    width: var(--toolbar-button-size);
-    height: var(--toolbar-button-size);
+  }
+
+  .editor-toolbar__color-foreground--enter-from,
+  .editor-toolbar__color-foreground--leave-to {
+    opacity: 0;
+    scale: 0.8;
+  }
+
+  .editor-toolbar__color-foreground--enter-active,
+  .editor-toolbar__color-foreground--leave-active {
+    transition: opacity 150ms, scale 150ms;
+    will-change: opacity, scale;
   }
 }
 </style>

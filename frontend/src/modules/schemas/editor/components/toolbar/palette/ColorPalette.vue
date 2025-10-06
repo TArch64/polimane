@@ -8,7 +8,8 @@
       v-for="(color, index) of store.palette"
       :key="index"
       :active="color === store.activeColor"
-      @update:active="activateColor(color)"
+      @update:active="store.activateColor(color)"
+      @choose="$emit('close')"
       v-model="store.palette[index]!"
     />
   </Card>
@@ -30,11 +31,6 @@ const rootRef = useDomRef<HTMLElement>();
 const store = useToolsStore();
 
 onClickOutside(rootRef, () => emit('close'));
-
-function activateColor(color: string): void {
-  store.activateColor(color);
-  emit('close');
-}
 </script>
 
 <style scoped>

@@ -1,10 +1,18 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueDevTools from 'vite-plugin-vue-devtools';
+import type { InlineCollection } from 'unplugin-icons';
 import icons from 'unplugin-icons/vite';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 const { SENTRY_AUTH_TOKEN, FRONTEND_PUBLIC_SENTRY_RELEASE } = process.env;
+
+function defineIcons(defs: string[]): InlineCollection {
+  return Object.fromEntries(defs.map((name) => [
+    name,
+    () => Bun.file(`./src/assets/${name.replace('-', '/')}.svg`).text(),
+  ]));
+}
 
 export default defineConfig({
   clearScreen: false,
@@ -39,9 +47,10 @@ export default defineConfig({
       compiler: 'vue3',
 
       customCollections: {
-        custom: {
-          logo: () => Bun.file('./src/assets/logo.svg').text(),
-        },
+        custom: defineIcons([
+          'logo',
+          'tools-bead',
+        ]),
       },
     }),
 

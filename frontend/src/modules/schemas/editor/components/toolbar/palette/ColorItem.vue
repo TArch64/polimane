@@ -1,12 +1,12 @@
 <template>
-  <Button icon size="none" class="color-item" :class="classes">
+  <ToolbarButton :active :class="classes">
     <slot />
-  </Button>
+  </ToolbarButton>
 </template>
 
 <script setup lang="ts">
 import { computed, type Slot } from 'vue';
-import { Button } from '@/components/button';
+import ToolbarButton from '../ToolbarButton.vue';
 
 const props = withDefaults(defineProps<{
   color: string;
@@ -21,32 +21,15 @@ defineSlots<{
 
 const classes = computed(() => {
   const modifier = props.color ? 'value' : 'empty';
-
-  return [
-    `color-item--${modifier}`,
-    { 'color-item--active': props.active },
-  ];
+  return `color-item--${modifier}`;
 });
 </script>
 
 <style scoped>
 @layer page {
-  .color-item {
-    aspect-ratio: 1;
-    padding: 0;
-    border: var(--divider);
-    transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
-    will-change: background-color, border-color;
-  }
-
-  .color-item--active {
-    outline: solid 1px var(--color-primary);
-    outline-offset: 1px;
-  }
-
   .color-item--value {
     --button-background: v-bind("color");
-    --button-hover-background: color-mix(in srgb, v-bind("color"), transparent 20%);
+    --button-hover-background: color-mix(in srgb, v-bind("color"), white 20%);
   }
 
   .color-item--empty {

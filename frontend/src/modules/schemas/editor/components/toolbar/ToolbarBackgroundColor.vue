@@ -1,5 +1,5 @@
 <template>
-  <ColorItem :color="model">
+  <ColorItem title="Колір Фону" :color="model">
     <input
       ref="pickerRef"
       type="color"
@@ -25,7 +25,7 @@ const model = computed<string>({
 <style scoped>
 @layer page {
   .toolbar-background-color__picker {
-    opacity: 0;;
+    opacity: 0;
     width: 100%;
     height: 100%;
     cursor: pointer;

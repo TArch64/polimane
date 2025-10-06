@@ -1,6 +1,5 @@
 <template>
   <ColorItem
-    class="color-palette__spot"
     :color="model"
     :active="isActive"
     @click.stop="onClick"
@@ -18,6 +17,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import ColorItem from './ColorItem.vue';
+
+const emit = defineEmits<{
+  choose: [];
+}>();
 
 const isActive = defineModel<boolean>('active', {
   required: true,
@@ -41,6 +44,7 @@ function onClick(): void {
   }
 
   isActive.value = true;
+  emit('choose');
 }
 
 function onDblClick(): void {
@@ -50,11 +54,6 @@ function onDblClick(): void {
 
 <style scoped>
 @layer page {
-  .color-palette__spot {
-    width: var(--toolbar-button-size);
-    height: var(--toolbar-button-size);
-  }
-
   .color-palette__spot-picker {
     visibility: hidden;
     width: 100%;
