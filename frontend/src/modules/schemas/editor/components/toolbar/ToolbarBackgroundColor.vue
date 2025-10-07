@@ -16,7 +16,7 @@ import { ColorItem } from './palette';
 
 const editorStore = useEditorStore();
 
-const model = computed<string>({
+const model = computed({
   get: () => editorStore.schema.backgroundColor,
   set: (color) => editorStore.schema.backgroundColor = color,
 });

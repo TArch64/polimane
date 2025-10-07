@@ -4,7 +4,9 @@
     <ToolbarTool />
 
     <div class="editor-toolbar__color">
-      <ToolbarBackgroundColor class="editor-toolbar__color-background" />
+      <div class="editor-toolbar__color-background">
+        <ToolbarBackgroundColor />
+      </div>
 
       <Transition name="editor-toolbar__color-foreground-" :duration="150">
         <ToolbarPalette class="editor-toolbar__color-foreground" v-if="!store.isEraser" />
@@ -58,7 +60,7 @@ const toolbarTopShift = computed(() => `${toolbarSize.height.value / 2}px`);
 
   .editor-toolbar__color {
     position: relative;
-    padding-top: 4px;
+    margin-top: 4px;
     padding-bottom: calc(var(--toolbar-button-size) / 2);
     padding-right: calc(var(--toolbar-button-size) / 2);
     --toolbar-button-size: 24px;

@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import { computed } from 'vue';
-import { contrastWCAG21 } from 'colorjs.io/fn';
+import { useContrast } from '@editor/composables';
 import { parseSchemaBeadCoord, type SchemaBeadCoord, type SchemaSizeDirection } from '@/models';
 import { useEditorStore } from './editorStore';
 
-const BEAD_EMPTY_LIGHT = 'rgba(0, 0, 0, 0.1)';
-const BEAD_EMPTY_DARK = 'rgba(255, 255, 255, 0.1)';
+const EMPTY_LIGHT = 'rgba(0, 0, 0, 0.1)';
+const EMPTY_DARK = 'rgba(255, 255, 255, 0.1)';
 
 export enum PaintEffect {
   EXTENDED = 'extend',
@@ -77,10 +77,8 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     return null;
   }
 
-  const emptyColor = computed(() => {
-    const contrast = contrastWCAG21(editorStore.schema.backgroundColor, BEAD_EMPTY_DARK);
-    return contrast < 4.5 ? BEAD_EMPTY_LIGHT : BEAD_EMPTY_DARK;
-  });
+  const emptyContrast = useContrast(() => editorStore.schema.backgroundColor, EMPTY_DARK);
+  const emptyColor = computed(() => emptyContrast.value < 4.5 ? EMPTY_LIGHT : EMPTY_DARK);
 
   return { paint, emptyColor };
 });

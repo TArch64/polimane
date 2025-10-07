@@ -6,6 +6,7 @@
 
 <script setup lang="ts">
 import { computed, type Slot } from 'vue';
+import { useContrast } from '@editor/composables';
 import ToolbarButton from '../ToolbarButton.vue';
 
 const props = withDefaults(defineProps<{
@@ -23,6 +24,9 @@ const classes = computed(() => {
   const modifier = props.color ? 'value' : 'empty';
   return `color-item--${modifier}`;
 });
+
+const valueContrast = useContrast(() => props.color || '#FFF', '#FFF');
+const hoverVar = computed(() => valueContrast.value > 3 ? '#fff' : '#999');
 </script>
 
 <style scoped>
@@ -39,7 +43,7 @@ const classes = computed(() => {
 
   .color-item--value {
     --button-background: v-bind("color");
-    --button-hover-background: color-mix(in srgb, v-bind("color"), var(--color-white) 20%);
+    --button-hover-background: color-mix(in srgb, v-bind("color"), v-bind("hoverVar") 20%);
   }
 
   .color-item--empty {
