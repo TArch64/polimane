@@ -1,3 +1,4 @@
+import { readdir } from 'node:fs/promises';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueDevTools from 'vite-plugin-vue-devtools';
@@ -7,11 +8,16 @@ import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 const { SENTRY_AUTH_TOKEN, FRONTEND_PUBLIC_SENTRY_RELEASE } = process.env;
 
-function defineIcons(defs: string[]): InlineCollection {
-  return Object.fromEntries(defs.map((name) => [
-    name,
-    () => Bun.file(`./src/assets/${name.replace('-', '/')}.svg`).text(),
-  ]));
+async function createCustomIconsCollection(): Promise<InlineCollection> {
+  const files = await readdir('./src/assets/icons', { recursive: true });
+  const iconFiles = files.filter((file) => file.endsWith('.svg'));
+
+  const icons = iconFiles.map((file) => [
+    file.replace('.svg', '').replace('/', '-'),
+    () => Bun.file(`./src/assets/icons/${file}`).text(),
+  ]);
+
+  return Object.fromEntries(icons);
 }
 
 export default defineConfig({
@@ -47,10 +53,7 @@ export default defineConfig({
       compiler: 'vue3',
 
       customCollections: {
-        custom: defineIcons([
-          'logo',
-          'tools-bead',
-        ]),
+        custom: await createCustomIconsCollection(),
       },
     }),
 

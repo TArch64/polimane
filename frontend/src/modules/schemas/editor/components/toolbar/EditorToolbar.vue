@@ -1,7 +1,8 @@
 <template>
   <Card as="aside" ref="toolbarRef" class="editor-toolbar">
     <ToolbarEraser />
-    <ToolbarTool />
+    <ToolbarBead />
+    <ToolbarSelection />
 
     <div class="editor-toolbar__color">
       <div class="editor-toolbar__color-background">
@@ -9,7 +10,7 @@
       </div>
 
       <Transition name="editor-toolbar__color-foreground-" :duration="150">
-        <ToolbarPalette class="editor-toolbar__color-foreground" v-if="!store.isEraser" />
+        <ToolbarPalette class="editor-toolbar__color-foreground" v-if="store.isBead" />
       </Transition>
     </div>
   </Card>
@@ -22,7 +23,7 @@ import { computed } from 'vue';
 import { Card } from '@/components/card';
 import { useDomRef } from '@/composables';
 import { ToolbarPalette } from './palette';
-import { ToolbarEraser, ToolbarTool } from './tools';
+import { ToolbarBead, ToolbarEraser, ToolbarSelection } from './tools';
 import ToolbarBackgroundColor from './ToolbarBackgroundColor.vue';
 
 const store = useToolsStore();
