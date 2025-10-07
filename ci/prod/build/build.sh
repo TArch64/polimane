@@ -11,7 +11,8 @@ if [ -n "$BUILD_TARGET" ]; then
 fi
 
 cleanup() {
-  docker container rm -f "build-$BUILD_ID" || true
+  echo "Cleaning up build container..."
+  docker container rm -f "build-$BUILD_ID" > /dev/null || true
 }
 
 trap cleanup EXIT INT TERM
