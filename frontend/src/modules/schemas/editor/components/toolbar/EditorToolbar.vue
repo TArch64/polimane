@@ -2,7 +2,7 @@
   <Card as="aside" ref="toolbarRef" class="editor-toolbar">
     <ToolbarEraser />
     <ToolbarBead />
-    <ToolbarSelection v-if="false" />
+    <ToolbarSelection />
 
     <div class="editor-toolbar__color">
       <div class="editor-toolbar__color-background">
