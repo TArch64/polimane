@@ -42,6 +42,5 @@ export const useEditorStore = defineStore('schemas/editor', () => {
     hasUnsavedChanges: toRef(saveDispatcher, 'hasUnsavedChanges'),
     isSaving: toRef(saveDispatcher, 'isSaving'),
     save: saveDispatcher.flush,
-    onSaved: saveDispatcher.onSaved,
   };
 });

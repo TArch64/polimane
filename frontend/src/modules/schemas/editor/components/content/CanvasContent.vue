@@ -44,25 +44,20 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { BEAD_SIZE, type ICanvasZoom, useBeadPainting, useBeadsGrid } from '../../composables';
+import { BEAD_SIZE, useBeadPainting, useBeadsGrid } from '../../composables';
 import { useBeadsStore, useEditorStore } from '../../stores';
 import { CanvasBead } from './CanvasBead';
 
 const props = defineProps<{
   wrapperRect: DOMRect;
-  canvasZoom: ICanvasZoom;
 }>();
 
 const backgroundRectRef = ref<SVGRectElement>(null!);
 
-const beadsStore = useBeadsStore();
 const editorStore = useEditorStore();
+const beadsStore = useBeadsStore();
 
-const listeners = useBeadPainting({
-  backgroundRectRef,
-  canvasZoom: props.canvasZoom,
-});
-
+const listeners = useBeadPainting({ backgroundRectRef });
 const beadsGrid = useBeadsGrid(() => editorStore.schema);
 
 const transform = (() => {

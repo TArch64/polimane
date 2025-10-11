@@ -10,7 +10,13 @@ import './colorLib';
 import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
 import { destroyStore, lazyDestroyStore } from '@/helpers';
-import { useBeadsStore, useEditorStore, useHistoryStore, useToolsStore } from './stores';
+import {
+  useBeadsStore,
+  useCanvasStore,
+  useEditorStore,
+  useHistoryStore,
+  useToolsStore,
+} from './stores';
 import { EditorCanvas, EditorHeader, EditorToolbar } from './components';
 import { useEditorBackgroundRenderer } from './composables';
 
@@ -27,6 +33,7 @@ defineOptions({
   beforeRouteLeave: async (_, __, next) => {
     lazyDestroyStore(useEditorStore);
     lazyDestroyStore(useHistoryStore);
+    lazyDestroyStore(useCanvasStore);
     lazyDestroyStore(useToolsStore);
     lazyDestroyStore(useBeadsStore);
     next();

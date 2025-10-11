@@ -1,22 +1,27 @@
 import { computed, ref, type Ref } from 'vue';
 import { type IPoint, type SchemaBeadCoord, serializeSchemaBeadCoord } from '@/models';
 import { createAnimatedFrame } from '@/helpers';
-import { PaintEffect, useBeadsStore, useEditorStore, useToolsStore } from '../stores';
+import {
+  PaintEffect,
+  useBeadsStore,
+  useCanvasStore,
+  useEditorStore,
+  useToolsStore,
+} from '../stores';
 import { BEAD_CENTER, BEAD_RADIUS, BEAD_SIZE } from './useBeadsGrid';
-import type { ICanvasZoom } from './useCanvasZoom';
 
 export interface IBeadPaintingOptions {
   backgroundRectRef: Ref<SVGRectElement>;
-  canvasZoom: ICanvasZoom;
 }
 
 export interface BeadPainting {
   mousedown: (event: MouseEvent) => void;
-  mousemove?: (event: MouseEvent) => void;
+  mousemove: (event: MouseEvent) => void;
 }
 
 export function useBeadPainting(options: IBeadPaintingOptions) {
   const editorStore = useEditorStore();
+  const canvasStore = useCanvasStore();
   const toolsStore = useToolsStore();
   const beadsStore = useBeadsStore();
 
@@ -40,8 +45,8 @@ export function useBeadPainting(options: IBeadPaintingOptions) {
     backgroundRect ??= options.backgroundRectRef.value.getBoundingClientRect();
 
     const mouse: IPoint = {
-      y: (event.clientY - backgroundRect.y) / options.canvasZoom.scale,
-      x: (event.clientX - backgroundRect.x) / options.canvasZoom.scale,
+      y: (event.clientY - backgroundRect.y) / canvasStore.scale,
+      x: (event.clientX - backgroundRect.x) / canvasStore.scale,
     };
 
     const coord: IPoint = {
@@ -97,8 +102,14 @@ export function useBeadPainting(options: IBeadPaintingOptions) {
     paint(event, toolsStore.isEraser ? null : toolsStore.activeColor);
   }
 
-  return computed((): BeadPainting => ({
-    mousedown: onMousedown,
-    ...(isPainting.value ? { mousemove: onMousemove } : {}),
-  }));
+  return computed((): Partial<BeadPainting> => {
+    if (toolsStore.isSelection) {
+      return {};
+    }
+
+    return {
+      mousedown: onMousedown,
+      ...(isPainting.value ? { mousemove: onMousemove } : {}),
+    };
+  });
 }

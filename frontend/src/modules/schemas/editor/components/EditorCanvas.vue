@@ -1,6 +1,7 @@
 <template>
   <main ref="wrapperRef" @contextmenu.prevent>
     <svg
+      ref="canvasRef"
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMin slice"
       :width="wrapperRect.width"
@@ -9,23 +10,25 @@
       @wheel="onWheel"
       v-if="wrapperRect"
     >
-      <CanvasContent
-        :canvasZoom
-        :wrapperRect
-      />
+      <template v-if="canvasRef">
+        <CanvasContent :wrapperRect />
+        <CanvasSelection :canvasRef v-if="toolsStore.isSelection" />
+      </template>
     </svg>
   </main>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
-import { useHistoryStore } from '../stores';
+import { useHistoryStore, useToolsStore } from '../stores';
 import { useCanvasNavigation, useCanvasZoom, useHotKeys } from '../composables';
 import type { IViewBox } from '../types';
-import { CanvasContent } from './content';
+import { CanvasContent, CanvasSelection } from './content';
 
 const historyStore = useHistoryStore();
+const toolsStore = useToolsStore();
 
+const canvasRef = ref<SVGSVGElement | null>(null);
 const wrapperRef = ref<HTMLElement | null>(null);
 const wrapperRect = ref<DOMRect | null>(null);
 
@@ -48,7 +51,7 @@ onMounted(async () => {
 });
 
 const canvasZoom = useCanvasZoom({ wrapperRect, viewBox });
-const canvasNavigation = useCanvasNavigation({ canvasZoom, viewBox });
+const canvasNavigation = useCanvasNavigation({ viewBox });
 
 function onWheel(event: WheelEvent): void {
   event.preventDefault();
@@ -60,3 +63,11 @@ useHotKeys({
   Meta_Shift_Z: () => historyStore.redo(),
 });
 </script>
+
+<style scoped>
+@layer page {
+  :has(.canvas-selection):deep(.canvas-content) {
+    cursor: default !important;
+  }
+}
+</style>

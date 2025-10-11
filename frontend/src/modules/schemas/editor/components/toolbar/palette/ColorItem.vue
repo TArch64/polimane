@@ -26,7 +26,7 @@ const classes = computed(() => {
 });
 
 const valueContrast = useContrast(() => props.color || '#FFF', '#FFF');
-const hoverVar = computed(() => valueContrast.value > 3 ? '#fff' : '#999');
+const hoverVar = computed(() => valueContrast.value > 4.5 ? '#fff' : '#999');
 </script>
 
 <style scoped>

@@ -1,8 +1,7 @@
+import { useCanvasStore } from '@editor/stores';
 import type { IViewBox } from '../types';
-import type { ICanvasZoom } from './useCanvasZoom';
 
 export interface ICanvasNavigationOptions {
-  canvasZoom: ICanvasZoom;
   viewBox: IViewBox;
 }
 
@@ -11,9 +10,11 @@ export interface ICanvasNavigation {
 }
 
 export function useCanvasNavigation(options: ICanvasNavigationOptions): ICanvasNavigation {
+  const canvasStore = useCanvasStore();
+
   function navigate(event: WheelEvent): void {
-    options.viewBox.x += (event.deltaX / options.canvasZoom.scale);
-    options.viewBox.y += (event.deltaY / options.canvasZoom.scale);
+    options.viewBox.x += (event.deltaX / canvasStore.scale);
+    options.viewBox.y += (event.deltaY / canvasStore.scale);
   }
 
   return { navigate };
