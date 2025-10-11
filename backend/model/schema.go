@@ -51,8 +51,8 @@ type SchemaPalette []string
 type SchemaBeads map[string]string
 
 type SchemaSize struct {
-	Left   uint16 `validate:"required,gte=0,lte=255" json:"left"`
-	Top    uint16 `validate:"required,gte=0,lte=255" json:"top"`
-	Right  uint16 `validate:"required,gte=0,lte=255" json:"right"`
-	Bottom uint16 `validate:"required,gte=0,lte=255" json:"bottom"`
+	Left   uint16 `validate:"required,gte=0,lte=65535" json:"left"`
+	Top    uint16 `validate:"required,gte=0,lte=65535" json:"top"`
+	Right  uint16 `validate:"required,gte=0,lte=65535" json:"right"`
+	Bottom uint16 `validate:"required,gte=0,lte=65535" json:"bottom"`
 }
