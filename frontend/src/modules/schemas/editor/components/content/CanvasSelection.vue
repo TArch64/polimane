@@ -1,36 +1,27 @@
 <template>
   <g>
-    <rect
-      :x
-      :y
-      :width
-      :height
-      :stroke="emptyColor"
-      rx="2"
-      ry="2"
-      fill="none"
-      stroke-width="1"
-      class="canvas-selection"
-    />
+    <CanvasDefs>
+      <rect
+        :x
+        :y
+        :width
+        :height
+        :id="partialId"
+        rx="2"
+        ry="2"
+        fill="none"
+        stroke-width="1"
+        class="canvas-selection"
+      />
+    </CanvasDefs>
 
-    <rect
-      :x
-      :y
-      :width
-      :height
-      :stroke="selectionColor"
-      rx="2"
-      ry="2"
-      fill="none"
-      stroke-width="1"
-      stroke-dasharray="4 3"
-      class="canvas-selection"
-    />
+    <use :href="partialHref" :stroke="emptyColor" />
+    <use :href="partialHref" :stroke="selectionColor" stroke-dasharray="4 3" />
   </g>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, useId } from 'vue';
 import type { IBeadSelection } from '@editor/stores';
 import {
   BEAD_SIZE,
@@ -38,6 +29,7 @@ import {
   useBackgroundCanvasColor,
   useSelectionColor,
 } from '@editor/composables';
+import CanvasDefs from './CanvasDefs.vue';
 
 const props = defineProps<{
   selected: IBeadSelection;
@@ -48,6 +40,9 @@ const fromOffset = computed(() => props.beadsGrid.resolveBeadOffset(props.select
 const toOffset = computed(() => props.beadsGrid.resolveBeadOffset(props.selected.to));
 
 const PADDING = 2;
+
+const partialId = `editorSelection-${useId()}`;
+const partialHref = `#${partialId}`;
 
 const x = computed(() => Math.min(fromOffset.value[0], toOffset.value[0]) - PADDING);
 const y = computed(() => Math.min(fromOffset.value[1], toOffset.value[1]) - PADDING);

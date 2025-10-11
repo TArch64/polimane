@@ -1,7 +1,7 @@
 <template>
-  <defs>
+  <CanvasDefs>
     <CanvasBackgroundPattern :id="backgroundPatternId" />
-  </defs>
+  </CanvasDefs>
 
   <g :transform class="canvas-content" v-on="listeners">
     <rect
@@ -37,6 +37,7 @@ import { type IBeadsGrid, useBeadTools } from '../../composables';
 import { CanvasBead } from './CanvasBead';
 import CanvasBackgroundPattern from './CanvasBackgroundPattern.vue';
 import CanvasSelection from './CanvasSelection.vue';
+import CanvasDefs from './CanvasDefs.vue';
 
 const props = defineProps<{
   wrapperRect: DOMRect;

@@ -10,6 +10,8 @@
       @wheel="onWheel"
       v-if="wrapperRect"
     >
+      <defs id="editorCanvasDefs" />
+
       <CanvasContent
         :beadsGrid
         :wrapperRect
