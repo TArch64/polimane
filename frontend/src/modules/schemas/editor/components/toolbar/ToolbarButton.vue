@@ -1,20 +1,21 @@
 <template>
   <Button
     icon
+    :active
     :disabled
     size="none"
+    variant="secondary"
     class="toolbar-button"
-    :class="classes"
   >
     <slot />
   </Button>
 </template>
 
 <script setup lang="ts">
-import { computed, type Slot } from 'vue';
+import type { Slot } from 'vue';
 import { Button } from '@/components/button';
 
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
   active?: boolean;
   disabled?: boolean;
 }>(), {
@@ -25,24 +26,15 @@ const props = withDefaults(defineProps<{
 defineSlots<{
   default: Slot;
 }>();
-
-const classes = computed(() => ({
-  'toolbar-button--active': props.active,
-}));
 </script>
 
 <style scoped>
 @layer page {
   .toolbar-button {
+    padding: 0;
     width: var(--toolbar-button-size);
     height: var(--toolbar-button-size);
-    padding: 0;
-    transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
-    will-change: background-color, border-color;
-  }
-
-  .toolbar-button--active {
-    --button-background: var(--button-hover-background);
+    --button-foreground: var(--color-text-2);
   }
 }
 </style>

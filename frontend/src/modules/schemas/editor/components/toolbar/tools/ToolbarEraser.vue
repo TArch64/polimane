@@ -4,14 +4,14 @@
     :active="store.isEraser"
     @click="activate"
   >
-    <CloseIcon />
+    <DropletOffIcon />
   </ToolbarButton>
 </template>
 
 <script setup lang="ts">
 import { useToolsStore } from '@editor/stores';
 import { useHotKeys } from '@editor/composables';
-import { CloseIcon } from '@/components/icon';
+import { DropletOffIcon } from '@/components/icon';
 import ToolbarButton from '../ToolbarButton.vue';
 
 const store = useToolsStore();
