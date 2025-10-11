@@ -1,1 +1,1 @@
-export * from './sentryPlugin';
+export * from './SentryPlugin';
