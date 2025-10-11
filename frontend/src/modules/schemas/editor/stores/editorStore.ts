@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { onScopeDispose, type Ref, ref, toRef } from 'vue';
 import type { ISchema } from '@/models';
-import { type HttpBody, useHttpClient } from '@/composables';
+import { type HttpBody, HttpTransport, useHttpClient } from '@/composables';
 import { useEditorSaveDispatcher } from '../composables';
 import { useHistoryStore } from './historyStore';
 
@@ -14,7 +14,11 @@ export const useEditorStore = defineStore('schemas/editor', () => {
   const historyStore = useHistoryStore();
 
   const saveDispatcher = useEditorSaveDispatcher(schema, async (patch) => {
-    await http.patch<HttpBody, UpdateSchemaRequest>(['/schemas', schema.value.id], patch);
+    await http.patch<HttpBody, UpdateSchemaRequest>(['/schemas', schema.value.id], patch, {
+      // Chrome has issues with fetch sending big request body
+      transport: HttpTransport.LEGACY,
+    });
+
     schema.value.updatedAt = new Date().toISOString();
   });
 
