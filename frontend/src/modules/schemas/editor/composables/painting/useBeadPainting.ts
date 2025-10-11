@@ -7,19 +7,16 @@ import {
   useCanvasStore,
   useEditorStore,
   useToolsStore,
-} from '../stores';
-import { BEAD_CENTER, BEAD_RADIUS, BEAD_SIZE } from './useBeadsGrid';
+} from '../../stores';
+import { BEAD_CENTER, BEAD_RADIUS, BEAD_SIZE } from '../useBeadsGrid';
+import type { IBeadToolsOptions } from './IBeadToolsOptions';
 
-export interface IBeadPaintingOptions {
-  backgroundRectRef: Ref<SVGRectElement>;
-}
-
-export interface BeadPainting {
+export interface IBeadPainting {
   mousedown: (event: MouseEvent) => void;
-  mousemove: (event: MouseEvent) => void;
+  mousemove?: (event: MouseEvent) => void;
 }
 
-export function useBeadPainting(options: IBeadPaintingOptions) {
+export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPainting> {
   const editorStore = useEditorStore();
   const canvasStore = useCanvasStore();
   const toolsStore = useToolsStore();
@@ -102,14 +99,8 @@ export function useBeadPainting(options: IBeadPaintingOptions) {
     paint(event, toolsStore.isEraser ? null : toolsStore.activeColor);
   }
 
-  return computed((): Partial<BeadPainting> => {
-    if (toolsStore.isSelection) {
-      return {};
-    }
-
-    return {
-      mousedown: onMousedown,
-      ...(isPainting.value ? { mousemove: onMousemove } : {}),
-    };
-  });
+  return computed(() => ({
+    mousedown: onMousedown,
+    ...(isPainting.value ? { mousemove: onMousemove } : {}),
+  }));
 }

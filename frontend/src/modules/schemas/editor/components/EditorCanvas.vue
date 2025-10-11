@@ -1,5 +1,5 @@
 <template>
-  <main ref="wrapperRef" @contextmenu.prevent>
+  <main ref="wrapperRef" :class="wrapperClasses" @contextmenu.prevent>
     <svg
       ref="canvasRef"
       xmlns="http://www.w3.org/2000/svg"
@@ -12,7 +12,12 @@
     >
       <template v-if="canvasRef">
         <CanvasContent :wrapperRect />
-        <CanvasSelection :canvasRef v-if="toolsStore.isSelection" />
+
+        <FadeTransition>
+          <CanvasSelection
+            v-if="toolsStore.isSelection && !selectionStore.isEmpty"
+          />
+        </FadeTransition>
       </template>
     </svg>
   </main>
@@ -20,17 +25,23 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
-import { useHistoryStore, useToolsStore } from '../stores';
+import { FadeTransition } from '@/components/transition';
+import { useHistoryStore, useSelectionStore, useToolsStore } from '../stores';
 import { useCanvasNavigation, useCanvasZoom, useHotKeys } from '../composables';
 import type { IViewBox } from '../types';
 import { CanvasContent, CanvasSelection } from './content';
 
 const historyStore = useHistoryStore();
 const toolsStore = useToolsStore();
+const selectionStore = useSelectionStore();
 
 const canvasRef = ref<SVGSVGElement | null>(null);
 const wrapperRef = ref<HTMLElement | null>(null);
 const wrapperRect = ref<DOMRect | null>(null);
+
+const wrapperClasses = computed(() => ({
+  'canvas-editor--selection': toolsStore.isSelection,
+}));
 
 const viewBox = reactive<IViewBox>({
   x: 0,
@@ -66,8 +77,8 @@ useHotKeys({
 
 <style scoped>
 @layer page {
-  :has(.canvas-selection):deep(.canvas-content) {
-    cursor: default !important;
+  .canvas-editor--selection {
+    --editor-cursor: default;
   }
 }
 </style>

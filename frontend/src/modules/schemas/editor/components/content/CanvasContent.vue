@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { BEAD_SIZE, useBeadPainting, useBeadsGrid } from '../../composables';
+import { BEAD_SIZE, useBeadsGrid, useBeadTools } from '../../composables';
 import { useBeadsStore, useEditorStore } from '../../stores';
 import { CanvasBead } from './CanvasBead';
 
@@ -57,7 +57,7 @@ const backgroundRectRef = ref<SVGRectElement>(null!);
 const editorStore = useEditorStore();
 const beadsStore = useBeadsStore();
 
-const listeners = useBeadPainting({ backgroundRectRef });
+const listeners = useBeadTools({ backgroundRectRef });
 const beadsGrid = useBeadsGrid(() => editorStore.schema);
 
 const transform = (() => {
@@ -71,7 +71,7 @@ const transform = (() => {
 <style scoped>
 @layer page {
   .canvas-content:hover {
-    cursor: crosshair;
+    cursor: var(--editor-cursor, crosshair);
   }
 
   .canvas-content__background-bead {
