@@ -1,9 +1,5 @@
 <template>
-  <rect
-    v-bind="selectionStore.selection"
-    stroke="var(--color-divider)"
-    :fill="selectionFill"
-  />
+  <div inert class="editor-selection" />
 </template>
 
 <script setup lang="ts">
@@ -16,5 +12,19 @@ const selectionStore = useSelectionStore();
 
 const contrast = useContrast(() => editorStore.schema.backgroundColor, '#000');
 const selectionColor = computed(() => contrast.value > 4.5 ? 'var(--color-black)' : 'var(--color-white)');
-const selectionFill = computed(() => `color-mix(in srgb, ${selectionColor.value}, transparent 80%)`);
 </script>
+
+<style scoped>
+@layer page {
+  .editor-selection {
+    position: fixed;
+    border: var(--divider);
+    background-color: color-mix(in srgb, v-bind("selectionColor"), transparent 80%);
+    top: v-bind("selectionStore.selection.y + 'px'");
+    left: v-bind("selectionStore.selection.x + 'px'");
+    width: v-bind("selectionStore.selection.width + 'px'");
+    height: v-bind("selectionStore.selection.height + 'px'");
+    will-change: width, height, top, left;
+  }
+}
+</style>

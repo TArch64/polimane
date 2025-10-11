@@ -10,16 +10,16 @@
       @wheel="onWheel"
       v-if="wrapperRect"
     >
-      <template v-if="canvasRef">
-        <CanvasContent :wrapperRect />
-
-        <FadeTransition>
-          <CanvasSelection
-            v-if="toolsStore.isSelection && !selectionStore.isEmpty"
-          />
-        </FadeTransition>
-      </template>
+      <CanvasContent :wrapperRect v-if="canvasRef" />
     </svg>
+
+    <Teleport to="body">
+      <FadeTransition @after-leave="selectionStore.reset">
+        <CanvasSelection
+          v-if="toolsStore.isSelection && selectionStore.isSelecting"
+        />
+      </FadeTransition>
+    </Teleport>
   </main>
 </template>
 

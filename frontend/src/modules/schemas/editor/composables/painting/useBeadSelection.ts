@@ -1,29 +1,22 @@
-import { computed, ref, type Ref } from 'vue';
+import { computed, type Ref } from 'vue';
 import { useSelectionStore } from '@editor/stores';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 
 export interface IBeadSelection {
   mousedown: (event: MouseEvent) => void;
+  mousemove?: (event: MouseEvent) => void;
 }
 
 export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection> {
   const selectionStore = useSelectionStore();
 
-  const isSelecting = ref(false);
-  let backgroundRect: DOMRect | null = null;
-
   function onMouseup() {
-    isSelecting.value = false;
-    backgroundRect = null;
-    selectionStore.reset();
+    selectionStore.toggleSelecting(false);
   }
 
   function onMouseDown(event: MouseEvent) {
-    backgroundRect ??= options.backgroundRectRef.value.getBoundingClientRect();
-
-    isSelecting.value = true;
+    selectionStore.toggleSelecting(true);
     selectionStore.setPoint(event.clientX, event.clientY);
-
     addEventListener('mouseup', onMouseup, { once: true });
   }
 
@@ -33,6 +26,6 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
 
   return computed(() => ({
     mousedown: onMouseDown,
-    ...(isSelecting.value ? { mousemove: onMouseMove } : {}),
+    ...(selectionStore.isSelecting ? { mousemove: onMouseMove } : {}),
   }));
 }

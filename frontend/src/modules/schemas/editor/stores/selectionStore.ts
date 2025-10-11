@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import type { INodeRect } from '@/models';
-import { useCanvasStore } from './canvasStore';
 
 export const useSelectionStore = defineStore('schemas/editor/selection', () => {
-  const canvasStore = useCanvasStore();
+  const isSelecting = ref(false);
+  const toggleSelecting = (value: boolean) => isSelecting.value = value;
 
   const selection = reactive<INodeRect>({
     x: 0,
@@ -35,20 +35,16 @@ export const useSelectionStore = defineStore('schemas/editor/selection', () => {
   const resolvedSelection = computed(() => ({
     x: selection.width < 0 ? selection.x + selection.width : selection.x,
     y: selection.height < 0 ? selection.y + selection.height : selection.y,
-    width: Math.abs(selection.width) * canvasStore.scale,
-    height: Math.abs(selection.height) * canvasStore.scale,
+    width: Math.abs(selection.width),
+    height: Math.abs(selection.height),
   }));
-
-  const isEmpty = computed(() => {
-    const values = Object.values(resolvedSelection.value);
-    return values.some((v) => !v);
-  });
 
   return {
     selection: resolvedSelection,
-    isEmpty,
     setPoint,
     reset,
     extend,
+    isSelecting,
+    toggleSelecting,
   };
 });

@@ -1,5 +1,5 @@
 <template>
-  <Transition name="fade-transition-" :duration>
+  <Transition name="fade-transition-" :duration @after-leave="$emit('after-leave')">
     <slot />
   </Transition>
 </template>
@@ -13,6 +13,10 @@ const props = withDefaults(defineProps<{
 }>(), {
   duration: () => ({ enter: 150, leave: 100 }),
 });
+
+defineEmits<{
+  'after-leave': [];
+}>();
 
 defineSlots<{
   default: Slot;
