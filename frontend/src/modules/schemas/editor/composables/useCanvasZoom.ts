@@ -1,30 +1,25 @@
-import { reactive, type Ref } from 'vue';
+import { reactive } from 'vue';
 import { useCanvasStore } from '@editor/stores';
-import type { INodeRect } from '@/models';
-
-export interface ICanvasZoomOptions {
-  wrapperRect: Ref<DOMRect | null>;
-  viewBox: INodeRect;
-}
 
 export interface ICanvasZoom {
   zoom: (event: WheelEvent) => void;
 }
 
-export function useCanvasZoom(options: ICanvasZoomOptions): ICanvasZoom {
+export function useCanvasZoom(): ICanvasZoom {
   const canvasStore = useCanvasStore();
 
   function zoom(event: WheelEvent): void {
-    const mousePointToX = (event.clientX / canvasStore.scale) + options.viewBox.x;
-    const mousePointToY = (event.clientY / canvasStore.scale) + options.viewBox.y;
+    let scale = canvasStore.scale;
+    const mousePointToX = (event.clientX / scale) + canvasStore.translation.x;
+    const mousePointToY = (event.clientY / scale) + canvasStore.translation.y;
 
     const scaleFactor = 1 - event.deltaY * 0.01;
-    canvasStore.setScale(canvasStore.scale * scaleFactor);
+    scale = canvasStore.setScale(scale * scaleFactor);
 
-    options.viewBox.x = mousePointToX - (event.clientX / canvasStore.scale);
-    options.viewBox.y = mousePointToY - (event.clientY / canvasStore.scale);
-    options.viewBox.width = options.wrapperRect.value!.width / canvasStore.scale;
-    options.viewBox.height = options.wrapperRect.value!.height / canvasStore.scale;
+    canvasStore.setTranslation({
+      x: mousePointToX - (event.clientX / scale),
+      y: mousePointToY - (event.clientY / scale),
+    });
   }
 
   return reactive({ zoom });

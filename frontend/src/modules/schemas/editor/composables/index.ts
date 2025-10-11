@@ -6,3 +6,6 @@ export * from './useCanvasNavigation';
 export * from './useHotKeys';
 export * from './useContrast';
 export * from './painting';
+export * from './useSelectionColor';
+export * from './useBackgroundContrast';
+export * from './useBackgroundCanvasColor';

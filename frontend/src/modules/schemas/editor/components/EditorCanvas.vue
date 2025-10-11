@@ -6,34 +6,37 @@
       preserveAspectRatio="xMidYMin slice"
       :width="wrapperRect.width"
       :height="wrapperRect.height"
-      :viewBox="viewBoxAttr"
+      :viewBox
       @wheel="onWheel"
       v-if="wrapperRect"
     >
-      <CanvasContent :wrapperRect v-if="canvasRef" />
+      <CanvasContent
+        :beadsGrid
+        :wrapperRect
+        v-if="canvasRef"
+      />
     </svg>
 
     <Teleport to="body">
       <FadeTransition @after-leave="selectionStore.reset">
-        <CanvasSelection
-          v-if="toolsStore.isSelection && selectionStore.isSelecting"
-        />
+        <EditorSelection v-if="toolsStore.isSelection && selectionStore.isSelecting" />
       </FadeTransition>
     </Teleport>
   </main>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { FadeTransition } from '@/components/transition';
-import { useHistoryStore, useSelectionStore, useToolsStore } from '../stores';
-import { useCanvasNavigation, useCanvasZoom, useHotKeys } from '../composables';
-import type { IViewBox } from '../types';
-import { CanvasContent, CanvasSelection } from './content';
+import { useCanvasStore, useHistoryStore, useSelectionStore, useToolsStore } from '../stores';
+import { useBeadsGrid, useCanvasNavigation, useCanvasZoom, useHotKeys } from '../composables';
+import { CanvasContent } from './content';
+import EditorSelection from './EditorSelection.vue';
 
 const historyStore = useHistoryStore();
 const toolsStore = useToolsStore();
 const selectionStore = useSelectionStore();
+const canvasStore = useCanvasStore();
 
 const canvasRef = ref<SVGSVGElement | null>(null);
 const wrapperRef = ref<HTMLElement | null>(null);
@@ -43,26 +46,20 @@ const wrapperClasses = computed(() => ({
   'canvas-editor--selection': toolsStore.isSelection,
 }));
 
-const viewBox = reactive<IViewBox>({
-  x: 0,
-  y: 0,
-  width: 0,
-  height: 0,
+onMounted(() => {
+  wrapperRect.value = wrapperRef.value!.getBoundingClientRect();
 });
 
-const viewBoxAttr = computed(() => {
-  const { height, width, x, y } = viewBox;
+const viewBox = computed((): string => {
+  const { x, y } = canvasStore.translation;
+  const width = wrapperRect.value!.width / canvasStore.scale;
+  const height = wrapperRect.value!.height / canvasStore.scale;
   return `${x} ${y} ${width} ${height}`;
 });
 
-onMounted(async () => {
-  wrapperRect.value = wrapperRef.value!.getBoundingClientRect();
-  viewBox.width = wrapperRect.value.width;
-  viewBox.height = wrapperRect.value.height;
-});
-
-const canvasZoom = useCanvasZoom({ wrapperRect, viewBox });
-const canvasNavigation = useCanvasNavigation({ viewBox });
+const canvasZoom = useCanvasZoom();
+const canvasNavigation = useCanvasNavigation();
+const beadsGrid = useBeadsGrid();
 
 function onWheel(event: WheelEvent): void {
   event.preventDefault();

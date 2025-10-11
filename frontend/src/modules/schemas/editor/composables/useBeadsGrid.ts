@@ -1,5 +1,6 @@
-import { computed, type MaybeRefOrGetter, reactive, toValue } from 'vue';
-import { type ISchema, parseSchemaBeadCoord, type SchemaBeadCoord } from '@/models';
+import { computed, reactive } from 'vue';
+import { useEditorStore } from '@editor/stores';
+import { parseSchemaBeadCoord, type SchemaBeadCoord } from '@/models';
 
 export const BEAD_SIZE = 12;
 export const BEAD_CENTER = BEAD_SIZE / 2;
@@ -13,22 +14,26 @@ export interface IBeadsGridItem {
   color: string;
 }
 
-export interface IBeadsGrid {
-  beads: IBeadsGridItem[];
-  size: {
-    minX: number;
-    minY: number;
-    width: number;
-    height: number;
-  };
+export interface IBeadsGridSize {
+  minX: number;
+  minY: number;
+  width: number;
+  height: number;
 }
 
-export function useBeadsGrid(schemaRef: MaybeRefOrGetter<ISchema>): IBeadsGrid {
-  const schema = computed(() => toValue(schemaRef));
-  const left = computed(() => schema.value.size.left);
-  const top = computed(() => schema.value.size.top);
-  const right = computed(() => schema.value.size.right);
-  const bottom = computed(() => schema.value.size.bottom);
+export interface IBeadsGrid {
+  beads: IBeadsGridItem[];
+  size: IBeadsGridSize;
+  resolveBeadOffset: (coord: SchemaBeadCoord) => BeadOffset;
+}
+
+export function useBeadsGrid(): IBeadsGrid {
+  const editorStore = useEditorStore();
+
+  const left = computed(() => editorStore.schema.size.left);
+  const top = computed(() => editorStore.schema.size.top);
+  const right = computed(() => editorStore.schema.size.right);
+  const bottom = computed(() => editorStore.schema.size.bottom);
 
   const initialOffsetX = left.value * BEAD_SIZE;
   const initialOffsetY = top.value * BEAD_SIZE;
@@ -39,23 +44,29 @@ export function useBeadsGrid(schemaRef: MaybeRefOrGetter<ISchema>): IBeadsGrid {
   const width = computed(() => (left.value + right.value) * BEAD_SIZE);
   const height = computed(() => (top.value + bottom.value) * BEAD_SIZE);
 
-  const beads = computed(() => (
-    Object.entries(schema.value.beads).map(([coord_, color]): IBeadsGridItem => {
-      const coord = coord_ as SchemaBeadCoord;
-      const [x, y] = parseSchemaBeadCoord(coord);
-      const offsetX = initialOffsetX + (x * BEAD_SIZE);
-      const offsetY = initialOffsetY + (y * BEAD_SIZE);
+  function resolveBeadOffset(coord: SchemaBeadCoord): BeadOffset {
+    const [x, y] = parseSchemaBeadCoord(coord);
+    const offsetX = initialOffsetX + (x * BEAD_SIZE);
+    const offsetY = initialOffsetY + (y * BEAD_SIZE);
+    return [offsetX, offsetY];
+  }
 
-      return {
-        coord,
-        offset: [offsetX, offsetY],
-        color,
-      };
-    })
+  const beads = computed(() => (
+    Object.entries(editorStore.schema.beads)
+      .map(([coord_, color]): IBeadsGridItem => {
+        const coord = coord_ as SchemaBeadCoord;
+
+        return {
+          coord,
+          color,
+          offset: resolveBeadOffset(coord),
+        };
+      })
   ));
 
   return reactive({
     beads,
+    resolveBeadOffset,
 
     size: {
       minX: minOffsetX,

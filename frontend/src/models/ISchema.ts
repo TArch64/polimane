@@ -9,7 +9,7 @@ export function serializeSchemaBeadCoord(x: number, y: number): SchemaBeadCoord 
   return `${x}:${y}`;
 }
 
-export function parseSchemaBeadCoord(coord: SchemaBeadCoord): SchemaBeadCoordTuple {
+export function parseSchemaBeadCoord(coord: string): SchemaBeadCoordTuple {
   return coord.split(':').map(Number) as SchemaBeadCoordTuple;
 }
 

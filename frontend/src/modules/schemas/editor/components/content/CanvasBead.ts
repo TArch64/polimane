@@ -1,19 +1,16 @@
 import { type FunctionalComponent, h } from 'vue';
-import type { SchemaBeadCoord } from '@/models';
-import { BEAD_CENTER, BEAD_RADIUS, type BeadOffset } from '../../composables';
+import { BEAD_CENTER, BEAD_RADIUS, type IBeadsGridItem } from '../../composables';
 
 export interface ICanvasBeadProps {
-  offset: BeadOffset;
-  coord: SchemaBeadCoord;
-  color: string | null;
+  bead: IBeadsGridItem;
 }
 
 export const CanvasBead: FunctionalComponent<ICanvasBeadProps> = (props) => {
   return h('circle', {
     r: BEAD_RADIUS,
-    coord: props.coord,
-    fill: props.color,
-    cx: props.offset[0] + BEAD_CENTER,
-    cy: props.offset[1] + BEAD_CENTER,
+    coord: props.bead.coord,
+    fill: props.bead.color,
+    cx: props.bead.offset[0] + BEAD_CENTER,
+    cy: props.bead.offset[1] + BEAD_CENTER,
   });
 };

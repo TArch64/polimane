@@ -1,10 +1,18 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, ref } from 'vue';
-import type { INodeRect } from '@/models';
+import type { INodeRect, SchemaBeadCoord } from '@/models';
+
+export interface IBeadSelection {
+  from: SchemaBeadCoord;
+  to: SchemaBeadCoord;
+}
 
 export const useSelectionStore = defineStore('schemas/editor/selection', () => {
   const isSelecting = ref(false);
   const toggleSelecting = (value: boolean) => isSelecting.value = value;
+
+  const selected = ref<IBeadSelection | null>(null);
+  const setSelected = (value: IBeadSelection | null) => selected.value = value;
 
   const selection = reactive<INodeRect>({
     x: 0,
@@ -46,5 +54,7 @@ export const useSelectionStore = defineStore('schemas/editor/selection', () => {
     extend,
     isSelecting,
     toggleSelecting,
+    selected,
+    setSelected,
   };
 });

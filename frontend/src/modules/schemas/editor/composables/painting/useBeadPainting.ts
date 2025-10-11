@@ -1,15 +1,16 @@
 import { computed, ref, type Ref } from 'vue';
 import { createAnimatedFrame } from '@/helpers';
+import { serializeSchemaBeadCoord } from '@/models';
 import { PaintEffect, useBeadsStore, useToolsStore } from '../../stores';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 import { useBeadCoord } from './useBeadCoord';
 
-export interface IBeadPainting {
+export interface IBeadPaintingListeners {
   mousedown: (event: MouseEvent) => void;
   mousemove?: (event: MouseEvent) => void;
 }
 
-export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPainting> {
+export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingListeners> {
   const toolsStore = useToolsStore();
   const beadsStore = useBeadsStore();
 
@@ -17,7 +18,8 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPainting> 
   const isPainting = ref(false);
 
   const paint = createAnimatedFrame((event: MouseEvent, color: string | null) => {
-    const coord = beadCoord.getCoord(event);
+    const coordTuple = beadCoord.getFromEvent(event);
+    const coord = coordTuple ? serializeSchemaBeadCoord(...coordTuple) : null;
     const effect = coord ? beadsStore.paint(coord, color) : null;
 
     if (effect === PaintEffect.EXTENDED) {

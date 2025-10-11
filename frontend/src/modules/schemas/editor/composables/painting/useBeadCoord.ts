@@ -1,10 +1,15 @@
 import { useCanvasStore, useEditorStore } from '@editor/stores';
-import { type IPoint, type SchemaBeadCoord, serializeSchemaBeadCoord } from '@/models';
+import { type IPoint, parseSchemaBeadCoord, type SchemaBeadCoordTuple } from '@/models';
 import { BEAD_CENTER, BEAD_RADIUS, BEAD_SIZE } from '../useBeadsGrid';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 
+export interface IBeadResolveOptions {
+  checkShape?: boolean;
+}
+
 export interface IBeadCoord {
-  getCoord: (event: MouseEvent) => SchemaBeadCoord | null;
+  getFromEvent: (event: MouseEvent) => SchemaBeadCoordTuple | null;
+  getFromPoint: (point: IPoint, options?: IBeadResolveOptions) => SchemaBeadCoordTuple | null;
   clearCache: () => void;
 }
 
@@ -14,30 +19,26 @@ export function useBeadCoord(options: IBeadToolsOptions): IBeadCoord {
 
   let backgroundRect: DOMRect | null = null;
 
-  function inCircle(mouse: IPoint, circle: IPoint, radius: number) {
-    const dx = mouse.x - circle.x;
-    const dy = mouse.y - circle.y;
+  function inCircle(point: IPoint, circle: IPoint, radius: number) {
+    const dx = point.x - circle.x;
+    const dy = point.y - circle.y;
     return dx * dx + dy * dy <= radius * radius;
   }
 
-  function getCoord(event: MouseEvent): SchemaBeadCoord | null {
-    const target = event.target as HTMLElement;
-    const storedCoord = target.getAttribute('coord');
+  function getFromPoint(
+    point: IPoint,
+    getOptions: IBeadResolveOptions = {},
+  ): SchemaBeadCoordTuple | null {
+    backgroundRect ??= options.backgroundRef.value.getBoundingClientRect();
 
-    if (storedCoord) {
-      return storedCoord as SchemaBeadCoord;
-    }
-
-    backgroundRect ??= options.backgroundRectRef.value.getBoundingClientRect();
-
-    const mouse: IPoint = {
-      y: (event.clientY - backgroundRect.y) / canvasStore.scale,
-      x: (event.clientX - backgroundRect.x) / canvasStore.scale,
+    const relativePoint: IPoint = {
+      y: (point.y - backgroundRect.y) / canvasStore.scale,
+      x: (point.x - backgroundRect.x) / canvasStore.scale,
     };
 
     const coord: IPoint = {
-      y: Math.floor(mouse.y / BEAD_SIZE),
-      x: Math.floor(mouse.x / BEAD_SIZE),
+      y: Math.floor(relativePoint.y / BEAD_SIZE),
+      x: Math.floor(relativePoint.x / BEAD_SIZE),
     };
 
     if (coord.y < 0 || coord.x < 0) {
@@ -49,17 +50,26 @@ export function useBeadCoord(options: IBeadToolsOptions): IBeadCoord {
       x: (coord.x * BEAD_SIZE) + BEAD_CENTER,
     };
 
-    if (!inCircle(mouse, beadCenter, BEAD_RADIUS)) {
+    if (getOptions.checkShape !== false && !inCircle(relativePoint, beadCenter, BEAD_RADIUS)) {
       return null;
     }
 
     const { left, top } = editorStore.schema.size;
-    return serializeSchemaBeadCoord(coord.x - left, coord.y - top);
+    return [coord.x - left, coord.y - top];
+  }
+
+  function getFromEvent(event: MouseEvent): SchemaBeadCoordTuple | null {
+    const target = event.target as HTMLElement;
+    const storedCoord = target.getAttribute('coord');
+
+    return storedCoord
+      ? parseSchemaBeadCoord(storedCoord)
+      : getFromPoint({ x: event.clientX, y: event.clientY });
   }
 
   function clearCache() {
     backgroundRect = null;
   }
 
-  return { getCoord, clearCache };
+  return { getFromPoint, getFromEvent, clearCache };
 }

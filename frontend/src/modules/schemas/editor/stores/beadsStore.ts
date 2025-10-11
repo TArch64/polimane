@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia';
-import { computed } from 'vue';
-import { useContrast } from '@editor/composables';
-import { parseSchemaBeadCoord, type SchemaBeadCoord, type SchemaSizeDirection } from '@/models';
+import {
+  parseSchemaBeadCoord,
+  type SchemaBeadCoord,
+  type SchemaBeadCoordTuple,
+  type SchemaBeads,
+  type SchemaSizeDirection,
+} from '@/models';
 import { useEditorStore } from './editorStore';
-
-const EMPTY_LIGHT = 'rgba(0, 0, 0, 0.1)';
-const EMPTY_DARK = 'rgba(255, 255, 255, 0.1)';
 
 export enum PaintEffect {
   EXTENDED = 'extend',
@@ -77,8 +78,14 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     return null;
   }
 
-  const emptyContrast = useContrast(() => editorStore.schema.backgroundColor, EMPTY_DARK);
-  const emptyColor = computed(() => emptyContrast.value < 4.5 ? EMPTY_LIGHT : EMPTY_DARK);
+  function getInArea(from: SchemaBeadCoordTuple, to: SchemaBeadCoordTuple): SchemaBeads {
+    const entries = Object.entries(editorStore.schema.beads).filter(([coord]) => {
+      const [x, y] = parseSchemaBeadCoord(coord);
+      return x >= from[0] && x <= to[0] && y >= from[1] && y <= to[1];
+    });
 
-  return { paint, emptyColor };
+    return Object.fromEntries(entries);
+  }
+
+  return { paint, getInArea };
 });
