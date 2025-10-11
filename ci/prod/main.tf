@@ -4,22 +4,22 @@ terraform {
   required_providers {
     bitwarden = {
       source  = "maxlaverse/bitwarden"
-      version = "0.15.0"
+      version = "0.16.0"
     }
 
     aws = {
       source  = "hashicorp/aws"
-      version = "6.9.0"
+      version = "6.16.0"
     }
 
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "5.8.4"
+      version = "5.11.0"
     }
 
     cockroach = {
       source  = "cockroachdb/cockroach"
-      version = "1.12.2"
+      version = "1.15.1"
     }
 
     tls = {
