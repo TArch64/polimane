@@ -9,3 +9,4 @@ export * from './painting';
 export * from './useSelectionColor';
 export * from './useBackgroundContrast';
 export * from './useBackgroundCanvasColor';
+export * from './useCanvasPosition';

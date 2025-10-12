@@ -21,22 +21,23 @@
 
     <FadeTransition>
       <CanvasSelection
+        :selected
         :beadsGrid
-        :selected="selectionStore.selected"
-        v-if="selectionStore.selected"
+        :key="`${selected.from}-${selected.to}`"
+        v-if="selected"
       />
     </FadeTransition>
   </g>
 </template>
 
 <script setup lang="ts">
-import { ref, useId } from 'vue';
+import { computed, ref, useId } from 'vue';
 import { useSelectionStore } from '@editor/stores';
 import { FadeTransition } from '@/components/transition';
 import { type IBeadsGrid, useBeadTools } from '../../composables';
 import { CanvasBead } from './CanvasBead';
 import CanvasBackgroundPattern from './CanvasBackgroundPattern.vue';
-import CanvasSelection from './CanvasSelection.vue';
+import { CanvasSelection } from './selection';
 import CanvasDefs from './CanvasDefs.vue';
 
 const props = defineProps<{
@@ -45,6 +46,7 @@ const props = defineProps<{
 }>();
 
 const selectionStore = useSelectionStore();
+const selected = computed(() => selectionStore.selected);
 
 const backgroundPatternId = `editorEmptyBeads-${useId()}`;
 const backgroundPatternFill = `url(#${backgroundPatternId})`;
