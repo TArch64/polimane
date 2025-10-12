@@ -4,6 +4,7 @@
       ref="canvasRef"
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMin slice"
+      class="canvas-editor"
       :width="wrapperRect.width"
       :height="wrapperRect.height"
       :viewBox
