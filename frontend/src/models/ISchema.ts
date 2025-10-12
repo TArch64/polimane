@@ -1,3 +1,5 @@
+import type { IPoint } from './Point';
+
 export type SchemaSizeDirection = 'top' | 'left' | 'right' | 'bottom';
 export type SchemaSize = Record<SchemaSizeDirection, number>;
 
@@ -9,8 +11,9 @@ export function serializeSchemaBeadCoord(x: number, y: number): SchemaBeadCoord 
   return `${x}:${y}`;
 }
 
-export function parseSchemaBeadCoord(coord: string): SchemaBeadCoordTuple {
-  return coord.split(':').map(Number) as SchemaBeadCoordTuple;
+export function parseSchemaBeadCoord(coord: string): IPoint {
+  const [x, y] = coord.split(':').map(Number);
+  return { x: x!, y: y! };
 }
 
 export interface ISchema {

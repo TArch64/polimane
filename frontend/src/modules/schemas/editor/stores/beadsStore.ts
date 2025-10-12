@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import {
+  type IPoint,
   parseSchemaBeadCoord,
   type SchemaBeadCoord,
-  type SchemaBeadCoordTuple,
   type SchemaBeads,
   type SchemaSizeDirection,
 } from '@/models';
@@ -20,7 +20,7 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
   }
 
   function checkExtendingPaint(coord: SchemaBeadCoord): SchemaSizeDirection[] {
-    const [x, y] = parseSchemaBeadCoord(coord);
+    const { x, y } = parseSchemaBeadCoord(coord);
     const size = editorStore.schema.size;
     const directions: SchemaSizeDirection[] = [];
 
@@ -78,10 +78,10 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     return null;
   }
 
-  function getInArea(from: SchemaBeadCoordTuple, to: SchemaBeadCoordTuple): SchemaBeads {
+  function getInArea(from: IPoint, to: IPoint): SchemaBeads {
     const entries = Object.entries(editorStore.schema.beads).filter(([coord]) => {
-      const [x, y] = parseSchemaBeadCoord(coord);
-      return x >= from[0] && x <= to[0] && y >= from[1] && y <= to[1];
+      const { x, y } = parseSchemaBeadCoord(coord);
+      return x >= from.x && x <= to.x && y >= from.y && y <= to.y;
     });
 
     return Object.fromEntries(entries);

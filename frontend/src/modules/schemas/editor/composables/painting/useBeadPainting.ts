@@ -18,9 +18,9 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
   const isPainting = ref(false);
 
   const paint = createAnimatedFrame((event: MouseEvent, color: string | null) => {
-    const coordTuple = beadCoord.getFromEvent(event);
-    const coord = coordTuple ? serializeSchemaBeadCoord(...coordTuple) : null;
-    const effect = coord ? beadsStore.paint(coord, color) : null;
+    const point = beadCoord.getFromEvent(event);
+    const coord = point && serializeSchemaBeadCoord(point.x, point.y);
+    const effect = coord && beadsStore.paint(coord, color);
 
     if (effect === PaintEffect.EXTENDED) {
       beadCoord.clearCache();

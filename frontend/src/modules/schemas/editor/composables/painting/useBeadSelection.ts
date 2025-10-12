@@ -2,14 +2,13 @@ import { computed, type Ref, watch } from 'vue';
 import {
   type IBeadSelection,
   useBeadsStore,
-  useCanvasStore,
   useSelectionStore,
   useToolsStore,
 } from '@editor/stores';
 import {
+  type IPoint,
   parseSchemaBeadCoord,
   type SchemaBeadCoord,
-  type SchemaBeadCoordTuple,
   serializeSchemaBeadCoord,
 } from '@/models';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
@@ -23,11 +22,10 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
   const selectionStore = useSelectionStore();
   const toolsStore = useToolsStore();
   const beadsStore = useBeadsStore();
-  const canvasStore = useCanvasStore();
 
   const beadCoord = useBeadCoord(options);
 
-  function createSelection(from: SchemaBeadCoordTuple, to: SchemaBeadCoordTuple): IBeadSelection | null {
+  function createSelection(from: IPoint, to: IPoint): IBeadSelection | null {
     const selected = Object.keys(beadsStore.getInArea(from, to)) as SchemaBeadCoord[];
 
     if (!selected.length) {
@@ -35,12 +33,17 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
     }
 
     if (selected.length === 1) {
-      return { from: selected[0]!, to: selected[0]! };
+      const coord = selected[0]!;
+      return { from: coord, to: coord };
     }
 
-    const parsed = selected.map(parseSchemaBeadCoord);
-    const xs = parsed.map(([x]) => x);
-    const ys = parsed.map(([, y]) => y);
+    const xs: number[] = [];
+    const ys: number[] = [];
+
+    for (const coord of selected.map(parseSchemaBeadCoord)) {
+      xs.push(coord.x);
+      ys.push(coord.y);
+    }
 
     return {
       from: serializeSchemaBeadCoord(Math.min(...xs), Math.min(...ys)),

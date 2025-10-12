@@ -1,5 +1,5 @@
 import { useCanvasStore, useEditorStore } from '@editor/stores';
-import { type IPoint, parseSchemaBeadCoord, type SchemaBeadCoordTuple } from '@/models';
+import { type IPoint, parseSchemaBeadCoord } from '@/models';
 import { BEAD_CENTER, BEAD_RADIUS, BEAD_SIZE } from '../useBeadsGrid';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 
@@ -8,8 +8,8 @@ export interface IBeadResolveOptions {
 }
 
 export interface IBeadCoord {
-  getFromEvent: (event: MouseEvent) => SchemaBeadCoordTuple | null;
-  getFromPoint: (point: IPoint, options?: IBeadResolveOptions) => SchemaBeadCoordTuple | null;
+  getFromEvent: (event: MouseEvent) => IPoint | null;
+  getFromPoint: (point: IPoint, options?: IBeadResolveOptions) => IPoint | null;
   clearCache: () => void;
 }
 
@@ -25,10 +25,7 @@ export function useBeadCoord(options: IBeadToolsOptions): IBeadCoord {
     return dx * dx + dy * dy <= radius * radius;
   }
 
-  function getFromPoint(
-    point: IPoint,
-    getOptions: IBeadResolveOptions = {},
-  ): SchemaBeadCoordTuple | null {
+  function getFromPoint(point: IPoint, getOptions: IBeadResolveOptions = {}): IPoint | null {
     backgroundRect ??= options.backgroundRef.value.getBoundingClientRect();
 
     const relativePoint: IPoint = {
@@ -55,10 +52,10 @@ export function useBeadCoord(options: IBeadToolsOptions): IBeadCoord {
     }
 
     const { left, top } = editorStore.schema.size;
-    return [coord.x - left, coord.y - top];
+    return { x: coord.x - left, y: coord.y - top };
   }
 
-  function getFromEvent(event: MouseEvent): SchemaBeadCoordTuple | null {
+  function getFromEvent(event: MouseEvent): IPoint | null {
     const target = event.target as HTMLElement;
     const storedCoord = target.getAttribute('coord');
 

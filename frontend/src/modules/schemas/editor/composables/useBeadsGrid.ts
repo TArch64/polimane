@@ -40,7 +40,7 @@ export function useBeadsGrid(): IBeadsGrid {
   const height = computed(() => (size.top + size.bottom) * BEAD_SIZE);
 
   function resolveBeadOffset(coord: SchemaBeadCoord): IPoint {
-    const [x, y] = parseSchemaBeadCoord(coord);
+    const { x, y } = parseSchemaBeadCoord(coord);
     const offsetX = initialOffsetX + (x * BEAD_SIZE);
     const offsetY = initialOffsetY + (y * BEAD_SIZE);
     return { x: offsetX, y: offsetY };
