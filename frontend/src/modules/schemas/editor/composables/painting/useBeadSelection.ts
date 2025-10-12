@@ -8,11 +8,12 @@ import {
 import {
   type IPoint,
   parseSchemaBeadCoord,
+  Point,
   type SchemaBeadCoord,
   serializeSchemaBeadCoord,
 } from '@/models';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
-import { useBeadCoord } from './useBeadCoord';
+import { type IBeadResolveOptions, useBeadCoord } from './useBeadCoord';
 
 export interface IBeadSelectionListeners {
   mousedown: (event: MouseEvent) => void;
@@ -56,28 +57,25 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
   }
 
   function onMouseup() {
-    removeEventListener('mousemove', onMouseMove);
-    beadCoord.clearCache();
+    try {
+      removeEventListener('mousemove', onMouseMove);
+      beadCoord.clearCache();
 
-    const baseX = selectionStore.selection.x;
-    const baseY = selectionStore.selection.y;
+      const { x, y, width, height } = selectionStore.selection;
+      let point = new Point({ x, y });
+      const resolveOptions: IBeadResolveOptions = { checkShape: false };
 
-    const from = beadCoord.getFromPoint({ x: baseX, y: baseY }, {
-      checkShape: false,
-    });
+      const from = beadCoord.getFromPoint(point, resolveOptions);
 
-    const to = from && beadCoord.getFromPoint({
-      x: baseX + selectionStore.selection.width,
-      y: baseY + selectionStore.selection.height,
-    }, {
-      checkShape: false,
-    });
+      point = point.plus({ x: width, y: height });
+      const to = from && beadCoord.getFromPoint(point, resolveOptions);
 
-    selectionStore.toggleSelecting(false);
-
-    from && to
-      ? selectionStore.setSelected(createSelection(from, to))
-      : selectionStore.setSelected(null);
+      from && to
+        ? selectionStore.setSelected(createSelection(from, to))
+        : selectionStore.setSelected(null);
+    } finally {
+      selectionStore.toggleSelecting(false);
+    }
   }
 
   function onMouseDown(event: MouseEvent) {
