@@ -22,6 +22,7 @@ const position = useCanvasPosition(() => props.selectionRef);
 <style scoped>
 @layer page {
   .selection-area {
+    z-index: 1000;
     position: fixed;
     top: 0;
     left: 0;

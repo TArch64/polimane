@@ -1,20 +1,52 @@
 <template>
-  <div class="selection-resize-handle" :class="classes" />
+  <Transition name="selection-resize-handle-" appear :duration="200">
+    <div
+      class="selection-resize-handle"
+      :class="classes"
+      @mousedown="onMouseDown"
+    />
+  </Transition>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useBackgroundContrast } from '@editor/composables';
+import { Direction } from '@/enums';
 
 const props = defineProps<{
-  position: 'top' | 'bottom' | 'left' | 'right';
+  direction: Direction;
 }>();
 
-const classes = computed(() => `selection-resize-handle--${props.position}`);
+const translation = defineModel<number>('translation', { required: true });
+const overlay = defineModel<boolean>('overlay', { required: true });
+
+const isVertical = computed(() => props.direction === 'top' || props.direction === 'bottom');
+const isNegative = computed(() => props.direction === 'top' || props.direction === 'left');
+
+const classes = computed(() => `selection-resize-handle--${props.direction}`);
 
 const contrast = useBackgroundContrast('#FFF');
 const backgroundColor = computed(() => contrast.isAA ? 'var(--color-primary)' : 'var(--color-white)');
 const borderColor = computed(() => contrast.isAA ? 'var(--color-white)' : 'var(--color-primary)');
+
+function onMouseMove(event: MouseEvent) {
+  const axis = isVertical.value ? 'movementY' : 'movementX';
+  const direction = isNegative.value ? -1 : 1;
+  const value = translation.value + direction * event[axis];
+  translation.value = Math.max(value, 0);
+}
+
+function onMouseUp() {
+  overlay.value = false;
+  translation.value = 0;
+  removeEventListener('mousemove', onMouseMove);
+}
+
+function onMouseDown() {
+  overlay.value = true;
+  addEventListener('mousemove', onMouseMove);
+  addEventListener('mouseup', onMouseUp, { once: true });
+}
 </script>
 
 <style scoped>
@@ -26,9 +58,10 @@ const borderColor = computed(() => contrast.isAA ? 'var(--color-white)' : 'var(-
     background-color: v-bind("backgroundColor");
     border: 1px solid v-bind("borderColor");
     transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
+    will-change: background-color, border-color, v-bind("direction");
     --handle-main-size: max(calc(100% / 5), 40px);
     --handle-cross-size: 8px;
-    --handle-offset: -20px;
+    --handle-offset: calc(-20px - v-bind("translation + 'px'"));
   }
 
   .selection-resize-handle--top,
@@ -63,6 +96,19 @@ const borderColor = computed(() => contrast.isAA ? 'var(--color-white)' : 'var(-
 
   .selection-resize-handle--right {
     right: var(--handle-offset);
+  }
+
+  .selection-resize-handle--enter-from,
+  .selection-resize-handle--leave-to {
+    opacity: 0;
+    scale: 0.8;
+  }
+
+  .selection-resize-handle--enter-active,
+  .selection-resize-handle--leave-active {
+    transform-origin: center center;
+    transition: opacity 0.2s ease-out, scale 0.2s ease-out;
+    will-change: opacity, scale;
   }
 }
 </style>

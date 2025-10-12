@@ -4,8 +4,8 @@ import {
   parseSchemaBeadCoord,
   type SchemaBeadCoord,
   type SchemaBeads,
-  type SchemaSizeDirection,
 } from '@/models';
+import { Direction } from '@/enums';
 import { useEditorStore } from './editorStore';
 
 export enum PaintEffect {
@@ -19,35 +19,35 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     return editorStore.schema.beads[coord] ?? null;
   }
 
-  function checkExtendingPaint(coord: SchemaBeadCoord): SchemaSizeDirection[] {
+  function checkExtendingPaint(coord: SchemaBeadCoord): Direction[] {
     const { x, y } = parseSchemaBeadCoord(coord);
     const size = editorStore.schema.size;
-    const directions: SchemaSizeDirection[] = [];
+    const directions: Direction[] = [];
 
     if (x <= 0) {
       if (size.left + x < 3) {
-        directions.push('left');
+        directions.push(Direction.LEFT);
       }
     } else {
       if (size.right - x < 3) {
-        directions.push('right');
+        directions.push(Direction.RIGHT);
       }
     }
 
     if (y <= 0) {
       if (size.top + y < 3) {
-        directions.push('top');
+        directions.push(Direction.TOP);
       }
     } else {
       if (size.bottom - y < 3) {
-        directions.push('bottom');
+        directions.push(Direction.BOTTOM);
       }
     }
 
     return directions;
   }
 
-  function extendSchemaSize(directions: SchemaSizeDirection[]): void {
+  function extendSchemaSize(directions: Direction[]): void {
     for (const direction of directions) {
       editorStore.schema.size[direction] += 10;
     }
