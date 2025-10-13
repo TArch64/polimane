@@ -1,6 +1,6 @@
 import { computed, reactive, type Ref, ref, watch, type WatchStopHandle } from 'vue';
-import type { ISchema } from '@/models';
 import { combineStopHandles, getObjectKeys } from '@/helpers';
+import type { ISchema } from '@/models';
 import type { SafeAny } from '@/types';
 
 const SAVE_TIMEOUT = 30_000;

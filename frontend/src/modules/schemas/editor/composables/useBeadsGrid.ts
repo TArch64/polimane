@@ -1,7 +1,13 @@
 import { computed, reactive } from 'vue';
 import { useEditorStore } from '@editor/stores';
 import { reactiveComputed } from '@vueuse/core';
-import { type IPoint, parseSchemaBeadCoord, type SchemaBeadCoord } from '@/models';
+import {
+  type IPoint,
+  parseSchemaBeadCoord,
+  type SchemaBeadCoord,
+  type SchemaBeads,
+} from '@/models';
+import { getObjectEntries } from '@/helpers';
 
 export const BEAD_SIZE = 12;
 export const BEAD_CENTER = BEAD_SIZE / 2;
@@ -47,18 +53,17 @@ export function useBeadsGrid(): IBeadsGrid {
   }
 
   const beads = computed(() => (
-    Object.entries(editorStore.schema.beads)
-      .map(([coord_, color]): IBeadsGridItem => {
-        const coord = coord_ as SchemaBeadCoord;
-        const offset = resolveBeadOffset(coord);
+    getObjectEntries<SchemaBeads>(editorStore.schema.beads)
+      .map(([coord, color]): IBeadsGridItem => {
+        const { x, y } = resolveBeadOffset(coord);
 
         return {
           coord,
           color,
 
           offset: {
-            x: offset.x + BEAD_CENTER,
-            y: offset.y + BEAD_CENTER,
+            x: x + BEAD_CENTER,
+            y: y + BEAD_CENTER,
           },
         };
       })

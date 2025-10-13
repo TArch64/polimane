@@ -5,13 +5,8 @@ import {
   useSelectionStore,
   useToolsStore,
 } from '@editor/stores';
-import {
-  type IPoint,
-  parseSchemaBeadCoord,
-  Point,
-  type SchemaBeadCoord,
-  serializeSchemaBeadCoord,
-} from '@/models';
+import { type IPoint, parseSchemaBeadCoord, Point, serializeSchemaBeadCoord } from '@/models';
+import { getObjectKeys } from '@/helpers';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 import { type IBeadResolveOptions, useBeadCoord } from './useBeadCoord';
 
@@ -27,7 +22,7 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
   const beadCoord = useBeadCoord(options);
 
   function createSelection(from: IPoint, to: IPoint): IBeadSelection | null {
-    const selected = Object.keys(beadsStore.getInArea(from, to)) as SchemaBeadCoord[];
+    const selected = getObjectKeys(beadsStore.getInArea(from, to));
 
     if (!selected.length) {
       return null;
@@ -53,7 +48,7 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
   }
 
   function onMouseMove(event: MouseEvent) {
-    selectionStore.extend(event.movementX, event.movementY);
+    selectionStore.area.extend(event.movementX, event.movementY);
   }
 
   function onMouseup() {
@@ -61,7 +56,7 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
       removeEventListener('mousemove', onMouseMove);
       beadCoord.clearCache();
 
-      const { x, y, width, height } = selectionStore.selection;
+      const { x, y, width, height } = selectionStore.area;
       let point = new Point({ x, y });
       const resolveOptions: IBeadResolveOptions = { checkShape: false };
 
@@ -80,7 +75,7 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
 
   function onMouseDown(event: MouseEvent) {
     selectionStore.toggleSelecting(true);
-    selectionStore.setPoint(event.clientX, event.clientY);
+    selectionStore.area.setPoint(event.clientX, event.clientY);
     addEventListener('mouseup', onMouseup, { once: true });
     addEventListener('mousemove', onMouseMove);
   }

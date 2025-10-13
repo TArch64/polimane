@@ -6,6 +6,7 @@ import {
   type SchemaBeads,
 } from '@/models';
 import { Direction } from '@/enums';
+import { getObjectEntries } from '@/helpers';
 import { useEditorStore } from './editorStore';
 
 export enum PaintEffect {
@@ -79,7 +80,7 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
   }
 
   function getInArea(from: IPoint, to: IPoint): SchemaBeads {
-    const entries = Object.entries(editorStore.schema.beads).filter(([coord]) => {
+    const entries = getObjectEntries<SchemaBeads>(editorStore.schema.beads).filter(([coord]) => {
       const { x, y } = parseSchemaBeadCoord(coord);
       return x >= from.x && x <= to.x && y >= from.y && y <= to.y;
     });
