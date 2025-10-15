@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed } from 'vue';
 import { useBackgroundContrast } from '@editor/composables';
 import { useSelectionStore } from '@editor/stores';
 import { Direction, isNegativeDirection, isVerticalDirection } from '@/enums';
@@ -21,7 +21,7 @@ const props = defineProps<{
 const overlay = defineModel<boolean>('overlay', { required: true });
 
 const selectionStore = useSelectionStore();
-const translation = toRef(selectionStore.resize.translation, props.direction);
+const translation = computed(() => selectionStore.resize.translation[props.direction]);
 
 const isVertical = isVerticalDirection(props.direction);
 const isNegative = isNegativeDirection(props.direction);
@@ -34,9 +34,8 @@ const borderColor = computed(() => contrast.isAA ? 'var(--color-white)' : 'var(-
 
 function onMouseMove(event: MouseEvent) {
   const axis = isVertical ? 'movementY' : 'movementX';
-  const direction = isNegative ? -1 : 1;
-  const value = translation.value + direction * event[axis];
-  translation.value = Math.max(value, 0);
+  const modifier = isNegative ? -1 : 1;
+  selectionStore.resize.extendTranslation(props.direction, modifier * event[axis]);
 }
 
 function onMouseUp() {

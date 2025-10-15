@@ -1,7 +1,6 @@
-import { computed, reactive, type Ref, ref, watch } from 'vue';
+import { computed, reactive, type Ref, ref } from 'vue';
 import { BEAD_SIZE } from '@editor/const';
-import { watchThrottled } from '@vueuse/core';
-import { Direction, isNegativeDirection, isVerticalDirection } from '@/enums';
+import { Direction, DirectionList, isNegativeDirection, isVerticalDirection } from '@/enums';
 import {
   type INodeRect,
   parseSchemaBeadCoord,
@@ -23,32 +22,25 @@ export interface ISelectionResize extends INodeRect {
   isResizing: boolean;
   direction: Direction | null;
   translation: Record<Direction, number>;
+  extendTranslation: (dir: Direction, delta: number) => void;
   reset: () => void;
 }
 
 export function useSelectionResize(options: ISelectionResizeOptions): ISelectionResize {
   const beadsStore = useBeadsStore();
 
-  const translation = reactive<Record<Direction, number>>({
-    [Direction.TOP]: 0,
-    [Direction.BOTTOM]: 0,
-    [Direction.LEFT]: 0,
-    [Direction.RIGHT]: 0,
-  });
+  const translation = ref(0);
+  const direction = ref<Direction | null>(null);
+  const isResizing = computed(() => !!translation.value);
 
-  const direction = computed(() => {
-    return getObjectKeys(translation)
-      .find((direction) => !!translation[direction])
-      || null;
-  });
+  const fullTranslation = computed(() => Object.fromEntries(
+    DirectionList.map((dir) => [dir, dir === direction.value ? translation.value : 0]),
+  ) as Record<Direction, number>);
 
-  const directionTranslation = computed(() => direction.value ? translation[direction.value] : 0);
-
-  const isResizing = computed(() => !!direction.value);
-  const resizingX = computed(() => options.area.x - translation.left);
-  const resizingY = computed(() => options.area.y - translation.top);
-  const resizingWidth = computed(() => options.area.width + translation.right + translation.left);
-  const resizingHeight = computed(() => options.area.height + translation.bottom + translation.top);
+  const resizingX = computed(() => options.area.x - fullTranslation.value.left);
+  const resizingY = computed(() => options.area.y - fullTranslation.value.top);
+  const resizingWidth = computed(() => options.area.width + fullTranslation.value.right + fullTranslation.value.left);
+  const resizingHeight = computed(() => options.area.height + fullTranslation.value.bottom + fullTranslation.value.top);
 
   const capturedSequence = ref<SchemaBeads[]>([]);
   const sequenceAxis = ref<'x' | 'y' | null>(null);
@@ -73,25 +65,6 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
     return sequence;
   }
 
-  watch(direction, (direction) => {
-    const selected = options.selected.value;
-
-    if (!direction || !selected) {
-      return;
-    }
-
-    const from = parseSchemaBeadCoord(selected.from);
-    const to = parseSchemaBeadCoord(selected.to);
-    const selectedBeads = beadsStore.getInArea(from, to);
-
-    sequenceAxis.value = isVerticalDirection(direction) ? 'y' : 'x';
-    capturedSequence.value = buildSequence(selectedBeads, direction);
-  });
-
-  const sequencePendingOffset = computed(() => {
-    return Math.floor(directionTranslation.value / BEAD_SIZE);
-  });
-
   function renderTemplate(template: SchemaBeads) {
     return getObjectEntries<SchemaBeads>(template).map(([templateCoord, bead]) => {
       const coord = parseSchemaBeadCoord(templateCoord);
@@ -107,7 +80,28 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
     options.area.extend(x, y);
   }
 
-  watchThrottled(sequencePendingOffset, (offset) => {
+  function extendTranslation(dir: Direction, delta: number) {
+    translation.value += delta;
+
+    if (translation.value <= 0) {
+      translation.value = 0;
+      return;
+    }
+
+    if (!direction.value) {
+      direction.value = dir;
+      const selected = options.selected.value!;
+
+      const from = parseSchemaBeadCoord(selected.from);
+      const to = parseSchemaBeadCoord(selected.to);
+      const selectedBeads = beadsStore.getInArea(from, to);
+
+      sequenceAxis.value = isVerticalDirection(dir) ? 'y' : 'x';
+      capturedSequence.value = buildSequence(selectedBeads, dir);
+    }
+
+    const offset = Math.floor(translation.value / BEAD_SIZE);
+
     if (offset === 0) {
       return;
     }
@@ -124,8 +118,8 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
       }
 
       sequenceIndex.value++;
-      translation[direction.value!] -= BEAD_SIZE;
-      extendArea(direction.value!, BEAD_SIZE);
+      translation.value -= BEAD_SIZE;
+      extendArea(dir, BEAD_SIZE);
 
       if (sequenceIndex.value === capturedSequence.value.length) {
         sequenceIndex.value = 0;
@@ -133,14 +127,11 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
         shift = index;
       }
     }
-  }, {
-    throttle: 10,
-    trailing: true,
-  });
+  }
 
   function reset(): void {
-    const entries = getObjectKeys(translation).map((direction) => [direction, 0]);
-    Object.assign(translation, Object.fromEntries(entries));
+    translation.value = 0;
+    direction.value = null;
     capturedSequence.value = [];
     sequenceAxis.value = null;
     sequenceIndex.value = 0;
@@ -149,7 +140,8 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
 
   return reactive({
     isResizing,
-    translation,
+    translation: fullTranslation,
+    extendTranslation,
     direction,
     x: resizingX,
     y: resizingY,
