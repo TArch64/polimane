@@ -8,7 +8,7 @@ import {
   type SchemaBeads,
   serializeSchemaBeadCoord,
 } from '@/models';
-import { getObjectEntries, getObjectKeys } from '@/helpers';
+import { getObjectEntries, getObjectKeys, type ObjectEntries } from '@/helpers';
 import { useBeadsStore } from '../beadsStore';
 import type { IBeadSelection } from '../selectionStore';
 import type { ISelectionArea } from './useSelectionArea';
@@ -66,12 +66,12 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
     return sequence;
   }
 
-  function renderTemplate(template: SchemaBeads) {
+  function renderTemplate(template: SchemaBeads): ObjectEntries<SchemaBeads> {
     return getObjectEntries<SchemaBeads>(template).map(([templateCoord, bead]) => {
       const coord = parseSchemaBeadCoord(templateCoord);
       const modifier = isNegativeDirection(direction.value!) ? -1 : 1;
       coord[sequenceAxis.value!] += (sequenceOffset.value + capturedSequence.value.length) * modifier;
-      return [serializeSchemaBeadCoord(coord.x, coord.y), bead] as const;
+      return [serializeSchemaBeadCoord(coord.x, coord.y), bead];
     });
   }
 
@@ -85,6 +85,22 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
     }
 
     options.area.extend(x, y);
+  }
+
+  function extendSelected(newBeads: ObjectEntries<SchemaBeads>): void {
+    const coords = [
+      options.selected.value!.from,
+      options.selected.value!.to,
+      ...newBeads.map(([coord]) => coord),
+    ];
+    const parsed = coords.map(parseSchemaBeadCoord);
+    const xs = parsed.map((c) => c.x);
+    const ys = parsed.map((c) => c.y);
+
+    options.selected.value = {
+      from: serializeSchemaBeadCoord(Math.min(...xs), Math.min(...ys)),
+      to: serializeSchemaBeadCoord(Math.max(...xs), Math.max(...ys)),
+    };
   }
 
   function reset(): void {
@@ -137,6 +153,7 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
       sequenceIndex.value++;
       translation.value -= BEAD_SIZE;
       extendArea(BEAD_SIZE);
+      extendSelected(newBeads);
 
       if (sequenceIndex.value === capturedSequence.value.length) {
         sequenceIndex.value = 0;

@@ -33,12 +33,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { FadeTransition } from '@/components/transition';
-import { useCanvasStore, useHistoryStore, useSelectionStore, useToolsStore } from '../stores';
+import { useCanvasStore, useSelectionStore, useToolsStore } from '../stores';
 import { useBeadsGrid, useCanvasNavigation, useCanvasZoom, useHotKeys } from '../composables';
 import { CanvasContent } from './content';
 import EditorSelection from './EditorSelection.vue';
 
-const historyStore = useHistoryStore();
 const toolsStore = useToolsStore();
 const selectionStore = useSelectionStore();
 const canvasStore = useCanvasStore();
@@ -72,8 +71,6 @@ function onWheel(event: WheelEvent): void {
 }
 
 useHotKeys({
-  Meta_Z: historyStore.undo,
-  Meta_Shift_Z: historyStore.redo,
   Backspace: selectionStore.removeSelected,
   Delete: selectionStore.removeSelected,
 });

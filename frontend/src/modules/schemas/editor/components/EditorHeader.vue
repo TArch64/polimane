@@ -72,6 +72,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { computed } from 'vue';
+import { useHotKeys } from '@editor/composables';
 import { Button } from '@/components/button';
 import {
   ArrowBackIcon,
@@ -145,6 +146,11 @@ function undo() {
   historyStore.undo();
   selectionStore.reset();
 }
+
+useHotKeys({
+  Meta_Z: undo,
+  Meta_Shift_Z: historyStore.redo,
+});
 
 useProgressBar(deleteSchema);
 </script>

@@ -3,7 +3,7 @@ import { onScopeDispose, type Ref, ref, toRef } from 'vue';
 import type { ISchema } from '@/models';
 import { type HttpBody, HttpTransport, useHttpClient } from '@/composables';
 import { useEditorSaveDispatcher } from './composables';
-import { useHistoryStore } from './historyStore';
+import useHistoryStore from './historyStore';
 
 type UpdateSchemaRequest = Partial<Omit<ISchema, 'id'>>;
 

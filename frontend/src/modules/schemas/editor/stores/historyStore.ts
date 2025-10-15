@@ -6,7 +6,7 @@ import type { ISchema } from '@/models';
 
 type HistoryRecord = Pick<ISchema, 'beads' | 'size' | 'backgroundColor'>;
 
-export const useHistoryStore = defineStore('schemas/editor/history', () => {
+const useHistoryStore = defineStore('schemas/editor/history', () => {
   let stopWatcher: VoidFunction;
   const objectCompressor = ObjectCompressor.typed<HistoryRecord>();
 
@@ -88,3 +88,4 @@ export const useHistoryStore = defineStore('schemas/editor/history', () => {
     canRedo,
   };
 });
+export default useHistoryStore;
