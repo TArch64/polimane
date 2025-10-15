@@ -2,6 +2,7 @@ import type { IHttpTransport } from './IHttpTransport';
 
 const NETWORK_ERROR = new TypeError('Network request failed');
 const TIMEOUT_ERROR = new TypeError('Network request timed out');
+const ABORT_ERROR = new DOMException('Aborted', 'AbortError');
 
 export class HttpLegacyTransport implements IHttpTransport {
   send(request: Request): Promise<Response> {
@@ -14,6 +15,7 @@ export class HttpLegacyTransport implements IHttpTransport {
       xhr.onload = () => resolve(this.buildResponse(xhr));
       xhr.onerror = () => reject(NETWORK_ERROR);
       xhr.ontimeout = () => reject(TIMEOUT_ERROR);
+      xhr.onabort = () => reject(ABORT_ERROR);
 
       request.signal?.addEventListener('abort', () => {
         xhr.abort();
