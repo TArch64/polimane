@@ -1,11 +1,13 @@
 import { defineStore } from 'pinia';
-import { computed } from 'vue';
-import { contrastWCAG21 } from 'colorjs.io/fn';
-import { parseSchemaBeadCoord, type SchemaBeadCoord, type SchemaSizeDirection } from '@/models';
+import {
+  type IPoint,
+  parseSchemaBeadCoord,
+  type SchemaBeadCoord,
+  type SchemaBeads,
+} from '@/models';
+import { Direction } from '@/enums';
+import { getObjectEntries } from '@/helpers';
 import { useEditorStore } from './editorStore';
-
-const BEAD_EMPTY_LIGHT = 'rgba(0, 0, 0, 0.1)';
-const BEAD_EMPTY_DARK = 'rgba(255, 255, 255, 0.1)';
 
 export enum PaintEffect {
   EXTENDED = 'extend',
@@ -18,42 +20,48 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     return editorStore.schema.beads[coord] ?? null;
   }
 
-  function checkExtendingPaint(coord: SchemaBeadCoord): SchemaSizeDirection[] {
-    const [x, y] = parseSchemaBeadCoord(coord);
+  function checkExtendingPaint(coord: SchemaBeadCoord): Direction[] {
+    const { x, y } = parseSchemaBeadCoord(coord);
     const size = editorStore.schema.size;
-    const directions: SchemaSizeDirection[] = [];
+    const directions: Direction[] = [];
 
     if (x <= 0) {
       if (size.left + x < 3) {
-        directions.push('left');
+        directions.push(Direction.LEFT);
       }
     } else {
       if (size.right - x < 3) {
-        directions.push('right');
+        directions.push(Direction.RIGHT);
       }
     }
 
     if (y <= 0) {
       if (size.top + y < 3) {
-        directions.push('top');
+        directions.push(Direction.TOP);
       }
     } else {
       if (size.bottom - y < 3) {
-        directions.push('bottom');
+        directions.push(Direction.BOTTOM);
       }
     }
 
     return directions;
   }
 
-  function extendSchemaSize(directions: SchemaSizeDirection[]): void {
+  function extendSchemaSize(directions: Direction[]): void {
     for (const direction of directions) {
       editorStore.schema.size[direction] += 10;
     }
   }
 
+  function remove(coord: SchemaBeadCoord): void {
+    delete editorStore.schema.beads[coord];
+  }
+
   function paint(coord: SchemaBeadCoord, color: string | null): PaintEffect | null {
-    if (getColor(coord) === color) {
+    const currentColor = getColor(coord);
+
+    if (currentColor === color) {
       return null;
     }
 
@@ -70,17 +78,21 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
       return null;
     }
 
-    if (editorStore.schema.beads[coord]) {
-      delete editorStore.schema.beads[coord];
+    if (currentColor) {
+      remove(coord);
     }
 
     return null;
   }
 
-  const emptyColor = computed(() => {
-    const contrast = contrastWCAG21(editorStore.schema.backgroundColor, BEAD_EMPTY_DARK);
-    return contrast < 4.5 ? BEAD_EMPTY_LIGHT : BEAD_EMPTY_DARK;
-  });
+  function getInArea(from: IPoint, to: IPoint): SchemaBeads {
+    const entries = getObjectEntries<SchemaBeads>(editorStore.schema.beads).filter(([coord]) => {
+      const { x, y } = parseSchemaBeadCoord(coord);
+      return x >= from.x && x <= to.x && y >= from.y && y <= to.y;
+    });
 
-  return { paint, emptyColor };
+    return Object.fromEntries(entries);
+  }
+
+  return { paint, remove, getInArea };
 });

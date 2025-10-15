@@ -14,7 +14,8 @@
       "DOM.Iterable"
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@editor/*": ["./src/modules/schemas/editor/*"]
     }
   }
 }

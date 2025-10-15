@@ -1,10 +1,24 @@
+import { readdir } from 'node:fs/promises';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueDevTools from 'vite-plugin-vue-devtools';
+import type { InlineCollection } from 'unplugin-icons';
 import icons from 'unplugin-icons/vite';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 const { SENTRY_AUTH_TOKEN, FRONTEND_PUBLIC_SENTRY_RELEASE } = process.env;
+
+async function createCustomIconsCollection(): Promise<InlineCollection> {
+  const files = await readdir('./src/assets/icons', { recursive: true });
+  const iconFiles = files.filter((file) => file.endsWith('.svg'));
+
+  const icons = iconFiles.map((file) => [
+    file.replace('.svg', '').replaceAll('/', '-'),
+    () => Bun.file(`./src/assets/icons/${file}`).text(),
+  ]);
+
+  return Object.fromEntries(icons);
+}
 
 export default defineConfig({
   clearScreen: false,
@@ -13,6 +27,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': Bun.fileURLToPath(new URL('./src', import.meta.url)),
+      '@editor': Bun.fileURLToPath(new URL('./src/modules/schemas/editor', import.meta.url)),
     },
   },
 
@@ -38,9 +53,7 @@ export default defineConfig({
       compiler: 'vue3',
 
       customCollections: {
-        custom: {
-          logo: () => Bun.file('./src/assets/logo.svg').text(),
-        },
+        custom: await createCustomIconsCollection(),
       },
     }),
 

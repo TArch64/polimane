@@ -1,7 +1,7 @@
 <template>
   <EditorHeader />
+  <EditorToolbar />
   <EditorCanvas class="editor__fill" />
-  <EditorPalette />
 </template>
 
 <script lang="ts" setup>
@@ -10,8 +10,15 @@ import './colorLib';
 import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
 import { destroyStore, lazyDestroyStore } from '@/helpers';
-import { useBeadsStore, useEditorStore, usePaletteStore } from './stores';
-import { EditorCanvas, EditorHeader, EditorPalette } from './components';
+import {
+  useBeadsStore,
+  useCanvasStore,
+  useEditorStore,
+  useHistoryStore,
+  useSelectionStore,
+  useToolsStore,
+} from './stores';
+import { EditorCanvas, EditorHeader, EditorToolbar } from './components';
 import { useEditorBackgroundRenderer } from './composables';
 
 defineProps<{
@@ -26,7 +33,10 @@ defineOptions({
 
   beforeRouteLeave: async (_, __, next) => {
     lazyDestroyStore(useEditorStore);
-    lazyDestroyStore(usePaletteStore);
+    lazyDestroyStore(useHistoryStore);
+    lazyDestroyStore(useCanvasStore);
+    lazyDestroyStore(useToolsStore);
+    lazyDestroyStore(useSelectionStore);
     lazyDestroyStore(useBeadsStore);
     next();
   },
@@ -44,10 +54,19 @@ useEventListener(window, 'beforeunload', (event) => {
 </script>
 
 <style scoped>
+@property --editor-background-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #F8F8F8;
+}
+
 @layer page {
   :global(.app--schema-editor) {
-    background-color: var(--editor-background-color);
     overflow: hidden;
+    background-color: var(--editor-background-color);
+    transition: background-color 0.15s ease-out;
+    will-change: background-color;
+    --editor-ui-padding: 12px;
   }
 
   .editor__fill {

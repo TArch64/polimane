@@ -4,7 +4,7 @@ import './polyfills';
 import { createApp, h } from 'vue';
 import { createPinia } from 'pinia';
 import { configure as configureProgress } from 'nprogress';
-import { sentryPlugin } from '@/plugins';
+import { SentryPlugin } from '@/plugins';
 import { ContextMenuPlugin } from './components/contextMenu';
 import { ConfirmPlugin } from './components/confirm';
 import { ModalPlugin } from './components/modal';
@@ -24,14 +24,14 @@ app.use(createPinia());
 app.use(router);
 
 app.use(httpClientPlugin, {
-  baseUrl: import.meta.env.FRONTEND_PUBLIC_API_URL,
+  baseUrl: import.meta.env.FRONTEND_PUBLIC_API_URL!,
 });
 
 app.use(ModalPlugin);
 app.use(ConfirmPlugin);
 app.use(ContextMenuPlugin);
 
-app.use(sentryPlugin, {
+app.use(SentryPlugin, {
   dsn: import.meta.env.FRONTEND_PUBLIC_SENTRY_DSN || '',
 });
 

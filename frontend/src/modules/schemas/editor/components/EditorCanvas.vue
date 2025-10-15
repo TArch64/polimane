@@ -1,80 +1,85 @@
 <template>
-  <main
-    ref="wrapperRef"
-    @contextmenu.prevent
-    @keydown="onKeydown"
-  >
+  <main ref="wrapperRef" :class="wrapperClasses" @contextmenu.prevent>
     <svg
-      :viewBox
       ref="canvasRef"
-      tabindex="0"
-      class="editor-canvas__svg"
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMin slice"
+      class="canvas-editor"
       :width="wrapperRect.width"
       :height="wrapperRect.height"
+      :viewBox
       @wheel="onWheel"
       v-if="wrapperRect"
     >
+      <defs id="editorCanvasDefs" />
+
       <CanvasContent
-        :canvasZoom
+        :beadsGrid
         :wrapperRect
+        v-if="canvasRef"
       />
     </svg>
+
+    <Teleport to="body">
+      <FadeTransition>
+        <EditorSelection
+          v-if="toolsStore.isSelection && selectionStore.isSelecting"
+        />
+      </FadeTransition>
+    </Teleport>
   </main>
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue';
-import { useEditorStore } from '../stores';
-import { useCanvasNavigation, useCanvasZoom } from '../composables';
+import { computed, onMounted, ref } from 'vue';
+import { FadeTransition } from '@/components/transition';
+import { useCanvasStore, useSelectionStore, useToolsStore } from '../stores';
+import { useBeadsGrid, useCanvasNavigation, useCanvasZoom, useHotKeys } from '../composables';
 import { CanvasContent } from './content';
+import EditorSelection from './EditorSelection.vue';
 
-const editorStore = useEditorStore();
+const toolsStore = useToolsStore();
+const selectionStore = useSelectionStore();
+const canvasStore = useCanvasStore();
 
 const canvasRef = ref<SVGSVGElement | null>(null);
-
 const wrapperRef = ref<HTMLElement | null>(null);
 const wrapperRect = ref<DOMRect | null>(null);
 
-const viewBox = ref('');
+const wrapperClasses = computed(() => ({
+  'canvas-editor--selection': toolsStore.isSelection,
+}));
 
-onMounted(async () => {
+onMounted(() => {
   wrapperRect.value = wrapperRef.value!.getBoundingClientRect();
-
-  viewBox.value = [
-    0,
-    0,
-    wrapperRect.value.width,
-    wrapperRect.value.height,
-  ].join(' ');
-
-  await nextTick();
-  canvasRef.value?.focus();
 });
 
-const canvasZoom = useCanvasZoom({ wrapperRect });
-const canvasNavigation = useCanvasNavigation(canvasZoom);
+const viewBox = computed((): string => {
+  const { x, y } = canvasStore.translation;
+  const width = wrapperRect.value!.width / canvasStore.scale;
+  const height = wrapperRect.value!.height / canvasStore.scale;
+  return `${x} ${y} ${width} ${height}`;
+});
+
+const canvasZoom = useCanvasZoom();
+const canvasNavigation = useCanvasNavigation();
+const beadsGrid = useBeadsGrid();
 
 function onWheel(event: WheelEvent): void {
   event.preventDefault();
   event.ctrlKey ? canvasZoom.zoom(event) : canvasNavigation.navigate(event);
 }
 
-function onKeydown(event: KeyboardEvent) {
-  if (!event.metaKey || event.key.toLowerCase() !== 'z') {
-    return;
-  }
-
-  event.preventDefault();
-  event.shiftKey ? editorStore.redo() : editorStore.undo();
-}
+useHotKeys({
+  Backspace: selectionStore.removeSelected,
+  Delete: selectionStore.removeSelected,
+});
 </script>
 
 <style scoped>
 @layer page {
-  .editor-canvas__svg {
-    outline: none !important;
+  .canvas-editor--selection {
+    --editor-cursor: default;
   }
 }
 </style>

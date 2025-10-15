@@ -1,5 +1,11 @@
 import { addBreadcrumb } from '@sentry/vue';
 import { buildUrl, type UrlParams, type UrlPath } from '@/helpers';
+import {
+  HttpLegacyTransport,
+  HttpModernTransport,
+  HttpTransport,
+  type IHttpTransport,
+} from './transports';
 import { HttpError } from './HttpError';
 import type { HttpMiddleware, HttpMiddlewareExecutor } from './HttpMiddlewareExecutor';
 
@@ -13,6 +19,7 @@ export interface IHttpClientOptions {
 export interface IHttpRequestConfig {
   meta?: Record<string, unknown>;
   responseType?: 'json' | 'text';
+  transport?: HttpTransport;
 }
 
 interface IRequestConfig<
@@ -28,6 +35,7 @@ interface IRequestConfig<
 export class HttpClient {
   private readonly baseUrl;
   private readonly middlewareExecutor;
+  private readonly transports: Partial<Record<HttpTransport, IHttpTransport>> = {};
 
   constructor(options: IHttpClientOptions) {
     this.baseUrl = options.baseUrl;
@@ -86,6 +94,10 @@ export class HttpClient {
     });
   }
 
+  middleware(middleware: HttpMiddleware): void {
+    this.middlewareExecutor.add(middleware);
+  }
+
   private async request<
     R extends HttpBody,
     P extends UrlParams,
@@ -104,7 +116,8 @@ export class HttpClient {
 
     await this.middlewareExecutor.callBeforeRequestInterceptor(request);
     try {
-      const response = await fetch(request);
+      const transport = this.getTransport(config);
+      const response = await transport.send(request);
 
       if (!response.ok) {
         await this.handleError(response, config);
@@ -138,7 +151,22 @@ export class HttpClient {
     throw error;
   }
 
-  middleware(middleware: HttpMiddleware): void {
-    this.middlewareExecutor.add(middleware);
+  private getTransport(config: IRequestConfig): IHttpTransport {
+    const transport = config.transport ?? HttpTransport.MODERN;
+
+    if (!(transport in this.transports)) {
+      this.transports[transport] = this.createTransport(transport);
+    }
+
+    return this.transports[transport]!;
+  }
+
+  private createTransport(transport: HttpTransport): IHttpTransport {
+    switch (transport) {
+      case HttpTransport.MODERN:
+        return new HttpModernTransport();
+      case HttpTransport.LEGACY:
+        return new HttpLegacyTransport();
+    }
   }
 }

@@ -20,18 +20,18 @@
 
     <Button
       icon
-      :disabled="!editorStore.canUndo"
+      :disabled="!historyStore.canUndo"
       title="Відмінити зміни"
-      @click="editorStore.undo"
+      @click="undo"
     >
       <CornerUpLeftIcon />
     </Button>
 
     <Button
       icon
-      :disabled="!editorStore.canRedo"
+      :disabled="!historyStore.canRedo"
       title="Повернути назад зміни"
-      @click="editorStore.redo"
+      @click="historyStore.redo"
     >
       <CornerUpRightIcon />
     </Button>
@@ -72,6 +72,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { computed } from 'vue';
+import { useHotKeys } from '@editor/composables';
 import { Button } from '@/components/button';
 import {
   ArrowBackIcon,
@@ -92,11 +93,13 @@ import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
-import { useEditorStore } from '../stores';
+import { useEditorStore, useHistoryStore, useSelectionStore } from '../stores';
 import { SchemaEditModal, SchemaExportModal } from './modals';
 
 const router = useRouter();
+const historyStore = useHistoryStore();
 const editorStore = useEditorStore();
+const selectionStore = useSelectionStore();
 
 const renameModal = useModal(SchemaEditModal);
 const exportModal = useModal(SchemaExportModal);
@@ -139,6 +142,16 @@ const deleteSchema = useAsyncAction(async () => {
   }
 });
 
+function undo() {
+  historyStore.undo();
+  selectionStore.reset();
+}
+
+useHotKeys({
+  Meta_Z: undo,
+  Meta_Shift_Z: historyStore.redo,
+});
+
 useProgressBar(deleteSchema);
 </script>
 
@@ -146,8 +159,8 @@ useProgressBar(deleteSchema);
 @layer page {
   .editor-header {
     position: fixed;
-    top: 8px;
-    left: 8px;
+    top: var(--editor-ui-padding);
+    left: var(--editor-ui-padding);
     z-index: 10;
     display: flex;
     align-items: center;

@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -20,7 +21,11 @@ import (
 	"polimane/backend/signal"
 )
 
-var unauthorizedErr = base.NewReasonedError(fiber.StatusUnauthorized, "Unauthorized")
+var (
+	unauthorizedErr   = base.NewReasonedError(fiber.StatusUnauthorized, "Unauthorized")
+	missingTokenErr   = errors.New("missing access or refresh token")
+	sessionExpiredErr = errors.New("session expired")
+)
 
 type MiddlewareOptions struct {
 	fx.In
@@ -79,7 +84,7 @@ func (m *Middleware) Handler(ctx *fiber.Ctx) error {
 	accessToken := ctx.Get("Authorization")
 	refreshToken := ctx.Get("X-Refresh-Token")
 	if accessToken == "" || refreshToken == "" {
-		return m.newUnauthorizedErr(errors.New("missing access or refresh token"))
+		return m.newUnauthorizedErr(missingTokenErr)
 	}
 
 	accessTokenClaims, err := m.workosClient.AuthenticateWithAccessToken(ctx.Context(), accessToken)
@@ -122,6 +127,9 @@ func (m *Middleware) refreshToken(ctx *fiber.Ctx, token string) (*workos.AccessT
 	})
 
 	if err != nil {
+		if strings.Contains(err.Error(), "Session ended") {
+			return nil, m.newUnauthorizedErr(sessionExpiredErr)
+		}
 		return nil, err
 	}
 

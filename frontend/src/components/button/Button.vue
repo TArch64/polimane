@@ -39,6 +39,7 @@ const props = withDefaults(defineProps<{
   danger?: boolean;
   disabled?: boolean;
   loading?: boolean;
+  active?: boolean;
 }>(), {
   icon: false,
   danger: false,
@@ -51,11 +52,14 @@ defineSlots<{
 }>();
 
 const classes = computed(() => [
-  props.icon && 'button--icon',
   props.size && props.variant !== 'inline' && `button--${props.size}`,
   props.variant && `button--${props.variant}`,
-  props.danger && 'button--danger',
-  props.loading && 'button--loading',
+  {
+    'button--icon': props.icon,
+    'button--danger': props.danger,
+    'button--loading': props.loading,
+    'button--active': props.active,
+  },
 ]);
 </script>
 
@@ -114,10 +118,11 @@ const classes = computed(() => [
     background-color: var(--button-background);
     color: var(--button-foreground);
     border-radius: var(--rounded-md);
-    transition: background-color 0.15s ease-out;
-    will-change: background-color;
+    transition: background-color 0.15s ease-out, color 0.15s ease-out;
+    will-change: background-color, color;
 
-    &:where(:hover, .router-link-exact-active):not([disabled], .button--loading) {
+    &:where(:hover, .router-link-exact-active, .button--active):not([disabled], .button--loading) {
+      color: var(--button-hover-foreground, var(--button-foreground));
       background-color: var(--button-hover-background);
     }
 
@@ -142,6 +147,7 @@ const classes = computed(() => [
     --button-disabled-background: transparent;
 
     --button-foreground: var(--button-base-color);
+    --button-hover-foreground: var(--button-base-color);
     --button-disabled-foreground: color-mix(in srgb, var(--button-base-color), transparent 70%);
   }
 

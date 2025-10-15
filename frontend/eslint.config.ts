@@ -61,6 +61,11 @@ export default defineConfigWithVueTs(
               group: 'internal',
               position: 'after',
             },
+            {
+              pattern: '@editor/**',
+              group: 'internal',
+              position: 'after',
+            },
           ],
           groups: [
             'builtin',

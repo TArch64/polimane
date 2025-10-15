@@ -8,10 +8,10 @@ export interface INodeRect {
 export class NodeRect implements INodeRect {
   static BLANK = new NodeRect({ x: 0, y: 0, width: 0, height: 0 });
 
-  readonly x;
-  readonly y;
-  readonly width;
-  readonly height;
+  x;
+  y;
+  width;
+  height;
 
   constructor(rect: INodeRect) {
     this.x = rect.x;
@@ -70,5 +70,9 @@ export class NodeRect implements INodeRect {
       width: this.width,
       height: this.height,
     };
+  }
+
+  clone(): NodeRect {
+    return new NodeRect(this.toJSON());
   }
 }

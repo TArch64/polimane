@@ -1,23 +1,16 @@
-import { computed, markRaw, reactive, ref, type Ref, shallowRef } from 'vue';
+import { defineStore } from 'pinia';
+import { computed, markRaw, onScopeDispose, type Ref, ref, shallowRef } from 'vue';
 import { watchDebounced } from '@vueuse/core';
-import type { ISchema } from '@/models';
 import { ObjectCompressor } from '@/helpers';
+import type { ISchema } from '@/models';
 
-type HistoryRecord = Pick<ISchema, 'beads' | 'size'>;
+type HistoryRecord = Pick<ISchema, 'beads' | 'size' | 'backgroundColor'>;
 
-export interface IEditorHistory {
-  canUndo: boolean;
-  canRedo: boolean;
-  init: () => Promise<void>;
-  destroy: () => void;
-  undo: () => Promise<void>;
-  redo: () => Promise<void>;
-}
-
-export function useEditorHistory(schema: Ref<ISchema>): IEditorHistory {
+const useHistoryStore = defineStore('schemas/editor/history', () => {
   let stopWatcher: VoidFunction;
   const objectCompressor = ObjectCompressor.typed<HistoryRecord>();
 
+  let schema: Ref<ISchema>;
   const history = shallowRef<Blob[]>([]);
   const cursor = ref(-1);
 
@@ -32,6 +25,7 @@ export function useEditorHistory(schema: Ref<ISchema>): IEditorHistory {
     const blob = markRaw(await objectCompressor.compress({
       beads: schema.value.beads,
       size: schema.value.size,
+      backgroundColor: schema.value.backgroundColor,
     }));
 
     history.value = [...history.value, blob].slice(-30);
@@ -42,21 +36,18 @@ export function useEditorHistory(schema: Ref<ISchema>): IEditorHistory {
     stopWatcher = watchDebounced([
       () => schema.value.beads,
       () => schema.value.size,
+      () => schema.value.backgroundColor,
     ], commit, {
       deep: true,
       debounce: 200,
     });
   }
 
-  async function init(): Promise<void> {
+  async function init(schema_: Ref<ISchema>): Promise<void> {
+    schema = schema_;
     history.value = [];
     await commit();
     startWatcher();
-  }
-
-  function destroy(): void {
-    stopWatcher();
-    history.value = [];
   }
 
   async function restoreVersion(shift: number): Promise<void> {
@@ -84,12 +75,17 @@ export function useEditorHistory(schema: Ref<ISchema>): IEditorHistory {
     if (canRedo.value) await restoreVersion(1);
   }
 
-  return reactive({
+  onScopeDispose(() => {
+    stopWatcher();
+    history.value = [];
+  });
+
+  return {
     init,
-    destroy,
     undo,
     canUndo,
     redo,
     canRedo,
-  });
-}
+  };
+});
+export default useHistoryStore;

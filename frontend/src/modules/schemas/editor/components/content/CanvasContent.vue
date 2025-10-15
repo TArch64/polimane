@@ -1,26 +1,12 @@
 <template>
-  <defs>
-    <pattern
-      x="0"
-      y="0"
-      id="editorEmptyBeads"
-      patternUnits="userSpaceOnUse"
-      :width="BEAD_SIZE"
-      :height="BEAD_SIZE"
-    >
-      <circle
-        :cx="BEAD_CENTER"
-        :cy="BEAD_CENTER"
-        :r="BEAD_RADIUS"
-        :fill="beadsStore.emptyColor"
-      />
-    </pattern>
-  </defs>
+  <CanvasDefs>
+    <CanvasBackgroundPattern :id="backgroundPatternId" />
+  </CanvasDefs>
 
   <g :transform class="canvas-content" v-on="listeners">
     <rect
-      ref="backgroundRectRef"
-      fill="url(#editorEmptyBeads)"
+      ref="backgroundRef"
+      :fill="backgroundPatternFill"
       :x="beadsGrid.size.minX"
       :y="beadsGrid.size.minY"
       :width="beadsGrid.size.width"
@@ -29,47 +15,50 @@
 
     <CanvasBead
       v-for="bead of beadsGrid.beads"
+      :bead
       :key="bead.coord"
-      :offset="bead.offset"
-      :coord="bead.coord"
-      :color="bead.color"
     />
+
+    <FadeTransition>
+      <CanvasSelection
+        :key="`${selected.from}-${selected.to}`"
+        v-if="selected"
+      />
+    </FadeTransition>
   </g>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import {
-  BEAD_CENTER,
-  BEAD_RADIUS,
-  BEAD_SIZE,
-  type ICanvasZoom,
-  useBeadPainting,
-  useBeadsGrid,
-} from '../../composables';
-import { useBeadsStore, useEditorStore } from '../../stores';
+import { computed, ref, useId } from 'vue';
+import { useSelectionStore } from '@editor/stores';
+import { FadeTransition } from '@/components/transition';
+import { type IBeadsGrid, useBeadTools } from '../../composables';
 import { CanvasBead } from './CanvasBead';
+import CanvasBackgroundPattern from './CanvasBackgroundPattern.vue';
+import { CanvasSelection } from './selection';
+import CanvasDefs from './CanvasDefs.vue';
 
 const props = defineProps<{
   wrapperRect: DOMRect;
-  canvasZoom: ICanvasZoom;
+  beadsGrid: IBeadsGrid;
 }>();
 
-const backgroundRectRef = ref<SVGRectElement>(null!);
+const selectionStore = useSelectionStore();
+const selected = computed(() => selectionStore.selected);
 
-const beadsStore = useBeadsStore();
-const editorStore = useEditorStore();
+const backgroundPatternId = `editorEmptyBeads-${useId()}`;
+const backgroundPatternFill = `url(#${backgroundPatternId})`;
+const backgroundRef = ref<SVGRectElement>(null!);
 
-const listeners = useBeadPainting({
-  backgroundRectRef,
-  canvasZoom: props.canvasZoom,
+const listeners = useBeadTools({
+  backgroundRef,
+  beadsGrid: props.beadsGrid,
 });
 
-const beadsGrid = useBeadsGrid(() => editorStore.schema);
-
 const transform = (() => {
-  const y = (props.wrapperRect.height - beadsGrid.size.height) / 2;
-  const x = (props.wrapperRect.width - beadsGrid.size.width) / 2;
+  // shouldn't be recomputed to avoid shifting on schema resize
+  const y = (props.wrapperRect.height - props.beadsGrid.size.height) / 2;
+  const x = (props.wrapperRect.width - props.beadsGrid.size.width) / 2;
 
   return `translate(${x}, ${y})`;
 })();
@@ -78,7 +67,7 @@ const transform = (() => {
 <style scoped>
 @layer page {
   .canvas-content:hover {
-    cursor: crosshair;
+    cursor: var(--editor-cursor, crosshair);
   }
 }
 </style>

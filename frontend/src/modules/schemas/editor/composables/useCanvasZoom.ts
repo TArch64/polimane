@@ -1,35 +1,26 @@
-import { reactive, type Ref, ref } from 'vue';
-
-const MIN_ZOOM = 0.5;
-const MAX_ZOOM = 10;
-
-export interface ICanvasZoomOptions {
-  wrapperRect: Ref<DOMRect | null>;
-}
+import { reactive } from 'vue';
+import { useCanvasStore } from '@editor/stores';
 
 export interface ICanvasZoom {
-  scale: number;
   zoom: (event: WheelEvent) => void;
 }
 
-export function useCanvasZoom(options: ICanvasZoomOptions): ICanvasZoom {
-  const scale = ref(1);
+export function useCanvasZoom(): ICanvasZoom {
+  const canvasStore = useCanvasStore();
 
   function zoom(event: WheelEvent): void {
-    const svg = event.currentTarget as SVGSVGElement;
-    const viewBox = svg.viewBox.baseVal;
-
-    const mousePointToX = (event.clientX / scale.value) + viewBox.x;
-    const mousePointToY = (event.clientY / scale.value) + viewBox.y;
+    let scale = canvasStore.scale;
+    const mousePointToX = (event.clientX / scale) + canvasStore.translation.x;
+    const mousePointToY = (event.clientY / scale) + canvasStore.translation.y;
 
     const scaleFactor = 1 - event.deltaY * 0.01;
-    scale.value = Math.min(Math.max(scale.value * scaleFactor, MIN_ZOOM), MAX_ZOOM);
+    scale = canvasStore.setScale(scale * scaleFactor);
 
-    viewBox.x = mousePointToX - (event.clientX / scale.value);
-    viewBox.y = mousePointToY - (event.clientY / scale.value);
-    viewBox.width = options.wrapperRect.value!.width / scale.value;
-    viewBox.height = options.wrapperRect.value!.height / scale.value;
+    canvasStore.setTranslation({
+      x: mousePointToX - (event.clientX / scale),
+      y: mousePointToY - (event.clientY / scale),
+    });
   }
 
-  return reactive({ zoom, scale });
+  return reactive({ zoom });
 }
