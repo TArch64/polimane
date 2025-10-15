@@ -49,5 +49,6 @@ export const useSelectionStore = defineStore('schemas/editor/selection', () => {
     selected,
     setSelected,
     removeSelected,
+    reset,
   };
 });

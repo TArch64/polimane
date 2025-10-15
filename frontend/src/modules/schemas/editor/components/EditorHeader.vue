@@ -22,7 +22,7 @@
       icon
       :disabled="!historyStore.canUndo"
       title="Відмінити зміни"
-      @click="historyStore.undo"
+      @click="undo"
     >
       <CornerUpLeftIcon />
     </Button>
@@ -92,12 +92,13 @@ import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
-import { useEditorStore, useHistoryStore } from '../stores';
+import { useEditorStore, useHistoryStore, useSelectionStore } from '../stores';
 import { SchemaEditModal, SchemaExportModal } from './modals';
 
 const router = useRouter();
 const historyStore = useHistoryStore();
 const editorStore = useEditorStore();
+const selectionStore = useSelectionStore();
 
 const renameModal = useModal(SchemaEditModal);
 const exportModal = useModal(SchemaExportModal);
@@ -139,6 +140,11 @@ const deleteSchema = useAsyncAction(async () => {
     await router.push({ name: 'home' });
   }
 });
+
+function undo() {
+  historyStore.undo();
+  selectionStore.reset();
+}
 
 useProgressBar(deleteSchema);
 </script>
