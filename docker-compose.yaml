@@ -63,7 +63,7 @@ services:
 
   sqs:
     <<: *common
-    image: softwaremill/elasticmq-native
+    image: softwaremill/elasticmq-native:1.6.15
     volumes:
     - ./ci/dev/sqs/elasticmq.conf:/opt/elasticmq.conf
     ports:

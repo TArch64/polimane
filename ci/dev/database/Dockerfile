@@ -1,3 +1,3 @@
-FROM cockroachdb/cockroach:latest-v25.2
+FROM cockroachdb/cockroach:latest-v25.3
 
 COPY initdb /docker-entrypoint-initdb.d
