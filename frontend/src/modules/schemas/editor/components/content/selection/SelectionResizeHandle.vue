@@ -40,7 +40,7 @@ function onMouseMove(event: MouseEvent) {
 
 function onMouseUp() {
   overlay.value = false;
-  selectionStore.resize.reset();
+  selectionStore.resize.cleanup();
   removeEventListener('mousemove', onMouseMove);
 }
 

@@ -23,7 +23,7 @@ export interface ISelectionResize extends INodeRect {
   direction: Direction | null;
   translation: Record<Direction, number>;
   extendTranslation: (dir: Direction, delta: number) => void;
-  reset: () => void;
+  cleanup: () => void;
 }
 
 export function useSelectionResize(options: ISelectionResizeOptions): ISelectionResize {
@@ -80,6 +80,15 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
     options.area.extend(x, y);
   }
 
+  function reset(): void {
+    translation.value = 0;
+    direction.value = null;
+    capturedSequence.value = [];
+    sequenceAxis.value = null;
+    sequenceIndex.value = 0;
+    sequenceOffset.value = 0;
+  }
+
   function extendTranslation(dir: Direction, delta: number) {
     translation.value += delta;
 
@@ -88,7 +97,11 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
       return;
     }
 
-    if (!direction.value) {
+    if (dir !== direction.value) {
+      if (direction.value) {
+        reset();
+      }
+
       direction.value = dir;
       const selected = options.selected.value!;
 
@@ -125,13 +138,8 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
     }
   }
 
-  function reset(): void {
+  function cleanup() {
     translation.value = 0;
-    direction.value = null;
-    capturedSequence.value = [];
-    sequenceAxis.value = null;
-    sequenceIndex.value = 0;
-    sequenceOffset.value = 0;
   }
 
   return reactive({
@@ -143,6 +151,6 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
     y: resizingY,
     width: resizingWidth,
     height: resizingHeight,
-    reset,
+    cleanup,
   });
 }
