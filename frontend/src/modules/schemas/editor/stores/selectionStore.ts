@@ -25,6 +25,7 @@ export const useSelectionStore = defineStore('schemas/editor/selection', () => {
   function reset() {
     setSelected(null);
     area.reset();
+    resize.reset();
   }
 
   function removeSelected() {

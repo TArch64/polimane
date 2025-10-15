@@ -24,6 +24,7 @@ export interface ISelectionResize extends INodeRect {
   translation: Record<Direction, number>;
   extendTranslation: (dir: Direction, delta: number) => void;
   cleanup: () => void;
+  reset: () => void;
 }
 
 export function useSelectionResize(options: ISelectionResizeOptions): ISelectionResize {
@@ -158,5 +159,6 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
     width: resizingWidth,
     height: resizingHeight,
     cleanup,
+    reset,
   });
 }

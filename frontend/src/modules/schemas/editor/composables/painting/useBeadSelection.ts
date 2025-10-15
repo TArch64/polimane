@@ -87,7 +87,7 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
 
       selectionStore.selected
         ? setCanvasSelection()
-        : selectionStore.area.reset();
+        : selectionStore.reset();
     } finally {
       selectionStore.toggleSelecting(false);
     }
