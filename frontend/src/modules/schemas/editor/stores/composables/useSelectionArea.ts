@@ -3,7 +3,8 @@ import { type INodeRect } from '@/models';
 
 export interface ISelectionArea extends INodeRect {
   setPoint: (x: number, y: number) => void;
-  extend: (x: number, y: number) => void;
+  shiftPoint: (dx: number, dy: number) => void;
+  extend: (dx: number, dy: number) => void;
   reset: () => void;
 }
 
@@ -26,9 +27,14 @@ export function useSelectionArea(): ISelectionArea {
     y.value = y_;
   }
 
-  function extend(width_: number, height_: number) {
-    width.value += width_;
-    height.value += height_;
+  function shiftPoint(dx: number, dy: number) {
+    x.value += dx;
+    y.value += dy;
+  }
+
+  function extend(dx: number, dy: number) {
+    width.value += dx;
+    height.value += dy;
   }
 
   const resolvedX = computed(() => width.value < 0 ? x.value + width.value : x.value);
@@ -42,6 +48,7 @@ export function useSelectionArea(): ISelectionArea {
     width: resolvedWidth,
     height: resolvedHeight,
     setPoint,
+    shiftPoint,
     extend,
     reset,
   });

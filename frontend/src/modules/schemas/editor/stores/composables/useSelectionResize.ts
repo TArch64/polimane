@@ -68,15 +68,21 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
   function renderTemplate(template: SchemaBeads) {
     return getObjectEntries<SchemaBeads>(template).map(([templateCoord, bead]) => {
       const coord = parseSchemaBeadCoord(templateCoord);
-      coord[sequenceAxis.value!] += sequenceOffset.value + capturedSequence.value.length;
+      const modifier = isNegativeDirection(direction.value!) ? -1 : 1;
+      coord[sequenceAxis.value!] += (sequenceOffset.value + capturedSequence.value.length) * modifier;
       return [serializeSchemaBeadCoord(coord.x, coord.y), bead] as const;
     });
   }
 
-  function extendArea(direction: Direction, value: number) {
-    const mainAxis = isNegativeDirection(direction) ? -value : value;
-    const x = isVerticalDirection(direction) ? 0 : mainAxis;
-    const y = isVerticalDirection(direction) ? mainAxis : 0;
+  function extendArea(value: number) {
+    const isVertical = isVerticalDirection(direction.value!);
+    const x = isVertical ? 0 : value;
+    const y = isVertical ? value : 0;
+
+    if (isNegativeDirection(direction.value!)) {
+      options.area.shiftPoint(-x, -y);
+    }
+
     options.area.extend(x, y);
   }
 
@@ -129,7 +135,7 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
 
       sequenceIndex.value++;
       translation.value -= BEAD_SIZE;
-      extendArea(dir, BEAD_SIZE);
+      extendArea(BEAD_SIZE);
 
       if (sequenceIndex.value === capturedSequence.value.length) {
         sequenceIndex.value = 0;
