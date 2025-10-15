@@ -13,7 +13,7 @@ async function createCustomIconsCollection(): Promise<InlineCollection> {
   const iconFiles = files.filter((file) => file.endsWith('.svg'));
 
   const icons = iconFiles.map((file) => [
-    file.replace('.svg', '').replace('/', '-'),
+    file.replace('.svg', '').replaceAll('/', '-'),
     () => Bun.file(`./src/assets/icons/${file}`).text(),
   ]);
 
