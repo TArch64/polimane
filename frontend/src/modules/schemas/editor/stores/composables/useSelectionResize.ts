@@ -124,12 +124,12 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
       }
 
       sequenceIndex.value++;
-      sequenceOffset.value++;
       translation[direction.value!] -= BEAD_SIZE;
       extendArea(direction.value!, BEAD_SIZE);
 
       if (sequenceIndex.value === capturedSequence.value.length) {
         sequenceIndex.value = 0;
+        sequenceOffset.value += capturedSequence.value.length;
         shift = index;
       }
     }
