@@ -56,7 +56,7 @@ export function useBeadCoord(options: IBeadToolsOptions): IBeadCoord {
   }
 
   function getFromEvent(event: MouseEvent): IPoint | null {
-    const target = event.target as HTMLElement;
+    const target = event.target as SVGElement;
     const storedCoord = target.getAttribute('coord');
 
     return storedCoord
