@@ -43,9 +43,9 @@ async function open(): Promise<void> {
 }
 
 useHotKeys(
-  store.palette.slice(0, 9).map((color, index): HotKeyDef => [
+  store.palette.slice(0, 9).map((_, index): HotKeyDef => [
     `Meta_${index + 1}`,
-    () => store.activateColor(color),
+    () => store.activateColor(store.palette[index]!),
   ]),
 );
 </script>

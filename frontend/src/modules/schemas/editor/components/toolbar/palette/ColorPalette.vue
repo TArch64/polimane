@@ -8,8 +8,9 @@
       v-for="(color, index) of store.palette"
       :key="index"
       :active="color === store.activeColor"
+      :model-value="color"
       @update:active="store.activateColor(color)"
-      v-model="store.palette[index]!"
+      @update:model-value="updateColor(index, $event)"
     />
   </Card>
 </template>
@@ -32,6 +33,12 @@ const binding = makeBinding(ToolbarGrid, () => ({
 
 const rootRef = useDomRef<HTMLDialogElement>();
 const store = useToolsStore();
+
+function updateColor(index: number, color: string): void {
+  const isActive = store.activeColor === store.palette[index];
+  store.palette[index] = color;
+  if (isActive) store.activateColor(color);
+}
 
 onBackdropClick(rootRef, () => emit('close'));
 </script>
