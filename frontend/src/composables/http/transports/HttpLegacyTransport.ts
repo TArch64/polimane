@@ -43,8 +43,8 @@ export class HttpLegacyTransport implements IHttpTransport {
     const entries = xhr.getAllResponseHeaders()
       .split('\r\n')
       .map((line) => {
-        const [name, value] = line.split(': ');
-        return [name, value] as [string, string];
+        const [name, ...values] = line.split(': ');
+        return [name!, values.join(': ')] as [string, string];
       })
       .filter(([name, value]) => name && value);
 
