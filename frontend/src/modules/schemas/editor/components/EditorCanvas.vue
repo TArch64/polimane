@@ -72,8 +72,10 @@ function onWheel(event: WheelEvent): void {
 }
 
 useHotKeys({
-  Meta_Z: () => historyStore.undo(),
-  Meta_Shift_Z: () => historyStore.redo(),
+  Meta_Z: historyStore.undo,
+  Meta_Shift_Z: historyStore.redo,
+  Backspace: selectionStore.removeSelected,
+  Delete: selectionStore.removeSelected,
 });
 </script>
 

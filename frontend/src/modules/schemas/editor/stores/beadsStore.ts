@@ -54,8 +54,14 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     }
   }
 
+  function remove(coord: SchemaBeadCoord): void {
+    delete editorStore.schema.beads[coord];
+  }
+
   function paint(coord: SchemaBeadCoord, color: string | null): PaintEffect | null {
-    if (getColor(coord) === color) {
+    const currentColor = getColor(coord);
+
+    if (currentColor === color) {
       return null;
     }
 
@@ -72,8 +78,8 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
       return null;
     }
 
-    if (editorStore.schema.beads[coord]) {
-      delete editorStore.schema.beads[coord];
+    if (currentColor) {
+      remove(coord);
     }
 
     return null;
@@ -88,5 +94,5 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     return Object.fromEntries(entries);
   }
 
-  return { paint, getInArea };
+  return { paint, remove, getInArea };
 });

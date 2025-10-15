@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import type { SchemaBeadCoord } from '@/models';
+import { parseSchemaBeadCoord, type SchemaBeadCoord } from '@/models';
+import { getObjectKeys } from '@/helpers';
+import { useBeadsStore } from './beadsStore';
 import { useSelectionArea, useSelectionResize } from './composables';
 
 export interface IBeadSelection {
@@ -9,6 +11,8 @@ export interface IBeadSelection {
 }
 
 export const useSelectionStore = defineStore('schemas/editor/selection', () => {
+  const beadsStore = useBeadsStore();
+
   const isSelecting = ref(false);
   const toggleSelecting = (value: boolean) => isSelecting.value = value;
 
@@ -18,6 +22,25 @@ export const useSelectionStore = defineStore('schemas/editor/selection', () => {
   const area = useSelectionArea();
   const resize = useSelectionResize({ area, selected });
 
+  function reset() {
+    setSelected(null);
+    area.reset();
+  }
+
+  function removeSelected() {
+    if (!selected.value) return;
+
+    const from = parseSchemaBeadCoord(selected.value.from);
+    const to = parseSchemaBeadCoord(selected.value.to);
+    const selectedBeads = beadsStore.getInArea(from, to);
+
+    for (const coord of getObjectKeys(selectedBeads)) {
+      beadsStore.remove(coord);
+    }
+
+    reset();
+  }
+
   return {
     area,
     resize,
@@ -25,5 +48,6 @@ export const useSelectionStore = defineStore('schemas/editor/selection', () => {
     toggleSelecting,
     selected,
     setSelected,
+    removeSelected,
   };
 });
