@@ -14,9 +14,9 @@
     />
 
     <CanvasBead
-      v-for="bead of beadsGrid.beads"
-      :bead
-      :key="bead.coord"
+      v-for="item of beadsGrid.beads"
+      :key="item.coord"
+      :item
     />
 
     <FadeTransition>

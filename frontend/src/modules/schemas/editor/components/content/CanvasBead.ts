@@ -3,15 +3,15 @@ import { BEAD_RADIUS } from '@editor/const';
 import type { IBeadsGridItem } from '../../composables';
 
 export interface ICanvasBeadProps {
-  bead: IBeadsGridItem;
+  item: IBeadsGridItem;
 }
 
 export const CanvasBead: FunctionalComponent<ICanvasBeadProps> = (props) => (
   h('circle', {
     r: BEAD_RADIUS,
-    coord: props.bead.coord,
-    fill: props.bead.color,
-    cx: props.bead.offset.x,
-    cy: props.bead.offset.y,
+    coord: props.item.coord,
+    fill: props.item.bead.color,
+    cx: props.item.offset.x,
+    cy: props.item.offset.y,
   })
 );

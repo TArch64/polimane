@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import {
   type IPoint,
+  type ISchemaBead,
   parseSchemaBeadCoord,
   type SchemaBeadCoord,
   type SchemaBeads,
@@ -58,7 +59,7 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     delete editorStore.schema.beads[coord];
   }
 
-  function paint(coord: SchemaBeadCoord, color: string | null): PaintEffect | null {
+  function paint(coord: SchemaBeadCoord, color: ISchemaBead | null): PaintEffect | null {
     const currentColor = getColor(coord);
 
     if (currentColor === color) {

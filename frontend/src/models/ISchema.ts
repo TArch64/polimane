@@ -1,10 +1,11 @@
 import { Direction } from '@/enums';
 import type { IPoint } from './Point';
+import type { ISchemaBead } from './ISchemaBead';
 
 export type SchemaSize = Record<Direction, number>;
 
 export type SchemaBeadCoord = `${number}:${number}`;
-export type SchemaBeads = Record<SchemaBeadCoord, string>;
+export type SchemaBeads = Record<SchemaBeadCoord, ISchemaBead>;
 
 export function serializeSchemaBeadCoord(x: number, y: number): SchemaBeadCoord {
   return `${x}:${y}`;

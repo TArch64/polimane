@@ -20,7 +20,7 @@ func beadsGrid(data *templates.SchemaPreviewData) chan *SchemaBead {
 	go func() {
 		defer close(ch)
 
-		for coord, color := range data.Beads {
+		for coord, bead := range data.Beads {
 			parts := strings.SplitN(coord, ":", 2)
 			x, _ := strconv.Atoi(parts[0])
 			y, _ := strconv.Atoi(parts[1])
@@ -28,7 +28,7 @@ func beadsGrid(data *templates.SchemaPreviewData) chan *SchemaBead {
 			ch <- &SchemaBead{
 				CenterX: data.OffsetX + (x * int(data.BeadSize)) + int(data.ShapeCenter),
 				CenterY: data.OffsetY + (y * int(data.BeadSize)) + int(data.ShapeCenter),
-				Color:   color,
+				Color:   bead.Color,
 			}
 		}
 	}()

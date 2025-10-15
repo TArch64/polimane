@@ -1,6 +1,7 @@
 import { computed, ref, type Ref } from 'vue';
 import { createAnimatedFrame } from '@/helpers';
 import { serializeSchemaBeadCoord } from '@/models';
+import { BeadKind } from '@/enums';
 import { PaintEffect, useBeadsStore, useToolsStore } from '../../stores';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 import { useBeadCoord } from './useBeadCoord';
@@ -20,7 +21,8 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
   const paint = createAnimatedFrame((event: MouseEvent, color: string | null) => {
     const point = beadCoord.getFromEvent(event);
     const coord = point && serializeSchemaBeadCoord(point.x, point.y);
-    const effect = coord && beadsStore.paint(coord, color);
+    const bead = color ? { kind: BeadKind.CIRCLE, color } : null;
+    const effect = coord && beadsStore.paint(coord, bead);
 
     if (effect === PaintEffect.EXTENDED) {
       beadCoord.clearCache();

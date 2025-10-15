@@ -4,6 +4,7 @@ import { reactiveComputed } from '@vueuse/core';
 import { BEAD_CENTER, BEAD_SIZE } from '@editor/const';
 import {
   type IPoint,
+  type ISchemaBead,
   parseSchemaBeadCoord,
   type SchemaBeadCoord,
   type SchemaBeads,
@@ -13,7 +14,7 @@ import { getObjectEntries } from '@/helpers';
 export interface IBeadsGridItem {
   coord: SchemaBeadCoord;
   offset: IPoint;
-  color: string;
+  bead: ISchemaBead;
 }
 
 export interface IBeadsGridSize {
@@ -51,12 +52,12 @@ export function useBeadsGrid(): IBeadsGrid {
 
   const beads = computed(() => (
     getObjectEntries<SchemaBeads>(editorStore.schema.beads)
-      .map(([coord, color]): IBeadsGridItem => {
+      .map(([coord, bead]): IBeadsGridItem => {
         const { x, y } = resolveBeadOffset(coord);
 
         return {
           coord,
-          color,
+          bead,
 
           offset: {
             x: x + BEAD_CENTER,
