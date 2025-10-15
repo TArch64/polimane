@@ -1,6 +1,6 @@
 <template>
   <ToolbarButton
-    title="Очитити"
+    title="Очистити"
     :active="store.isEraser"
     @click="activate"
   >
