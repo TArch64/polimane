@@ -1,6 +1,6 @@
 import { useCanvasStore, useEditorStore } from '@editor/stores';
+import { BEAD_CENTER, BEAD_RADIUS, BEAD_SIZE } from '@editor/const';
 import { type IPoint, parseSchemaBeadCoord } from '@/models';
-import { BEAD_CENTER, BEAD_RADIUS, BEAD_SIZE } from '../useBeadsGrid';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 
 export interface IBeadResolveOptions {

@@ -21,7 +21,8 @@
 </template>
 
 <script setup lang="ts">
-import { BEAD_SIZE, useBackgroundCanvasColor } from '@editor/composables';
+import { useBackgroundCanvasColor } from '@editor/composables';
+import { BEAD_SIZE } from '@editor/const';
 
 const emptyColor = useBackgroundCanvasColor();
 </script>

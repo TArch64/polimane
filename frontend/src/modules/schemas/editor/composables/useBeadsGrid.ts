@@ -1,6 +1,7 @@
 import { computed, reactive } from 'vue';
 import { useEditorStore } from '@editor/stores';
 import { reactiveComputed } from '@vueuse/core';
+import { BEAD_CENTER, BEAD_SIZE } from '@editor/const';
 import {
   type IPoint,
   parseSchemaBeadCoord,
@@ -8,10 +9,6 @@ import {
   type SchemaBeads,
 } from '@/models';
 import { getObjectEntries } from '@/helpers';
-
-export const BEAD_SIZE = 12;
-export const BEAD_CENTER = BEAD_SIZE / 2;
-export const BEAD_RADIUS = BEAD_CENTER - 1;
 
 export interface IBeadsGridItem {
   coord: SchemaBeadCoord;

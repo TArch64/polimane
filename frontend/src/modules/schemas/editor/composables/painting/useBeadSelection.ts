@@ -5,6 +5,7 @@ import {
   useSelectionStore,
   useToolsStore,
 } from '@editor/stores';
+import { BEAD_SIZE } from '@editor/const';
 import { type IPoint, parseSchemaBeadCoord, Point, serializeSchemaBeadCoord } from '@/models';
 import { getObjectKeys } from '@/helpers';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
@@ -51,6 +52,21 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
     selectionStore.area.extend(event.movementX, event.movementY);
   }
 
+  function setCanvasSelection() {
+    const { from, to } = selectionStore.selected!;
+    const fromOffset = options.beadsGrid.resolveBeadOffset(from);
+    const toOffset = options.beadsGrid.resolveBeadOffset(to);
+
+    const PADDING = 2;
+    const x = Math.min(fromOffset.x, toOffset.x) - PADDING;
+    const y = Math.min(fromOffset.y, toOffset.y) - PADDING;
+    const width = Math.abs(fromOffset.x - toOffset.x) + BEAD_SIZE + PADDING * 2;
+    const height = Math.abs(fromOffset.y - toOffset.y) + BEAD_SIZE + PADDING * 2;
+
+    selectionStore.area.setPoint(x, y);
+    selectionStore.area.extend(width, height);
+  }
+
   function onMouseup() {
     try {
       removeEventListener('mousemove', onMouseMove);
@@ -68,12 +84,17 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
       from && to
         ? selectionStore.setSelected(createSelection(from, to))
         : selectionStore.setSelected(null);
+
+      selectionStore.selected
+        ? setCanvasSelection()
+        : selectionStore.area.reset();
     } finally {
       selectionStore.toggleSelecting(false);
     }
   }
 
   function onMouseDown(event: MouseEvent) {
+    selectionStore.setSelected(null);
     selectionStore.toggleSelecting(true);
     selectionStore.area.setPoint(event.clientX, event.clientY);
     addEventListener('mouseup', onMouseup, { once: true });

@@ -21,8 +21,10 @@
     </svg>
 
     <Teleport to="body">
-      <FadeTransition @after-leave="selectionStore.area.reset">
-        <EditorSelection v-if="toolsStore.isSelection && selectionStore.isSelecting" />
+      <FadeTransition>
+        <EditorSelection
+          v-if="toolsStore.isSelection && selectionStore.isSelecting"
+        />
       </FadeTransition>
     </Teleport>
   </main>

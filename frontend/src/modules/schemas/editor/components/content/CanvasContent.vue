@@ -21,8 +21,6 @@
 
     <FadeTransition>
       <CanvasSelection
-        :selected
-        :beadsGrid
         :key="`${selected.from}-${selected.to}`"
         v-if="selected"
       />
@@ -52,7 +50,10 @@ const backgroundPatternId = `editorEmptyBeads-${useId()}`;
 const backgroundPatternFill = `url(#${backgroundPatternId})`;
 const backgroundRef = ref<SVGRectElement>(null!);
 
-const listeners = useBeadTools({ backgroundRef });
+const listeners = useBeadTools({
+  backgroundRef,
+  beadsGrid: props.beadsGrid,
+});
 
 const transform = (() => {
   // shouldn't be recomputed to avoid shifting on schema resize

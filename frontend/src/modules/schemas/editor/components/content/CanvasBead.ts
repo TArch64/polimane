@@ -1,5 +1,6 @@
 import { type FunctionalComponent, h } from 'vue';
-import { BEAD_RADIUS, type IBeadsGridItem } from '../../composables';
+import { BEAD_RADIUS } from '@editor/const';
+import type { IBeadsGridItem } from '../../composables';
 
 export interface ICanvasBeadProps {
   bead: IBeadsGridItem;

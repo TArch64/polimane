@@ -9,19 +9,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import { useBackgroundContrast } from '@editor/composables';
-import { Direction } from '@/enums';
+import { useSelectionStore } from '@editor/stores';
+import { Direction, isNegativeDirection, isVerticalDirection } from '@/enums';
 
 const props = defineProps<{
   direction: Direction;
 }>();
 
-const translation = defineModel<number>('translation', { required: true });
 const overlay = defineModel<boolean>('overlay', { required: true });
 
-const isVertical = computed(() => props.direction === 'top' || props.direction === 'bottom');
-const isNegative = computed(() => props.direction === 'top' || props.direction === 'left');
+const selectionStore = useSelectionStore();
+const translation = toRef(selectionStore.resize.translation, props.direction);
+
+const isVertical = isVerticalDirection(props.direction);
+const isNegative = isNegativeDirection(props.direction);
 
 const classes = computed(() => `selection-resize-handle--${props.direction}`);
 
@@ -30,15 +33,15 @@ const backgroundColor = computed(() => contrast.isAA ? 'var(--color-primary)' : 
 const borderColor = computed(() => contrast.isAA ? 'var(--color-white)' : 'var(--color-primary)');
 
 function onMouseMove(event: MouseEvent) {
-  const axis = isVertical.value ? 'movementY' : 'movementX';
-  const direction = isNegative.value ? -1 : 1;
+  const axis = isVertical ? 'movementY' : 'movementX';
+  const direction = isNegative ? -1 : 1;
   const value = translation.value + direction * event[axis];
   translation.value = Math.max(value, 0);
 }
 
 function onMouseUp() {
   overlay.value = false;
-  translation.value = 0;
+  selectionStore.resize.reset();
   removeEventListener('mousemove', onMouseMove);
 }
 
@@ -60,7 +63,7 @@ function onMouseDown() {
     transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
     will-change: background-color, border-color, v-bind("direction");
     --handle-main-size: max(calc(100% / 5), 40px);
-    --handle-cross-size: 8px;
+    --handle-cross-size: 5px;
     --handle-offset: calc(-20px - v-bind("translation + 'px'"));
   }
 

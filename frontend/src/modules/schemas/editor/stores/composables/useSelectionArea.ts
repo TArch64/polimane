@@ -1,6 +1,5 @@
-import { computed, ref } from 'vue';
-import { reactiveComputed } from '@vueuse/core';
-import { type INodeRect, NodeRect } from '@/models';
+import { computed, reactive, ref } from 'vue';
+import { type INodeRect } from '@/models';
 
 export interface ISelectionArea extends INodeRect {
   setPoint: (x: number, y: number) => void;
@@ -9,32 +8,41 @@ export interface ISelectionArea extends INodeRect {
 }
 
 export function useSelectionArea(): ISelectionArea {
-  const raw = ref<NodeRect>(NodeRect.BLANK.clone());
-
-  function setPoint(x: number, y: number) {
-    raw.value = raw.value.with({ x, y });
-  }
+  const x = ref(0);
+  const y = ref(0);
+  const width = ref(0);
+  const height = ref(0);
 
   function reset() {
-    raw.value = NodeRect.BLANK.clone();
+    x.value = 0;
+    y.value = 0;
+    width.value = 0;
+    height.value = 0;
   }
 
-  function extend(x: number, y: number) {
-    raw.value.width += x;
-    raw.value.height += y;
+  function setPoint(x_: number, y_: number) {
+    reset();
+    x.value = x_;
+    y.value = y_;
   }
 
-  const resolved = computed(() => ({
-    x: raw.value.width < 0 ? raw.value.x + raw.value.width : raw.value.x,
-    y: raw.value.height < 0 ? raw.value.y + raw.value.height : raw.value.y,
-    width: Math.abs(raw.value.width),
-    height: Math.abs(raw.value.height),
-  }));
+  function extend(width_: number, height_: number) {
+    width.value += width_;
+    height.value += height_;
+  }
 
-  return reactiveComputed(() => ({
-    ...resolved.value,
+  const resolvedX = computed(() => width.value < 0 ? x.value + width.value : x.value);
+  const resolvedY = computed(() => height.value < 0 ? y.value + height.value : y.value);
+  const resolvedWidth = computed(() => Math.abs(width.value));
+  const resolvedHeight = computed(() => Math.abs(height.value));
+
+  return reactive({
+    x: resolvedX,
+    y: resolvedY,
+    width: resolvedWidth,
+    height: resolvedHeight,
     setPoint,
     extend,
     reset,
-  }));
+  });
 }
