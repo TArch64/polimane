@@ -106,11 +106,8 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
       return;
     }
 
-    let shift = 0;
-
     for (let index = 0; index < offset; index++) {
-      const templateIndex = sequenceIndex.value + index - shift;
-      const templateBeads = capturedSequence.value[templateIndex]!;
+      const templateBeads = capturedSequence.value[sequenceIndex.value]!;
       const newBeads = renderTemplate(templateBeads);
 
       for (const [coord, bead] of newBeads) {
@@ -124,7 +121,6 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
       if (sequenceIndex.value === capturedSequence.value.length) {
         sequenceIndex.value = 0;
         sequenceOffset.value += capturedSequence.value.length;
-        shift = index;
       }
     }
   }
