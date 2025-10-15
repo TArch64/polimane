@@ -1,11 +1,9 @@
 <template>
-  <Transition name="selection-resize-handle-" appear :duration="200">
-    <div
-      class="selection-resize-handle"
-      :class="classes"
-      @mousedown="onMouseDown"
-    />
-  </Transition>
+  <div
+    class="selection-resize-handle"
+    :class="classes"
+    @mousedown="onMouseDown"
+  />
 </template>
 
 <script setup lang="ts">
@@ -98,19 +96,6 @@ function onMouseDown() {
 
   .selection-resize-handle--right {
     right: var(--handle-offset);
-  }
-
-  .selection-resize-handle--enter-from,
-  .selection-resize-handle--leave-to {
-    opacity: 0;
-    scale: 0.8;
-  }
-
-  .selection-resize-handle--enter-active,
-  .selection-resize-handle--leave-active {
-    transform-origin: center center;
-    transition: opacity 0.2s ease-out, scale 0.2s ease-out;
-    will-change: opacity, scale;
   }
 }
 </style>
