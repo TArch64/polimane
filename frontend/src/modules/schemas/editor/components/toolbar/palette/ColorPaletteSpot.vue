@@ -18,10 +18,6 @@
 import { ref } from 'vue';
 import ColorItem from './ColorItem.vue';
 
-const emit = defineEmits<{
-  choose: [];
-}>();
-
 const isActive = defineModel<boolean>('active', {
   required: true,
 });
@@ -44,7 +40,6 @@ function onClick(): void {
   }
 
   isActive.value = true;
-  emit('choose');
 }
 
 function onDblClick(): void {

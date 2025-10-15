@@ -1,6 +1,6 @@
 <template>
   <Card
-    :as="ToolbarGrid"
+    :binding
     ref="rootRef"
     class="color-palette"
   >
@@ -9,7 +9,6 @@
       :key="index"
       :active="color === store.activeColor"
       @update:active="store.activateColor(color)"
-      @choose="$emit('close')"
       v-model="store.palette[index]!"
     />
   </Card>
@@ -17,9 +16,9 @@
 
 <script setup lang="ts">
 import { useToolsStore } from '@editor/stores';
-import { onClickOutside } from '@vueuse/core';
 import { Card } from '@/components/card';
-import { useDomRef } from '@/composables';
+import { onBackdropClick, useDomRef } from '@/composables';
+import { makeBinding } from '@/components/binding';
 import ToolbarGrid from '../ToolbarGrid.vue';
 import ColorPaletteSpot from './ColorPaletteSpot.vue';
 
@@ -27,16 +26,24 @@ const emit = defineEmits<{
   close: [];
 }>();
 
-const rootRef = useDomRef<HTMLElement>();
+const binding = makeBinding(ToolbarGrid, () => ({
+  as: 'dialog',
+}));
+
+const rootRef = useDomRef<HTMLDialogElement>();
 const store = useToolsStore();
 
-onClickOutside(rootRef, () => emit('close'));
+onBackdropClick(rootRef, () => emit('close'));
 </script>
 
 <style scoped>
 @layer page {
   .color-palette {
-    padding: 8px;
+    padding: 8px 6px;
+
+    &::backdrop {
+      background: transparent;
+    }
   }
 }
 </style>

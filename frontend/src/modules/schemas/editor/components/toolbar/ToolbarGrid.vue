@@ -1,11 +1,18 @@
 <template>
-  <div class="toolbar-grid">
+  <Component :is="as" class="toolbar-grid">
     <slot />
-  </div>
+  </Component>
 </template>
 
 <script setup lang="ts">
 import type { Slot } from 'vue';
+import type { ComponentAs } from '@/types';
+
+withDefaults(defineProps<{
+  as?: ComponentAs;
+}>(), {
+  as: 'div',
+});
 
 defineSlots<{
   default: Slot;

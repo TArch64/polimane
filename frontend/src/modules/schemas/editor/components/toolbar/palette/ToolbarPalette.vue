@@ -10,7 +10,6 @@
     <Teleport to="body">
       <FadeTransition>
         <ColorPalette
-          popover="manual"
           ref="paletteRef"
           class="toolbar-palette__floating"
           @close="isOpened = false"
@@ -33,13 +32,13 @@ import ColorPalette from './ColorPalette.vue';
 const store = useToolsStore();
 
 const isOpened = ref(false);
-const paletteRef = useDomRef<HTMLElement>();
+const paletteRef = useDomRef<HTMLDialogElement>();
 
 async function open(): Promise<void> {
   if (!isOpened.value) {
     isOpened.value = true;
     await nextTick();
-    paletteRef.value.showPopover();
+    paletteRef.value.showModal();
   }
 }
 
