@@ -60,4 +60,5 @@ export const PersonFillIcon = makeIcon(() => import('~icons/eva/person-fill'));
 
 export const LogoIcon = makeIcon(() => import('~icons/custom/logo'));
 export const ToolsBeadCircleIcon = makeIcon(() => import('~icons/custom/tools-bead-circle'));
+export const ToolsBeadBugleIcon = makeIcon(() => import('~icons/custom/tools-bead-bugle'));
 export const ToolsSelectionIcon = makeIcon(() => import('~icons/custom/tools-selection'));
