@@ -59,5 +59,5 @@ export const DropletOffIcon = makeIcon(() => import('~icons/eva/droplet-off-outl
 export const PersonFillIcon = makeIcon(() => import('~icons/eva/person-fill'));
 
 export const LogoIcon = makeIcon(() => import('~icons/custom/logo'));
-export const ToolsBeadIcon = makeIcon(() => import('~icons/custom/tools-bead'));
+export const ToolsBeadCircleIcon = makeIcon(() => import('~icons/custom/tools-bead-circle'));
 export const ToolsSelectionIcon = makeIcon(() => import('~icons/custom/tools-selection'));

@@ -1,5 +1,5 @@
 <template>
-  <ToolbarDropdown>
+  <ToolbarDropdown :offset-top="-16">
     <template #activator="{ open }">
       <ColorItem
         title="Колір Бісеру"
@@ -8,7 +8,7 @@
       />
     </template>
 
-    <ColorPalette />
+    <ColorSelector />
   </ToolbarDropdown>
 </template>
 
@@ -17,7 +17,7 @@ import { useToolsStore } from '@editor/stores';
 import { type HotKeyDef, useHotKeys } from '@editor/composables';
 import ToolbarDropdown from '../ToolbarDropdown.vue';
 import ColorItem from './ColorItem.vue';
-import ColorPalette from './ColorPalette.vue';
+import ColorSelector from './ColorSelector.vue';
 
 const store = useToolsStore();
 

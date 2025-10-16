@@ -6,10 +6,11 @@
 
 <script setup lang="ts">
 import type { Slot } from 'vue';
-import type { ComponentAs } from '@/types';
+import type { ComponentAs, NumericString } from '@/types';
 
 withDefaults(defineProps<{
   as?: ComponentAs;
+  columns: NumericString | number;
 }>(), {
   as: 'div',
 });
@@ -24,7 +25,7 @@ defineSlots<{
   .toolbar-grid {
     display: grid;
     gap: 6px;
-    grid-template-columns: repeat(2, var(--toolbar-button-size));
+    grid-template-columns: repeat(v-bind("columns"), var(--toolbar-button-size));
   }
 }
 </style>

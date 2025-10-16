@@ -1,6 +1,6 @@
 <template>
-  <ToolbarGrid>
-    <ColorPaletteSpot
+  <ToolbarGrid columns="2">
+    <ColorSelectorSpot
       v-for="(color, index) of store.palette"
       :key="index"
       :active="color === store.activeColor"
@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import { useToolsStore } from '@editor/stores';
 import ToolbarGrid from '../ToolbarGrid.vue';
-import ColorPaletteSpot from './ColorPaletteSpot.vue';
+import ColorSelectorSpot from './ColorSelectorSpot.vue';
 
 const store = useToolsStore();
 

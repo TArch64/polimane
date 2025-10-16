@@ -8,6 +8,7 @@
           as="dialog"
           ref="dropdownRef"
           class="toolbar-dropdown__floating"
+          :style="dropdownStyles"
           v-if="isOpened"
         >
           <slot :close />
@@ -18,10 +19,14 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, type Slot } from 'vue';
+import { computed, nextTick, ref, type Slot, useId } from 'vue';
 import { FadeTransition } from '@/components/transition';
 import { onBackdropClick, useDomRef } from '@/composables';
 import { Card } from '@/components/card';
+
+const props = defineProps<{
+  offsetTop: number;
+}>();
 
 defineSlots<{
   default: Slot<{
@@ -33,7 +38,14 @@ defineSlots<{
   }>;
 }>();
 
-const dropdownRef = useDomRef<HTMLDialogElement | null>(null);
+const positionAnchor = `--toolbar-dropdown-${useId()}`;
+const dropdownRef = useDomRef<HTMLDialogElement | null>();
+
+const dropdownStyles = computed(() => ({
+  positionAnchor,
+  '--dropdown-offset-top': `${props.offsetTop}px`,
+}));
+
 const isOpened = ref(false);
 
 async function open(): Promise<void> {
@@ -54,13 +66,12 @@ onBackdropClick(dropdownRef, close);
 <style scoped>
 @layer page {
   .toolbar-dropdown {
-    anchor-name: --toolbar-dropdown;
+    anchor-name: v-bind("positionAnchor");
   }
 
   .toolbar-dropdown__floating {
-    position-anchor: --toolbar-dropdown;
     position-area: right span-y-end;
-    margin: -16px 0 0 8px;
+    margin: var(--dropdown-offset-top) 0 0 8px;
     padding: 8px 6px;
 
     &::backdrop {

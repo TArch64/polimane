@@ -8,7 +8,7 @@
     <input
       ref="pickerRef"
       type="color"
-      class="color-palette__spot-picker"
+      class="color-selector__spot-input"
       v-model="model"
     >
   </ColorItem>
@@ -49,7 +49,7 @@ function onDblClick(): void {
 
 <style scoped>
 @layer page {
-  .color-palette__spot-picker {
+  .color-selector__spot-input {
     visibility: hidden;
     width: 100%;
     height: 100%;
