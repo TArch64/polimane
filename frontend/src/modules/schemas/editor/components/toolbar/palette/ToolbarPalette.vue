@@ -1,5 +1,5 @@
 <template>
-  <ToolbarDropdown :offset-top="-16">
+  <ToolbarDropdown>
     <template #activator="{ open }">
       <ColorItem
         title="Колір Бісеру"

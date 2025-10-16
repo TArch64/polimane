@@ -1,5 +1,5 @@
 <template>
-  <div class="toolbar-dropdown">
+  <div ref="containerRef" class="toolbar-dropdown">
     <slot :open name="activator" />
 
     <Teleport to="body">
@@ -20,13 +20,10 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, type Slot, useId } from 'vue';
-import { FadeTransition } from '@/components/transition';
 import { onBackdropClick, useDomRef } from '@/composables';
+import { FadeTransition } from '@/components/transition';
 import { Card } from '@/components/card';
-
-const props = defineProps<{
-  offsetTop: number;
-}>();
+import { useToolbarRef } from './toolbarRef';
 
 defineSlots<{
   default: Slot<{
@@ -39,21 +36,29 @@ defineSlots<{
 }>();
 
 const positionAnchor = `--toolbar-dropdown-${useId()}`;
-const dropdownRef = useDomRef<HTMLDialogElement | null>();
 
-const dropdownStyles = computed(() => ({
-  positionAnchor,
-  '--dropdown-offset-top': `${props.offsetTop}px`,
-}));
+const toolbarRef = useToolbarRef();
+const containerRef = useDomRef<HTMLElement>();
+const dropdownRef = useDomRef<HTMLDialogElement | null>();
 
 const isOpened = ref(false);
 
+const offsetTop = ref(0);
+const offsetLeft = ref(0);
+
 async function open(): Promise<void> {
-  if (!isOpened.value) {
-    isOpened.value = true;
-    await nextTick();
-    dropdownRef.value!.showModal();
-  }
+  if (isOpened.value) return;
+
+  isOpened.value = true;
+
+  await nextTick();
+  dropdownRef.value!.showModal();
+
+  const toolbarRect = toolbarRef.value.getBoundingClientRect();
+  const containerRect = containerRef.value.getBoundingClientRect();
+  const dropdownRect = dropdownRef.value!.getBoundingClientRect();
+  offsetTop.value = -Math.min(dropdownRect.height / 10, 16);
+  offsetLeft.value = (toolbarRect.right - containerRect.right) + 4;
 }
 
 function close(): void {
@@ -61,9 +66,32 @@ function close(): void {
 }
 
 onBackdropClick(dropdownRef, close);
+
+const dropdownStyles = computed(() => ({
+  positionAnchor,
+  '--toolbar-dropdown-offset-top': `${offsetTop.value}px`,
+  '--toolbar-dropdown-offset-left': `${offsetLeft.value}px`,
+}));
+
+defineExpose({
+  open,
+  close,
+});
 </script>
 
 <style scoped>
+@property --toolbar-dropdown-offset-top {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --toolbar-dropdown-offset-left {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+
 @layer page {
   .toolbar-dropdown {
     anchor-name: v-bind("positionAnchor");
@@ -71,7 +99,7 @@ onBackdropClick(dropdownRef, close);
 
   .toolbar-dropdown__floating {
     position-area: right span-y-end;
-    margin: var(--dropdown-offset-top) 0 0 8px;
+    margin: var(--toolbar-dropdown-offset-top) 0 0 var(--toolbar-dropdown-offset-left);
     padding: 8px 6px;
 
     &::backdrop {
