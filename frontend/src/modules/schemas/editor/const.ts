@@ -1,3 +1,8 @@
 export const BEAD_SIZE = 12;
-export const BEAD_CENTER = BEAD_SIZE / 2;
-export const BEAD_RADIUS = BEAD_CENTER - 1;
+
+export const BEAD_CIRCLE_CENTER = BEAD_SIZE / 2;
+export const BEAD_CIRCLE_RADIUS = BEAD_CIRCLE_CENTER - 1;
+
+export const BEAD_BUGLE_PADDING = BEAD_SIZE / 4;
+export const BEAD_BUGLE_SIZE = BEAD_SIZE - (BEAD_BUGLE_PADDING * 2);
+export const BEAD_BUGLE_CORNER_RADIUS = BEAD_BUGLE_SIZE / 6;

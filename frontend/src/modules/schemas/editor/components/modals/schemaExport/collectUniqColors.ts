@@ -1,5 +1,4 @@
-import { getBeadSettings, type ISchema, isRefBead, type SchemaBead } from '@/models';
-import type { BeadContentKind } from '@/enums';
+import { getBeadSettings, type ISchema, isRefBead, type SchemaContentBead } from '@/models';
 
 export function collectUniqColors(schema: ISchema): string[] {
   const set = new Set<string>();
@@ -9,7 +8,7 @@ export function collectUniqColors(schema: ISchema): string[] {
       continue;
     }
 
-    const settings = getBeadSettings(bead as SchemaBead<BeadContentKind>);
+    const settings = getBeadSettings(bead as SchemaContentBead);
     set.add(settings.color);
   }
 

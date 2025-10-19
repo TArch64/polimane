@@ -1,5 +1,5 @@
 import { useCanvasStore, useEditorStore } from '@editor/stores';
-import { BEAD_CENTER, BEAD_RADIUS, BEAD_SIZE } from '@editor/const';
+import { BEAD_CIRCLE_CENTER, BEAD_CIRCLE_RADIUS, BEAD_SIZE } from '@editor/const';
 import { type IPoint, parseSchemaBeadCoord } from '@/models';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 
@@ -43,11 +43,11 @@ export function useBeadCoord(options: IBeadToolsOptions): IBeadCoord {
     }
 
     const beadCenter: IPoint = {
-      y: (coord.y * BEAD_SIZE) + BEAD_CENTER,
-      x: (coord.x * BEAD_SIZE) + BEAD_CENTER,
+      y: (coord.y * BEAD_SIZE) + BEAD_CIRCLE_CENTER,
+      x: (coord.x * BEAD_SIZE) + BEAD_CIRCLE_CENTER,
     };
 
-    if (getOptions.checkShape !== false && !inCircle(relativePoint, beadCenter, BEAD_RADIUS)) {
+    if (getOptions.checkShape !== false && !inCircle(relativePoint, beadCenter, BEAD_CIRCLE_RADIUS)) {
       return null;
     }
 

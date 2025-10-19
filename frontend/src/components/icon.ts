@@ -6,7 +6,7 @@ export interface IIconProps {
 
 export type IconComponent = FunctionalComponent<IIconProps>;
 
-const makeIcon = (loader: AsyncComponentLoader): IconComponent => {
+const makeIcon = (name: string, loader: AsyncComponentLoader): IconComponent => {
   const asyncComponent = defineAsyncComponent(loader);
 
   function makeSize(size?: number | string) {
@@ -15,7 +15,7 @@ const makeIcon = (loader: AsyncComponentLoader): IconComponent => {
     return `${size}px`;
   }
 
-  return (props, ctx) => {
+  const Component: IconComponent = (props, ctx) => {
     const size = makeSize(props.size);
 
     return h('span', {
@@ -34,31 +34,34 @@ const makeIcon = (loader: AsyncComponentLoader): IconComponent => {
       }),
     ]);
   };
+
+  Component.displayName = name;
+  return Component;
 };
 
-export const SettingsIcon = makeIcon(() => import('~icons/eva/settings-outline'));
-export const CloseIcon = makeIcon(() => import('~icons/eva/close-outline'));
-export const ArrowBackIcon = makeIcon(() => import('~icons/eva/arrow-back-outline'));
-export const TrashIcon = makeIcon(() => import('~icons/eva/trash-outline'));
-export const PlusIcon = makeIcon(() => import('~icons/eva/plus-outline'));
-export const EditIcon = makeIcon(() => import('~icons/eva/edit-outline'));
-export const MoreHorizontalIcon = makeIcon(() => import('~icons/eva/more-horizontal-outline'));
-export const CopyIcon = makeIcon(() => import('~icons/eva/copy-outline'));
-export const CornerUpLeftIcon = makeIcon(() => import('~icons/eva/corner-up-left-outline'));
-export const CornerUpRightIcon = makeIcon(() => import('~icons/eva/corner-up-right-outline'));
-export const LogOutIcon = makeIcon(() => import('~icons/eva/log-out-outline'));
-export const SaveIcon = makeIcon(() => import('~icons/eva/save-outline'));
-export const CheckmarkCircleIcon = makeIcon(() => import('~icons/eva/checkmark-circle-outline'));
-export const CheckmarkIcon = makeIcon(() => import('~icons/eva/checkmark-outline'));
-export const LoaderIcon = makeIcon(() => import('~icons/eva/loader-outline'));
-export const UnlockIcon = makeIcon(() => import('~icons/eva/unlock-outline'));
-export const RepeatIcon = makeIcon(() => import('~icons/eva/repeat-outline'));
-export const FileTextIcon = makeIcon(() => import('~icons/eva/file-text-outline'));
-export const DropletOffIcon = makeIcon(() => import('~icons/eva/droplet-off-outline'));
+export const SettingsIcon = makeIcon('SettingsIcon', () => import('~icons/eva/settings-outline'));
+export const CloseIcon = makeIcon('CloseIcon', () => import('~icons/eva/close-outline'));
+export const ArrowBackIcon = makeIcon('ArrowBackIcon', () => import('~icons/eva/arrow-back-outline'));
+export const TrashIcon = makeIcon('TrashIcon', () => import('~icons/eva/trash-outline'));
+export const PlusIcon = makeIcon('PlusIcon', () => import('~icons/eva/plus-outline'));
+export const EditIcon = makeIcon('EditIcon', () => import('~icons/eva/edit-outline'));
+export const MoreHorizontalIcon = makeIcon('MoreHorizontalIcon', () => import('~icons/eva/more-horizontal-outline'));
+export const CopyIcon = makeIcon('CopyIcon', () => import('~icons/eva/copy-outline'));
+export const CornerUpLeftIcon = makeIcon('CornerUpLeftIcon', () => import('~icons/eva/corner-up-left-outline'));
+export const CornerUpRightIcon = makeIcon('CornerUpRightIcon', () => import('~icons/eva/corner-up-right-outline'));
+export const LogOutIcon = makeIcon('LogOutIcon', () => import('~icons/eva/log-out-outline'));
+export const SaveIcon = makeIcon('SaveIcon', () => import('~icons/eva/save-outline'));
+export const CheckmarkCircleIcon = makeIcon('CheckmarkCircleIcon', () => import('~icons/eva/checkmark-circle-outline'));
+export const CheckmarkIcon = makeIcon('CheckmarkIcon', () => import('~icons/eva/checkmark-outline'));
+export const LoaderIcon = makeIcon('LoaderIcon', () => import('~icons/eva/loader-outline'));
+export const UnlockIcon = makeIcon('UnlockIcon', () => import('~icons/eva/unlock-outline'));
+export const RepeatIcon = makeIcon('RepeatIcon', () => import('~icons/eva/repeat-outline'));
+export const FileTextIcon = makeIcon('FileTextIcon', () => import('~icons/eva/file-text-outline'));
+export const DropletOffIcon = makeIcon('DropletOffIcon', () => import('~icons/eva/droplet-off-outline'));
 
-export const PersonFillIcon = makeIcon(() => import('~icons/eva/person-fill'));
+export const PersonFillIcon = makeIcon('PersonFillIcon', () => import('~icons/eva/person-fill'));
 
-export const LogoIcon = makeIcon(() => import('~icons/custom/logo'));
-export const ToolsBeadCircleIcon = makeIcon(() => import('~icons/custom/tools-bead-circle'));
-export const ToolsBeadBugleIcon = makeIcon(() => import('~icons/custom/tools-bead-bugle'));
-export const ToolsSelectionIcon = makeIcon(() => import('~icons/custom/tools-selection'));
+export const LogoIcon = makeIcon('LogoIcon', () => import('~icons/custom/logo'));
+export const ToolsBeadCircleIcon = makeIcon('ToolsBeadCircleIcon', () => import('~icons/custom/tools-bead-circle'));
+export const ToolsBeadBugleIcon = makeIcon('ToolsBeadBugleIcon', () => import('~icons/custom/tools-bead-bugle'));
+export const ToolsSelectionIcon = makeIcon('ToolsSelectionIcon', () => import('~icons/custom/tools-selection'));

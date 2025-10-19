@@ -1,4 +1,4 @@
-import { BeadKind } from '@/enums';
+import { type BeadContentKind, BeadKind } from '@/enums';
 import type { IPoint } from './Point';
 import type { SchemaBeadCoord } from './SchemaBeadCoord';
 
@@ -9,8 +9,10 @@ export type SchemaBeadMap = {
 };
 
 export type SchemaBead<K extends BeadKind = BeadKind> = Partial<Pick<SchemaBeadMap, K>> & {
-  kind: BeadKind;
+  kind: K;
 };
+
+export type SchemaContentBead = SchemaBead<BeadContentKind>;
 
 export interface ISchemaBaseBead {
   color: string;

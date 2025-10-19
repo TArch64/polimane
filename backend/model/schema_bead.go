@@ -13,13 +13,30 @@ type SchemaBead struct {
 	Ref    *SchemaRefBead    `validate:"omitempty,dive" json:"ref,omitempty"`
 }
 
+func (s *SchemaBead) GetColor() string {
+	if s.Circle != nil {
+		return s.Circle.Color
+	}
+	if s.Bugle != nil {
+		return s.Bugle.Color
+	}
+	return ""
+}
+
+func (s *SchemaBead) GetSpan() *SchemaBeadSpan {
+	if s.Bugle != nil {
+		return s.Bugle.Span
+	}
+	return nil
+}
+
 type SchemaCircleBead struct {
 	Color string `validate:"required,iscolor" json:"color"`
 }
 
 type SchemaBugleBead struct {
-	Color string         `validate:"required,iscolor" json:"color"`
-	Span  SchemaBeadSpan `validate:"required,dive" json:"span"`
+	Color string          `validate:"required,iscolor" json:"color"`
+	Span  *SchemaBeadSpan `validate:"required,dive" json:"span"`
 }
 
 type SchemaRefBead struct {

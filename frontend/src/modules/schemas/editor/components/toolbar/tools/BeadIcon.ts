@@ -14,3 +14,5 @@ export interface IBeadIconProps {
 export const BeadIcon: FunctionalComponent<IBeadIconProps> = (props, { attrs }) => {
   return h(map[props.kind], attrs);
 };
+
+BeadIcon.displayName = 'BeadIcon';
