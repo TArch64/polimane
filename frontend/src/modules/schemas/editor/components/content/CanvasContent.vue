@@ -69,5 +69,13 @@ const transform = (() => {
   .canvas-content:hover {
     cursor: var(--editor-cursor, crosshair);
   }
+
+  :deep(.canvas-bead-bugle) {
+    rx: v-bind("BEAD_BUGLE_CORNER_RADIUS");
+    ry: v-bind("BEAD_BUGLE_CORNER_RADIUS");
+    transition: 0.15s ease-out;
+    transition-property: width, height, x, y;
+    will-change: width, height, x, y;
+  }
 }
 </style>

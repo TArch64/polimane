@@ -1,5 +1,5 @@
 import { type FunctionalComponent, h } from 'vue';
-import { BEAD_BUGLE_CORNER_RADIUS, BEAD_CIRCLE_RADIUS } from '@editor/const';
+import { BEAD_CIRCLE_RADIUS } from '@editor/const';
 import { getBeadSettings, type SchemaBead } from '@/models';
 import { type BeadContentKind, BeadKind } from '@/enums';
 import type { IBeadsGridBugle, IBeadsGridCircle, IBeadsGridItem } from '../../composables';
@@ -30,12 +30,11 @@ export const CanvasBeadBugle: BeadComponent = (props) => {
   const settings = getBeadSettings(props.item.bead as SchemaBead<BeadKind.BUGLE>);
 
   return h('rect', {
+    class: 'canvas-bead-bugle',
     x: precomputed.x,
     y: precomputed.y,
     width: precomputed.width,
     height: precomputed.height,
-    rx: BEAD_BUGLE_CORNER_RADIUS,
-    ry: BEAD_BUGLE_CORNER_RADIUS,
     coord: props.item.coord,
     fill: settings.color,
   });
