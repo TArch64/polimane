@@ -87,8 +87,8 @@ export function useBeadsGrid(): IBeadsGrid {
     const span = options.bead.bugle!.span;
 
     const spanCoord: IPoint = {
-      x: options.coord.x + (span.x),
-      y: options.coord.y + (span.y),
+      x: options.coord.x + span.x,
+      y: options.coord.y + span.y,
     };
 
     const startCoordX = Math.min(options.coord.x, spanCoord.x);

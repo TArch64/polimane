@@ -1,12 +1,15 @@
 import { defineStore } from 'pinia';
 import {
   type BeadCoord,
+  getBeadSettings,
   type IPoint,
   parseBeadCoord,
   type SchemaBead,
   type SchemaBeads,
+  type SchemaSpannableBead,
+  serializeBeadCoord,
 } from '@/models';
-import { Direction } from '@/enums';
+import { BeadKind, Direction, isBeadSpannableKind } from '@/enums';
 import { getObjectEntries } from '@/helpers';
 import { useEditorStore } from './editorStore';
 
@@ -55,7 +58,53 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     }
   }
 
+  function isInArea(coord: IPoint, from: IPoint, to: IPoint): boolean {
+    return coord.x >= from.x && coord.x <= to.x
+      && coord.y >= from.y && coord.y <= to.y;
+  }
+
+  function getInArea(from: IPoint, to: IPoint): SchemaBeads {
+    const entries = getObjectEntries(editorStore.schema.beads).filter(([coord]) => {
+      return isInArea(parseBeadCoord(coord), from, to);
+    });
+
+    return Object.fromEntries(entries);
+  }
+
+  function onBeadBeforeRemove(coord: BeadCoord): void {
+    const bead = editorStore.schema.beads[coord];
+    if (!bead || !isBeadSpannableKind(bead.kind)) return;
+
+    const point = parseBeadCoord(coord);
+    const settings = getBeadSettings(bead as SchemaSpannableBead);
+
+    const spanX = point.x + settings.span.x;
+    const spanY = point.y + settings.span.y;
+
+    const from: IPoint = {
+      x: Math.min(point.x, spanX),
+      y: Math.min(point.y, spanY),
+    };
+
+    const to: IPoint = {
+      x: Math.max(point.x, spanX),
+      y: Math.max(point.y, spanY),
+    };
+
+    for (let x = from.x; x <= to.x; x++) {
+      for (let y = from.y; y <= to.y; y++) {
+        const checkingCoord = serializeBeadCoord(x, y);
+        const checkingBead = editorStore.schema.beads[checkingCoord];
+
+        if (checkingBead?.kind === BeadKind.REF) {
+          delete editorStore.schema.beads[checkingCoord];
+        }
+      }
+    }
+  }
+
   function remove(coord: BeadCoord): void {
+    onBeadBeforeRemove(coord);
     delete editorStore.schema.beads[coord];
   }
 
@@ -67,6 +116,10 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     }
 
     if (color) {
+      if (coord in editorStore.schema.beads) {
+        onBeadBeforeRemove(coord);
+      }
+
       editorStore.schema.beads[coord] = color;
 
       const extendingDirections = checkExtendingPaint(coord);
@@ -84,15 +137,6 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     }
 
     return null;
-  }
-
-  function getInArea(from: IPoint, to: IPoint): SchemaBeads {
-    const entries = getObjectEntries<SchemaBeads>(editorStore.schema.beads).filter(([coord]) => {
-      const { x, y } = parseBeadCoord(coord);
-      return x >= from.x && x <= to.x && y >= from.y && y <= to.y;
-    });
-
-    return Object.fromEntries(entries);
   }
 
   return { paint, remove, getInArea };

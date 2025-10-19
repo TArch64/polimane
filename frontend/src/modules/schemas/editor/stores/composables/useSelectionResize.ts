@@ -67,7 +67,7 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
   }
 
   function renderTemplate(template: SchemaBeads): ObjectEntries<SchemaBeads> {
-    return getObjectEntries<SchemaBeads>(template).map(([templateCoord, bead]) => {
+    return getObjectEntries(template).map(([templateCoord, bead]) => {
       const coord = parseBeadCoord(templateCoord);
       const modifier = isNegativeDirection(direction.value!) ? -1 : 1;
       coord[sequenceAxis.value!] += (sequenceOffset.value + capturedSequence.value.length) * modifier;

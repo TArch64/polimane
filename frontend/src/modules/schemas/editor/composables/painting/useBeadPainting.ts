@@ -1,6 +1,7 @@
 import { computed, ref, type Ref } from 'vue';
 import { createAnimatedFrame } from '@/helpers';
 import {
+  getBeadSettings,
   type IPoint,
   type SchemaBead,
   type SchemaSpannableBead,
@@ -46,7 +47,7 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
       const spanningCoord = serializeBeadCoord(spanning.coord.x, spanning.coord.y);
       bead = beadFactory.createRef(spanningCoord);
 
-      spanning.original.bugle!.span = {
+      getBeadSettings(spanning.original).span = {
         x: point.x - spanning.coord.x,
         y: point.y - spanning.coord.y,
       };
