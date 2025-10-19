@@ -6,10 +6,12 @@ import {
   type IPoint,
   isRefBead,
   isSpannableBead,
+  Point,
   type SchemaBead,
   type SchemaSpannableBead,
   serializeBeadPoint,
 } from '@/models';
+import { Direction, isHorizontalDirection, isVerticalDirection } from '@/enums';
 import { PaintEffect, useBeadsStore, useEditorStore, useToolsStore } from '../../stores';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 import { useBeadCoord } from './useBeadCoord';
@@ -22,9 +24,9 @@ export interface IBeadPaintingListeners {
 
 interface ISpanningBead {
   coord: BeadCoord;
-  point: IPoint;
+  point: Point;
   original: SchemaSpannableBead;
-  direction?: 'x' | 'y';
+  direction?: Direction;
 }
 
 export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingListeners> {
@@ -36,6 +38,39 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
   const beadFactory = useBeadFactory();
   const isPainting = ref(false);
   let spanning: ISpanningBead | null = null;
+  let mouseupAbort: AbortController | null = null;
+
+  function restrictSpanningPoint(refPoint: IPoint): void {
+    const { direction, point } = spanning!;
+    refPoint.x = isHorizontalDirection(direction!) ? refPoint.x : point.x;
+    refPoint.y = isVerticalDirection(direction!) ? refPoint.y : point.y;
+  }
+
+  function detectDirection(from: IPoint, to: IPoint): Direction {
+    const deltaX = to.x - from.x;
+    const deltaY = to.y - from.y;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      return deltaX > 0 ? Direction.RIGHT : Direction.LEFT;
+    } else {
+      return deltaY > 0 ? Direction.BOTTOM : Direction.TOP;
+    }
+  }
+
+  function isSameSpanningRef(coord: BeadCoord): boolean {
+    const existingBead = editorStore.schema.beads[coord];
+
+    return !!existingBead
+      && isRefBead(existingBead)
+      && getBeadSettings(existingBead).to === spanning!.coord;
+  }
+
+  function updateSpanningSize(point: IPoint) {
+    getBeadSettings(spanning!.original).span = {
+      x: point.x - spanning!.point.x,
+      y: point.y - spanning!.point.y,
+    };
+  }
 
   const paint = createAnimatedFrame((event: MouseEvent, color: string | null) => {
     const point = beadCoord.getFromEvent(event);
@@ -45,34 +80,29 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
     let bead: SchemaBead | null;
 
     if (spanning) {
-      if (spanning.point.x === point.x && spanning.point.y === point.y) {
+      if (spanning.point.isEqual(point)) {
         return;
       }
 
       if (spanning.direction) {
-        point.x = spanning.direction === 'x' ? point.x : spanning.point.x;
-        point.y = spanning.direction === 'y' ? point.y : spanning.point.y;
+        restrictSpanningPoint(point);
+
+        if (detectDirection(spanning.point, point) !== spanning.direction) {
+          return;
+        }
+
         coord = serializeBeadPoint(point);
       } else {
-        spanning.direction = spanning.point.x === point.x ? 'y' : 'x';
+        spanning.direction = detectDirection(spanning.point, point);
       }
 
-      const existingBead = editorStore.schema.beads[coord];
-
-      if (existingBead
-        && isRefBead(existingBead)
-        && getBeadSettings(existingBead).to === spanning.coord
-      ) {
+      if (isSameSpanningRef(coord)) {
         return;
       }
 
       const spanningCoord = serializeBeadPoint(spanning.point);
       bead = beadFactory.createRef(spanningCoord);
-
-      getBeadSettings(spanning.original).span = {
-        x: point.x - spanning.point.x,
-        y: point.y - spanning.point.y,
-      };
+      updateSpanningSize(point);
     } else {
       const kind = toolsStore.activeBead;
       bead = beadFactory.create(kind, color);
@@ -80,7 +110,7 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
       if (!!bead && isSpannableBead(bead)) {
         spanning = {
           coord,
-          point,
+          point: new Point(point),
           original: bead,
         };
       }
@@ -101,7 +131,12 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
     if (event.buttons === 1) {
       isPainting.value = true;
       paint(event, toolsStore.isEraser ? null : toolsStore.activeColor);
-      addEventListener('mouseup', onMouseup, { once: true });
+
+      mouseupAbort = new AbortController();
+      addEventListener('mouseup', onMouseup, {
+        once: true,
+        signal: mouseupAbort.signal,
+      });
     }
 
     if (event.buttons === 2) {
