@@ -1,14 +1,14 @@
 import { type FunctionalComponent, h } from 'vue';
-import { BeadKind } from '@/enums';
+import { type BeadContentKind, BeadKind } from '@/enums';
 import { type IconComponent, ToolsBeadBugleIcon, ToolsBeadCircleIcon } from '@/components/icon';
 
-const map: Record<BeadKind, IconComponent> = {
+const map: Record<BeadContentKind, IconComponent> = {
   [BeadKind.CIRCLE]: ToolsBeadCircleIcon,
   [BeadKind.BUGLE]: ToolsBeadBugleIcon,
 };
 
 export interface IBeadIconProps {
-  kind: BeadKind;
+  kind: BeadContentKind;
 }
 
 export const BeadIcon: FunctionalComponent<IBeadIconProps> = (props, { attrs }) => {

@@ -4,17 +4,18 @@ import { reactiveComputed } from '@vueuse/core';
 import { BEAD_CENTER, BEAD_SIZE } from '@editor/const';
 import {
   type IPoint,
-  type ISchemaBead,
+  isRefBead,
   parseSchemaBeadCoord,
+  type SchemaBead,
   type SchemaBeadCoord,
-  type SchemaBeads,
 } from '@/models';
 import { getObjectEntries } from '@/helpers';
+import { type BeadContentKind } from '@/enums';
 
 export interface IBeadsGridItem {
   coord: SchemaBeadCoord;
   offset: IPoint;
-  bead: ISchemaBead;
+  bead: SchemaBead<BeadContentKind>;
 }
 
 export interface IBeadsGridSize {
@@ -50,22 +51,30 @@ export function useBeadsGrid(): IBeadsGrid {
     return { x: offsetX, y: offsetY };
   }
 
-  const beads = computed(() => (
-    getObjectEntries<SchemaBeads>(editorStore.schema.beads)
-      .map(([coord, bead]): IBeadsGridItem => {
-        const { x, y } = resolveBeadOffset(coord);
+  const beads = computed(() => {
+    const items: IBeadsGridItem[] = [];
+    const beads = editorStore.schema.beads;
 
-        return {
-          coord,
-          bead,
+    for (const [coord, bead] of getObjectEntries(beads)) {
+      if (isRefBead(bead)) {
+        continue;
+      }
 
-          offset: {
-            x: x + BEAD_CENTER,
-            y: y + BEAD_CENTER,
-          },
-        };
-      })
-  ));
+      const { x, y } = resolveBeadOffset(coord);
+
+      items.push({
+        coord,
+        bead,
+
+        offset: {
+          x: x + BEAD_CENTER,
+          y: y + BEAD_CENTER,
+        },
+      });
+    }
+
+    return items;
+  });
 
   return reactive({
     beads,

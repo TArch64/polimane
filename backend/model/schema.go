@@ -10,8 +10,6 @@ import (
 
 const (
 	SchemaPaletteSize = 10
-
-	BeadCircle = "circle"
 )
 
 type Schema struct {
@@ -51,11 +49,6 @@ func SchemaScreenshotKey(id ID) string {
 type SchemaPalette []string
 
 type SchemaBeads map[string]*SchemaBead
-
-type SchemaBead struct {
-	Color string `validate:"required,iscolor" json:"color"`
-	Kind  string `validate:"required,oneof=circle" json:"kind"`
-}
 
 type SchemaSize struct {
 	Left   uint16 `validate:"required,gte=0,lte=65535" json:"left"`

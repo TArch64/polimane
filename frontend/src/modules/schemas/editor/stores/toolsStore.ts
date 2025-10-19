@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { EditorTool } from '@editor/enums';
-import { BeadKind } from '@/enums';
+import { type BeadContentKind, BeadKind } from '@/enums';
 import { useEditorStore } from './editorStore';
 
 export const useToolsStore = defineStore('schemas/editor/tools', () => {
@@ -21,8 +21,8 @@ export const useToolsStore = defineStore('schemas/editor/tools', () => {
   const activeColor = ref<string>(palette.value[0]!);
   const activateColor = (id: string) => activeColor.value = id;
 
-  const activeBead = ref<BeadKind>(BeadKind.CIRCLE);
-  const activateBead = (bead: BeadKind) => activeBead.value = bead;
+  const activeBead = ref<BeadContentKind>(BeadKind.CIRCLE);
+  const activateBead = (bead: BeadContentKind) => activeBead.value = bead;
 
   return {
     palette,

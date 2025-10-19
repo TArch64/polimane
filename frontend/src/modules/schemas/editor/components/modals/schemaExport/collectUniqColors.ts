@@ -1,6 +1,17 @@
-import type { ISchema } from '@/models';
+import { getBeadSettings, type ISchema, isRefBead, type SchemaBead } from '@/models';
+import type { BeadContentKind } from '@/enums';
 
 export function collectUniqColors(schema: ISchema): string[] {
-  const list = Object.values(schema.beads).map((bead) => bead.color);
-  return Array.from(new Set(list));
+  const set = new Set<string>();
+
+  for (const bead of Object.values(schema.beads)) {
+    if (isRefBead(bead)) {
+      continue;
+    }
+
+    const settings = getBeadSettings(bead as SchemaBead<BeadContentKind>);
+    set.add(settings.color);
+  }
+
+  return Array.from(set);
 }

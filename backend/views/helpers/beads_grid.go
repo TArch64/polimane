@@ -28,7 +28,7 @@ func beadsGrid(data *templates.SchemaPreviewData) chan *SchemaBead {
 			ch <- &SchemaBead{
 				CenterX: data.OffsetX + (x * int(data.BeadSize)) + int(data.ShapeCenter),
 				CenterY: data.OffsetY + (y * int(data.BeadSize)) + int(data.ShapeCenter),
-				Color:   bead.Color,
+				Color:   bead.Circle.Color,
 			}
 		}
 	}()

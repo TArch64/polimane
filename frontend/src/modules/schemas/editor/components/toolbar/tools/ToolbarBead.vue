@@ -12,7 +12,7 @@
 
     <ToolbarGrid columns="1">
       <ToolbarButton
-        v-for="kind of BeadKindList"
+        v-for="kind of BeadContentList"
         :key="kind"
         :title="getBeadKindTitle(kind)"
         @click="activateBead(kind)"
@@ -28,7 +28,7 @@ import { useToolsStore } from '@editor/stores';
 import { EditorTool } from '@editor/enums';
 import { ref } from 'vue';
 import type { ComponentExposed } from 'vue-component-type-helpers';
-import { BeadKind, BeadKindList, getBeadKindTitle } from '@/enums';
+import { type BeadContentKind, BeadContentList, getBeadKindTitle } from '@/enums';
 import ToolbarButton from '../ToolbarButton.vue';
 import ToolbarDropdown from '../ToolbarDropdown.vue';
 import ToolbarGrid from '../ToolbarGrid.vue';
@@ -44,7 +44,7 @@ function onActivatorClick(): void {
     : store.activateTool(EditorTool.BEAD);
 }
 
-function activateBead(bead: BeadKind): void {
+function activateBead(bead: BeadContentKind): void {
   store.activateBead(bead);
   dropdownRef.value.close();
 }

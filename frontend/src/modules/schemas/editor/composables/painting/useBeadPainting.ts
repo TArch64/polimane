@@ -1,10 +1,10 @@
 import { computed, ref, type Ref } from 'vue';
 import { createAnimatedFrame } from '@/helpers';
 import { serializeSchemaBeadCoord } from '@/models';
-import { BeadKind } from '@/enums';
 import { PaintEffect, useBeadsStore, useToolsStore } from '../../stores';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 import { useBeadCoord } from './useBeadCoord';
+import { useBeadFactory } from './useBeadFactory';
 
 export interface IBeadPaintingListeners {
   mousedown: (event: MouseEvent) => void;
@@ -16,13 +16,19 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
   const beadsStore = useBeadsStore();
 
   const beadCoord = useBeadCoord(options);
+  const beadFactory = useBeadFactory();
   const isPainting = ref(false);
+  let isSpanning = false;
 
   const paint = createAnimatedFrame((event: MouseEvent, color: string | null) => {
     const point = beadCoord.getFromEvent(event);
-    const coord = point && serializeSchemaBeadCoord(point.x, point.y);
-    const bead = color ? { kind: BeadKind.CIRCLE, color } : null;
-    const effect = coord && beadsStore.paint(coord, bead);
+    if (!point) return;
+
+    // TODO: save to bead coords ref of spanning bead
+
+    const coord = serializeSchemaBeadCoord(point.x, point.y);
+    const bead = beadFactory.create(toolsStore.activeBead, color);
+    const effect = beadsStore.paint(coord, bead);
 
     if (effect === PaintEffect.EXTENDED) {
       beadCoord.clearCache();
@@ -31,6 +37,7 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
 
   function onMouseup() {
     isPainting.value = false;
+    isSpanning = false;
     beadCoord.clearCache();
   }
 
