@@ -44,6 +44,6 @@ type SchemaRefBead struct {
 }
 
 type SchemaBeadSpan struct {
-	X uint8 `validate:"required,gte=0,lte=255" json:"x"`
-	Y uint8 `validate:"required,gte=0,lte=255" json:"y"`
+	X int8 `validate:"required,gte=-128,lte=127" json:"x"`
+	Y int8 `validate:"required,gte=-128,lte=127" json:"y"`
 }

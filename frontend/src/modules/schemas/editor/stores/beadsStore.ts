@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 import {
+  type BeadCoord,
   type IPoint,
-  parseSchemaBeadCoord,
+  parseBeadCoord,
   type SchemaBead,
-  type SchemaBeadCoord,
   type SchemaBeads,
 } from '@/models';
 import { Direction } from '@/enums';
@@ -17,12 +17,12 @@ export enum PaintEffect {
 export const useBeadsStore = defineStore('schemas/editor/beads', () => {
   const editorStore = useEditorStore();
 
-  function getColor(coord: SchemaBeadCoord) {
+  function getColor(coord: BeadCoord) {
     return editorStore.schema.beads[coord] ?? null;
   }
 
-  function checkExtendingPaint(coord: SchemaBeadCoord): Direction[] {
-    const { x, y } = parseSchemaBeadCoord(coord);
+  function checkExtendingPaint(coord: BeadCoord): Direction[] {
+    const { x, y } = parseBeadCoord(coord);
     const size = editorStore.schema.size;
     const directions: Direction[] = [];
 
@@ -55,11 +55,11 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     }
   }
 
-  function remove(coord: SchemaBeadCoord): void {
+  function remove(coord: BeadCoord): void {
     delete editorStore.schema.beads[coord];
   }
 
-  function paint(coord: SchemaBeadCoord, color: SchemaBead | null): PaintEffect | null {
+  function paint(coord: BeadCoord, color: SchemaBead | null): PaintEffect | null {
     const currentColor = getColor(coord);
 
     if (currentColor === color) {
@@ -88,7 +88,7 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
 
   function getInArea(from: IPoint, to: IPoint): SchemaBeads {
     const entries = getObjectEntries<SchemaBeads>(editorStore.schema.beads).filter(([coord]) => {
-      const { x, y } = parseSchemaBeadCoord(coord);
+      const { x, y } = parseBeadCoord(coord);
       return x >= from.x && x <= to.x && y >= from.y && y <= to.y;
     });
 

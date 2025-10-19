@@ -2,11 +2,11 @@ import { computed, reactive, type Ref, ref } from 'vue';
 import { BEAD_SIZE } from '@editor/const';
 import { Direction, DirectionList, isNegativeDirection, isVerticalDirection } from '@/enums';
 import {
+  type BeadCoord,
   type INodeRect,
-  parseSchemaBeadCoord,
-  type SchemaBeadCoord,
+  parseBeadCoord,
   type SchemaBeads,
-  serializeSchemaBeadCoord,
+  serializeBeadCoord,
 } from '@/models';
 import { getObjectEntries, getObjectKeys, type ObjectEntries } from '@/helpers';
 import { useBeadsStore } from '../beadsStore';
@@ -48,8 +48,8 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
   const sequenceIndex = ref(0);
   const sequenceOffset = ref(0);
 
-  function getAxisCoord(coord: SchemaBeadCoord): number {
-    return parseSchemaBeadCoord(coord)[sequenceAxis.value!];
+  function getAxisCoord(coord: BeadCoord): number {
+    return parseBeadCoord(coord)[sequenceAxis.value!];
   }
 
   function buildSequence(beads: SchemaBeads, direction: Direction): SchemaBeads[] {
@@ -68,10 +68,10 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
 
   function renderTemplate(template: SchemaBeads): ObjectEntries<SchemaBeads> {
     return getObjectEntries<SchemaBeads>(template).map(([templateCoord, bead]) => {
-      const coord = parseSchemaBeadCoord(templateCoord);
+      const coord = parseBeadCoord(templateCoord);
       const modifier = isNegativeDirection(direction.value!) ? -1 : 1;
       coord[sequenceAxis.value!] += (sequenceOffset.value + capturedSequence.value.length) * modifier;
-      return [serializeSchemaBeadCoord(coord.x, coord.y), bead];
+      return [serializeBeadCoord(coord.x, coord.y), bead];
     });
   }
 
@@ -93,13 +93,13 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
       options.selected.value!.to,
       ...newBeads.map(([coord]) => coord),
     ];
-    const parsed = coords.map(parseSchemaBeadCoord);
+    const parsed = coords.map(parseBeadCoord);
     const xs = parsed.map((c) => c.x);
     const ys = parsed.map((c) => c.y);
 
     options.selected.value = {
-      from: serializeSchemaBeadCoord(Math.min(...xs), Math.min(...ys)),
-      to: serializeSchemaBeadCoord(Math.max(...xs), Math.max(...ys)),
+      from: serializeBeadCoord(Math.min(...xs), Math.min(...ys)),
+      to: serializeBeadCoord(Math.max(...xs), Math.max(...ys)),
     };
   }
 
@@ -128,8 +128,8 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
       direction.value = dir;
       const selected = options.selected.value!;
 
-      const from = parseSchemaBeadCoord(selected.from);
-      const to = parseSchemaBeadCoord(selected.to);
+      const from = parseBeadCoord(selected.from);
+      const to = parseBeadCoord(selected.to);
       const selectedBeads = beadsStore.getInArea(from, to);
 
       sequenceAxis.value = isVerticalDirection(dir) ? 'y' : 'x';

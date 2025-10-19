@@ -1,6 +1,6 @@
-import { type BeadContentKind, BeadKind } from '@/enums';
+import { type BeadContentKind, BeadKind, type BeadSpannableKind } from '@/enums';
 import type { IPoint } from './Point';
-import type { SchemaBeadCoord } from './SchemaBeadCoord';
+import type { BeadCoord } from './SchemaBeadCoord';
 
 export type SchemaBeadMap = {
   [BeadKind.CIRCLE]: ISchemaCircleBead;
@@ -13,6 +13,7 @@ export type SchemaBead<K extends BeadKind = BeadKind> = Partial<Pick<SchemaBeadM
 };
 
 export type SchemaContentBead = SchemaBead<BeadContentKind>;
+export type SchemaSpannableBead = SchemaBead<BeadSpannableKind>;
 
 export interface ISchemaBaseBead {
   color: string;
@@ -26,7 +27,7 @@ export interface ISchemaBugleBead extends ISchemaBaseBead {
 }
 
 export interface ISchemaRefBead {
-  to: SchemaBeadCoord;
+  to: BeadCoord;
 }
 
 export function getBeadSettings<K extends BeadKind = BeadKind>(bead: SchemaBead<K>): SchemaBeadMap[K] {

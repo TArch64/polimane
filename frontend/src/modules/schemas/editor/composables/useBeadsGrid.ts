@@ -1,13 +1,13 @@
 import { computed, reactive } from 'vue';
 import { useEditorStore } from '@editor/stores';
 import { reactiveComputed } from '@vueuse/core';
-import { BEAD_BUGLE_PADDING, BEAD_BUGLE_SIZE, BEAD_CIRCLE_CENTER, BEAD_SIZE } from '@editor/const';
+import { BEAD_BUGLE_PADDING, BEAD_CIRCLE_CENTER, BEAD_SIZE } from '@editor/const';
 import {
+  type BeadCoord,
   type INodeRect,
   type IPoint,
   isRefBead,
-  parseSchemaBeadCoord,
-  type SchemaBeadCoord,
+  parseBeadCoord,
   type SchemaContentBead,
 } from '@/models';
 import { getObjectEntries } from '@/helpers';
@@ -27,7 +27,6 @@ type BeadPrecomutedDataMap = {
 
 interface IComputeBeadDataOptions {
   coord: IPoint;
-  offset: IPoint;
   bead: SchemaContentBead;
 }
 
@@ -35,7 +34,7 @@ type ComputeBeadData<K extends BeadContentKind> = (options: IComputeBeadDataOpti
 type BeadDataComputers = { [K in BeadContentKind]: ComputeBeadData<K> };
 
 export interface IBeadsGridItem {
-  coord: SchemaBeadCoord;
+  coord: BeadCoord;
   precomputed: BeadPrecomutedDataMap[BeadContentKind];
   bead: SchemaContentBead;
 }
@@ -50,7 +49,7 @@ export interface IBeadsGridSize {
 export interface IBeadsGrid {
   beads: IBeadsGridItem[];
   size: IBeadsGridSize;
-  resolveBeadOffset: (coord: SchemaBeadCoord | IPoint) => IPoint;
+  resolveBeadOffset: (coord: BeadCoord | IPoint) => IPoint;
 }
 
 export function useBeadsGrid(): IBeadsGrid {
@@ -66,26 +65,48 @@ export function useBeadsGrid(): IBeadsGrid {
   const width = computed(() => (size.left + size.right) * BEAD_SIZE);
   const height = computed(() => (size.top + size.bottom) * BEAD_SIZE);
 
-  function resolveBeadOffset(coord_: SchemaBeadCoord | IPoint): IPoint {
-    const coord = typeof coord_ === 'string' ? parseSchemaBeadCoord(coord_) : coord_;
+  function resolveBeadOffset(coord_: BeadCoord | IPoint): IPoint {
+    const coord = typeof coord_ === 'string' ? parseBeadCoord(coord_) : coord_;
     const offsetX = initialOffsetX + (coord.x * BEAD_SIZE);
     const offsetY = initialOffsetY + (coord.y * BEAD_SIZE);
     return { x: offsetX, y: offsetY };
   }
 
-  const computeBeadCircle: ComputeBeadData<BeadKind.CIRCLE> = (options) => ({
-    center: {
-      x: options.offset.x + BEAD_CIRCLE_CENTER,
-      y: options.offset.y + BEAD_CIRCLE_CENTER,
-    },
-  });
+  const computeBeadCircle: ComputeBeadData<BeadKind.CIRCLE> = (options) => {
+    const offset = resolveBeadOffset(options.coord);
 
-  const computeBeadBugle: ComputeBeadData<BeadKind.BUGLE> = (options) => ({
-    x: options.offset.x + BEAD_BUGLE_PADDING,
-    y: options.offset.y + BEAD_BUGLE_PADDING,
-    width: BEAD_BUGLE_SIZE,
-    height: BEAD_BUGLE_SIZE,
-  });
+    return {
+      center: {
+        x: offset.x + BEAD_CIRCLE_CENTER,
+        y: offset.y + BEAD_CIRCLE_CENTER,
+      },
+    };
+  };
+
+  const computeBeadBugle: ComputeBeadData<BeadKind.BUGLE> = (options) => {
+    const span = options.bead.bugle!.span;
+
+    const spanCoord: IPoint = {
+      x: options.coord.x + (span.x),
+      y: options.coord.y + (span.y),
+    };
+
+    const startCoordX = Math.min(options.coord.x, spanCoord.x);
+    const startCoordY = Math.min(options.coord.y, spanCoord.y);
+    const coordWidth = Math.abs(span.x) + 1;
+    const coordHeight = Math.abs(span.y) + 1;
+
+    const offset = resolveBeadOffset({ x: startCoordX, y: startCoordY });
+    const width = coordWidth * BEAD_SIZE - BEAD_BUGLE_PADDING * 2;
+    const height = coordHeight * BEAD_SIZE - BEAD_BUGLE_PADDING * 2;
+
+    return {
+      x: offset.x + BEAD_BUGLE_PADDING,
+      y: offset.y + BEAD_BUGLE_PADDING,
+      width,
+      height,
+    };
+  };
 
   const computers: BeadDataComputers = {
     [BeadKind.CIRCLE]: computeBeadCircle,
@@ -102,8 +123,7 @@ export function useBeadsGrid(): IBeadsGrid {
       }
 
       const bead = bead_ as SchemaContentBead;
-      const parsedCoord = parseSchemaBeadCoord(coord);
-      const offset = resolveBeadOffset(parsedCoord);
+      const parsedCoord = parseBeadCoord(coord);
 
       items.push({
         coord,
@@ -111,7 +131,6 @@ export function useBeadsGrid(): IBeadsGrid {
 
         precomputed: computers[bead.kind as BeadContentKind]({
           coord: parsedCoord,
-          offset,
           bead,
         }),
       });

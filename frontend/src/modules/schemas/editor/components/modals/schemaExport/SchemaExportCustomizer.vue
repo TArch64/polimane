@@ -24,7 +24,7 @@
 import { reactive } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
 import { ColorPicker } from '@/components/form';
-import type { ISchema, SchemaBeadCoord } from '@/models';
+import type { BeadCoord, ISchema } from '@/models';
 import { collectUniqColors } from './collectUniqColors';
 
 const model = defineModel<ISchema>({ required: true });
@@ -52,7 +52,7 @@ const updateColor = useDebounceFn((index: number, color: string) => {
   const beads = structuredClone(model.value.beads);
 
   for (const coord_ in beads) {
-    const coord = coord_ as SchemaBeadCoord;
+    const coord = coord_ as BeadCoord;
     if (beads[coord] === colorModel.current) {
       beads[coord] = color;
     }

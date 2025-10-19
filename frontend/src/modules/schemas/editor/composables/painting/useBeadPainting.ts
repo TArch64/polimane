@@ -1,6 +1,12 @@
 import { computed, ref, type Ref } from 'vue';
 import { createAnimatedFrame } from '@/helpers';
-import { serializeSchemaBeadCoord } from '@/models';
+import {
+  type IPoint,
+  type SchemaBead,
+  type SchemaSpannableBead,
+  serializeBeadCoord,
+} from '@/models';
+import { isBeadSpannableKind } from '@/enums';
 import { PaintEffect, useBeadsStore, useToolsStore } from '../../stores';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 import { useBeadCoord } from './useBeadCoord';
@@ -11,6 +17,11 @@ export interface IBeadPaintingListeners {
   mousemove?: (event: MouseEvent) => void;
 }
 
+interface ISpanningBead {
+  coord: IPoint;
+  original: SchemaSpannableBead;
+}
+
 export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingListeners> {
   const toolsStore = useToolsStore();
   const beadsStore = useBeadsStore();
@@ -18,26 +29,47 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
   const beadCoord = useBeadCoord(options);
   const beadFactory = useBeadFactory();
   const isPainting = ref(false);
-  let isSpanning = false;
+  let spanning: ISpanningBead | null = null;
 
   const paint = createAnimatedFrame((event: MouseEvent, color: string | null) => {
     const point = beadCoord.getFromEvent(event);
     if (!point) return;
 
-    // TODO: save to bead coords ref of spanning bead
+    const coord = serializeBeadCoord(point.x, point.y);
+    let bead: SchemaBead | null;
 
-    const coord = serializeSchemaBeadCoord(point.x, point.y);
-    const bead = beadFactory.create(toolsStore.activeBead, color);
-    const effect = beadsStore.paint(coord, bead);
+    if (spanning) {
+      if (spanning.coord.x === point.x && spanning.coord.y === point.y) {
+        return;
+      }
 
-    if (effect === PaintEffect.EXTENDED) {
+      const spanningCoord = serializeBeadCoord(spanning.coord.x, spanning.coord.y);
+      bead = beadFactory.createRef(spanningCoord);
+
+      spanning.original.bugle!.span = {
+        x: point.x - spanning.coord.x,
+        y: point.y - spanning.coord.y,
+      };
+    } else {
+      const kind = toolsStore.activeBead;
+      bead = beadFactory.create(kind, color);
+
+      if (!!bead && isBeadSpannableKind(kind)) {
+        spanning = {
+          coord: point,
+          original: bead as SchemaSpannableBead,
+        };
+      }
+    }
+
+    if (beadsStore.paint(coord, bead) === PaintEffect.EXTENDED) {
       beadCoord.clearCache();
     }
   });
 
   function onMouseup() {
     isPainting.value = false;
-    isSpanning = false;
+    spanning = null;
     beadCoord.clearCache();
   }
 

@@ -1,8 +1,8 @@
 import type {
+  BeadCoord,
   ISchemaBugleBead,
   ISchemaCircleBead,
   SchemaBead,
-  SchemaBeadCoord,
   SchemaBeadMap,
 } from '@/models';
 import { type BeadContentKind, BeadKind } from '@/enums';
@@ -34,7 +34,7 @@ export function useBeadFactory() {
     };
   }
 
-  const createRef = (to: SchemaBeadCoord): SchemaBead => ({
+  const createRef = (to: BeadCoord): SchemaBead => ({
     kind: BeadKind.REF,
     ref: { to },
   });

@@ -1,6 +1,6 @@
 import { useCanvasStore, useEditorStore } from '@editor/stores';
 import { BEAD_CIRCLE_CENTER, BEAD_CIRCLE_RADIUS, BEAD_SIZE } from '@editor/const';
-import { type IPoint, parseSchemaBeadCoord } from '@/models';
+import { type IPoint, parseBeadCoord } from '@/models';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 
 export interface IBeadResolveOptions {
@@ -60,7 +60,7 @@ export function useBeadCoord(options: IBeadToolsOptions): IBeadCoord {
     const storedCoord = target.getAttribute('coord');
 
     return storedCoord
-      ? parseSchemaBeadCoord(storedCoord)
+      ? parseBeadCoord(storedCoord)
       : getFromPoint({ x: event.clientX, y: event.clientY });
   }
 
