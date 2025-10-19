@@ -9,14 +9,15 @@ import (
 type Interface interface {
 	Name() string
 	Process(ctx context.Context, message *events.Message) error
+	GetEventHandlers() EventHandlers
 }
 
 type Base struct {
-	events map[string]EventProcessor
+	EventHandlers EventHandlers
 }
 
 func NewBase() *Base {
 	return &Base{
-		events: make(map[string]EventProcessor),
+		EventHandlers: make(EventHandlers),
 	}
 }
