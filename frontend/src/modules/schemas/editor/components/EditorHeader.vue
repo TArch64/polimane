@@ -22,7 +22,7 @@
       icon
       :disabled="!historyStore.canUndo"
       title="Відмінити зміни"
-      @click="undo"
+      @click="historyStore.undo"
     >
       <CornerUpLeftIcon />
     </Button>
@@ -142,13 +142,8 @@ const deleteSchema = useAsyncAction(async () => {
   }
 });
 
-function undo() {
-  historyStore.undo();
-  selectionStore.reset();
-}
-
 useHotKeys({
-  Meta_Z: undo,
+  Meta_Z: historyStore.undo,
   Meta_Shift_Z: historyStore.redo,
 });
 

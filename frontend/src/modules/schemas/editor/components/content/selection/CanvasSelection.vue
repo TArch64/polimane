@@ -29,9 +29,9 @@
     />
 
     <ForeignTeleport>
-      <SelectionOverlay v-if="isOverlayDisplaying" />
+      <SelectionOverlay ref="overlayRef" v-if="isOverlayDisplaying" />
 
-      <SelectionArea :selectionRef v-if="selectionRef">
+      <SelectionArea ref="areaRef" :selectionRef v-if="selectionRef">
         <SelectionResizeHandle
           v-for="direction of DirectionList"
           :direction
@@ -47,7 +47,9 @@
 import { ref } from 'vue';
 import { useCanvasStore, useSelectionStore } from '@editor/stores';
 import { useSelectionColor } from '@editor/composables';
+import { onClickOutside } from '@vueuse/core';
 import { DirectionList } from '@/enums';
+import { useDomRef } from '@/composables';
 import ForeignTeleport from '../ForeignTeleport.vue';
 import SelectionArea from './SelectionArea.vue';
 import SelectionResizeHandle from './SelectionResizeHandle.vue';
@@ -58,7 +60,17 @@ const selectionStore = useSelectionStore();
 const selectionColor = useSelectionColor();
 
 const selectionRef = ref<SVGElement>(null!);
+const areaRef = useDomRef<HTMLElement | null>();
+const overlayRef = useDomRef<HTMLElement | null>();
+
 const isOverlayDisplaying = ref(false);
+
+const clickOutside = onClickOutside(areaRef, selectionStore.reset, {
+  ignore: [overlayRef],
+  controls: true,
+});
+
+clickOutside.cancel();
 </script>
 
 <style scoped>
