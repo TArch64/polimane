@@ -21,6 +21,7 @@ type Client interface {
 	UserManagement() UserManagement
 	MFA() MFA
 	AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*AccessTokenClaims, error)
+	AuthenticateWithRefreshToken(ctx context.Context, options *RefreshAuthOptions) (*usermanagement.RefreshAuthenticationResponse, error)
 }
 
 type Impl struct {
