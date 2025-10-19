@@ -24,6 +24,7 @@ interface ISpanningBead {
   coord: BeadCoord;
   point: IPoint;
   original: SchemaSpannableBead;
+  direction?: 'x' | 'y';
 }
 
 export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingListeners> {
@@ -40,12 +41,20 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
     const point = beadCoord.getFromEvent(event);
     if (!point) return;
 
-    const coord = serializeBeadPoint(point);
+    let coord = serializeBeadPoint(point);
     let bead: SchemaBead | null;
 
     if (spanning) {
       if (spanning.point.x === point.x && spanning.point.y === point.y) {
         return;
+      }
+
+      if (spanning.direction) {
+        point.x = spanning.direction === 'x' ? point.x : spanning.point.x;
+        point.y = spanning.direction === 'y' ? point.y : spanning.point.y;
+        coord = serializeBeadPoint(point);
+      } else {
+        spanning.direction = spanning.point.x === point.x ? 'y' : 'x';
       }
 
       const existingBead = editorStore.schema.beads[coord];
