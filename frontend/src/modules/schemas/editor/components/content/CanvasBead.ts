@@ -1,8 +1,13 @@
 import { type FunctionalComponent, h } from 'vue';
-import { BEAD_CIRCLE_RADIUS } from '@editor/const';
+import { BEAD_BUGLE_HITBOX_SIZE, BEAD_CIRCLE_RADIUS, BEAD_REF_HITBOX_SIZE } from '@editor/const';
 import { getBeadSettings, type SchemaBead } from '@/models';
-import { type BeadContentKind, BeadKind } from '@/enums';
-import type { IBeadsGridBugle, IBeadsGridCircle, IBeadsGridItem } from '../../composables';
+import { BeadKind } from '@/enums';
+import type {
+  IBeadsGridBugle,
+  IBeadsGridCircle,
+  IBeadsGridItem,
+  IBeadsGridRef,
+} from '../../composables';
 
 export interface ICanvasBeadProps {
   item: IBeadsGridItem;
@@ -10,41 +15,67 @@ export interface ICanvasBeadProps {
 
 type BeadComponent = FunctionalComponent<ICanvasBeadProps>;
 
-export const CanvasBeadCircle: BeadComponent = (props) => {
-  const precomputed = props.item.precomputed as IBeadsGridCircle;
+const CanvasBeadCircle: BeadComponent = (props) => {
+  const { center } = props.item.precomputed as IBeadsGridCircle;
   const settings = getBeadSettings(props.item.bead as SchemaBead<BeadKind.CIRCLE>);
 
   return h('circle', {
     r: BEAD_CIRCLE_RADIUS,
     coord: props.item.coord,
     fill: settings.color,
-    cx: precomputed.center.x,
-    cy: precomputed.center.y,
+    cx: center.x,
+    cy: center.y,
   });
 };
 
 CanvasBeadCircle.displayName = 'CanvasBeadCircle';
 
-export const CanvasBeadBugle: BeadComponent = (props) => {
-  const precomputed = props.item.precomputed as IBeadsGridBugle;
+const CanvasBeadBugle: BeadComponent = (props) => {
+  const { shape } = props.item.precomputed as IBeadsGridBugle;
   const settings = getBeadSettings(props.item.bead as SchemaBead<BeadKind.BUGLE>);
 
-  return h('rect', {
-    class: 'canvas-bead-bugle',
-    x: precomputed.x,
-    y: precomputed.y,
-    width: precomputed.width,
-    height: precomputed.height,
-    coord: props.item.coord,
-    fill: settings.color,
-  });
+  return [
+    h('rect', {
+      class: 'canvas-bead-bugle',
+      x: shape.x,
+      y: shape.y,
+      width: shape.width,
+      height: shape.height,
+      fill: settings.color,
+    }),
+    h('rect', {
+      x: shape.x,
+      y: shape.y,
+      width: BEAD_BUGLE_HITBOX_SIZE,
+      height: BEAD_BUGLE_HITBOX_SIZE,
+      fill: 'transparent',
+      coord: props.item.coord,
+    }),
+  ];
 };
 
 CanvasBeadBugle.displayName = 'CanvasBeadBugle';
 
-const beadComponentMap: Record<BeadContentKind, BeadComponent> = {
+const CanvasBeadRef: BeadComponent = (props) => {
+  const { hitbox } = props.item.precomputed as IBeadsGridRef;
+
+  return h('rect', {
+    class: 'canvas-bead-ref',
+    x: hitbox.x,
+    y: hitbox.y,
+    width: BEAD_REF_HITBOX_SIZE,
+    height: BEAD_REF_HITBOX_SIZE,
+    fill: 'transparent',
+    coord: props.item.coord,
+  });
+};
+
+CanvasBeadRef.displayName = 'CanvasBeadRef';
+
+const beadComponentMap: Record<BeadKind, BeadComponent> = {
   [BeadKind.CIRCLE]: CanvasBeadCircle,
   [BeadKind.BUGLE]: CanvasBeadBugle,
+  [BeadKind.REF]: CanvasBeadRef,
 };
 
 export const CanvasBead: BeadComponent = (props) => (

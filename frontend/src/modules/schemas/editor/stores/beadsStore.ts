@@ -3,14 +3,14 @@ import {
   type BeadCoord,
   getBeadSettings,
   type IPoint,
+  isRefBead,
+  isSpannableBead,
   parseBeadCoord,
   type SchemaBead,
   type SchemaBeads,
-  type SchemaSpannableBead,
   serializeBeadCoord,
 } from '@/models';
-import { BeadKind, Direction, isBeadSpannableKind } from '@/enums';
-import { getObjectEntries } from '@/helpers';
+import { BeadKind, Direction } from '@/enums';
 import { useEditorStore } from './editorStore';
 
 export enum PaintEffect {
@@ -58,46 +58,54 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     }
   }
 
-  function isInArea(coord: IPoint, from: IPoint, to: IPoint): boolean {
-    return coord.x >= from.x && coord.x <= to.x
-      && coord.y >= from.y && coord.y <= to.y;
+  function* iterateArea(from: IPoint, to: IPoint): Generator<[BeadCoord, SchemaBead]> {
+    for (let x = from.x; x <= to.x; x++) {
+      for (let y = from.y; y <= to.y; y++) {
+        const coord = serializeBeadCoord(x, y);
+        const bead = editorStore.schema.beads[coord];
+        if (bead) yield [coord, bead];
+      }
+    }
   }
 
   function getInArea(from: IPoint, to: IPoint): SchemaBeads {
-    const entries = getObjectEntries(editorStore.schema.beads).filter(([coord]) => {
-      return isInArea(parseBeadCoord(coord), from, to);
-    });
+    const beads: SchemaBeads = {};
 
-    return Object.fromEntries(entries);
+    for (const [coord, bead] of iterateArea(from, to)) {
+      beads[coord] = bead;
+    }
+
+    return beads;
   }
 
   function onBeadBeforeRemove(coord: BeadCoord): void {
     const bead = editorStore.schema.beads[coord];
-    if (!bead || !isBeadSpannableKind(bead.kind)) return;
+    if (!bead) return;
 
-    const point = parseBeadCoord(coord);
-    const settings = getBeadSettings(bead as SchemaSpannableBead);
+    if (isRefBead(bead)) {
+      return remove(getBeadSettings(bead).to);
+    }
 
-    const spanX = point.x + settings.span.x;
-    const spanY = point.y + settings.span.y;
+    if (isSpannableBead(bead)) {
+      const { x, y } = parseBeadCoord(coord);
+      const { span } = getBeadSettings(bead);
 
-    const from: IPoint = {
-      x: Math.min(point.x, spanX),
-      y: Math.min(point.y, spanY),
-    };
+      const spanX = x + span.x;
+      const spanY = y + span.y;
 
-    const to: IPoint = {
-      x: Math.max(point.x, spanX),
-      y: Math.max(point.y, spanY),
-    };
+      const from: IPoint = {
+        x: Math.min(x, spanX),
+        y: Math.min(y, spanY),
+      };
 
-    for (let x = from.x; x <= to.x; x++) {
-      for (let y = from.y; y <= to.y; y++) {
-        const checkingCoord = serializeBeadCoord(x, y);
-        const checkingBead = editorStore.schema.beads[checkingCoord];
+      const to: IPoint = {
+        x: Math.max(x, spanX),
+        y: Math.max(y, spanY),
+      };
 
-        if (checkingBead?.kind === BeadKind.REF) {
-          delete editorStore.schema.beads[checkingCoord];
+      for (const [coord, bead] of iterateArea(from, to)) {
+        if (bead.kind === BeadKind.REF) {
+          delete editorStore.schema.beads[coord];
         }
       }
     }

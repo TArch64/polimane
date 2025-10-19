@@ -1,42 +1,52 @@
 import { computed, reactive } from 'vue';
 import { useEditorStore } from '@editor/stores';
 import { reactiveComputed } from '@vueuse/core';
-import { BEAD_BUGLE_PADDING, BEAD_CIRCLE_CENTER, BEAD_SIZE } from '@editor/const';
+import {
+  BEAD_BUGLE_PADDING,
+  BEAD_CIRCLE_CENTER,
+  BEAD_REF_HITBOX_PADDING,
+  BEAD_SIZE,
+} from '@editor/const';
 import {
   type BeadCoord,
   type INodeRect,
   type IPoint,
-  isRefBead,
   parseBeadCoord,
-  type SchemaContentBead,
+  type SchemaBead,
 } from '@/models';
 import { getObjectEntries } from '@/helpers';
-import { type BeadContentKind, BeadKind } from '@/enums';
+import { BeadKind } from '@/enums';
 
 export interface IBeadsGridCircle {
   center: IPoint;
 }
 
-export interface IBeadsGridBugle extends INodeRect {
+export interface IBeadsGridBugle {
+  shape: INodeRect;
 }
 
-type BeadPrecomutedDataMap = {
+export interface IBeadsGridRef {
+  hitbox: IPoint;
+}
+
+type BeadPrecomputedDataMap = {
   [BeadKind.CIRCLE]: IBeadsGridCircle;
   [BeadKind.BUGLE]: IBeadsGridBugle;
+  [BeadKind.REF]: IBeadsGridRef;
 };
 
 interface IComputeBeadDataOptions {
   coord: IPoint;
-  bead: SchemaContentBead;
+  bead: SchemaBead;
 }
 
-type ComputeBeadData<K extends BeadContentKind> = (options: IComputeBeadDataOptions) => BeadPrecomutedDataMap[K];
-type BeadDataComputers = { [K in BeadContentKind]: ComputeBeadData<K> };
+type ComputeBeadData<K extends BeadKind> = (options: IComputeBeadDataOptions) => BeadPrecomputedDataMap[K];
+type BeadDataComputers = { [K in BeadKind]: ComputeBeadData<K> };
 
 export interface IBeadsGridItem {
   coord: BeadCoord;
-  precomputed: BeadPrecomutedDataMap[BeadContentKind];
-  bead: SchemaContentBead;
+  precomputed: BeadPrecomputedDataMap[BeadKind];
+  bead: SchemaBead;
 }
 
 export interface IBeadsGridSize {
@@ -101,35 +111,44 @@ export function useBeadsGrid(): IBeadsGrid {
     const height = coordHeight * BEAD_SIZE - BEAD_BUGLE_PADDING * 2;
 
     return {
-      x: offset.x + BEAD_BUGLE_PADDING,
-      y: offset.y + BEAD_BUGLE_PADDING,
-      width,
-      height,
+      shape: {
+        x: offset.x + BEAD_BUGLE_PADDING,
+        y: offset.y + BEAD_BUGLE_PADDING,
+        width,
+        height,
+      },
+    };
+  };
+
+  const computeBeadRef: ComputeBeadData<BeadKind.REF> = (options) => {
+    const offset = resolveBeadOffset(options.coord);
+
+    return {
+      hitbox: {
+        x: offset.x + BEAD_REF_HITBOX_PADDING,
+        y: offset.y + BEAD_REF_HITBOX_PADDING,
+      },
     };
   };
 
   const computers: BeadDataComputers = {
     [BeadKind.CIRCLE]: computeBeadCircle,
     [BeadKind.BUGLE]: computeBeadBugle,
+    [BeadKind.REF]: computeBeadRef,
   };
 
   const beads = computed(() => {
     const items: IBeadsGridItem[] = [];
     const beads = editorStore.schema.beads;
 
-    for (const [coord, bead_] of getObjectEntries(beads)) {
-      if (isRefBead(bead_)) {
-        continue;
-      }
-
-      const bead = bead_ as SchemaContentBead;
+    for (const [coord, bead] of getObjectEntries(beads)) {
       const parsedCoord = parseBeadCoord(coord);
 
       items.push({
         coord,
         bead,
 
-        precomputed: computers[bead.kind as BeadContentKind]({
+        precomputed: computers[bead.kind]({
           coord: parsedCoord,
           bead,
         }),

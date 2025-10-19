@@ -1,14 +1,16 @@
 import { computed, ref, type Ref } from 'vue';
 import { createAnimatedFrame } from '@/helpers';
 import {
+  type BeadCoord,
   getBeadSettings,
   type IPoint,
+  isRefBead,
+  isSpannableBead,
   type SchemaBead,
   type SchemaSpannableBead,
-  serializeBeadCoord,
+  serializeBeadPoint,
 } from '@/models';
-import { isBeadSpannableKind } from '@/enums';
-import { PaintEffect, useBeadsStore, useToolsStore } from '../../stores';
+import { PaintEffect, useBeadsStore, useEditorStore, useToolsStore } from '../../stores';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 import { useBeadCoord } from './useBeadCoord';
 import { useBeadFactory } from './useBeadFactory';
@@ -19,13 +21,15 @@ export interface IBeadPaintingListeners {
 }
 
 interface ISpanningBead {
-  coord: IPoint;
+  coord: BeadCoord;
+  point: IPoint;
   original: SchemaSpannableBead;
 }
 
 export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingListeners> {
   const toolsStore = useToolsStore();
   const beadsStore = useBeadsStore();
+  const editorStore = useEditorStore();
 
   const beadCoord = useBeadCoord(options);
   const beadFactory = useBeadFactory();
@@ -36,29 +40,39 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
     const point = beadCoord.getFromEvent(event);
     if (!point) return;
 
-    const coord = serializeBeadCoord(point.x, point.y);
+    const coord = serializeBeadPoint(point);
     let bead: SchemaBead | null;
 
     if (spanning) {
-      if (spanning.coord.x === point.x && spanning.coord.y === point.y) {
+      if (spanning.point.x === point.x && spanning.point.y === point.y) {
         return;
       }
 
-      const spanningCoord = serializeBeadCoord(spanning.coord.x, spanning.coord.y);
+      const existingBead = editorStore.schema.beads[coord];
+
+      if (existingBead
+        && isRefBead(existingBead)
+        && getBeadSettings(existingBead).to === spanning.coord
+      ) {
+        return;
+      }
+
+      const spanningCoord = serializeBeadPoint(spanning.point);
       bead = beadFactory.createRef(spanningCoord);
 
       getBeadSettings(spanning.original).span = {
-        x: point.x - spanning.coord.x,
-        y: point.y - spanning.coord.y,
+        x: point.x - spanning.point.x,
+        y: point.y - spanning.point.y,
       };
     } else {
       const kind = toolsStore.activeBead;
       bead = beadFactory.create(kind, color);
 
-      if (!!bead && isBeadSpannableKind(kind)) {
+      if (!!bead && isSpannableBead(bead)) {
         spanning = {
-          coord: point,
-          original: bead as SchemaSpannableBead,
+          coord,
+          point,
+          original: bead,
         };
       }
     }

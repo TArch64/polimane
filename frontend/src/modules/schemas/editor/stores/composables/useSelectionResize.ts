@@ -7,6 +7,7 @@ import {
   parseBeadCoord,
   type SchemaBeads,
   serializeBeadCoord,
+  serializeBeadPoint,
 } from '@/models';
 import { getObjectEntries, getObjectKeys, type ObjectEntries } from '@/helpers';
 import { useBeadsStore } from '../beadsStore';
@@ -71,7 +72,7 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
       const coord = parseBeadCoord(templateCoord);
       const modifier = isNegativeDirection(direction.value!) ? -1 : 1;
       coord[sequenceAxis.value!] += (sequenceOffset.value + capturedSequence.value.length) * modifier;
-      return [serializeBeadCoord(coord.x, coord.y), bead];
+      return [serializeBeadPoint(coord), bead];
     });
   }
 

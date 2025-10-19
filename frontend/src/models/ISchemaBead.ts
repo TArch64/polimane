@@ -1,4 +1,4 @@
-import { type BeadContentKind, BeadKind, type BeadSpannableKind } from '@/enums';
+import { type BeadContentKind, BeadKind, type BeadSpannableKind, BeadSpannableList } from '@/enums';
 import type { IPoint } from './Point';
 import type { BeadCoord } from './SchemaBeadCoord';
 
@@ -34,6 +34,10 @@ export function getBeadSettings<K extends BeadKind = BeadKind>(bead: SchemaBead<
   return bead[bead.kind as K] as SchemaBeadMap[K];
 }
 
-export function isRefBead(bead: SchemaBead): boolean {
+export function isRefBead(bead: SchemaBead): bead is SchemaBead<BeadKind.REF> {
   return bead.kind === BeadKind.REF;
+}
+
+export function isSpannableBead(bead: SchemaBead): bead is SchemaSpannableBead {
+  return (BeadSpannableList as readonly BeadKind[]).includes(bead.kind);
 }
