@@ -2,7 +2,7 @@
   <div
     class="selection-resize-handle"
     :class="classes"
-    @mousedown="onMouseDown"
+    @mousedown.prevent="onMouseDown"
   />
 </template>
 
@@ -31,12 +31,14 @@ const backgroundColor = computed(() => contrast.isAA ? 'var(--color-primary)' : 
 const borderColor = computed(() => contrast.isAA ? 'var(--color-white)' : 'var(--color-primary)');
 
 function onMouseMove(event: MouseEvent) {
+  event.preventDefault();
   const axis = isVertical ? 'movementY' : 'movementX';
   const modifier = isNegative ? -1 : 1;
   selectionStore.resize.extendTranslation(props.direction, modifier * event[axis]);
 }
 
-function onMouseUp() {
+function onMouseUp(event: MouseEvent) {
+  event.preventDefault();
   overlay.value = false;
   selectionStore.resize.cleanup();
   removeEventListener('mousemove', onMouseMove);
