@@ -14,7 +14,7 @@ export const useEditorStore = defineStore('schemas/editor', () => {
 
   const historyStore = useHistoryStore();
 
-  function cleanupOrhanBeads(patch: Partial<ISchema>): void {
+  function cleanupOrphanBeads(patch: Partial<ISchema>): void {
     if (!patch.beads) {
       return;
     }
@@ -31,7 +31,7 @@ export const useEditorStore = defineStore('schemas/editor', () => {
   }
 
   const saveDispatcher = useEditorSaveDispatcher(schema, async (patch) => {
-    cleanupOrhanBeads(patch);
+    cleanupOrphanBeads(patch);
 
     await http.patch<HttpBody, UpdateSchemaRequest>(['/schemas', schema.value.id], patch, {
       // Chrome has issues with fetch sending big request body
