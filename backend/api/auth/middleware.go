@@ -91,7 +91,7 @@ func (m *Middleware) Handler(ctx *fiber.Ctx) error {
 		accessTokenClaims, err = m.refreshToken(ctx, refreshToken)
 	}
 	if err != nil {
-		return err
+		return m.newUnauthorizedErr(err)
 	}
 
 	workosUser, err := m.getWorkosUser(ctx.Context(), accessTokenClaims)
