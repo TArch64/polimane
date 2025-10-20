@@ -7,26 +7,23 @@
   <rect x="0" y="0" width="{{ .Width }}" height="{{ .Height }}" fill="{{ .BackgroundColor }}" />
   {{- range beadsGrid . -}}
     {{- $bead := . -}}
-    {{- if isPresent .Circle -}}
-      {{- with .Circle -}}
-        <circle
-          r="{{ $.CircleRadius }}"
-          cx="{{ .CenterX }}"
-          cy="{{ .CenterY }}"
-          fill="{{ $bead.Color }}"
-        />
-      {{- end -}}
-    {{- else if isPresent .Bugle -}}
-      {{- with .Bugle -}}
-        <rect
-          x="{{ .X }}"
-          y="{{ .Y }}"
-          rx="{{ $.BugleCornerRadius }}"
-          width="{{ .Width }}"
-          height="{{ .Height }}"
-          fill="{{ $bead.Color }}"
-        />
-      {{- end -}}
+    {{- with .Circle -}}
+      <circle
+        r="{{ $.CircleRadius }}"
+        cx="{{ .CenterX }}"
+        cy="{{ .CenterY }}"
+        fill="{{ $bead.Color }}"
+      />
+    {{- end -}}
+    {{- with .Bugle -}}
+      <rect
+        x="{{ .X }}"
+        y="{{ .Y }}"
+        rx="{{ $.BugleCornerRadius }}"
+        width="{{ .Width }}"
+        height="{{ .Height }}"
+        fill="{{ $bead.Color }}"
+      />
     {{- end -}}
   {{- end -}}
 </svg>
