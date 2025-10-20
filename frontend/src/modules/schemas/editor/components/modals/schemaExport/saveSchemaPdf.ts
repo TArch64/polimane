@@ -1,6 +1,6 @@
 import type { jsPDF } from 'jspdf';
 import type { ISchema } from '@/models';
-import { collectUniqColors } from './collectUniqColors';
+import type { ISchemaColorModel } from './colorsModel';
 
 interface ISize {
   width: number;
@@ -14,20 +14,19 @@ function paintBackground(pdf: jsPDF, color: string) {
   pdf.rect(0, 0, pageSize.width, pageSize.height, 'F');
 }
 
-function replaceSourceColors(schema: ISchema, source_: string): string {
+function replaceSourceColors(source_: string, schema: ISchema, colors: ISchemaColorModel[]): string {
   let source = source_.replace('var(--ps-background)', schema.backgroundColor);
-  const colors = collectUniqColors(schema);
 
-  for (const [index, color] of colors.entries()) {
-    source = source.replaceAll(`var(--ps-${index})`, color);
+  for (const [index, model] of colors.entries()) {
+    source = source.replaceAll(`var(--ps-${index})`, model.current);
   }
 
   return source;
 }
 
-function buildSvgEl(schema: ISchema, source: string): SVGSVGElement {
+function buildSvgEl(schema: ISchema, source: string, colors: ISchemaColorModel[]): SVGSVGElement {
   return new DOMParser()
-    .parseFromString(replaceSourceColors(schema, source), 'image/svg+xml')
+    .parseFromString(replaceSourceColors(source, schema, colors), 'image/svg+xml')
     .querySelector<SVGSVGElement>('svg')!;
 }
 
@@ -60,7 +59,7 @@ async function insertSchema(pdf: jsPDF, svgEl: SVGSVGElement): Promise<void> {
   });
 }
 
-export async function saveSchemaPdf(schema: ISchema, source: string) {
+export async function saveSchemaPdf(schema: ISchema, source: string, colors: ISchemaColorModel[]) {
   const { default: JSPDF } = await import('jspdf');
   await import('svg2pdf.js');
 
@@ -71,7 +70,7 @@ export async function saveSchemaPdf(schema: ISchema, source: string) {
   });
 
   paintBackground(pdf, schema.backgroundColor);
-  await insertSchema(pdf, buildSvgEl(schema, source));
+  await insertSchema(pdf, buildSvgEl(schema, source, colors));
 
   await pdf.save(`${schema.name}.pdf`, { returnPromise: true });
 }

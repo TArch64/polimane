@@ -2,7 +2,7 @@
   <ColorPicker
     label="Змінити Колір Фону"
     class="export__background-color"
-    :model-value="model.backgroundColor"
+    :model-value="schema.backgroundColor"
     @update:model-value="updateBackgroundColor"
   />
 
@@ -21,45 +21,33 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
 import { ColorPicker } from '@/components/form';
-import type { BeadCoord, ISchema } from '@/models';
-import { collectUniqColors } from './collectUniqColors';
+import { getBeadSettings, type ISchema, isRefBead, type SchemaContentBead } from '@/models';
+import type { ISchemaColorModel } from './colorsModel';
 
-const model = defineModel<ISchema>({ required: true });
-
-interface IColorModel {
-  initial: string;
-  current: string;
-}
-
-function buildColorsModel(): IColorModel[] {
-  return collectUniqColors(model.value).map((color) => ({
-    initial: color,
-    current: color,
-  }));
-}
-
-const colors = reactive(buildColorsModel());
+const schema = defineModel<ISchema>('schema', { required: true });
+const colors = defineModel<ISchemaColorModel[]>('colors', { required: true });
 
 const updateBackgroundColor = useDebounceFn((color: string) => {
-  model.value = { ...model.value, backgroundColor: color };
+  schema.value = { ...schema.value, backgroundColor: color };
 }, 0);
 
 const updateColor = useDebounceFn((index: number, color: string) => {
-  const colorModel = colors[index]!;
-  const beads = structuredClone(model.value.beads);
+  const colorModel = colors.value[index]!;
+  const beads = structuredClone(schema.value.beads);
 
-  for (const coord_ in beads) {
-    const coord = coord_ as BeadCoord;
-    if (beads[coord] === colorModel.current) {
-      beads[coord] = color;
+  for (const bead of Object.values(beads)) {
+    if (isRefBead(bead)) {
+      continue;
     }
+
+    const settings = getBeadSettings(bead as SchemaContentBead);
+    settings.color = color;
   }
 
   colorModel.current = color;
-  model.value = { ...model.value, beads };
+  schema.value = { ...schema.value, beads };
 }, 0);
 </script>
 

@@ -1,6 +1,11 @@
 import { getBeadSettings, type ISchema, isRefBead, type SchemaContentBead } from '@/models';
 
-export function collectUniqColors(schema: ISchema): string[] {
+export interface ISchemaColorModel {
+  initial: string;
+  current: string;
+}
+
+function collectUniqColors(schema: ISchema): string[] {
   const set = new Set<string>();
 
   for (const bead of Object.values(schema.beads)) {
@@ -13,4 +18,11 @@ export function collectUniqColors(schema: ISchema): string[] {
   }
 
   return Array.from(set);
+}
+
+export function buildColorsModel(schema: ISchema): ISchemaColorModel[] {
+  return collectUniqColors(schema).map((color) => ({
+    initial: color,
+    current: color,
+  }));
 }
