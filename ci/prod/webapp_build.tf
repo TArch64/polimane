@@ -21,7 +21,7 @@ resource "null_resource" "webapp_build" {
       BUILD_DIST    = local.webapp_build_dir
 
       BUILD_SECRET = jsonencode(["FRONTEND_PUBLIC_SENTRY_DSN", "SENTRY_AUTH_TOKEN"])
-      # nonsensitive is safe here because values passed using env + build secrets
+      # nonsensitive is safe here because values passed using build secrets
       FRONTEND_PUBLIC_SENTRY_DSN = nonsensitive(data.bitwarden_secret.frontend_sentry_dsn.value)
       SENTRY_AUTH_TOKEN = nonsensitive(data.bitwarden_secret.frontend_sentry_auth_token.value)
 

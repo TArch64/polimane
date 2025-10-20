@@ -3,7 +3,7 @@ locals {
   lambda_name = local.app_name
 
   lambda_environment = {
-    BACKEND_APP_DOMAIN           = local.domain
+    BACKEND_APP_DOMAIN = local.webapp_domain
     BACKEND_APP_PROTOCOL         = "https"
     BACKEND_SENTRY_RELEASE       = local.lambda_sources_hash,
     BACKEND_BITWARDEN_TOKEN      = var.bitwarden_token
@@ -59,7 +59,7 @@ resource "null_resource" "lambda_migrations" {
       BUILD_CONTEXT = local.lambda_sources_dir
 
       BUILD_SECRET = jsonencode(["BACKEND_DATABASE_URL", "BACKEND_DATABASE_CERT"])
-      # nonsensitive is safe here because values passed using env + build secrets
+      # nonsensitive is safe here because values passed using build secrets
       BACKEND_DATABASE_URL = nonsensitive(bitwarden_secret.backend_database_url.value)
       BACKEND_DATABASE_CERT = nonsensitive(bitwarden_secret.backend_database_cert.value)
     }

@@ -43,8 +43,17 @@ resource "aws_acm_certificate" "cloudflare" {
   }
 }
 
-resource "cloudflare_dns_record" "webapp" {
+resource "cloudflare_dns_record" "root" {
   name    = local.domain
+  type    = "CNAME"
+  proxied = true
+  ttl     = 1
+  zone_id = local.cloudflare_zone_id
+  content = "${cloudflare_pages_project.webapp.name}.pages.dev"
+}
+
+resource "cloudflare_dns_record" "webapp" {
+  name = local.webapp_domain
   type    = "CNAME"
   proxied = true
   ttl     = 1

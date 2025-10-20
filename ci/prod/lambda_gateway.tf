@@ -6,7 +6,7 @@ resource "aws_apigatewayv2_api" "lambda_api" {
   route_selection_expression = "$request.method $request.path"
 
   cors_configuration {
-    allow_origins = ["https://${local.domain}"]
+    allow_origins = ["https://${local.webapp_domain}"]
     allow_methods = ["*"]
     allow_headers = [
       "Origin",

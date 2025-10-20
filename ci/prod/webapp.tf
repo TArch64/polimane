@@ -1,3 +1,7 @@
+locals {
+  webapp_domain = "app.${local.domain}"
+}
+
 resource "cloudflare_pages_project" "webapp" {
   account_id        = local.cloudflare_account_id
   name              = "polimane-prod-admin"
@@ -10,7 +14,7 @@ resource "cloudflare_pages_project" "webapp" {
 }
 
 resource "cloudflare_pages_domain" "webapp" {
-  name         = local.domain
+  name = local.webapp_domain
   account_id   = local.cloudflare_account_id
   project_name = cloudflare_pages_project.webapp.name
 }
@@ -33,7 +37,7 @@ resource "null_resource" "webapp_deploy" {
       BUILD_CONTEXT = local.webapp_sources_dir
 
       BUILD_SECRET = jsonencode(["CLOUDFLARE_API_TOKEN"])
-      # nonsensitive is safe here because values passed using env + build secrets
+      # nonsensitive is safe here because values passed using build secrets
       CLOUDFLARE_API_TOKEN = nonsensitive(data.bitwarden_secret.cloudflare_api_token.value)
 
       BUILD_ARGS = jsonencode(["CLOUDFLARE_ACCOUNT_ID", "PROJECT_NAME"])
