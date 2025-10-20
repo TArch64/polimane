@@ -53,7 +53,7 @@ func beadsGrid(data *templates.SchemaPreviewData) chan *SchemaBead {
 				}
 			} else if bead.Bugle != nil {
 				spanX := x + int(bead.Bugle.Span.X)
-				spanY := x + int(bead.Bugle.Span.Y)
+				spanY := y + int(bead.Bugle.Span.Y)
 
 				startCoordX := min(x, spanX)
 				startCoordY := min(y, spanY)
