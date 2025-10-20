@@ -49,21 +49,21 @@ func runHandler(ctx context.Context, handler http.Handler, req events.APIGateway
 	handler.ServeHTTP(recorder, httpReq)
 
 	headers := make(map[string]string)
-	multiValueHeaders := make(map[string][]string)
+	var cookies []string
 
 	for key, values := range recorder.Header() {
 		if strings.ToLower(key) == "set-cookie" {
-			multiValueHeaders[key] = values
+			cookies = append(cookies, values...)
 		} else if len(values) > 0 {
 			headers[key] = strings.Join(values, ", ")
 		}
 	}
 
 	return events.APIGatewayV2HTTPResponse{
-		StatusCode:        recorder.Code,
-		Headers:           headers,
-		MultiValueHeaders: multiValueHeaders,
-		Body:              recorder.Body.String(),
+		StatusCode: recorder.Code,
+		Headers:    headers,
+		Cookies:    cookies,
+		Body:       recorder.Body.String(),
 	}, nil
 }
 

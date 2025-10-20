@@ -2,7 +2,6 @@ resource "aws_apigatewayv2_api" "lambda_api" {
   name          = "${local.lambda_name}-api"
   protocol_type = "HTTP"
   tags          = local.aws_common_tags
-
   route_selection_expression = "$request.method $request.path"
 
   cors_configuration {
@@ -20,6 +19,7 @@ resource "aws_apigatewayv2_api" "lambda_api" {
     ]
     allow_credentials = true
     expose_headers = ["Set-Cookie"]
+    max_age = 300
   }
 }
 
