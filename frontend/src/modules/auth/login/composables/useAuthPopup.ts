@@ -34,7 +34,6 @@ export function useAuthPopup(options: IAuthPopupOptions): IAuthPopup {
 
     authChannel.addEventListener('message', (event) => {
       if (event.data.type === AuthChannelComplete) {
-        sessionStore.setTokens(event.data.accessToken, event.data.refreshToken);
         options.onSuccess();
       }
     }, { signal: abortController.signal });
@@ -51,9 +50,7 @@ export function useAuthPopup(options: IAuthPopupOptions): IAuthPopup {
     }
   }
 
-  onUnmounted(() => {
-    abortController.abort();
-  });
+  onUnmounted(() => abortController.abort());
 
   return { open };
 }

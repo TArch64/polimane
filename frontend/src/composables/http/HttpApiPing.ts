@@ -1,18 +1,18 @@
-import type { RemovableRef } from '@vueuse/core';
-import { useAccessToken } from '@/composables';
+import type { Ref } from 'vue';
+import { useAuthorized } from '../useAuthorized';
 import type { HttpClient } from './HttpClient';
 import type { HttpMiddleware, IHttpBeforeRequestInterceptor } from './HttpMiddlewareExecutor';
 
 export class HttpApiPing implements IHttpBeforeRequestInterceptor {
   static use(http: HttpClient): HttpMiddleware {
-    return new HttpApiPing(http, useAccessToken());
+    return new HttpApiPing(http, useAuthorized());
   }
 
   private timeoutId: TimeoutId | null = null;
 
   constructor(
     private readonly http: HttpClient,
-    private readonly token: RemovableRef<string | undefined>,
+    private readonly authorized: Ref<boolean>,
   ) {
     this.pingApi = this.pingApi.bind(this);
     requestIdleCallback(this.pingApi);
@@ -24,10 +24,12 @@ export class HttpApiPing implements IHttpBeforeRequestInterceptor {
   }
 
   private async pingApi(): Promise<void> {
-    if (!this.token.value) return;
+    if (!this.authorized.value) return;
 
     try {
-      await this.http.get('/ping');
+      await this.http.get('/ping', {}, {
+        meta: { unauthorizedRedirect: false },
+      });
     } catch (error) {
       console.error(error);
     }

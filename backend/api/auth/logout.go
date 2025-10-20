@@ -18,7 +18,7 @@ func (c *Controller) apiLogout(ctx *fiber.Ctx) error {
 		return err
 	}
 
+	removeCookies(ctx, c.env)
 	c.signals.InvalidateAuthCache.Emit(ctx.Context(), session.ID)
-
 	return base.NewSuccessResponse(ctx)
 }

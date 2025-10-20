@@ -8,3 +8,4 @@ export * from './usePageClass';
 export * from './useDateFormatter';
 export * from './useProgressBar';
 export * from './useThemeVar';
+export * from './useAuthorized';

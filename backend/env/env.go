@@ -13,6 +13,8 @@ type Environment struct {
 	SecretKey   string `env:"BACKEND_SECRET_KEY,required=true"`
 	AppDomain   string `env:"BACKEND_APP_DOMAIN,required=true"`
 	AppProtocol string `env:"BACKEND_APP_PROTOCOL,required=true"`
+	AppURL      *url.URL
+	ApiURL      *url.URL
 
 	Database struct {
 		URL string `env:"BACKEND_DATABASE_URL,required=true"`
@@ -37,30 +39,26 @@ type Environment struct {
 	}
 }
 
-func (e *Environment) AppURL() *url.URL {
-	return &url.URL{
-		Scheme: e.AppProtocol,
-		Host:   "app." + e.AppDomain,
-	}
-}
-
-func (e *Environment) ApiURL() *url.URL {
-	return &url.URL{
-		Scheme: e.AppProtocol,
-		Host:   "api." + e.AppDomain,
-	}
-}
-
 type Options struct {
 	fx.In
-	BitwardenClient bitwarden.Client
+	BitWardenClient bitwarden.Client
 }
 
 func Provider(options Options) (*Environment, error) {
-	instance := &Environment{}
-	if err := loadEnvs(instance, options.BitwardenClient); err != nil {
+	env := &Environment{}
+	if err := loadEnvs(env, options.BitWardenClient); err != nil {
 		return nil, base.TagError("env.load", err)
 	}
 
-	return instance, nil
+	env.AppURL = &url.URL{
+		Scheme: env.AppProtocol,
+		Host:   "app." + env.AppDomain,
+	}
+
+	env.ApiURL = &url.URL{
+		Scheme: env.AppProtocol,
+		Host:   "api." + env.AppDomain,
+	}
+
+	return env, nil
 }
