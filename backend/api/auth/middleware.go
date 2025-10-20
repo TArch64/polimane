@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"errors"
-	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -88,11 +87,11 @@ func (m *Middleware) Handler(ctx *fiber.Ctx) error {
 	}
 
 	accessTokenClaims, err := m.workosClient.AuthenticateWithAccessToken(ctx.Context(), accessToken)
-	if errors.Is(err, workos.AccessTokenExpired) {
+	if errors.Is(err, workos.AccessTokenExpiredErr) {
 		accessTokenClaims, err = m.refreshToken(ctx, refreshToken)
 	}
 	if err != nil {
-		return err
+		return m.newUnauthorizedErr(err)
 	}
 
 	workosUser, err := m.getWorkosUser(ctx.Context(), accessTokenClaims)
@@ -120,16 +119,12 @@ func (m *Middleware) Handler(ctx *fiber.Ctx) error {
 }
 
 func (m *Middleware) refreshToken(ctx *fiber.Ctx, token string) (*workos.AccessTokenClaims, error) {
-	res, err := m.workosClient.UserManagement().AuthenticateWithRefreshToken(ctx.Context(), usermanagement.AuthenticateWithRefreshTokenOpts{
-		ClientID:     m.env.WorkOS.ClientID,
-		RefreshToken: token,
-		UserAgent:    ctx.Get("User-Agent"),
+	res, err := m.workosClient.AuthenticateWithRefreshToken(ctx.Context(), &workos.RefreshAuthOptions{
+		Token:     token,
+		UserAgent: ctx.Get("User-Agent"),
 	})
 
 	if err != nil {
-		if strings.Contains(err.Error(), "Session ended") {
-			return nil, m.newUnauthorizedErr(sessionExpiredErr)
-		}
 		return nil, err
 	}
 

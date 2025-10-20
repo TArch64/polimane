@@ -1,8 +1,13 @@
 import { useEventListener } from '@vueuse/core';
+import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 
 export type HotKeyExec = () => void;
 export type HotKeyDef = [expr: string, exec: HotKeyExec];
 export type HotKeysDef = Record<HotKeyDef[0], HotKeyDef[1]>;
+
+export interface IHotKeysOptions {
+  isActive?: MaybeRefOrGetter<boolean>;
+}
 
 interface IHotKey {
   meta: boolean;
@@ -11,10 +16,9 @@ interface IHotKey {
   exec: HotKeyExec;
 }
 
-export function useHotKeys(def: HotKeysDef): void;
-export function useHotKeys(def: HotKeyDef[]): void;
-export function useHotKeys(def: HotKeysDef | HotKeyDef[]): void {
+export function useHotKeys(def: HotKeysDef | HotKeyDef[], options: IHotKeysOptions = {}): void {
   const entries = Array.isArray(def) ? def : Object.entries(def);
+  const isActive = computed(() => toValue(options.isActive) ?? true);
 
   const hotKeys = entries.map(([expr, exec]): IHotKey => {
     const parts = expr.toLowerCase().split('_');
@@ -42,7 +46,9 @@ export function useHotKeys(def: HotKeysDef | HotKeyDef[]): void {
     return hotKey;
   });
 
-  useEventListener('keydown', (event) => {
+  const target = computed(() => isActive.value ? document.documentElement : null);
+
+  useEventListener(target, 'keydown', (event) => {
     const key = event.key.toLowerCase();
 
     const hotKey = hotKeys.find((hotKey) => {

@@ -14,9 +14,9 @@
     />
 
     <CanvasBead
-      v-for="bead of beadsGrid.beads"
-      :bead
-      :key="bead.coord"
+      v-for="item of beadsGrid.beads"
+      :key="item.coord"
+      :item
     />
 
     <FadeTransition>
@@ -31,6 +31,7 @@
 <script setup lang="ts">
 import { computed, ref, useId } from 'vue';
 import { useSelectionStore } from '@editor/stores';
+import { BEAD_BUGLE_CORNER_RADIUS } from '@editor/const';
 import { FadeTransition } from '@/components/transition';
 import { type IBeadsGrid, useBeadTools } from '../../composables';
 import { CanvasBead } from './CanvasBead';
@@ -42,6 +43,8 @@ const props = defineProps<{
   wrapperRect: DOMRect;
   beadsGrid: IBeadsGrid;
 }>();
+
+const CORNER_RADIUS = BEAD_BUGLE_CORNER_RADIUS;
 
 const selectionStore = useSelectionStore();
 const selected = computed(() => selectionStore.selected);
@@ -68,6 +71,18 @@ const transform = (() => {
 @layer page {
   .canvas-content:hover {
     cursor: var(--editor-cursor, crosshair);
+  }
+
+  :deep(.canvas-bead-bugle),
+  :deep(.canvas-bead-ref) {
+    rx: v-bind("CORNER_RADIUS");
+    ry: v-bind("CORNER_RADIUS");
+  }
+
+  :deep(.canvas-bead-bugle) {
+    transition: 0.15s ease-out;
+    transition-property: width, height, x, y;
+    will-change: width, height, x, y;
   }
 }
 </style>

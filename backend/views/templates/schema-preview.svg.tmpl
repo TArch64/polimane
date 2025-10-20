@@ -5,12 +5,25 @@
   height="{{ .Height }}"
 >
   <rect x="0" y="0" width="{{ .Width }}" height="{{ .Height }}" fill="{{ .BackgroundColor }}" />
-  {{- range beadsGrid . }}
-    <circle
-      r="{{ $.ShapeRadius }}"
-      cx="{{ .CenterX }}"
-      cy="{{ .CenterY }}"
-      fill="{{ .Color }}"
-    />
-  {{ end -}}
+  {{- range beadsGrid . -}}
+    {{- $bead := . -}}
+    {{- with .Circle -}}
+      <circle
+        r="{{ $.CircleRadius }}"
+        cx="{{ .CenterX }}"
+        cy="{{ .CenterY }}"
+        fill="{{ $bead.Color }}"
+      />
+    {{- end -}}
+    {{- with .Bugle -}}
+      <rect
+        x="{{ .X }}"
+        y="{{ .Y }}"
+        rx="{{ $.BugleCornerRadius }}"
+        width="{{ .Width }}"
+        height="{{ .Height }}"
+        fill="{{ $bead.Color }}"
+      />
+    {{- end -}}
+  {{- end -}}
 </svg>

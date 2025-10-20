@@ -1,4 +1,6 @@
 export type * from './IUser';
-export * from './ISchema';
+export type * from './ISchema';
+export * from './ISchemaBead';
+export * from './SchemaBeadCoord';
 export * from './NodeRect';
 export * from './Point';

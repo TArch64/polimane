@@ -25,10 +25,12 @@ import { useDomRef } from '@/composables';
 import { ToolbarPalette } from './palette';
 import { ToolbarBead, ToolbarEraser, ToolbarSelection } from './tools';
 import ToolbarBackgroundColor from './ToolbarBackgroundColor.vue';
+import { provideToolbarRef } from './toolbarRef';
 
 const store = useToolsStore();
 
 const toolbarRef = useDomRef<HTMLElement>();
+provideToolbarRef(toolbarRef);
 
 const toolbarSize = useElementBounding(toolbarRef, {
   windowScroll: false,

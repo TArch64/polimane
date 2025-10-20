@@ -2,7 +2,7 @@
   <ToolbarButton
     title="Виділення"
     :active="store.isSelection"
-    @click="store.activateTool('selection')"
+    @click="store.activateTool(EditorTool.SELECTION)"
   >
     <ToolsSelectionIcon />
   </ToolbarButton>
@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import { useToolsStore } from '@editor/stores';
+import { EditorTool } from '@editor/enums';
 import { ToolsSelectionIcon } from '@/components/icon';
 import ToolbarButton from '../ToolbarButton.vue';
 

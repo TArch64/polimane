@@ -5,11 +5,12 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/lestrrat-go/jwx/v3/jwk"
 	"github.com/lestrrat-go/jwx/v3/jwt"
 )
 
 var (
-	AccessTokenExpired = errors.New("access token expired")
+	AccessTokenExpiredErr = errors.New("access token expired")
 )
 
 type AccessTokenClaims struct {
@@ -23,7 +24,7 @@ func (i *Impl) AuthenticateWithAccessToken(ctx context.Context, tokenStr string)
 		return nil, err
 	}
 
-	keySet, err := i.jwk.Fetch(ctx, jwksURL.String())
+	keySet, err := jwk.Fetch(ctx, jwksURL.String())
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +38,7 @@ func (i *Impl) AuthenticateWithAccessToken(ctx context.Context, tokenStr string)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "token is expired") {
-			return nil, AccessTokenExpired
+			return nil, AccessTokenExpiredErr
 		}
 
 		return nil, err

@@ -11,10 +11,11 @@ import { computed, onMounted, ref } from 'vue';
 import type { ISchema } from '@/models';
 import { useHttpClient } from '@/composables';
 import type { UrlPath } from '@/helpers';
-import { collectUniqColors } from './collectUniqColors';
+import type { ISchemaColorModel } from './colorsModel';
 
 const props = defineProps<{
   schema: ISchema;
+  colors: ISchemaColorModel[];
 }>();
 
 const http = useHttpClient();
@@ -25,12 +26,10 @@ const aspectRatio = computed(() => width.value / height.value);
 
 const source = ref('');
 
-const colors = computed(() => collectUniqColors(props.schema));
-
 const styles = computed(() => {
   const raw = [
     ['background', props.schema.backgroundColor],
-    ...colors.value.entries(),
+    ...props.colors.map((model, index) => [index, model.current]),
   ];
 
   const vars = raw.map(([key, value]) => [`--ps-${key}`, value]);
@@ -48,8 +47,8 @@ onMounted(async () => {
 
   document.querySelector<SVGRectElement>('rect')!.setAttribute('fill', 'var(--ps-background)');
 
-  for (const [index, color] of colors.value.entries()) {
-    const beadEls = document.querySelectorAll<SVGCircleElement>(`[fill="${color}"]`);
+  for (const [index, model] of props.colors.entries()) {
+    const beadEls = document.querySelectorAll<SVGCircleElement>(`[fill="${model.initial}"]`);
     for (const el of beadEls) {
       el.setAttribute('fill', `var(--ps-${index})`);
     }

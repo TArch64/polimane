@@ -6,7 +6,7 @@ import {
   useToolsStore,
 } from '@editor/stores';
 import { BEAD_SIZE } from '@editor/const';
-import { type IPoint, parseSchemaBeadCoord, Point, serializeSchemaBeadCoord } from '@/models';
+import { type IPoint, parseBeadCoord, Point, serializeBeadCoord } from '@/models';
 import { getObjectKeys } from '@/helpers';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 import { type IBeadResolveOptions, useBeadCoord } from './useBeadCoord';
@@ -37,14 +37,14 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
     const xs: number[] = [];
     const ys: number[] = [];
 
-    for (const coord of selected.map(parseSchemaBeadCoord)) {
+    for (const coord of selected.map(parseBeadCoord)) {
       xs.push(coord.x);
       ys.push(coord.y);
     }
 
     return {
-      from: serializeSchemaBeadCoord(Math.min(...xs), Math.min(...ys)),
-      to: serializeSchemaBeadCoord(Math.max(...xs), Math.max(...ys)),
+      from: serializeBeadCoord(Math.min(...xs), Math.min(...ys)),
+      to: serializeBeadCoord(Math.max(...xs), Math.max(...ys)),
     };
   }
 

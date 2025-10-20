@@ -35,8 +35,8 @@ const hoverVar = computed(() => valueContrast.value > 4.5 ? '#fff' : '#999');
     border: var(--divider);
   }
 
-  .toolbar-button--active {
-    border-color: var(--color-divider);
+  .button--active {
+    border-color: var(--color-white);
     outline: solid 1px var(--color-primary);
     outline-offset: 1px;
   }

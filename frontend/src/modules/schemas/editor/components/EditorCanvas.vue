@@ -73,6 +73,8 @@ function onWheel(event: WheelEvent): void {
 useHotKeys({
   Backspace: selectionStore.removeSelected,
   Delete: selectionStore.removeSelected,
+}, {
+  isActive: () => toolsStore.isSelection,
 });
 </script>
 

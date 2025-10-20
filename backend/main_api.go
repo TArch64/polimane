@@ -19,9 +19,6 @@ import (
 	"polimane/backend/services/awssqs"
 	"polimane/backend/services/bitwarden"
 	"polimane/backend/services/db"
-	"polimane/backend/services/jwk"
-	"polimane/backend/services/osenv"
-	"polimane/backend/services/osfs"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/services/sentry"
 	"polimane/backend/services/workos"
@@ -42,9 +39,6 @@ func main() {
 		fx.Provide(
 			// external
 			appcontext.Provider,
-			jwk.Provider,
-			osfs.Provider,
-			osenv.Provider,
 
 			// services
 			bitwarden.Provider,

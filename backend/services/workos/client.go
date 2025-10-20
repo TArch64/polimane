@@ -8,26 +8,24 @@ import (
 	"go.uber.org/fx"
 
 	"polimane/backend/env"
-	"polimane/backend/services/jwk"
 )
 
 type ClientOptions struct {
 	fx.In
 	Env *env.Environment
-	JWK jwk.Client
 }
 
 type Client interface {
 	UserManagement() UserManagement
 	MFA() MFA
 	AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*AccessTokenClaims, error)
+	AuthenticateWithRefreshToken(ctx context.Context, options *RefreshAuthOptions) (*usermanagement.RefreshAuthenticationResponse, error)
 }
 
 type Impl struct {
 	userManagement UserManagement
 	mfa            MFA
 	env            *env.Environment
-	jwk            jwk.Client
 }
 
 func Provider(options ClientOptions) Client {
@@ -38,6 +36,5 @@ func Provider(options ClientOptions) Client {
 		userManagement: usermanagement.DefaultClient,
 		mfa:            mfa.DefaultClient,
 		env:            options.Env,
-		jwk:            options.JWK,
 	}
 }

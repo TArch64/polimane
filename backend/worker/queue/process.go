@@ -8,7 +8,7 @@ import (
 )
 
 func (b *Base) Process(ctx context.Context, message *events.Message) error {
-	processor := b.events[message.EventType]
+	processor := b.EventHandlers[message.EventType]
 
 	if processor == nil {
 		return errors.New("no processor found for event type: " + message.EventType)

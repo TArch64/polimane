@@ -4,8 +4,15 @@ package worker
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"os"
+	"reflect"
+	"runtime"
+	"text/tabwriter"
 	"time"
+
+	"polimane/backend/base"
 
 	"go.uber.org/fx"
 
@@ -20,23 +27,24 @@ func (c *Controller) handleError(err error) {
 
 type StartOptions struct {
 	fx.In
+	Ctx        context.Context
 	SQS        awssqs.Client
 	Controller *Controller
 }
 
 func Start(options StartOptions) {
-	ctx := context.Background()
-
 	log.Println("starting worker...")
 
 	for _, q := range options.Controller.queues {
 		go watchQueue(
-			ctx,
+			options.Ctx,
 			q,
 			options.Controller,
 			options.SQS,
 		)
 	}
+
+	go printStartupMessage(options.Controller)
 }
 
 func watchQueue(
@@ -45,8 +53,6 @@ func watchQueue(
 	controller *Controller,
 	client awssqs.Client,
 ) {
-	log.Println("registered queue:", q.Name())
-
 	messagesChan := make(chan *events.Message, 100)
 	go controller.Process(ctx, q, messagesChan)
 
@@ -68,16 +74,48 @@ func watchQueue(
 		}
 
 		if len(messages) > 0 {
-			log.Printf("received %d messages from %s\n", len(messages), q.Name())
-
 			for _, message := range messages {
+				actionType := *message.MessageAttributes["EventType"].StringValue
+
 				messagesChan <- &events.Message{
 					Body:          *message.Body,
 					ReceiptHandle: *message.ReceiptHandle,
-					EventType:     *message.MessageAttributes["EventType"].StringValue,
+					EventType:     actionType,
 					OnEnd:         func() {},
 				}
+
+				log.Printf("Processing %s action from %s queue\n", actionType, q.Name())
 			}
 		}
 	}
+}
+
+func printStartupMessage(controller *Controller) {
+	writer := tabwriter.NewWriter(os.Stdout, 1, 1, 1, ' ', 0)
+
+	printStartupRow(writer, "Queue", "Event", "Handler")
+	printStartupRow(writer, "-----", "-----", "-------")
+
+	for _, q := range controller.queues {
+		queueName := q.Name()
+		for event, handler := range q.GetEventHandlers() {
+			handlerPointer := runtime.FuncForPC(reflect.ValueOf(handler).Pointer())
+			printStartupRow(writer, queueName, event, handlerPointer.Name())
+		}
+	}
+
+	err := writer.Flush()
+	if err != nil {
+		log.Println("error printing startup message:", err)
+	}
+}
+
+func printStartupRow(writer *tabwriter.Writer, columns ...string) {
+	_, _ = fmt.Fprintf(
+		writer,
+		"%s\t|\t%s\t|\t%s\n",
+		base.Colored(columns[0], base.AnsiBlue),
+		base.Colored(columns[1], base.AnsiGreen),
+		base.Colored(columns[2], base.AnsiYellow),
+	)
 }

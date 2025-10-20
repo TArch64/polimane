@@ -4,6 +4,10 @@ export interface IPoint {
 }
 
 export class Point implements IPoint {
+  static isEqual(a: IPoint, b: IPoint): boolean {
+    return a.x === b.x && a.y === b.y;
+  }
+
   readonly x;
   readonly y;
 
@@ -54,6 +58,6 @@ export class Point implements IPoint {
   }
 
   isEqual(other: IPoint): boolean {
-    return this.x === other.x && this.y === other.y;
+    return Point.isEqual(this, other);
   }
 }
