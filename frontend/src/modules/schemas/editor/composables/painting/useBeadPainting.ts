@@ -38,7 +38,6 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
   const beadFactory = useBeadFactory();
   const isPainting = ref(false);
   let spanning: ISpanningBead | null = null;
-  let mouseupAbort: AbortController | null = null;
 
   function restrictSpanningPoint(refPoint: IPoint): void {
     const { direction, point } = spanning!;
@@ -131,12 +130,7 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
     if (event.buttons === 1) {
       isPainting.value = true;
       paint(event, toolsStore.isEraser ? null : toolsStore.activeColor);
-
-      mouseupAbort = new AbortController();
-      addEventListener('mouseup', onMouseup, {
-        once: true,
-        signal: mouseupAbort.signal,
-      });
+      addEventListener('mouseup', onMouseup, { once: true });
     }
 
     if (event.buttons === 2) {
