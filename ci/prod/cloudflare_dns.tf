@@ -80,8 +80,8 @@ resource "cloudflare_dns_record" "cloudfront_validation" {
 }
 
 resource "aws_acm_certificate_validation" "cloudfront" {
-  provider                = aws.us_east_1
-  certificate_arn         = aws_acm_certificate.cloudfront.arn
+  provider        = aws.us_east_1
+  certificate_arn = aws_acm_certificate.cloudfront.arn
   validation_record_fqdns = [
     for record in cloudflare_dns_record.cloudfront_validation :
     "${record.name}."
