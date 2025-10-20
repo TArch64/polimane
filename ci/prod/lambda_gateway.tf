@@ -19,6 +19,7 @@ resource "aws_apigatewayv2_api" "lambda_api" {
       "Cookie"
     ]
     allow_credentials = true
+    expose_headers = ["Set-Cookie"]
   }
 }
 
