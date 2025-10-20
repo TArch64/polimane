@@ -31,7 +31,7 @@ func getErrorHandlerMiddleware() fiber.Handler {
 	})
 }
 
-func runHandler(ctx context.Context, handler http.Handler, req events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) {
+func runHandler(ctx context.Context, handler http.Handler, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	url := req.RawPath
 	if req.RawQueryString != "" {
 		url += "?" + req.RawQueryString
@@ -49,23 +49,28 @@ func runHandler(ctx context.Context, handler http.Handler, req events.LambdaFunc
 	handler.ServeHTTP(recorder, httpReq)
 
 	headers := make(map[string]string)
+	multiValueHeaders := make(map[string][]string)
+
 	for key, values := range recorder.Header() {
-		if len(values) > 0 {
+		if strings.ToLower(key) == "set-cookie" {
+			multiValueHeaders[key] = values
+		} else if len(values) > 0 {
 			headers[key] = strings.Join(values, ", ")
 		}
 	}
 
-	return events.LambdaFunctionURLResponse{
-		StatusCode: recorder.Code,
-		Headers:    headers,
-		Body:       recorder.Body.String(),
+	return events.APIGatewayV2HTTPResponse{
+		StatusCode:        recorder.Code,
+		Headers:           headers,
+		MultiValueHeaders: multiValueHeaders,
+		Body:              recorder.Body.String(),
 	}, nil
 }
 
 func Start(app *fiber.App) error {
 	handler := adaptor.FiberApp(app)
 
-	lambda.Start(func(ctx context.Context, req events.LambdaFunctionURLRequest) (events.LambdaFunctionURLResponse, error) {
+	lambda.Start(func(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 		return runHandler(ctx, handler, req)
 	})
 
