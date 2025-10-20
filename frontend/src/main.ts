@@ -1,6 +1,4 @@
 import './style/main.css';
-
-import './polyfills';
 import { createApp, h } from 'vue';
 import { createPinia } from 'pinia';
 import { configure as configureProgress } from 'nprogress';

@@ -1,4 +1,5 @@
 import { nextTick } from 'vue';
+import { startViewTransition } from '@/helpers';
 
 export interface IRouteTransition {
   start: (callback: ViewTransitionUpdateCallback) => void;
@@ -8,7 +9,7 @@ let pending: ViewTransitionUpdateCallback[] = [];
 
 export function useRouteTransition(): IRouteTransition {
   function doTransition(): void {
-    document.startViewTransition(async () => {
+    startViewTransition(async () => {
       for (const callback of pending) {
         await callback();
       }

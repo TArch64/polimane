@@ -13,3 +13,4 @@ export * from './object';
 export * from './buildUrl';
 export * from './padding';
 export * from './createAnimatedFrame';
+export * from './startViewTransition';

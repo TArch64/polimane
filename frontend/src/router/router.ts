@@ -6,6 +6,7 @@ import { schemasRoute } from '@/modules/schemas';
 import { authRoute } from '@/modules/auth';
 import { settingsRoute } from '@/modules/settings';
 import { defineRedirectRoute } from '@/router/define';
+import { startViewTransition } from '@/helpers';
 
 const routes = [
   authRoute,
@@ -28,7 +29,7 @@ export const router = createRouter({
 router.beforeEach(sessionMiddleware);
 
 router.beforeResolve(async (_, __, next) => {
-  const transition = document.startViewTransition(async () => {
+  const transition = startViewTransition(async () => {
     next();
     await nextTick();
     await nextTick();
