@@ -3,7 +3,7 @@ locals {
   lambda_name = local.app_name
 
   lambda_environment = {
-    BACKEND_APP_DOMAIN = local.webapp_domain
+    BACKEND_APP_DOMAIN = local.domain
     BACKEND_APP_PROTOCOL         = "https"
     BACKEND_SENTRY_RELEASE       = local.lambda_sources_hash,
     BACKEND_BITWARDEN_TOKEN      = var.bitwarden_token

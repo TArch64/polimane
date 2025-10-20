@@ -43,13 +43,14 @@ resource "aws_acm_certificate" "cloudflare" {
   }
 }
 
+# only used to create a redirect from old room domain to webapp subdomain
 resource "cloudflare_dns_record" "root" {
   name    = local.domain
-  type    = "CNAME"
+  type    = "A"
   proxied = true
   ttl     = 1
   zone_id = local.cloudflare_zone_id
-  content = "${cloudflare_pages_project.webapp.name}.pages.dev"
+  content = "192.0.2.1" # Dummy IP (TEST-NET-1). Cloudflare redirect before origin is used.
 }
 
 resource "cloudflare_dns_record" "webapp" {
