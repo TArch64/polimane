@@ -40,7 +40,7 @@ type Environment struct {
 func (e *Environment) AppURL() *url.URL {
 	return &url.URL{
 		Scheme: e.AppProtocol,
-		Host:   e.AppDomain,
+		Host:   "app." + e.AppDomain,
 	}
 }
 

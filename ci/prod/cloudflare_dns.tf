@@ -43,8 +43,18 @@ resource "aws_acm_certificate" "cloudflare" {
   }
 }
 
-resource "cloudflare_dns_record" "webapp" {
+# only used to create a redirect from old room domain to webapp subdomain
+resource "cloudflare_dns_record" "root" {
   name    = local.domain
+  type    = "A"
+  proxied = true
+  ttl     = 1
+  zone_id = local.cloudflare_zone_id
+  content = "192.0.2.1" # Dummy IP (TEST-NET-1). Cloudflare redirect before origin is used.
+}
+
+resource "cloudflare_dns_record" "webapp" {
+  name = local.webapp_domain
   type    = "CNAME"
   proxied = true
   ttl     = 1
@@ -80,8 +90,8 @@ resource "cloudflare_dns_record" "cloudfront_validation" {
 }
 
 resource "aws_acm_certificate_validation" "cloudfront" {
-  provider                = aws.us_east_1
-  certificate_arn         = aws_acm_certificate.cloudfront.arn
+  provider        = aws.us_east_1
+  certificate_arn = aws_acm_certificate.cloudfront.arn
   validation_record_fqdns = [
     for record in cloudflare_dns_record.cloudfront_validation :
     "${record.name}."
