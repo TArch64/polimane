@@ -27,7 +27,9 @@ resource "null_resource" "webapp_build" {
 
 
       BUILD_ARGS = jsonencode([
-        "FRONTEND_PUBLIC_API_URL", "FRONTEND_PUBLIC_SENTRY_RELEASE", "FRONTEND_PUBLIC_CDN_HOST"
+        "FRONTEND_PUBLIC_API_URL",
+        "FRONTEND_PUBLIC_SENTRY_RELEASE",
+        "FRONTEND_PUBLIC_CDN_HOST"
       ])
       FRONTEND_PUBLIC_API_URL        = "https://${local.api_domain}/api",
       FRONTEND_PUBLIC_CDN_HOST = local.cdn_domain,
