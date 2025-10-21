@@ -57,11 +57,11 @@ func Provider(options ServerOptions) (*fiber.App, error) {
 	}))
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     options.Env.AppURL().String(),
-		AllowHeaders:     "Origin, Content-Type, Accept, Authorization, X-Refresh-Token, X-Requested-With",
+		AllowOrigins:     options.Env.AppURL.String(),
+		AllowHeaders:     "Origin, Content-Type, Accept",
 		AllowMethods:     "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-		ExposeHeaders:    "X-New-Access-Token, X-New-Refresh-Token",
 		AllowCredentials: true,
+		ExposeHeaders:    "Set-Cookie",
 	}))
 
 	app.Use(encryptcookie.New(encryptcookie.Config{

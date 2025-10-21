@@ -12,6 +12,7 @@ export class HttpLegacyTransport implements IHttpTransport {
       xhr.open(request.method, request.url);
       this.setRequestHeaders(xhr, request.headers);
 
+      xhr.withCredentials = request.credentials === 'include';
       xhr.onload = () => resolve(this.buildResponse(xhr));
       xhr.onerror = () => reject(NETWORK_ERROR);
       xhr.ontimeout = () => reject(TIMEOUT_ERROR);

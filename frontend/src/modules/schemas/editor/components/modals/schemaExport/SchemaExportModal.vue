@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, shallowRef, toRaw } from 'vue';
+import { computed, ref, shallowRef, toRaw } from 'vue';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import { useEditorStore } from '@editor/stores';
 import { Modal, ModalWidth, useActiveModal } from '@/components/modal';
@@ -38,11 +38,11 @@ const previewRef = ref<ComponentExposed<typeof SchemaExportPreview>>(null!);
 
 const schema = shallowRef(toRaw(editorStore.schema));
 
-const colors = reactive(buildColorsModel(schema.value));
-const hasColors = computed(() => !!colors.length);
+const colors = ref(buildColorsModel(schema.value));
+const hasColors = computed(() => !!colors.value.length);
 
 const save = useAsyncAction(async () => {
-  await saveSchemaPdf(schema.value, previewRef.value.getSource(), colors);
+  await saveSchemaPdf(schema.value, previewRef.value.getSource(), colors.value);
   modal.close(null);
 });
 </script>

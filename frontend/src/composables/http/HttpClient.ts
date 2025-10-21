@@ -112,6 +112,7 @@ export class HttpClient {
       headers: {
         'Content-Type': responseType === 'text' ? 'text/plain' : 'application/json',
       },
+      credentials: 'include',
     });
 
     await this.middlewareExecutor.callBeforeRequestInterceptor(request);

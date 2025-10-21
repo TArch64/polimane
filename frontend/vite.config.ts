@@ -43,6 +43,13 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     allowedHosts: true,
+    origin: 'https://app.polimane.localhost',
+    proxy: {}, // force http1
+
+    https: {
+      key: '/certs/polimane.localhost+1-key.pem',
+      cert: '/certs/polimane.localhost+1.pem',
+    },
   },
 
   plugins: [

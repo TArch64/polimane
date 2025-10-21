@@ -2,12 +2,11 @@ resource "aws_apigatewayv2_api" "lambda_api" {
   name          = "${local.lambda_name}-api"
   protocol_type = "HTTP"
   tags          = local.aws_common_tags
-
   route_selection_expression = "$request.method $request.path"
 
   cors_configuration {
     allow_origins = ["https://${local.webapp_domain}"]
-    allow_methods = ["*"]
+    allow_methods = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     allow_headers = [
       "Origin",
       "Content-Type",
@@ -19,7 +18,8 @@ resource "aws_apigatewayv2_api" "lambda_api" {
       "Cookie"
     ]
     allow_credentials = true
-    expose_headers = ["X-New-Access-Token", "X-New-Refresh-Token"]
+    expose_headers = ["Set-Cookie"]
+    max_age = 300
   }
 }
 

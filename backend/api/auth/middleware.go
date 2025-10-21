@@ -21,9 +21,8 @@ import (
 )
 
 var (
-	unauthorizedErr   = base.NewReasonedError(fiber.StatusUnauthorized, "Unauthorized")
-	missingTokenErr   = errors.New("missing access or refresh token")
-	sessionExpiredErr = errors.New("session expired")
+	unauthorizedErr = base.NewReasonedError(fiber.StatusUnauthorized, "Unauthorized")
+	missingTokenErr = errors.New("missing access or refresh token")
 )
 
 type MiddlewareOptions struct {
@@ -80,17 +79,20 @@ func (m *Middleware) invalidateWorkosUserCache(ctx context.Context, userID strin
 }
 
 func (m *Middleware) Handler(ctx *fiber.Ctx) error {
-	accessToken := ctx.Get("Authorization")
-	refreshToken := ctx.Get("X-Refresh-Token")
-	if accessToken == "" || refreshToken == "" {
+	cookies, err := getCookies(ctx)
+	if err != nil {
+		return m.newUnauthorizedErr(err)
+	}
+	if cookies.AccessToken == "" || cookies.RefreshToken == "" {
 		return m.newUnauthorizedErr(missingTokenErr)
 	}
 
-	accessTokenClaims, err := m.workosClient.AuthenticateWithAccessToken(ctx.Context(), accessToken)
+	accessTokenClaims, err := m.workosClient.AuthenticateWithAccessToken(ctx.Context(), cookies.AccessToken)
 	if errors.Is(err, workos.AccessTokenExpiredErr) {
-		accessTokenClaims, err = m.refreshToken(ctx, refreshToken)
+		accessTokenClaims, err = m.refreshToken(ctx, cookies.RefreshToken)
 	}
 	if err != nil {
+		removeCookies(ctx, m.env)
 		return m.newUnauthorizedErr(err)
 	}
 
@@ -109,7 +111,7 @@ func (m *Middleware) Handler(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	SetSession(ctx, &UserSession{
+	setSession(ctx, &UserSession{
 		User:       user,
 		WorkosUser: workosUser,
 		ID:         accessTokenClaims.SessionID,
@@ -128,8 +130,11 @@ func (m *Middleware) refreshToken(ctx *fiber.Ctx, token string) (*workos.AccessT
 		return nil, err
 	}
 
-	ctx.Set("X-New-Refresh-Token", res.RefreshToken)
-	ctx.Set("X-New-Access-Token", res.AccessToken)
+	setCookies(ctx, m.env, &authCookies{
+		AccessToken:  res.AccessToken,
+		RefreshToken: res.RefreshToken,
+	})
+
 	return m.workosClient.AuthenticateWithAccessToken(ctx.Context(), res.AccessToken)
 }
 

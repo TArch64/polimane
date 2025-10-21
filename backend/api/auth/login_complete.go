@@ -42,10 +42,11 @@ func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	redirectUrl := c.env.AppURL().JoinPath("auth/complete")
-	redirectQuery := redirectUrl.Query()
-	redirectQuery.Set("access-token", data.AccessToken)
-	redirectQuery.Set("refresh-token", data.RefreshToken)
-	redirectUrl.RawQuery = redirectQuery.Encode()
+	setCookies(ctx, c.env, &authCookies{
+		AccessToken:  data.AccessToken,
+		RefreshToken: data.RefreshToken,
+	})
+
+	redirectUrl := c.env.AppURL.JoinPath("auth/complete")
 	return ctx.Redirect(redirectUrl.String())
 }
