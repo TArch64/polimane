@@ -7,11 +7,13 @@ import (
 
 	"polimane/backend/base"
 	"polimane/backend/env"
+	"polimane/backend/services/sentry"
 )
 
 type Options struct {
 	fx.In
-	Env *env.Environment
+	Env    *env.Environment
+	Sentry *sentry.Container
 }
 
 func Provider(options Options) (*gorm.DB, error) {
@@ -23,6 +25,12 @@ func Provider(options Options) (*gorm.DB, error) {
 
 	if err != nil {
 		return nil, base.TagError("db.open", err)
+	}
+
+	if tracing := newTracingPlugin(); tracing != nil {
+		if err = instance.Use(tracing); err != nil {
+			return nil, base.TagError("db.tracing", err)
+		}
 	}
 
 	return instance, nil

@@ -48,13 +48,13 @@ func (c *Controller) Process(
 			defer func() { <-semaphore }()
 
 			if err := q.Process(ctx, message); err != nil {
-				c.handleError(err)
+				c.handleError(ctx, err)
 				message.OnEnd()
 				return
 			}
 
 			if err := c.sqs.Delete(ctx, q.Name(), message.ReceiptHandle); err != nil {
-				c.handleError(err)
+				c.handleError(ctx, err)
 			}
 
 			message.OnEnd()

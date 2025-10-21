@@ -16,8 +16,15 @@ import (
 	"polimane/backend/worker/queue"
 )
 
-func (c *Controller) handleError(err error) {
-	sentry.CaptureException(err)
+func (c *Controller) handleError(ctx context.Context, err error) {
+	hub := sentry.GetHubFromContext(ctx)
+	client, scope := hub.Client(), hub.Scope()
+
+	client.CaptureException(
+		err,
+		&sentry.EventHint{Context: ctx},
+		scope,
+	)
 }
 
 type StartOptions struct {

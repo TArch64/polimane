@@ -2,6 +2,9 @@ package sentry
 
 import (
 	"github.com/getsentry/sentry-go"
+	sentryotel "github.com/getsentry/sentry-go/otel"
+	"go.opentelemetry.io/otel"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/fx"
 
 	"polimane/backend/base"
@@ -27,12 +30,22 @@ func Provider(options Options) (*Container, error) {
 		Dsn:              config.Dsn,
 		Release:          config.Release,
 		AttachStacktrace: true,
+		EnableTracing:    true,
+		TracesSampleRate: 0.5,
 		Environment:      "production",
 	})
 
 	if err != nil {
 		return nil, base.TagError("sentry", err)
 	}
+
+	otel.SetTracerProvider(
+		sdktrace.NewTracerProvider(
+			sdktrace.WithSpanProcessor(sentryotel.NewSentrySpanProcessor()),
+		),
+	)
+
+	otel.SetTextMapPropagator(sentryotel.NewSentryPropagator())
 
 	return &Container{IsInitialized: true}, nil
 }
