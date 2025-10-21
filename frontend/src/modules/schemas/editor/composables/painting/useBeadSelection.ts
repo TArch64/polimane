@@ -2,12 +2,21 @@ import { computed, type Ref, watch } from 'vue';
 import {
   type IBeadSelection,
   useBeadsStore,
+  useEditorStore,
   useSelectionStore,
   useToolsStore,
 } from '@editor/stores';
 import { BEAD_SIZE } from '@editor/const';
-import { type IPoint, parseBeadCoord, Point, serializeBeadCoord } from '@/models';
-import { getObjectKeys } from '@/helpers';
+import {
+  getBeadSettings,
+  type IPoint,
+  isRefBead,
+  isSpannableBead,
+  parseBeadCoord,
+  Point,
+  serializeBeadCoord,
+} from '@/models';
+import { getObjectEntries } from '@/helpers';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 import { type IBeadResolveOptions, useBeadCoord } from './useBeadCoord';
 
@@ -19,32 +28,45 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
   const selectionStore = useSelectionStore();
   const toolsStore = useToolsStore();
   const beadsStore = useBeadsStore();
+  const editorStore = useEditorStore();
 
   const beadCoord = useBeadCoord(options);
 
   function createSelection(from: IPoint, to: IPoint): IBeadSelection | null {
-    const selected = getObjectKeys(beadsStore.getInArea(from, to));
+    const selected = beadsStore.getInArea(from, to);
 
-    if (!selected.length) {
+    if (!Object.keys(selected).length) {
       return null;
-    }
-
-    if (selected.length === 1) {
-      const coord = selected[0]!;
-      return { from: coord, to: coord };
     }
 
     const xs: number[] = [];
     const ys: number[] = [];
 
-    for (const coord of selected.map(parseBeadCoord)) {
-      xs.push(coord.x);
-      ys.push(coord.y);
+    for (let [coord, bead] of getObjectEntries(selected)) {
+      if (isRefBead(bead)) {
+        const settings = getBeadSettings(bead);
+        coord = settings.to;
+        bead = editorStore.schema.beads[coord]!;
+      }
+
+      const { x, y } = parseBeadCoord(coord);
+
+      xs.push(x);
+      ys.push(y);
+
+      if (isSpannableBead(bead)) {
+        const settings = getBeadSettings(bead);
+        xs.push(x + settings.span.x);
+        ys.push(y + settings.span.y);
+      }
     }
 
+    xs.sort((a, b) => a - b);
+    ys.sort((a, b) => a - b);
+
     return {
-      from: serializeBeadCoord(Math.min(...xs), Math.min(...ys)),
-      to: serializeBeadCoord(Math.max(...xs), Math.max(...ys)),
+      from: serializeBeadCoord(xs[0]!, ys[0]!),
+      to: serializeBeadCoord(xs.at(-1)!, ys.at(-1)!),
     };
   }
 
