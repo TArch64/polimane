@@ -32,6 +32,7 @@ ENV SENTRY_COMMIT_SHA=$SENTRY_COMMIT_SHA
 
 RUN --mount=type=cache,target=/root/.bun/install/cache \
     --mount=type=secret,id=FRONTEND_PUBLIC_SENTRY_DSN,env=FRONTEND_PUBLIC_SENTRY_DSN \
+    --mount=type=secret,id=FRONTEND_GOOGLE_ANALYTICS_ID,env=FRONTEND_GOOGLE_ANALYTICS_ID \
     --mount=type=secret,id=SENTRY_AUTH_TOKEN,env=SENTRY_AUTH_TOKEN \
     bun run build && \
     find ./dist/assets/*.map -exec rm {} \;

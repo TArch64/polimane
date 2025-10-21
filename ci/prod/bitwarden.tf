@@ -68,3 +68,8 @@ data "bitwarden_secret" "backend_sqs_base_url" {
   key             = "backend_sqs_base_url"
   organization_id = data.bitwarden_project.app.organization_id
 }
+
+data "bitwarden_secret" "frontend_google_analytics_id" {
+  key             = "frontend_google_analytics_id"
+  organization_id = data.bitwarden_project.app.organization_id
+}

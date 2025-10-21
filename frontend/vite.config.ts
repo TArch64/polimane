@@ -5,11 +5,13 @@ import vueDevTools from 'vite-plugin-vue-devtools';
 import type { InlineCollection } from 'unplugin-icons';
 import icons from 'unplugin-icons/vite';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
+import { VitePluginRadar } from 'vite-plugin-radar';
 
 const {
   SENTRY_AUTH_TOKEN,
   SENTRY_COMMIT_SHA,
   FRONTEND_PUBLIC_SENTRY_RELEASE,
+  FRONTEND_GOOGLE_ANALYTICS_ID,
 } = process.env;
 
 async function createCustomIconsCollection(): Promise<InlineCollection> {
@@ -81,6 +83,10 @@ export default defineConfig({
           commit: SENTRY_COMMIT_SHA!,
         },
       },
+    }),
+
+    !!FRONTEND_GOOGLE_ANALYTICS_ID && VitePluginRadar({
+      analytics: { id: FRONTEND_GOOGLE_ANALYTICS_ID },
     }),
   ],
 });
