@@ -6,7 +6,11 @@ import type { InlineCollection } from 'unplugin-icons';
 import icons from 'unplugin-icons/vite';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 
-const { SENTRY_AUTH_TOKEN, FRONTEND_PUBLIC_SENTRY_RELEASE } = process.env;
+const {
+  SENTRY_AUTH_TOKEN,
+  SENTRY_COMMIT_SHA,
+  FRONTEND_PUBLIC_SENTRY_RELEASE,
+} = process.env;
 
 async function createCustomIconsCollection(): Promise<InlineCollection> {
   const files = await readdir('./src/assets/icons', { recursive: true });
@@ -69,7 +73,14 @@ export default defineConfig({
       project: 'polimane-frontend',
       authToken: SENTRY_AUTH_TOKEN,
       telemetry: false,
-      release: { name: FRONTEND_PUBLIC_SENTRY_RELEASE },
+      release: {
+        name: FRONTEND_PUBLIC_SENTRY_RELEASE,
+        deploy: { env: 'production' },
+        setCommits: {
+          repo: 'TArch64/polimane',
+          commit: SENTRY_COMMIT_SHA!,
+        },
+      },
     }),
   ],
 });
