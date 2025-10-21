@@ -1,12 +1,8 @@
 locals {
-  worker_sources_dir = abspath("${path.root}/../../backend")
+  worker_sources_dir  = local.lambda_sources_dir
+  worker_sources_hash = local.lambda_sources_hash
   worker_build_dir = abspath("${path.root}/tmp/worker")
   worker_build_zip = abspath("${local.worker_build_dir}/bootstrap.zip")
-
-  worker_sources_hash = sha1(join("", [
-    for f in fileset(local.worker_sources_dir, "**/*.go") :
-    filesha1("${local.worker_sources_dir}/${f}")
-  ]))
 }
 
 resource "null_resource" "worker_build" {

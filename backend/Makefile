@@ -1,4 +1,7 @@
-.PHONY: dev_api dev_worker db_migration_new db_migration_blank db_rehash_migrations db_migrate prod_api prod_worker
+.PHONY: dev_api dev_worker db_migration_new db_migration_blank db_rehash_migrations db_migrate prod_api prod_worker prod_build
+
+export SENTRY_ORG = myself-zmf
+export SENTRY_PROJECT = polimane-backend
 
 MAKEFLAGS += --no-print-directory
 ldflags = '-linkmode external -extldflags "-static -Wl,-unresolved-symbols=ignore-all"'
@@ -32,14 +35,18 @@ execute_with_retry:
 		sleep $(interval); \
 	done
 
-prod_api: cgo_envs
-	GOOS=linux GOARCH=arm64 \
-	go build -tags "prod" -o "$(out_dir)/bootstrap" -ldflags $(ldflags) main_api.go
-	zip -j "$(out_dir)/bootstrap.zip" "$(out_dir)/bootstrap"
-	rm "$(out_dir)/bootstrap"
+prod_api:
+	sentry-cli releases new $(SENTRY_RELEASE)
+	sentry-cli releases set-commits $(SENTRY_RELEASE) --commit "TArch64/polimane@$(SENTRY_COMMIT_SHA)"
+	$(MAKE) prod_build app=api out_dir=$(out_dir)
+	sentry-cli deploys new --release $(SENTRY_RELEASE) --env production
+	sentry-cli releases finalize $(SENTRY_RELEASE)
 
-prod_worker: cgo_envs
+prod_worker:
+	$(MAKE) prod_build app=worker out_dir=$(out_dir)
+
+prod_build: cgo_envs
 	GOOS=linux GOARCH=arm64 \
-	go build -tags "prod" -o "$(out_dir)/bootstrap" -ldflags $(ldflags) main_worker.go
+	go build -tags "prod" -o "$(out_dir)/bootstrap" -ldflags $(ldflags) main_$(app).go
 	zip -j "$(out_dir)/bootstrap.zip" "$(out_dir)/bootstrap"
 	rm "$(out_dir)/bootstrap"

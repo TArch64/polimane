@@ -27,6 +27,7 @@ func Provider(options Options) (*Container, error) {
 		Dsn:              config.Dsn,
 		Release:          config.Release,
 		AttachStacktrace: true,
+		Environment:      "production",
 	})
 
 	if err != nil {
