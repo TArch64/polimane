@@ -48,6 +48,10 @@ func convertIncomingRequest(ctx context.Context, req events.APIGatewayV2HTTPRequ
 		httpReq.Header.Set(key, value)
 	}
 
+	if len(req.Cookies) > 0 {
+		httpReq.Header.Set("Cookie", strings.Join(req.Cookies, "; "))
+	}
+
 	httpReq.RequestURI = url
 	return httpReq
 }
