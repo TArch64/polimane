@@ -11,7 +11,7 @@ const {
   SENTRY_AUTH_TOKEN,
   SENTRY_COMMIT_SHA,
   FRONTEND_PUBLIC_SENTRY_RELEASE,
-  FRONTEND_PUBLIC_GOOGLE_ANALYTICS_ID,
+  FRONTEND_GOOGLE_ANALYTICS_ID,
 } = process.env;
 
 async function createCustomIconsCollection(): Promise<InlineCollection> {
@@ -85,8 +85,8 @@ export default defineConfig({
       },
     }),
 
-    !!FRONTEND_PUBLIC_GOOGLE_ANALYTICS_ID && VitePluginRadar({
-      analytics: { id: FRONTEND_PUBLIC_GOOGLE_ANALYTICS_ID },
+    !!FRONTEND_GOOGLE_ANALYTICS_ID && VitePluginRadar({
+      analytics: { id: FRONTEND_GOOGLE_ANALYTICS_ID },
     }),
   ],
 });
