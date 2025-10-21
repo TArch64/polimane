@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   FRONTEND_PUBLIC_API_URL: string;
   FRONTEND_PUBLIC_SENTRY_DSN: string;
   FRONTEND_PUBLIC_CDN_HOST: string;
+  FRONTEND_PUBLIC_GOOGLE_ANALYTICS_ID: string;
 }
 
 interface ImportMeta {
