@@ -16,6 +16,10 @@
       </Button>
     </template>
 
+    <DropdownText class="home-top-bar__horizontal-divider">
+      {{ displayName }}
+    </DropdownText>
+
     <DropdownAction
       title="Log out"
       :icon="LogOutIcon"
@@ -30,10 +34,11 @@
 
 <script setup lang="ts">
 import type { RouteLocationRaw } from 'vue-router';
+import { computed } from 'vue';
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
 import { LogOutIcon, PersonFillIcon, PlusIcon, SettingsIcon } from '@/components/icon';
-import { Dropdown, DropdownAction } from '@/components/dropdown';
+import { Dropdown, DropdownAction, DropdownText } from '@/components/dropdown';
 import { useSessionStore } from '@/stores';
 import { useAsyncAction, useProgressBar } from '@/composables';
 import { useSchemasStore } from '../stores';
@@ -41,6 +46,16 @@ import { HomeCreateSchemaModal } from './schemas';
 
 const schemasStore = useSchemasStore();
 const sessionStore = useSessionStore();
+
+const displayName = computed(() => {
+  const { firstName, lastName, email } = sessionStore.user;
+
+  if (firstName || lastName) {
+    return [firstName, lastName].filter(Boolean).join(' ');
+  }
+
+  return email;
+});
 
 const settingsProfileRoute: RouteLocationRaw = { name: 'settings-profile' };
 const createSchemaModal = useModal(HomeCreateSchemaModal);
@@ -53,6 +68,10 @@ useProgressBar(logout);
 @layer page {
   .home-top-bar__create-schema {
     margin-right: 12px;
+  }
+
+  .home-top-bar__horizontal-divider {
+    border-bottom: var(--divider);
   }
 }
 </style>

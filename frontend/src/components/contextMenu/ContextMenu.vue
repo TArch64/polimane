@@ -1,7 +1,7 @@
 <template>
   <DropdownMenu
     ref="menuRef"
-    class="dropdown"
+    class="dropdown-menu"
     view-transition-name="context-menu"
     :control="menu.control"
     :class="classes"
@@ -88,7 +88,7 @@ onClickOutside(menuRef, () => emit('close'));
 
 <style scoped>
 @layer components {
-  .dropdown {
+  .dropdown-menu {
     z-index: 9999;
     margin: 4px 0 0;
     min-width: 200px;

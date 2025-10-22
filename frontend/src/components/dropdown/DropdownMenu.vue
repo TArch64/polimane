@@ -1,5 +1,5 @@
 <template>
-  <div role="menu" popover="manual" class="dropdown">
+  <div role="menu" popover="manual" class="dropdown-menu">
     <slot />
   </div>
 </template>
@@ -26,7 +26,7 @@ const backgroundColor = computed(() => {
 
 <style scoped>
 @layer components {
-  .dropdown {
+  .dropdown-menu {
     background-color: v-bind("backgroundColor");
     border: var(--divider);
     border-radius: var(--rounded-md);

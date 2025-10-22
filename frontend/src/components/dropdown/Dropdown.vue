@@ -8,7 +8,7 @@
   <Teleport to="body" v-if="isOpened">
     <DropdownMenu
       ref="menuRef"
-      class="dropdown"
+      class="dropdown-menu"
       :style="menuStyles"
       v-popover-shift
     >
@@ -77,7 +77,7 @@ function close(): void {
 
 <style scoped>
 @layer components {
-  .dropdown {
+  .dropdown-menu {
     position-area: bottom center;
     margin-top: 4px;
     min-width: 150px;

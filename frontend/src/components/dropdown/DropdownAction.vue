@@ -4,7 +4,7 @@
     :danger
     :disabled
     :prepend-icon="icon"
-    class="dropdown-action"
+    class="dropdown__action"
   >
     {{ title }}
   </Button>
@@ -29,7 +29,7 @@ withDefaults(defineProps<{
 
 <style scoped>
 @layer components {
-  .dropdown-action {
+  .dropdown__action {
     display: flex;
     align-items: center;
     justify-content: flex-start;
