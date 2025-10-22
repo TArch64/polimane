@@ -43,6 +43,7 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
   const beadFactory = useBeadFactory();
   const isPainting = ref(false);
   let spanning: ISpanningBead | null = null;
+  let lastPaintedPoint: Point | null = null;
 
   function restrictSpanningPoint(refPoint: IPoint): void {
     const { direction, point } = spanning!;
@@ -76,23 +77,18 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
     };
   }
 
-  const paint = createAnimatedFrame((event: MouseEvent, color: string | null) => {
-    const point = beadCoord.getFromEvent(event);
-    if (!point) return;
-
+  function paintCell(point: IPoint, color: string | null): PaintEffect | null {
     let coord = serializeBeadPoint(point);
     let bead: SchemaBead | null;
 
     if (spanning) {
       if (spanning.point.isEqual(point)) {
-        return;
+        return null;
       }
 
       if (spanning.direction) {
-        restrictSpanningPoint(point);
-
         if (detectDirection(spanning.point, point) !== spanning.direction) {
-          return;
+          return null;
         }
 
         coord = serializeBeadPoint(point);
@@ -101,7 +97,7 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
       }
 
       if (isSameSpanningRef(coord)) {
-        return;
+        return null;
       }
 
       const spanningCoord = serializeBeadPoint(spanning.point);
@@ -120,7 +116,44 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
       }
     }
 
-    if (beadsStore.paint(coord, bead) === PaintEffect.EXTENDED) {
+    const effect = beadsStore.paint(coord, bead);
+    lastPaintedPoint = new Point(point);
+    return effect;
+  }
+
+  function buildSequence(current: IPoint): IPoint[] {
+    if (!lastPaintedPoint) {
+      return [current];
+    }
+    if (lastPaintedPoint.isEqual(current)) {
+      return [];
+    }
+    const difference = lastPaintedPoint.getAxisDifference(current);
+    if (difference.x > 0 && difference.y > 0) {
+      return [current];
+    }
+    const axis = difference.x !== 0 ? 'x' : 'y';
+    const baseX = Math.min(lastPaintedPoint.x, current.x);
+    const baseY = Math.min(lastPaintedPoint.y, current.y);
+
+    return Array.from({ length: difference[axis] + 1 }, (_, index): IPoint => ({
+      x: axis === 'x' ? baseX + index : current.x,
+      y: axis === 'y' ? baseY + index : current.y,
+    }));
+  }
+
+  const paint = createAnimatedFrame((event: MouseEvent, color: string | null) => {
+    const current = beadCoord.getFromEvent(event);
+    if (!current) return;
+
+    if (spanning?.direction) {
+      restrictSpanningPoint(current);
+    }
+
+    const points = buildSequence(current);
+    const effect = points.map((point) => paintCell(point, color));
+
+    if (effect.includes(PaintEffect.EXTENDED)) {
       beadCoord.clearCache();
     }
   });
@@ -128,6 +161,7 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
   function onMouseup() {
     isPainting.value = false;
     spanning = null;
+    lastPaintedPoint = null;
     beadCoord.clearCache();
   }
 

@@ -60,4 +60,11 @@ export class Point implements IPoint {
   isEqual(other: IPoint): boolean {
     return Point.isEqual(this, other);
   }
+
+  getAxisDifference(other: IPoint): IPoint {
+    return {
+      x: Math.abs(other.x - this.x),
+      y: Math.abs(other.y - this.y),
+    };
+  }
 }
