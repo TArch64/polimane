@@ -21,7 +21,7 @@ import (
 	"polimane/backend/worker/queue"
 )
 
-func (c *Controller) handleError(err error) {
+func (c *Controller) handleError(_ context.Context, err error) {
 	log.Println(err)
 }
 
