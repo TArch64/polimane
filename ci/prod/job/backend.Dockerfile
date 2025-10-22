@@ -9,7 +9,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
     apt-get update && \
     apt-get install -y --no-install-recommends curl build-essential ca-certificates
 
-RUN curl -sSfL https://atlasgo.sh | sh
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go install github.com/pressly/goose/v3/cmd/goose@latest
 
 COPY Makefile ./
 COPY atlas.hcl ./

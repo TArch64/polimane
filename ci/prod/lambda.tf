@@ -1,5 +1,9 @@
 locals {
-  migrations_hash = filesha1("${local.lambda_sources_dir}/migrations/atlas.sum")
+  migrations_hash = sha1(join("", [
+    for f in fileset("${local.lambda_sources_dir}/migrations", "**/*.sql") :
+    filesha1("${local.lambda_sources_dir}/migrations/${f}")
+  ]))
+
   lambda_name = local.app_name
 
   lambda_environment = {

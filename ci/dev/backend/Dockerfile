@@ -11,6 +11,5 @@ RUN --mount=type=cache,target=/var/cache/apt \
     apt-get install -y --no-install-recommends musl-tools build-essential
 
 RUN --mount=type=cache,target=/go/pkg/mod \
-    go install github.com/mitranim/gow@latest
-
-RUN curl -sSf https://atlasgo.sh | sh
+    go install github.com/mitranim/gow@latest && \
+    go install github.com/pressly/goose/v3/cmd/goose@latest

@@ -56,7 +56,7 @@ services:
 
   db:
     <<: *common
-    build: ./ci/dev/database
+    image: cockroachdb/cockroach:latest-v25.3
     environment:
       COCKROACH_ARGS: start-single-node --insecure
     ports:
