@@ -29,6 +29,7 @@ export class SentryPlugin {
     init({
       app: this.app,
       dsn: this.options.dsn,
+      environment: import.meta.env.MODE,
     });
   }
 
