@@ -12,10 +12,15 @@ import {
   serializeBeadPoint,
 } from '@/models';
 import { Direction, isHorizontalDirection, isVerticalDirection } from '@/enums';
-import { PaintEffect, useBeadsStore, useEditorStore, useToolsStore } from '../../stores';
+import {
+  PaintEffect,
+  useBeadFactory,
+  useBeadsStore,
+  useEditorStore,
+  useToolsStore,
+} from '../../stores';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 import { useBeadCoord } from './useBeadCoord';
-import { useBeadFactory } from './useBeadFactory';
 
 export interface IBeadPaintingListeners {
   mousedown: (event: MouseEvent) => void;

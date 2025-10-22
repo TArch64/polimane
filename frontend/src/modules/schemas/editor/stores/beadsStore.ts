@@ -70,7 +70,11 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     }
   }
 
-  function getSpanBeads(coord: BeadCoord, bead: SchemaSpannableBead, out: SchemaBeads = {}): SchemaBeads {
+  function getSpanBeads<K extends BeadKind = BeadKind>(
+    coord: BeadCoord,
+    bead: SchemaSpannableBead,
+    out: SchemaBeads<K> = {},
+  ): SchemaBeads<K> {
     const { x, y } = parseBeadCoord(coord);
     const settings = getBeadSettings(bead);
 
@@ -81,7 +85,9 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     const to: IPoint = { x: Math.max(x, spanX), y: Math.max(y, spanY) };
 
     for (const [spanCoord, spanBead] of iterateArea(from, to)) {
-      out[spanCoord] = spanBead;
+      if (coord !== spanCoord) {
+        out[spanCoord] = spanBead as SchemaBead<K>;
+      }
     }
 
     return out;
@@ -165,5 +171,5 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     return null;
   }
 
-  return { paint, remove, getInArea };
+  return { paint, remove, getInArea, getSpanBeads };
 });

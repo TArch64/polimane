@@ -1,9 +1,9 @@
-import { Direction } from '@/enums';
+import { BeadKind, Direction } from '@/enums';
 import type { SchemaBead } from './ISchemaBead';
 import type { BeadCoord } from './SchemaBeadCoord';
 
 export type SchemaSize = Record<Direction, number>;
-export type SchemaBeads = Record<BeadCoord, SchemaBead>;
+export type SchemaBeads<K extends BeadKind = BeadKind> = Record<BeadCoord, SchemaBead<K>>;
 
 export interface ISchema {
   id: string;

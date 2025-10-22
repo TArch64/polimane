@@ -5,3 +5,4 @@ export * from './canvasStore';
 export * from './toolsStore';
 export * from './beadsStore';
 export * from './selectionStore';
+export { useBeadFactory } from './composables';

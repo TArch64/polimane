@@ -2,7 +2,6 @@ import { computed, type Ref, watch } from 'vue';
 import {
   type IBeadSelection,
   useBeadsStore,
-  useEditorStore,
   useSelectionStore,
   useToolsStore,
 } from '@editor/stores';
@@ -20,7 +19,6 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
   const selectionStore = useSelectionStore();
   const toolsStore = useToolsStore();
   const beadsStore = useBeadsStore();
-  const editorStore = useEditorStore();
 
   const beadCoord = useBeadCoord(options);
 

@@ -1,9 +1,17 @@
 import { computed, reactive, type Ref, ref } from 'vue';
 import { BEAD_SIZE } from '@editor/const';
-import { Direction, DirectionList, isNegativeDirection, isVerticalDirection } from '@/enums';
+import {
+  BeadKind,
+  Direction,
+  DirectionList,
+  isNegativeDirection,
+  isVerticalDirection,
+} from '@/enums';
 import {
   type BeadCoord,
   type INodeRect,
+  isRefBead,
+  isSpannableBead,
   parseBeadCoord,
   type SchemaBeads,
   serializeBeadCoord,
@@ -13,6 +21,7 @@ import { getObjectEntries, getObjectKeys, type ObjectEntries } from '@/helpers';
 import { useBeadsStore } from '../beadsStore';
 import type { IBeadSelection } from '../selectionStore';
 import type { ISelectionArea } from './useSelectionArea';
+import { useBeadFactory } from './useBeadFactory';
 
 export interface ISelectionResizeOptions {
   area: ISelectionArea;
@@ -30,6 +39,7 @@ export interface ISelectionResize extends INodeRect {
 
 export function useSelectionResize(options: ISelectionResizeOptions): ISelectionResize {
   const beadsStore = useBeadsStore();
+  const beadFactory = useBeadFactory();
 
   const translation = ref(0);
   const direction = ref<Direction | null>(null);
@@ -54,29 +64,51 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
   }
 
   function buildSequence(beads: SchemaBeads, direction: Direction): SchemaBeads[] {
+    const coords = getObjectKeys(beads).map(getAxisCoord);
+
     const order = isNegativeDirection(direction) ? -1 : 1;
-
-    const coords = getObjectKeys(beads)
-      .map(getAxisCoord);
-
     const mainCoords = Array.from(new Set(coords)).sort((a, b) => (a - b) * order);
     const sequence = mainCoords.map((): SchemaBeads => ({}));
 
-    for (const [coord, color] of getObjectEntries(beads)) {
+    for (const [coord, bead] of getObjectEntries(beads)) {
+      if (isRefBead(bead)) {
+        continue;
+      }
+
       const axisIndex = mainCoords.indexOf(getAxisCoord(coord));
-      sequence[axisIndex]![coord] = color;
+      sequence[axisIndex]![coord] = bead;
     }
 
     return sequence;
   }
 
-  function renderTemplate(template: SchemaBeads): ObjectEntries<SchemaBeads> {
-    return getObjectEntries(template).map(([templateCoord, bead]) => {
-      const coord = parseBeadCoord(templateCoord);
-      const modifier = isNegativeDirection(direction.value!) ? -1 : 1;
-      coord[sequenceAxis.value!] += (sequenceOffset.value + capturedSequence.value.length) * modifier;
-      return [serializeBeadPoint(coord), bead];
-    });
+  function renderTemplateCoord(templateCoord: BeadCoord): BeadCoord {
+    const point = parseBeadCoord(templateCoord);
+    const modifier = isNegativeDirection(direction.value!) ? -1 : 1;
+    point[sequenceAxis.value!] += (sequenceOffset.value + capturedSequence.value.length) * modifier;
+    return serializeBeadPoint(point);
+  }
+
+  function renderTemplate(template: SchemaBeads) {
+    return getObjectEntries(template).flatMap(([templateCoord, bead]) => {
+      const coord = renderTemplateCoord(templateCoord);
+      const entries = [[coord, bead]];
+
+      if (!isSpannableBead(bead)) {
+        return entries;
+      }
+
+      const spanRefs = beadsStore.getSpanBeads<BeadKind.REF>(templateCoord, bead);
+
+      for (const templateRefCoord of getObjectKeys(spanRefs)) {
+        entries.push([
+          renderTemplateCoord(templateRefCoord),
+          beadFactory.createRef(coord),
+        ]);
+      }
+
+      return entries;
+    }) as unknown as ObjectEntries<SchemaBeads>;
   }
 
   function extendArea(value: number) {
