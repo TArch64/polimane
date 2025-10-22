@@ -1,9 +1,11 @@
 package model
 
+type BeadKind string
+
 const (
-	BeadCircle = "circle"
-	BeadBugle  = "bugle"
-	BeadRef    = "ref"
+	BeadCircle BeadKind = "circle"
+	BeadBugle  BeadKind = "bugle"
+	BeadRef    BeadKind = "ref"
 )
 
 type SchemaBead struct {

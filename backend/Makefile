@@ -38,12 +38,12 @@ execute_with_retry:
 prod_api:
 	sentry-cli releases new $(SENTRY_RELEASE)
 	sentry-cli releases set-commits $(SENTRY_RELEASE) --commit "TArch64/polimane@$(SENTRY_COMMIT_SHA)"
-	$(MAKE) prod_build app=api out_dir=$(out_dir)
+	@make prod_build app=api out_dir=$(out_dir)
 	sentry-cli deploys new --release $(SENTRY_RELEASE) --env production
 	sentry-cli releases finalize $(SENTRY_RELEASE)
 
 prod_worker:
-	$(MAKE) prod_build app=worker out_dir=$(out_dir)
+	@make prod_build app=worker out_dir=$(out_dir)
 
 prod_build: cgo_envs
 	GOOS=linux GOARCH=arm64 \
