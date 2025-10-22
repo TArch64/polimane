@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM golang:1.25-bookworm
 
 WORKDIR /app
 
@@ -17,4 +17,4 @@ COPY migrations ./migrations
 
 RUN --mount=type=secret,id=BACKEND_DATABASE_URL,env=BACKEND_DATABASE_URL \
     --mount=type=secret,id=BACKEND_DATABASE_CERT,target=/tmp/postgres/ca-cert.pem \
-    make db_migrate env=prod
+    make db_migrate
