@@ -55,7 +55,10 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
 
   function buildSequence(beads: SchemaBeads, direction: Direction): SchemaBeads[] {
     const order = isNegativeDirection(direction) ? -1 : 1;
-    const coords = getObjectKeys(beads).map(getAxisCoord);
+
+    const coords = getObjectKeys(beads)
+      .map(getAxisCoord);
+
     const mainCoords = Array.from(new Set(coords)).sort((a, b) => (a - b) * order);
     const sequence = mainCoords.map((): SchemaBeads => ({}));
 

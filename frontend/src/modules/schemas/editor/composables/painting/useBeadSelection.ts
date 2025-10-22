@@ -7,16 +7,8 @@ import {
   useToolsStore,
 } from '@editor/stores';
 import { BEAD_SIZE } from '@editor/const';
-import {
-  getBeadSettings,
-  type IPoint,
-  isRefBead,
-  isSpannableBead,
-  parseBeadCoord,
-  Point,
-  serializeBeadCoord,
-} from '@/models';
-import { getObjectEntries } from '@/helpers';
+import { type IPoint, parseBeadCoord, Point, serializeBeadCoord } from '@/models';
+import { getObjectKeys } from '@/helpers';
 import type { IBeadToolsOptions } from './IBeadToolsOptions';
 import { type IBeadResolveOptions, useBeadCoord } from './useBeadCoord';
 
@@ -42,23 +34,10 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
     const xs: number[] = [];
     const ys: number[] = [];
 
-    for (let [coord, bead] of getObjectEntries(selected)) {
-      if (isRefBead(bead)) {
-        const settings = getBeadSettings(bead);
-        coord = settings.to;
-        bead = editorStore.schema.beads[coord]!;
-      }
-
+    for (const coord of getObjectKeys(selected)) {
       const { x, y } = parseBeadCoord(coord);
-
       xs.push(x);
       ys.push(y);
-
-      if (isSpannableBead(bead)) {
-        const settings = getBeadSettings(bead);
-        xs.push(x + settings.span.x);
-        ys.push(y + settings.span.y);
-      }
     }
 
     xs.sort((a, b) => a - b);

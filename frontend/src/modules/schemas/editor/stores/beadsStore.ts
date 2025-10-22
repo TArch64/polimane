@@ -8,9 +8,11 @@ import {
   parseBeadCoord,
   type SchemaBead,
   type SchemaBeads,
+  type SchemaSpannableBead,
   serializeBeadCoord,
 } from '@/models';
 import { BeadKind, Direction } from '@/enums';
+import { getObjectEntries } from '@/helpers';
 import { useEditorStore } from './editorStore';
 
 export enum PaintEffect {
@@ -68,11 +70,41 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     }
   }
 
+  function getSpanBeads(coord: BeadCoord, bead: SchemaSpannableBead, out: SchemaBeads = {}): SchemaBeads {
+    const { x, y } = parseBeadCoord(coord);
+    const settings = getBeadSettings(bead);
+
+    const spanX = x + settings.span.x;
+    const spanY = y + settings.span.y;
+
+    const from: IPoint = { x: Math.min(x, spanX), y: Math.min(y, spanY) };
+    const to: IPoint = { x: Math.max(x, spanX), y: Math.max(y, spanY) };
+
+    for (const [spanCoord, spanBead] of iterateArea(from, to)) {
+      out[spanCoord] = spanBead;
+    }
+
+    return out;
+  }
+
   function getInArea(from: IPoint, to: IPoint): SchemaBeads {
     const beads: SchemaBeads = {};
 
-    for (const [coord, bead] of iterateArea(from, to)) {
+    for (let [coord, bead] of iterateArea(from, to)) {
+      if (isRefBead(bead)) {
+        coord = getBeadSettings(bead).to;
+        bead = editorStore.schema.beads[coord]!;
+      }
+
+      if (coord in beads) {
+        continue;
+      }
+
       beads[coord] = bead;
+
+      if (isSpannableBead(bead)) {
+        getSpanBeads(coord, bead, beads);
+      }
     }
 
     return beads;
@@ -87,23 +119,9 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     }
 
     if (isSpannableBead(bead)) {
-      const { x, y } = parseBeadCoord(coord);
-      const { span } = getBeadSettings(bead);
+      const spanBeads = getSpanBeads(coord, bead);
 
-      const spanX = x + span.x;
-      const spanY = y + span.y;
-
-      const from: IPoint = {
-        x: Math.min(x, spanX),
-        y: Math.min(y, spanY),
-      };
-
-      const to: IPoint = {
-        x: Math.max(x, spanX),
-        y: Math.max(y, spanY),
-      };
-
-      for (const [coord, bead] of iterateArea(from, to)) {
+      for (const [coord, bead] of getObjectEntries(spanBeads)) {
         if (bead.kind === BeadKind.REF) {
           delete editorStore.schema.beads[coord];
         }
