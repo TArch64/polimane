@@ -13,7 +13,6 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     go install github.com/pressly/goose/v3/cmd/goose@latest
 
 COPY Makefile ./
-COPY atlas.hcl ./
 COPY migrations ./migrations
 
 RUN --mount=type=secret,id=BACKEND_DATABASE_URL,env=BACKEND_DATABASE_URL \
