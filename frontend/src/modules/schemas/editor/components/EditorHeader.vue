@@ -64,6 +64,7 @@
         title="Видалити"
         :icon="TrashIcon"
         @click="deleteSchema"
+        v-if="permissions.admin"
       />
     </Dropdown>
   </Card>
@@ -87,22 +88,23 @@ import {
   SettingsIcon,
   TrashIcon,
 } from '@/components/icon';
-import { useAsyncAction, useProgressBar } from '@/composables';
+import { useAccessPermissions, useAsyncAction, useProgressBar } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
-import { useEditorStore, useHistoryStore, useSelectionStore } from '../stores';
+import { useEditorStore, useHistoryStore } from '../stores';
 import { SchemaEditModal, SchemaExportModal } from './modals';
 
 const router = useRouter();
 const historyStore = useHistoryStore();
 const editorStore = useEditorStore();
-const selectionStore = useSelectionStore();
 
 const renameModal = useModal(SchemaEditModal);
 const exportModal = useModal(SchemaExportModal);
+
+const permissions = useAccessPermissions(() => editorStore.schema.access);
 
 const SavingIcon = computed((): IconComponent => {
   if (editorStore.isSaving) {

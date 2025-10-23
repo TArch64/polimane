@@ -11,17 +11,19 @@ import (
 )
 
 type listItem struct {
-	ID              model.ID   `json:"id"`
-	Name            string     `json:"name"`
-	BackgroundColor string     `json:"backgroundColor"`
-	ScreenshotedAt  *time.Time `json:"screenshotedAt"`
-	ScreenshotPath  *string    `json:"screenshotPath"`
+	ID              model.ID          `json:"id"`
+	Name            string            `json:"name"`
+	Access          model.AccessLevel `json:"access"`
+	BackgroundColor string            `json:"backgroundColor"`
+	ScreenshotedAt  *time.Time        `json:"screenshotedAt"`
+	ScreenshotPath  *string           `json:"screenshotPath"`
 }
 
 func newListItem(schema *model.Schema) *listItem {
 	return &listItem{
 		ID:              schema.ID,
 		Name:            schema.Name,
+		Access:          schema.Access,
 		BackgroundColor: schema.BackgroundColor,
 		ScreenshotedAt:  schema.ScreenshotedAt,
 		ScreenshotPath:  schema.ScreenshotPath(),
@@ -30,8 +32,14 @@ func newListItem(schema *model.Schema) *listItem {
 
 func (c *Controller) apiList(ctx *fiber.Ctx) error {
 	schemas, err := c.schemas.ByUser(ctx.Context(), &repositoryschemas.ByUserOptions{
-		User:   auth.GetSessionUser(ctx),
-		Select: []string{"id", "name", "screenshoted_at", "background_color"},
+		User: auth.GetSessionUser(ctx),
+		Select: []string{
+			"id",
+			"name",
+			"screenshoted_at",
+			"background_color",
+			"user_schemas.access AS access",
+		},
 	})
 
 	if err != nil {

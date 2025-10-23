@@ -14,15 +14,11 @@ type ByIDOptions struct {
 
 func (i *Impl) ByID(ctx context.Context, options *ByIDOptions) (*model.Schema, error) {
 	var err error
+	query := i.db.WithContext(ctx)
 
 	if options.User != nil {
-		err = i.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID, model.AccessRead)
-		if err != nil {
-			return nil, err
-		}
+		query = query.Scopes(UserSchemaScope(options.User.ID))
 	}
-
-	query := i.db.WithContext(ctx)
 
 	if len(options.Select) > 0 {
 		query = query.Select(options.Select)

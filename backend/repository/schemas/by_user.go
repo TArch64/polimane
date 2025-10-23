@@ -14,13 +14,19 @@ type ByUserOptions struct {
 func (i *Impl) ByUser(ctx context.Context, options *ByUserOptions) ([]*model.Schema, error) {
 	query := i.db.
 		WithContext(ctx).
-		Joins("JOIN user_schemas ON user_schemas.schema_id = schemas.id AND user_schemas.user_id = ?", options.User.ID)
+		Scopes(UserSchemaScope(options.User.ID))
 
 	if len(options.Select) > 0 {
 		query = query.Select(options.Select)
 	}
 
 	var schemas []*model.Schema
-	err := query.Find(&schemas).Error
+
+	err := query.
+		Limit(100).
+		Order("schemas.created_at DESC").
+		Find(&schemas).
+		Error
+
 	return schemas, err
 }

@@ -5,6 +5,7 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
@@ -23,5 +24,6 @@ func (c *Controller) apiCopy(ctx *fiber.Ctx) error {
 		return err
 	}
 
+	schema.Access = model.AccessAdmin
 	return ctx.JSON(newListItem(schema))
 }

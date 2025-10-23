@@ -1,6 +1,8 @@
 package schemas
 
 import (
+	"polimane/backend/model"
+
 	"github.com/gofiber/fiber/v2"
 
 	"polimane/backend/api/auth"
@@ -17,6 +19,7 @@ func (c *Controller) apiById(ctx *fiber.Ctx) error {
 	schema, err := c.schemas.ByID(ctx.Context(), &repositoryschemas.ByIDOptions{
 		User:     auth.GetSessionUser(ctx),
 		SchemaID: schemaId,
+		Select:   append(model.GetColumns(model.Schema{}), "user_schemas.access AS access"),
 	})
 
 	if err != nil {

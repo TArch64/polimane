@@ -21,7 +21,12 @@ type Schema struct {
 	Beads           t.JSONType[SchemaBeads]   `json:"beads,omitempty"`
 	BackgroundColor string                    `gorm:"default:#f8f8f8" json:"backgroundColor"`
 	ScreenshotedAt  *time.Time                `json:"screenshotedAt"`
-	Users           []User                    `gorm:"many2many:user_schemas" json:"-"`
+
+	// Relations
+	Users []User `gorm:"many2many:user_schemas" json:"-"`
+
+	// Computed fields
+	Access AccessLevel `gorm:"<-:false" json:"access,omitempty"`
 }
 
 func (s *Schema) ScreenshotPath() *string {
