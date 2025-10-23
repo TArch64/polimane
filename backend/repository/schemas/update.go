@@ -12,15 +12,15 @@ type UpdateOptions struct {
 	Updates  *model.Schema
 }
 
-func (i *Client) Update(ctx context.Context, options *UpdateOptions) (err error) {
+func (c *Client) Update(ctx context.Context, options *UpdateOptions) (err error) {
 	if options.User != nil {
-		err = i.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID, model.AccessWrite)
+		err = c.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID, model.AccessWrite)
 		if err != nil {
 			return err
 		}
 	}
 
-	return i.db.
+	return c.db.
 		WithContext(ctx).
 		Model(&model.Schema{
 			Identifiable: &model.Identifiable{

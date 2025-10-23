@@ -5,7 +5,7 @@ import { type HttpBody, HttpTransport, useAccessPermissions, useHttpClient } fro
 import { getObjectEntries } from '@/helpers';
 import { AccessLevel } from '@/enums';
 import { useEditorSaveDispatcher } from './composables';
-import useHistoryStore from './historyStore';
+import { useHistoryStore } from './historyStore';
 
 type UpdateSchemaRequest = Partial<Omit<ISchema, 'id'>>;
 

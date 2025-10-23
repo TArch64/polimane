@@ -11,11 +11,11 @@ type ByUserOptions struct {
 	Select []string
 }
 
-func (i *Client) OutByUser(ctx context.Context, options *ByUserOptions, out interface{}) error {
-	query := i.db.
+func (c *Client) ListByUserOut(ctx context.Context, options *ByUserOptions, out interface{}) error {
+	query := c.db.
 		WithContext(ctx).
 		Table("schemas").
-		Scopes(UserSchemaScope(options.User.ID))
+		Scopes(IncludeUserSchemaScope(options.User.ID))
 
 	if len(options.Select) > 0 {
 		query = query.Select(options.Select)
@@ -28,8 +28,8 @@ func (i *Client) OutByUser(ctx context.Context, options *ByUserOptions, out inte
 		Error
 }
 
-func (i *Client) ByUser(ctx context.Context, options *ByUserOptions) ([]*model.Schema, error) {
+func (c *Client) ListByUser(ctx context.Context, options *ByUserOptions) ([]*model.Schema, error) {
 	var schemas []*model.Schema
-	err := i.OutByUser(ctx, options, &schemas)
+	err := c.ListByUserOut(ctx, options, &schemas)
 	return schemas, err
 }

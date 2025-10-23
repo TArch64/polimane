@@ -18,7 +18,7 @@ func (q *Queue) ProcessSchemaScreenshot(ctx context.Context, message *events.Mes
 		return err
 	}
 
-	schema, err := q.schemas.ByID(ctx, &repositoryschemas.ByIDOptions{
+	schema, err := q.schemas.GetByID(ctx, &repositoryschemas.ByIDOptions{
 		SchemaID: body.SchemaID,
 	})
 

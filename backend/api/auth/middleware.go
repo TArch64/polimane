@@ -154,7 +154,7 @@ func (m *Middleware) getWorkosUser(ctx context.Context, accessTokenClaims *worko
 
 func (m *Middleware) getUser(ctx context.Context, id model.ID) (*model.User, error) {
 	return m.userCache.Get(ctx, id.String(), func() (*model.User, *time.Duration, error) {
-		user, err := m.users.ByID(ctx, id)
+		user, err := m.users.GetByID(ctx, id)
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil, m.newUnauthorizedErr(err, base.CustomErrorData{

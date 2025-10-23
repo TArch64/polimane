@@ -17,36 +17,36 @@ type DeleteOptions struct {
 	SchemaID model.ID
 }
 
-func (i *Client) Delete(ctx context.Context, options *DeleteOptions) (err error) {
-	err = i.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID, model.AccessAdmin)
+func (c *Client) Delete(ctx context.Context, options *DeleteOptions) (err error) {
+	err = c.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID, model.AccessAdmin)
 	if err != nil {
 		return err
 	}
 
-	err = i.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err = c.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if err = tx.Delete(&model.Schema{}, options.SchemaID).Error; err != nil {
 			return err
 		}
 
-		if err = i.userSchemas.DeleteTx(tx, options.User.ID, options.SchemaID); err != nil {
+		if err = c.userSchemas.DeleteTx(tx, options.User.ID, options.SchemaID); err != nil {
 			return err
 		}
 
-		return i.deleteScreenshot(ctx, options.SchemaID)
+		return c.deleteScreenshot(ctx, options.SchemaID)
 	})
 
 	if err != nil {
 		return err
 	}
 
-	i.signals.InvalidateUserCache.Emit(ctx, options.User.ID)
+	c.signals.InvalidateUserCache.Emit(ctx, options.User.ID)
 	return nil
 }
 
-func (i *Client) deleteScreenshot(ctx context.Context, schemaId model.ID) error {
+func (c *Client) deleteScreenshot(ctx context.Context, schemaId model.ID) error {
 	key := model.SchemaScreenshotKey(schemaId)
 
-	_, err := i.s3.DeleteObject(ctx, &s3.DeleteObjectInput{
+	_, err := c.s3.DeleteObject(ctx, &s3.DeleteObjectInput{
 		Key:    &key,
 		Bucket: &awsconfig.S3Bucket,
 	})

@@ -12,12 +12,12 @@ type ByIDOptions struct {
 	Select   []string
 }
 
-func (i *Client) OutByID(ctx context.Context, options *ByIDOptions, out interface{}) error {
-	query := i.db.WithContext(ctx).
+func (c *Client) GetOutByID(ctx context.Context, options *ByIDOptions, out interface{}) error {
+	query := c.db.WithContext(ctx).
 		Table("schemas")
 
 	if options.User != nil {
-		query = query.Scopes(UserSchemaScope(options.User.ID))
+		query = query.Scopes(IncludeUserSchemaScope(options.User.ID))
 	}
 
 	if len(options.Select) > 0 {
@@ -27,8 +27,8 @@ func (i *Client) OutByID(ctx context.Context, options *ByIDOptions, out interfac
 	return query.Take(out, options.SchemaID).Error
 }
 
-func (i *Client) ByID(ctx context.Context, options *ByIDOptions) (*model.Schema, error) {
+func (c *Client) GetByID(ctx context.Context, options *ByIDOptions) (*model.Schema, error) {
 	var schema model.Schema
-	err := i.OutByID(ctx, options, &schema)
+	err := c.GetOutByID(ctx, options, &schema)
 	return &schema, err
 }

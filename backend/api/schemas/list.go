@@ -32,7 +32,7 @@ func newListItem(schema *model.SchemaWithAccess) *listItem {
 
 func (c *Controller) apiList(ctx *fiber.Ctx) error {
 	var schemas []*model.SchemaWithAccess
-	err := c.schemas.OutByUser(ctx.Context(), &repositoryschemas.ByUserOptions{
+	err := c.schemas.ListByUserOut(ctx.Context(), &repositoryschemas.ByUserOptions{
 		User: auth.GetSessionUser(ctx),
 		Select: []string{
 			"id",

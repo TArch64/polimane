@@ -60,7 +60,8 @@
       <DropdownAction
         title="Редагувати Доступ"
         :icon="PeopleIcon"
-        @click="accessEditModal.open()"
+        :disabled="openAccessEditModal.isActive"
+        @click="openAccessEditModal"
       />
 
       <DropdownAction
@@ -105,12 +106,13 @@ import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
-import { useEditorStore, useHistoryStore } from '../stores';
+import { useEditorStore, useHistoryStore, useSchemaUsersStore } from '../stores';
 import { AccessEditModal, SchemaExportModal, SchemaRenameModal } from './modals';
 
 const router = useRouter();
 const historyStore = useHistoryStore();
 const editorStore = useEditorStore();
+const schemaUsersStore = useSchemaUsersStore();
 
 const renameModal = useModal(SchemaRenameModal);
 const exportModal = useModal(SchemaExportModal);
@@ -138,6 +140,11 @@ const savingTitle = computed((): string => {
 
 const isSaveDisabled = computed(() => {
   return !editorStore.hasUnsavedChanges || editorStore.isSaving;
+});
+
+const openAccessEditModal = useAsyncAction(async () => {
+  await schemaUsersStore.load();
+  accessEditModal.open();
 });
 
 const deleteConfirm = useConfirm({

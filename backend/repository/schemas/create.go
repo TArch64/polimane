@@ -18,7 +18,7 @@ type CreateOptions struct {
 	Beads           model.SchemaBeads
 }
 
-func (i *Client) Create(ctx context.Context, options *CreateOptions) (schema *model.Schema, err error) {
+func (c *Client) Create(ctx context.Context, options *CreateOptions) (schema *model.Schema, err error) {
 	if options.Palette == nil {
 		options.Palette = make(model.SchemaPalette, model.SchemaPaletteSize)
 	}
@@ -36,7 +36,7 @@ func (i *Client) Create(ctx context.Context, options *CreateOptions) (schema *mo
 		options.Beads = make(model.SchemaBeads)
 	}
 
-	err = i.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err = c.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		schema = &model.Schema{
 			Name:            options.Name,
 			BackgroundColor: options.BackgroundColor,
@@ -49,13 +49,13 @@ func (i *Client) Create(ctx context.Context, options *CreateOptions) (schema *mo
 			return err
 		}
 
-		return i.userSchemas.CreateTx(tx, options.User.ID, schema.ID, model.AccessAdmin)
+		return c.userSchemas.CreateTx(tx, options.User.ID, schema.ID, model.AccessAdmin)
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	i.signals.InvalidateUserCache.Emit(ctx, options.User.ID)
+	c.signals.InvalidateUserCache.Emit(ctx, options.User.ID)
 	return schema, nil
 }

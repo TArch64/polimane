@@ -72,7 +72,7 @@ func (c *Controller) updateScreenshot(ctx context.Context, schemaID model.ID, ne
 		})
 	}
 
-	schema, err := c.schemas.ByID(ctx, &repositoryschemas.ByIDOptions{
+	schema, err := c.schemas.GetByID(ctx, &repositoryschemas.ByIDOptions{
 		SchemaID: schemaID,
 	})
 

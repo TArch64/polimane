@@ -16,7 +16,7 @@ func (c *Controller) apiById(ctx *fiber.Ctx) error {
 	}
 
 	var schema model.SchemaWithAccess
-	err = c.schemas.OutByID(ctx.Context(), &repositoryschemas.ByIDOptions{
+	err = c.schemas.GetOutByID(ctx.Context(), &repositoryschemas.ByIDOptions{
 		User:     auth.GetSessionUser(ctx),
 		SchemaID: schemaId,
 		Select:   []string{"schemas.*", "user_schemas.access AS access"},
