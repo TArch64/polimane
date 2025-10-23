@@ -2,6 +2,9 @@ package queuedebounced
 
 import (
 	"context"
+	"errors"
+
+	"gorm.io/gorm"
 
 	repositoryschemas "polimane/backend/repository/schemas"
 	"polimane/backend/services/schemascreenshot"
@@ -19,6 +22,10 @@ func (q *Queue) ProcessSchemaScreenshot(ctx context.Context, message *events.Mes
 		SchemaID: body.SchemaID,
 	})
 
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		// Exit on removed schema
+		return nil
+	}
 	if err != nil {
 		return err
 	}
