@@ -9,6 +9,8 @@
       v-if="screenshotUrl"
     >
 
+    <div class="home-schema__screenshot" v-else />
+
     {{ schema.name }}
   </Card>
 </template>
