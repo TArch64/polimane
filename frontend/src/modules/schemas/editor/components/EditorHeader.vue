@@ -73,7 +73,7 @@
         danger
         title="Видалити"
         :icon="TrashIcon"
-        @click="deleteSchema"
+        @click="deleteSchemaIntent"
         v-if="editorStore.canDelete"
       />
     </Dropdown>
@@ -148,11 +148,15 @@ const deleteConfirm = useConfirm({
 });
 
 const deleteSchema = useAsyncAction(async () => {
-  if (await deleteConfirm.ask()) {
-    await editorStore.deleteSchema();
-    await router.push({ name: 'home' });
-  }
+  await editorStore.deleteSchema();
+  await router.push({ name: 'home' });
 });
+
+async function deleteSchemaIntent() {
+  if (await deleteConfirm.ask()) {
+    await deleteSchema();
+  }
+}
 
 useHotKeys({
   Meta_Z: historyStore.undo,
