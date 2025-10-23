@@ -9,32 +9,34 @@
       Едітор
     </Button>
 
-    <Button
-      icon
-      :disabled="isSaveDisabled"
-      :title="savingTitle"
-      @click="editorStore.save"
-    >
-      <SavingIcon />
-    </Button>
+    <template v-if="editorStore.isEditable">
+      <Button
+        icon
+        :disabled="isSaveDisabled"
+        :title="savingTitle"
+        @click="editorStore.save"
+      >
+        <SavingIcon />
+      </Button>
 
-    <Button
-      icon
-      :disabled="!historyStore.canUndo"
-      title="Відмінити зміни"
-      @click="historyStore.undo"
-    >
-      <CornerUpLeftIcon />
-    </Button>
+      <Button
+        icon
+        :disabled="!historyStore.canUndo"
+        title="Відмінити зміни"
+        @click="historyStore.undo"
+      >
+        <CornerUpLeftIcon />
+      </Button>
 
-    <Button
-      icon
-      :disabled="!historyStore.canRedo"
-      title="Повернути назад зміни"
-      @click="historyStore.redo"
-    >
-      <CornerUpRightIcon />
-    </Button>
+      <Button
+        icon
+        :disabled="!historyStore.canRedo"
+        title="Повернути назад зміни"
+        @click="historyStore.redo"
+      >
+        <CornerUpRightIcon />
+      </Button>
+    </template>
 
     <Dropdown>
       <template #activator="{ open, activatorStyle }">
@@ -51,6 +53,7 @@
         title="Налаштування"
         :icon="SettingsIcon"
         @click="renameModal.open()"
+        v-if="editorStore.isEditable"
       />
 
       <DropdownAction
@@ -64,7 +67,7 @@
         title="Видалити"
         :icon="TrashIcon"
         @click="deleteSchema"
-        v-if="permissions.admin"
+        v-if="editorStore.isRemovable"
       />
     </Dropdown>
   </Card>
@@ -72,7 +75,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import { useHotKeys } from '@editor/composables';
 import { Button } from '@/components/button';
 import {
@@ -88,7 +91,7 @@ import {
   SettingsIcon,
   TrashIcon,
 } from '@/components/icon';
-import { useAccessPermissions, useAsyncAction, useProgressBar } from '@/composables';
+import { useAsyncAction, useProgressBar } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { mergeAnchorName } from '@/helpers';
@@ -103,8 +106,6 @@ const editorStore = useEditorStore();
 
 const renameModal = useModal(SchemaEditModal);
 const exportModal = useModal(SchemaExportModal);
-
-const permissions = useAccessPermissions(() => editorStore.schema.access);
 
 const SavingIcon = computed((): IconComponent => {
   if (editorStore.isSaving) {
@@ -147,6 +148,8 @@ const deleteSchema = useAsyncAction(async () => {
 useHotKeys({
   Meta_Z: historyStore.undo,
   Meta_Shift_Z: historyStore.redo,
+}, {
+  isActive: toRef(editorStore, 'isEditable'),
 });
 
 useProgressBar(deleteSchema);

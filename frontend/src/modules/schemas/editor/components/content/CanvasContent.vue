@@ -1,5 +1,5 @@
 <template>
-  <CanvasDefs>
+  <CanvasDefs v-if="editorStore.isEditable">
     <CanvasBackgroundPattern :id="backgroundPatternId" />
   </CanvasDefs>
 
@@ -11,6 +11,7 @@
       :y="beadsGrid.size.minY"
       :width="beadsGrid.size.width"
       :height="beadsGrid.size.height"
+      v-if="editorStore.isEditable"
     />
 
     <CanvasBead
@@ -19,7 +20,7 @@
       :item
     />
 
-    <FadeTransition>
+    <FadeTransition v-if="editorStore.isEditable">
       <CanvasSelection
         :key="`${selected.from}-${selected.to}`"
         v-if="selected"
@@ -30,7 +31,7 @@
 
 <script setup lang="ts">
 import { computed, ref, useId } from 'vue';
-import { useSelectionStore } from '@editor/stores';
+import { useEditorStore, useSelectionStore } from '@editor/stores';
 import { BEAD_BUGLE_CORNER_RADIUS } from '@editor/const';
 import { FadeTransition } from '@/components/transition';
 import { type IBeadsGrid, useBeadTools } from '../../composables';
@@ -46,6 +47,7 @@ const props = defineProps<{
 
 const CORNER_RADIUS = BEAD_BUGLE_CORNER_RADIUS;
 
+const editorStore = useEditorStore();
 const selectionStore = useSelectionStore();
 const selected = computed(() => selectionStore.selected);
 
@@ -53,10 +55,12 @@ const backgroundPatternId = `editorEmptyBeads-${useId()}`;
 const backgroundPatternFill = `url(#${backgroundPatternId})`;
 const backgroundRef = ref<SVGRectElement>(null!);
 
-const listeners = useBeadTools({
-  backgroundRef,
-  beadsGrid: props.beadsGrid,
-});
+const listeners = editorStore.isEditable
+  ? useBeadTools({
+      backgroundRef,
+      beadsGrid: props.beadsGrid,
+    })
+  : {};
 
 const transform = (() => {
   // shouldn't be recomputed to avoid shifting on schema resize

@@ -20,7 +20,7 @@
       />
     </svg>
 
-    <Teleport to="body">
+    <Teleport to="body" v-if="editorStore.isEditable">
       <FadeTransition>
         <EditorSelection
           v-if="toolsStore.isSelection && selectionStore.isSelecting"
@@ -33,11 +33,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { FadeTransition } from '@/components/transition';
-import { useCanvasStore, useSelectionStore, useToolsStore } from '../stores';
+import { useCanvasStore, useEditorStore, useSelectionStore, useToolsStore } from '../stores';
 import { useBeadsGrid, useCanvasNavigation, useCanvasZoom, useHotKeys } from '../composables';
 import { CanvasContent } from './content';
 import EditorSelection from './EditorSelection.vue';
 
+const editorStore = useEditorStore();
 const toolsStore = useToolsStore();
 const selectionStore = useSelectionStore();
 const canvasStore = useCanvasStore();
@@ -48,6 +49,7 @@ const wrapperRect = ref<DOMRect | null>(null);
 
 const wrapperClasses = computed(() => ({
   'canvas-editor--selection': toolsStore.isSelection,
+  'canvas-editor--readonly': !editorStore.isEditable,
 }));
 
 onMounted(() => {
@@ -80,6 +82,7 @@ useHotKeys({
 
 <style scoped>
 @layer page {
+  .canvas-editor--readonly,
   .canvas-editor--selection {
     --editor-cursor: default;
   }
