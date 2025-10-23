@@ -8,7 +8,7 @@ interface IConfirmPluginState {
   confirms: Confirm[];
 }
 
-export type ConfirmCreateOptions = Omit<IConfirmOptions, 'id'>;
+export type ConfirmCreateInternalOptions = Omit<IConfirmOptions, 'id'>;
 
 export class ConfirmPlugin {
   static install: FunctionPlugin = (app) => {
@@ -27,7 +27,7 @@ export class ConfirmPlugin {
     return this.state.confirms.slice().reverse().find((confirm) => confirm.isOpened);
   }
 
-  create(options: ConfirmCreateOptions) {
+  create(options: ConfirmCreateInternalOptions) {
     const confirm = new Confirm({
       ...options,
       id: newId(),

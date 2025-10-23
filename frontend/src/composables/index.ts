@@ -11,3 +11,4 @@ export * from './useThemeVar';
 export * from './useAuthorized';
 export * from './useAccessPermissions';
 export * from './useTransitionState';
+export * from './useTopElement';

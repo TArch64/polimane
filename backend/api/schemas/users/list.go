@@ -1,4 +1,4 @@
-package schemas
+package users
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -8,7 +8,7 @@ import (
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
 
-type schemaUserListItem struct {
+type userListItem struct {
 	ID        string            `json:"id"`
 	Email     string            `json:"email"`
 	FirstName string            `json:"firstName"`
@@ -16,13 +16,13 @@ type schemaUserListItem struct {
 	Access    model.AccessLevel `json:"access"`
 }
 
-func (c *Controller) apiUsers(ctx *fiber.Ctx) error {
+func (c *Controller) apiList(ctx *fiber.Ctx) error {
 	schemaId, err := base.GetParamID(ctx, schemaIdParam)
 	if err != nil {
 		return err
 	}
 
-	var users []*schemaUserListItem
+	var users []*userListItem
 	err = c.userSchemas.ListBySchemaOut(ctx.Context(), &repositoryuserschemas.ListBySchemaOptions{
 		SchemaID: schemaId,
 

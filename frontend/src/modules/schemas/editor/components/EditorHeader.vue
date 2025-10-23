@@ -62,6 +62,7 @@
         :icon="PeopleIcon"
         :disabled="openAccessEditModal.isActive"
         @click="openAccessEditModal"
+        v-if="editorStore.canEditAccess"
       />
 
       <DropdownAction

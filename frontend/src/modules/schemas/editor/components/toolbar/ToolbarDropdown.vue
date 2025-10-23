@@ -65,7 +65,7 @@ function close(): void {
   isOpened.value = false;
 }
 
-onBackdropClick(dropdownRef, close);
+onBackdropClick(close);
 
 const dropdownStyles = computed(() => ({
   positionAnchor,

@@ -5,8 +5,8 @@ import (
 	"go.uber.org/fx"
 
 	"polimane/backend/api/base"
+	"polimane/backend/api/schemas/users"
 	repositoryschemas "polimane/backend/repository/schemas"
-	repositoryuserschemas "polimane/backend/repository/userschemas"
 	"polimane/backend/services/awssqs"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/views"
@@ -17,27 +17,27 @@ const schemaIdParam = "schemaId"
 type ControllerOptions struct {
 	fx.In
 	Schemas          *repositoryschemas.Client
-	UserSchemas      *repositoryuserschemas.Client
 	SQS              *awssqs.Client
 	Renderer         *views.Renderer
 	SchemaScreenshot *schemascreenshot.Service
+	UsersController  *users.Controller
 }
 
 type Controller struct {
 	schemas          *repositoryschemas.Client
-	userSchemas      *repositoryuserschemas.Client
 	sqs              *awssqs.Client
 	renderer         *views.Renderer
 	schemaScreenshot *schemascreenshot.Service
+	usersController  *users.Controller
 }
 
 func Provider(options ControllerOptions) base.Controller {
 	return &Controller{
 		schemas:          options.Schemas,
-		userSchemas:      options.UserSchemas,
 		sqs:              options.SQS,
 		renderer:         options.Renderer,
 		schemaScreenshot: options.SchemaScreenshot,
+		usersController:  options.UsersController,
 	}
 }
 
@@ -54,7 +54,8 @@ func (c *Controller) Private(group fiber.Router) {
 			group.Patch("", c.apiUpdate)
 			group.Post("copy", c.apiCopy)
 			group.Get("preview", c.apiPreview)
-			group.Get("users", c.apiUsers)
+
+			c.usersController.Private(group)
 		})
 	})
 }

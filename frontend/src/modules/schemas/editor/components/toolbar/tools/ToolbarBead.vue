@@ -15,6 +15,7 @@
         v-for="kind of BeadContentList"
         :key="kind"
         :title="getBeadKindTitle(kind)"
+        :active="store.activeBead === kind"
         @click="activateBead(kind)"
       >
         <BeadIcon :kind />

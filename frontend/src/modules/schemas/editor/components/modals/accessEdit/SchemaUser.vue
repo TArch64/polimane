@@ -9,7 +9,16 @@
     </p>
 
     <div class="access-user__actions">
-      <Button icon danger size="md" variant="secondary">
+      <Button
+        icon
+        danger
+        size="md"
+        variant="secondary"
+        :loading="deleteUser.isActive"
+        :style="deleteConfirm.anchorStyle"
+        @click="deleteUserIntent"
+        v-if="!isCurrentUser"
+      >
         <TrashIcon />
       </Button>
     </div>
@@ -18,16 +27,20 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useSchemaUsersStore } from '@editor/stores';
 import type { ISchemaUser } from '@/models';
 import { useSessionStore } from '@/stores';
 import { Button } from '@/components/button';
 import { TrashIcon } from '@/components/icon';
+import { useAsyncAction } from '@/composables';
+import { useConfirm } from '@/components/confirm';
 
 const props = defineProps<{
   user: ISchemaUser;
 }>();
 
 const sessionStore = useSessionStore();
+const usersStore = useSchemaUsersStore();
 const isCurrentUser = computed(() => props.user.id === sessionStore.user.id);
 
 const displayName = computed(() => {
@@ -39,6 +52,20 @@ const displayName = computed(() => {
 
   return email;
 });
+
+const deleteConfirm = useConfirm({
+  danger: true,
+  message: 'Ви впевнені, що хочете заборонити доступ до схему цьому користувачу?',
+  acceptButton: 'Заборонити',
+});
+
+const deleteUser = useAsyncAction(async () => {
+  await usersStore.deleteUser(props.user);
+});
+
+async function deleteUserIntent(): Promise<void> {
+  if (await deleteConfirm.ask()) await deleteUser();
+}
 </script>
 
 <style scoped>
@@ -46,6 +73,7 @@ const displayName = computed(() => {
   .access-user {
     display: flex;
     align-items: center;
+    min-height: 32px;
   }
 
   .access-user__name {

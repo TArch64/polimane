@@ -68,7 +68,7 @@ const close = () => modal.close(null);
 const dialogRef = ref<HTMLDialogElement>(null!);
 
 onMounted(() => dialogRef.value.showModal());
-onBackdropClick(dialogRef, close);
+onBackdropClick(close);
 </script>
 
 <style scoped>

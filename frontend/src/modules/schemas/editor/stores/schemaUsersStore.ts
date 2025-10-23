@@ -22,8 +22,14 @@ export const useSchemaUsersStore = defineStore('schemas/editor/users', () => {
     if (users.isInitial) await users.load();
   }
 
+  async function deleteUser(deletingUser: ISchemaUser): Promise<void> {
+    await http.delete(['/schemas', editorStore.schema.id, 'users', deletingUser.id]);
+    users.data = users.data.filter((user) => user.id !== deletingUser.id);
+  }
+
   return {
     load,
+    deleteUser,
     users: toRef(users, 'data'),
   };
 });
