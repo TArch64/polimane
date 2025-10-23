@@ -28,7 +28,7 @@ func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := c.users.CreateIfNeeded(reqCtx, data.User.ID)
+	user, err := c.users.CreateIfNeeded(reqCtx, data.User)
 	if err != nil {
 		return err
 	}

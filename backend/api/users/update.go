@@ -8,6 +8,8 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/model"
+	repositoryusers "polimane/backend/repository/users"
 )
 
 type updateBody struct {
@@ -28,7 +30,7 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) (err error) {
 
 	user := auth.GetSessionUser(ctx)
 
-	if err = c.updateUser(ctx.Context(), user.WorkosID, &body); err != nil {
+	if err = c.updateUser(ctx.Context(), user, &body); err != nil {
 		return err
 	}
 
@@ -42,13 +44,25 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) (err error) {
 	return base.NewSuccessResponse(ctx)
 }
 
-func (c *Controller) updateUser(ctx context.Context, userID string, body *updateBody) error {
-	_, err := c.workosClient.UserManagement().UpdateUser(ctx, usermanagement.UpdateUserOpts{
-		User:      userID,
+func (c *Controller) updateUser(ctx context.Context, user *model.User, body *updateBody) error {
+	updated, err := c.workosClient.UserManagement().UpdateUser(ctx, usermanagement.UpdateUserOpts{
+		User:      user.WorkosID,
 		FirstName: body.FirstName,
 		LastName:  body.LastName,
 		Email:     body.Email,
 	})
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	return c.users.Update(ctx, &repositoryusers.UpdateOptions{
+		UserID: user.ID,
+
+		Updates: &model.User{
+			Email:     updated.Email,
+			FirstName: updated.FirstName,
+			LastName:  updated.LastName,
+		},
+	})
 }

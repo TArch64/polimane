@@ -3,6 +3,7 @@ package users
 import (
 	"context"
 
+	"github.com/workos/workos-go/v4/pkg/usermanagement"
 	"go.uber.org/fx"
 	"gorm.io/gorm"
 
@@ -11,7 +12,8 @@ import (
 
 type Client interface {
 	ByID(ctx context.Context, id model.ID) (*model.User, error)
-	CreateIfNeeded(ctx context.Context, workosID string) (*model.User, error)
+	CreateIfNeeded(ctx context.Context, workosUser usermanagement.User) (*model.User, error)
+	Update(ctx context.Context, options *UpdateOptions) error
 }
 
 type ClientOptions struct {

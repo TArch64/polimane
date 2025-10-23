@@ -4,5 +4,4 @@ export interface IUser {
   lastName: string;
   email: string;
   isEmailVerified: boolean;
-  profilePictureUrl: string;
 }
