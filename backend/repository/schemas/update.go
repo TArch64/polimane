@@ -7,22 +7,21 @@ import (
 )
 
 type UpdateOptions struct {
-	Ctx      context.Context
 	User     *model.User
 	SchemaID model.ID
 	Updates  *model.Schema
 }
 
-func (i *Impl) Update(options *UpdateOptions) (err error) {
+func (i *Impl) Update(ctx context.Context, options *UpdateOptions) (err error) {
 	if options.User != nil {
-		err = i.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+		err = i.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID)
 		if err != nil {
 			return err
 		}
 	}
 
 	return i.db.
-		WithContext(options.Ctx).
+		WithContext(ctx).
 		Model(&model.Schema{
 			Identifiable: &model.Identifiable{
 				ID: options.SchemaID,

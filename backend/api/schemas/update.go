@@ -72,8 +72,7 @@ func (c *Controller) updateScreenshot(ctx context.Context, schemaID model.ID, ne
 		})
 	}
 
-	schema, err := c.schemas.ByID(&repositoryschemas.ByIDOptions{
-		Ctx:      ctx,
+	schema, err := c.schemas.ByID(ctx, &repositoryschemas.ByIDOptions{
 		SchemaID: schemaID,
 	})
 
@@ -102,8 +101,7 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
 		return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
 	}
 
-	err = c.schemas.Update(&repositoryschemas.UpdateOptions{
-		Ctx:      ctx.Context(),
+	err = c.schemas.Update(ctx.Context(), &repositoryschemas.UpdateOptions{
 		User:     auth.GetSessionUser(ctx),
 		SchemaID: schemaID,
 		Updates:  updates,

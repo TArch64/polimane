@@ -7,23 +7,22 @@ import (
 )
 
 type ByIDOptions struct {
-	Ctx      context.Context
 	User     *model.User
 	SchemaID model.ID
 	Select   []string
 }
 
-func (i *Impl) ByID(options *ByIDOptions) (*model.Schema, error) {
+func (i *Impl) ByID(ctx context.Context, options *ByIDOptions) (*model.Schema, error) {
 	var err error
 
 	if options.User != nil {
-		err = i.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+		err = i.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	query := i.db.WithContext(options.Ctx)
+	query := i.db.WithContext(ctx)
 
 	if len(options.Select) > 0 {
 		query = query.Select(options.Select)

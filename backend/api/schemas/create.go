@@ -19,8 +19,7 @@ func (c *Controller) apiCreate(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	schema, err := c.schemas.Create(&repositoryschemas.CreateOptions{
-		Ctx:  ctx.Context(),
+	schema, err := c.schemas.Create(ctx.Context(), &repositoryschemas.CreateOptions{
 		User: auth.GetSessionUser(ctx),
 		Name: body.Name,
 	})

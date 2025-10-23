@@ -47,8 +47,7 @@ func (i *Impl) Screenshot(ctx context.Context, options *ScreenshotOptions) error
 
 	screenshotedAt := time.Now()
 
-	return i.schemas.Update(&repositoryschemas.UpdateOptions{
-		Ctx:      ctx,
+	return i.schemas.Update(ctx, &repositoryschemas.UpdateOptions{
 		SchemaID: options.Schema.ID,
 		Updates:  &model.Schema{ScreenshotedAt: &screenshotedAt},
 	})

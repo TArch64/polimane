@@ -10,7 +10,6 @@ import (
 )
 
 type CreateOptions struct {
-	Ctx             context.Context
 	User            *model.User
 	Name            string
 	BackgroundColor string
@@ -19,7 +18,7 @@ type CreateOptions struct {
 	Beads           model.SchemaBeads
 }
 
-func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) {
+func (i *Impl) Create(ctx context.Context, options *CreateOptions) (schema *model.Schema, err error) {
 	if options.Palette == nil {
 		options.Palette = make(model.SchemaPalette, model.SchemaPaletteSize)
 	}
@@ -37,7 +36,7 @@ func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) 
 		options.Beads = make(model.SchemaBeads)
 	}
 
-	err = i.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
+	err = i.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		schema = &model.Schema{
 			Name:            options.Name,
 			BackgroundColor: options.BackgroundColor,
@@ -57,6 +56,6 @@ func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) 
 		return nil, err
 	}
 
-	i.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
+	i.signals.InvalidateUserCache.Emit(ctx, options.User.ID)
 	return schema, nil
 }

@@ -14,8 +14,7 @@ func (c *Controller) apiCopy(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	schema, err := c.schemas.Copy(&repositoryschemas.CopyOptions{
-		Ctx:      ctx.Context(),
+	schema, err := c.schemas.Copy(ctx.Context(), &repositoryschemas.CopyOptions{
 		User:     auth.GetSessionUser(ctx),
 		SchemaID: schemaId,
 	})

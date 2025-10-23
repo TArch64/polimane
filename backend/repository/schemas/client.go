@@ -1,6 +1,8 @@
 package schemas
 
 import (
+	"context"
+
 	"go.uber.org/fx"
 	"gorm.io/gorm"
 
@@ -11,12 +13,12 @@ import (
 )
 
 type Client interface {
-	ByID(options *ByIDOptions) (*model.Schema, error)
-	ByUser(options *ByUserOptions) ([]*model.Schema, error)
-	Copy(options *CopyOptions) (*model.Schema, error)
-	Create(options *CreateOptions) (schema *model.Schema, err error)
-	Delete(options *DeleteOptions) (err error)
-	Update(options *UpdateOptions) (err error)
+	ByID(ctx context.Context, options *ByIDOptions) (*model.Schema, error)
+	ByUser(ctx context.Context, options *ByUserOptions) ([]*model.Schema, error)
+	Copy(ctx context.Context, options *CopyOptions) (*model.Schema, error)
+	Create(ctx context.Context, options *CreateOptions) (schema *model.Schema, err error)
+	Delete(ctx context.Context, options *DeleteOptions) (err error)
+	Update(ctx context.Context, options *UpdateOptions) (err error)
 }
 
 type ClientOptions struct {

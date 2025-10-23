@@ -13,18 +13,17 @@ import (
 )
 
 type DeleteOptions struct {
-	Ctx      context.Context
 	User     *model.User
 	SchemaID model.ID
 }
 
-func (i *Impl) Delete(options *DeleteOptions) (err error) {
-	err = i.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+func (i *Impl) Delete(ctx context.Context, options *DeleteOptions) (err error) {
+	err = i.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID)
 	if err != nil {
 		return err
 	}
 
-	err = i.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
+	err = i.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if err = tx.Delete(&model.Schema{}, options.SchemaID).Error; err != nil {
 			return err
 		}
@@ -33,14 +32,14 @@ func (i *Impl) Delete(options *DeleteOptions) (err error) {
 			return err
 		}
 
-		return i.deleteScreenshot(options.Ctx, options.SchemaID)
+		return i.deleteScreenshot(ctx, options.SchemaID)
 	})
 
 	if err != nil {
 		return err
 	}
 
-	i.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
+	i.signals.InvalidateUserCache.Emit(ctx, options.User.ID)
 	return nil
 }
 

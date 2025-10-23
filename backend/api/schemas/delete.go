@@ -14,8 +14,7 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	err = c.schemas.Delete(&repositoryschemas.DeleteOptions{
-		Ctx:      ctx.Context(),
+	err = c.schemas.Delete(ctx.Context(), &repositoryschemas.DeleteOptions{
 		User:     auth.GetSessionUser(ctx),
 		SchemaID: schemaId,
 	})

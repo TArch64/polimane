@@ -16,8 +16,7 @@ func (c *Controller) apiPreview(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	schema, err := c.schemas.ByID(&repositoryschemas.ByIDOptions{
-		Ctx:      ctx.Context(),
+	schema, err := c.schemas.ByID(ctx.Context(), &repositoryschemas.ByIDOptions{
 		User:     auth.GetSessionUser(ctx),
 		SchemaID: schemaId,
 	})
