@@ -14,7 +14,7 @@ type UpdateOptions struct {
 
 func (i *Impl) Update(ctx context.Context, options *UpdateOptions) (err error) {
 	if options.User != nil {
-		err = i.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID)
+		err = i.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID, model.AccessWrite)
 		if err != nil {
 			return err
 		}

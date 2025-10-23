@@ -10,9 +10,9 @@ import (
 )
 
 type Client interface {
-	CreateTx(tx *gorm.DB, userID, schemaID model.ID) error
+	CreateTx(tx *gorm.DB, userID, schemaID model.ID, access model.AccessLevel) error
 	DeleteTx(tx *gorm.DB, userID, schemaID model.ID) error
-	HasAccess(ctx context.Context, userID, schemaID model.ID) error
+	HasAccess(ctx context.Context, userID, schemaID model.ID, access model.AccessLevel) error
 }
 
 type ClientOptions struct {

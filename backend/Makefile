@@ -23,6 +23,12 @@ db_new_migration:
 db_migrate:
 	goose up
 
+db_rollback:
+	goose down
+
+db_status:
+	goose status
+
 prod_api:
 	sentry-cli releases new $(SENTRY_RELEASE)
 	sentry-cli releases set-commits $(SENTRY_RELEASE) --commit "TArch64/polimane@$(SENTRY_COMMIT_SHA)"

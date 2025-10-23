@@ -1,9 +1,9 @@
 package model
 
-type AccessLevel string
+type AccessLevel uint8
 
 const (
-	AccessRead  AccessLevel = "read"
-	AccessWrite AccessLevel = "write"
-	AccessAdmin AccessLevel = "admin"
+	AccessRead  AccessLevel = 1
+	AccessWrite AccessLevel = 2
+	AccessAdmin AccessLevel = 3
 )

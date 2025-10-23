@@ -16,7 +16,7 @@ func (i *Impl) ByID(ctx context.Context, options *ByIDOptions) (*model.Schema, e
 	var err error
 
 	if options.User != nil {
-		err = i.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID)
+		err = i.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID, model.AccessRead)
 		if err != nil {
 			return nil, err
 		}

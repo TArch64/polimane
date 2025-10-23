@@ -49,7 +49,7 @@ func (i *Impl) Create(ctx context.Context, options *CreateOptions) (schema *mode
 			return err
 		}
 
-		return i.userSchemas.CreateTx(tx, options.User.ID, schema.ID)
+		return i.userSchemas.CreateTx(tx, options.User.ID, schema.ID, model.AccessAdmin)
 	})
 
 	if err != nil {

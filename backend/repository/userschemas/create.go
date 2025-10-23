@@ -6,10 +6,11 @@ import (
 	"polimane/backend/model"
 )
 
-func (c *Impl) CreateTx(tx *gorm.DB, userID, schemaID model.ID) error {
+func (c *Impl) CreateTx(tx *gorm.DB, userID, schemaID model.ID, access model.AccessLevel) error {
 	userSchema := &model.UserSchema{
 		UserID:   userID,
 		SchemaID: schemaID,
+		Access:   access,
 	}
 
 	return tx.Create(userSchema).Error

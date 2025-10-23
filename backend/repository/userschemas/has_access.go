@@ -8,14 +8,14 @@ import (
 	"polimane/backend/model"
 )
 
-func (c *Impl) HasAccess(ctx context.Context, userID, schemaID model.ID) error {
+func (c *Impl) HasAccess(ctx context.Context, userID, schemaID model.ID, access model.AccessLevel) error {
 	var exists bool
 
 	err := c.db.
 		WithContext(ctx).
 		Model(&model.UserSchema{}).
 		Select("1 AS exists").
-		Where("user_id = ? AND schema_id = ?", userID, schemaID).
+		Where("user_id = ? AND schema_id = ? AND access >= ?", userID, schemaID, access).
 		Pluck("exists", &exists).
 		Error
 

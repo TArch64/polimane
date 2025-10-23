@@ -18,7 +18,7 @@ type DeleteOptions struct {
 }
 
 func (i *Impl) Delete(ctx context.Context, options *DeleteOptions) (err error) {
-	err = i.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID)
+	err = i.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID, model.AccessAdmin)
 	if err != nil {
 		return err
 	}
