@@ -17,14 +17,14 @@ type Interface interface {
 type Impl struct {
 	renderer views.Renderer
 	s3       awss3.Client
-	schemas  repositoryschemas.Client
+	schemas  *repositoryschemas.Client
 }
 
 type ProviderOptions struct {
 	fx.In
 	Renderer views.Renderer
 	S3       awss3.Client
-	Schemas  repositoryschemas.Client
+	Schemas  *repositoryschemas.Client
 }
 
 func Provider(options ProviderOptions) Interface {

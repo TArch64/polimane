@@ -17,7 +17,7 @@ type DeleteOptions struct {
 	SchemaID model.ID
 }
 
-func (i *Impl) Delete(ctx context.Context, options *DeleteOptions) (err error) {
+func (i *Client) Delete(ctx context.Context, options *DeleteOptions) (err error) {
 	err = i.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID, model.AccessAdmin)
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func (i *Impl) Delete(ctx context.Context, options *DeleteOptions) (err error) {
 	return nil
 }
 
-func (i *Impl) deleteScreenshot(ctx context.Context, schemaId model.ID) error {
+func (i *Client) deleteScreenshot(ctx context.Context, schemaId model.ID) error {
 	key := model.SchemaScreenshotKey(schemaId)
 
 	_, err := i.s3.DeleteObject(ctx, &s3.DeleteObjectInput{

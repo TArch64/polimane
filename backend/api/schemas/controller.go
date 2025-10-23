@@ -16,14 +16,14 @@ const schemaIdParam = "schemaId"
 
 type ControllerOptions struct {
 	fx.In
-	Schemas          repositoryschemas.Client
+	Schemas          *repositoryschemas.Client
 	SQS              awssqs.Client
 	Renderer         views.Renderer
 	SchemaScreenshot schemascreenshot.Interface
 }
 
 type Controller struct {
-	schemas          repositoryschemas.Client
+	schemas          *repositoryschemas.Client
 	sqs              awssqs.Client
 	renderer         views.Renderer
 	schemaScreenshot schemascreenshot.Interface

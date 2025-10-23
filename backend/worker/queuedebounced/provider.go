@@ -11,13 +11,13 @@ import (
 
 type Queue struct {
 	*queue.Base
-	schemas          repositoryschemas.Client
+	schemas          *repositoryschemas.Client
 	schemaScreenshot schemascreenshot.Interface
 }
 
 type ProviderOptions struct {
 	fx.In
-	Schemas          repositoryschemas.Client
+	Schemas          *repositoryschemas.Client
 	SchemaScreenshot schemascreenshot.Interface
 }
 

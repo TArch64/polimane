@@ -11,7 +11,7 @@ type ByUserOptions struct {
 	Select []string
 }
 
-func (i *Impl) OutByUser(ctx context.Context, options *ByUserOptions, out interface{}) error {
+func (i *Client) OutByUser(ctx context.Context, options *ByUserOptions, out interface{}) error {
 	query := i.db.
 		WithContext(ctx).
 		Table("schemas").
@@ -28,7 +28,7 @@ func (i *Impl) OutByUser(ctx context.Context, options *ByUserOptions, out interf
 		Error
 }
 
-func (i *Impl) ByUser(ctx context.Context, options *ByUserOptions) ([]*model.Schema, error) {
+func (i *Client) ByUser(ctx context.Context, options *ByUserOptions) ([]*model.Schema, error) {
 	var schemas []*model.Schema
 	err := i.OutByUser(ctx, options, &schemas)
 	return schemas, err

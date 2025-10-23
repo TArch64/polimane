@@ -12,7 +12,7 @@ type UpdateOptions struct {
 	Updates  *model.Schema
 }
 
-func (i *Impl) Update(ctx context.Context, options *UpdateOptions) (err error) {
+func (i *Client) Update(ctx context.Context, options *UpdateOptions) (err error) {
 	if options.User != nil {
 		err = i.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID, model.AccessWrite)
 		if err != nil {

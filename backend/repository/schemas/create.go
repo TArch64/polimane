@@ -18,7 +18,7 @@ type CreateOptions struct {
 	Beads           model.SchemaBeads
 }
 
-func (i *Impl) Create(ctx context.Context, options *CreateOptions) (schema *model.Schema, err error) {
+func (i *Client) Create(ctx context.Context, options *CreateOptions) (schema *model.Schema, err error) {
 	if options.Palette == nil {
 		options.Palette = make(model.SchemaPalette, model.SchemaPaletteSize)
 	}

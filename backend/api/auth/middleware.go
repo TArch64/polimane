@@ -30,7 +30,7 @@ type MiddlewareOptions struct {
 	Signals      *signal.Container
 	Env          *env.Environment
 	WorkosClient workos.Client
-	Users        repositoryusers.Client
+	Users        *repositoryusers.Client
 }
 
 type Middleware struct {
@@ -38,7 +38,7 @@ type Middleware struct {
 	workosUserCache cache.Cache[*usermanagement.User]
 	workosClient    workos.Client
 	env             *env.Environment
-	users           repositoryusers.Client
+	users           *repositoryusers.Client
 }
 
 func MiddlewareProvider(options MiddlewareOptions) *Middleware {

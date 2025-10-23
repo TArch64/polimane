@@ -11,7 +11,7 @@ type UpdateOptions struct {
 	Updates *model.User
 }
 
-func (i *Impl) Update(ctx context.Context, options *UpdateOptions) error {
+func (i *Client) Update(ctx context.Context, options *UpdateOptions) error {
 	return i.db.
 		WithContext(ctx).
 		Model(&model.User{
