@@ -9,7 +9,7 @@
       Едітор
     </Button>
 
-    <template v-if="editorStore.isEditable">
+    <template v-if="editorStore.canEdit">
       <Button
         icon
         :disabled="isSaveDisabled"
@@ -50,10 +50,16 @@
       </template>
 
       <DropdownAction
-        title="Налаштування"
-        :icon="SettingsIcon"
+        title="Переназвати"
+        :icon="EditIcon"
         @click="renameModal.open()"
-        v-if="editorStore.isEditable"
+        v-if="editorStore.canEdit"
+      />
+
+      <DropdownAction
+        title="Редагувати Доступ"
+        :icon="PeopleIcon"
+        @click="accessEditModal.open()"
       />
 
       <DropdownAction
@@ -67,7 +73,7 @@
         title="Видалити"
         :icon="TrashIcon"
         @click="deleteSchema"
-        v-if="editorStore.isRemovable"
+        v-if="editorStore.canDelete"
       />
     </Dropdown>
   </Card>
@@ -83,12 +89,13 @@ import {
   CheckmarkCircleIcon,
   CornerUpLeftIcon,
   CornerUpRightIcon,
+  EditIcon,
   FileTextIcon,
   type IconComponent,
   LoaderIcon,
   MoreHorizontalIcon,
+  PeopleIcon,
   SaveIcon,
-  SettingsIcon,
   TrashIcon,
 } from '@/components/icon';
 import { useAsyncAction, useProgressBar } from '@/composables';
@@ -98,14 +105,15 @@ import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
 import { useEditorStore, useHistoryStore } from '../stores';
-import { SchemaEditModal, SchemaExportModal } from './modals';
+import { AccessEditModal, SchemaExportModal, SchemaRenameModal } from './modals';
 
 const router = useRouter();
 const historyStore = useHistoryStore();
 const editorStore = useEditorStore();
 
-const renameModal = useModal(SchemaEditModal);
+const renameModal = useModal(SchemaRenameModal);
 const exportModal = useModal(SchemaExportModal);
+const accessEditModal = useModal(AccessEditModal);
 
 const SavingIcon = computed((): IconComponent => {
   if (editorStore.isSaving) {
@@ -149,7 +157,7 @@ useHotKeys({
   Meta_Z: historyStore.undo,
   Meta_Shift_Z: historyStore.redo,
 }, {
-  isActive: toRef(editorStore, 'isEditable'),
+  isActive: toRef(editorStore, 'canEdit'),
 });
 
 useProgressBar(deleteSchema);

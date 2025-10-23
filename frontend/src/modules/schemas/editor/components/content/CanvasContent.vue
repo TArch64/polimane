@@ -1,5 +1,5 @@
 <template>
-  <CanvasDefs v-if="editorStore.isEditable">
+  <CanvasDefs v-if="editorStore.canEdit">
     <CanvasBackgroundPattern :id="backgroundPatternId" />
   </CanvasDefs>
 
@@ -11,7 +11,7 @@
       :y="beadsGrid.size.minY"
       :width="beadsGrid.size.width"
       :height="beadsGrid.size.height"
-      v-if="editorStore.isEditable"
+      v-if="editorStore.canEdit"
     />
 
     <CanvasBead
@@ -20,7 +20,7 @@
       :item
     />
 
-    <FadeTransition v-if="editorStore.isEditable">
+    <FadeTransition v-if="editorStore.canEdit">
       <CanvasSelection
         :key="`${selected.from}-${selected.to}`"
         v-if="selected"
@@ -55,7 +55,7 @@ const backgroundPatternId = `editorEmptyBeads-${useId()}`;
 const backgroundPatternFill = `url(#${backgroundPatternId})`;
 const backgroundRef = ref<SVGRectElement>(null!);
 
-const listeners = editorStore.isEditable
+const listeners = editorStore.canEdit
   ? useBeadTools({
       backgroundRef,
       beadsGrid: props.beadsGrid,

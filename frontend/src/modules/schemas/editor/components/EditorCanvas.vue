@@ -20,7 +20,7 @@
       />
     </svg>
 
-    <Teleport to="body" v-if="editorStore.isEditable">
+    <Teleport to="body" v-if="editorStore.canEdit">
       <FadeTransition>
         <EditorSelection
           v-if="toolsStore.isSelection && selectionStore.isSelecting"
@@ -49,7 +49,7 @@ const wrapperRect = ref<DOMRect | null>(null);
 
 const wrapperClasses = computed(() => ({
   'canvas-editor--selection': toolsStore.isSelection,
-  'canvas-editor--readonly': !editorStore.isEditable,
+  'canvas-editor--readonly': !editorStore.canEdit,
 }));
 
 onMounted(() => {

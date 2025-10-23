@@ -1,6 +1,6 @@
 <template>
   <EditorHeader />
-  <EditorToolbar v-if="editorStore.isEditable" />
+  <EditorToolbar v-if="editorStore.canEdit" />
   <EditorCanvas class="editor__fill" />
 </template>
 
