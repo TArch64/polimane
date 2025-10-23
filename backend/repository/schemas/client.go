@@ -14,7 +14,9 @@ import (
 
 type Client interface {
 	ByID(ctx context.Context, options *ByIDOptions) (*model.Schema, error)
+	OutByID(ctx context.Context, options *ByIDOptions, out interface{}) error
 	ByUser(ctx context.Context, options *ByUserOptions) ([]*model.Schema, error)
+	OutByUser(ctx context.Context, options *ByUserOptions, out interface{}) error
 	Copy(ctx context.Context, options *CopyOptions) (*model.Schema, error)
 	Create(ctx context.Context, options *CreateOptions) (schema *model.Schema, err error)
 	Delete(ctx context.Context, options *DeleteOptions) (err error)

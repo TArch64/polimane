@@ -11,22 +11,25 @@ type ByUserOptions struct {
 	Select []string
 }
 
-func (i *Impl) ByUser(ctx context.Context, options *ByUserOptions) ([]*model.Schema, error) {
+func (i *Impl) OutByUser(ctx context.Context, options *ByUserOptions, out interface{}) error {
 	query := i.db.
 		WithContext(ctx).
+		Table("schemas").
 		Scopes(UserSchemaScope(options.User.ID))
 
 	if len(options.Select) > 0 {
 		query = query.Select(options.Select)
 	}
 
-	var schemas []*model.Schema
-
-	err := query.
+	return query.
 		Limit(100).
 		Order("schemas.created_at DESC").
-		Find(&schemas).
+		Find(out).
 		Error
+}
 
+func (i *Impl) ByUser(ctx context.Context, options *ByUserOptions) ([]*model.Schema, error) {
+	var schemas []*model.Schema
+	err := i.OutByUser(ctx, options, &schemas)
 	return schemas, err
 }

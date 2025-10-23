@@ -19,7 +19,7 @@ type listItem struct {
 	ScreenshotPath  *string           `json:"screenshotPath"`
 }
 
-func newListItem(schema *model.Schema) *listItem {
+func newListItem(schema *model.SchemaWithAccess) *listItem {
 	return &listItem{
 		ID:              schema.ID,
 		Name:            schema.Name,
@@ -31,7 +31,8 @@ func newListItem(schema *model.Schema) *listItem {
 }
 
 func (c *Controller) apiList(ctx *fiber.Ctx) error {
-	schemas, err := c.schemas.ByUser(ctx.Context(), &repositoryschemas.ByUserOptions{
+	var schemas []*model.SchemaWithAccess
+	err := c.schemas.OutByUser(ctx.Context(), &repositoryschemas.ByUserOptions{
 		User: auth.GetSessionUser(ctx),
 		Select: []string{
 			"id",
@@ -40,7 +41,7 @@ func (c *Controller) apiList(ctx *fiber.Ctx) error {
 			"background_color",
 			"user_schemas.access AS access",
 		},
-	})
+	}, &schemas)
 
 	if err != nil {
 		return err

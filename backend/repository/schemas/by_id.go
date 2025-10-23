@@ -12,9 +12,9 @@ type ByIDOptions struct {
 	Select   []string
 }
 
-func (i *Impl) ByID(ctx context.Context, options *ByIDOptions) (*model.Schema, error) {
-	var err error
-	query := i.db.WithContext(ctx)
+func (i *Impl) OutByID(ctx context.Context, options *ByIDOptions, out interface{}) error {
+	query := i.db.WithContext(ctx).
+		Table("schemas")
 
 	if options.User != nil {
 		query = query.Scopes(UserSchemaScope(options.User.ID))
@@ -24,7 +24,11 @@ func (i *Impl) ByID(ctx context.Context, options *ByIDOptions) (*model.Schema, e
 		query = query.Select(options.Select)
 	}
 
+	return query.Take(out, options.SchemaID).Error
+}
+
+func (i *Impl) ByID(ctx context.Context, options *ByIDOptions) (*model.Schema, error) {
 	var schema model.Schema
-	err = query.Take(&schema, options.SchemaID).Error
+	err := i.OutByID(ctx, options, &schema)
 	return &schema, err
 }

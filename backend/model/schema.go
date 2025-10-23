@@ -24,9 +24,11 @@ type Schema struct {
 
 	// Relations
 	Users []User `gorm:"many2many:user_schemas" json:"-"`
+}
 
-	// Computed fields
-	Access AccessLevel `gorm:"<-:false" json:"access,omitempty"`
+type SchemaWithAccess struct {
+	Schema
+	Access AccessLevel `json:"access"`
 }
 
 func (s *Schema) ScreenshotPath() *string {
