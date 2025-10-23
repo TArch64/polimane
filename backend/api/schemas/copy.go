@@ -24,6 +24,10 @@ func (c *Controller) apiCopy(ctx *fiber.Ctx) error {
 		return err
 	}
 
+	if err = c.updateScreenshot(ctx.Context(), schema.ID, false); err != nil {
+		return err
+	}
+
 	return ctx.JSON(newListItem(&model.SchemaWithAccess{
 		Schema: *schema,
 		Access: model.AccessAdmin,
