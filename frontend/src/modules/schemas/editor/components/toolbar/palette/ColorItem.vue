@@ -35,7 +35,7 @@ const hoverVar = computed(() => valueContrast.value > 4.5 ? '#fff' : '#999');
     border: var(--divider);
   }
 
-  .button--active {
+  .button--active:not(.color-item--empty) {
     border-color: var(--color-white);
     outline: solid 1px var(--color-primary);
     outline-offset: 1px;
