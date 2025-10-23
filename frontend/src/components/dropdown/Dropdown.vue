@@ -10,6 +10,7 @@
       ref="menuRef"
       class="dropdown-menu"
       :style="menuStyles"
+      @click="close"
       v-popover-shift
     >
       <slot />
@@ -45,6 +46,23 @@ const menuStyles = computed(() => ({
 
 let closeController: AbortController | null = null;
 
+function close(): void {
+  closeController?.abort();
+
+  routeTransition.start(async () => {
+    isOpened.value = false;
+    await nextTick();
+  });
+}
+
+function closeEvent(event: Event): void {
+  if (menuRef.value?.contains(event.target as Node)) {
+    return;
+  }
+
+  close();
+}
+
 function open() {
   if (isOpened.value) {
     return;
@@ -60,17 +78,16 @@ function open() {
 
   waitClickComplete().then(() => {
     closeController = new AbortController();
-    window.addEventListener('click', close, { signal: closeController.signal });
-    window.addEventListener('contextmenu', close, { signal: closeController.signal });
-  });
-}
 
-function close(): void {
-  closeController?.abort();
+    window.addEventListener('click', closeEvent, {
+      signal: closeController.signal,
+      capture: true,
+    });
 
-  routeTransition.start(async () => {
-    isOpened.value = false;
-    await nextTick();
+    window.addEventListener('contextmenu', closeEvent, {
+      signal: closeController.signal,
+      capture: true,
+    });
   });
 }
 </script>

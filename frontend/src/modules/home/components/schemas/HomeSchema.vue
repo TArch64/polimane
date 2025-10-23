@@ -38,6 +38,7 @@ const cardRef = useDomRef<HTMLElement>();
 const permissions = useAccessPermissions(() => props.schema.access);
 
 const cardBinding = makeBinding(RouterLink, () => ({
+  draggable: false,
   to: {
     name: 'schema-editor',
     params: { schemaId: props.schema.id },
