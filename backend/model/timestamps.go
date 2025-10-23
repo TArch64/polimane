@@ -3,6 +3,6 @@ package model
 import "time"
 
 type Timestamps struct {
-	CreatedAt time.Time `gorm:"not null" json:"createdAt"`
-	UpdatedAt time.Time `gorm:"not null" json:"updatedAt"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
