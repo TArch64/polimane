@@ -14,13 +14,13 @@ import (
 
 type Controller struct {
 	queues []queue.Interface
-	sqs    awssqs.Client
+	sqs    *awssqs.Client
 }
 
 type ProviderOptions struct {
 	fx.In
 	Queues []queue.Interface `group:"queues"`
-	SQS    awssqs.Client
+	SQS    *awssqs.Client
 	Sentry *sentry.Container
 }
 

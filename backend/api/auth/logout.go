@@ -10,7 +10,7 @@ import (
 func (c *Controller) apiLogout(ctx *fiber.Ctx) error {
 	session := GetSession(ctx)
 
-	err := c.workosClient.UserManagement().RevokeSession(ctx.Context(), usermanagement.RevokeSessionOpts{
+	err := c.workosClient.UserManagement.RevokeSession(ctx.Context(), usermanagement.RevokeSessionOpts{
 		SessionID: session.ID,
 	})
 

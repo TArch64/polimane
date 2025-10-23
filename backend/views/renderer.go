@@ -5,23 +5,19 @@ import (
 	"sync"
 )
 
-type Renderer interface {
-	Render(options *RenderOptions) (string, error)
-}
-
-type RendererImpl struct {
+type Renderer struct {
 	cache      map[string]*template.Template
 	cacheMutex *sync.RWMutex
 }
 
-func Provider() Renderer {
+func Provider() *Renderer {
 	var templatesCount = 0
 	templatesDir, err := templatesFS.ReadDir("templates")
 	if err == nil {
 		templatesCount = len(templatesDir)
 	}
 
-	return &RendererImpl{
+	return &Renderer{
 		cache:      make(map[string]*template.Template, templatesCount),
 		cacheMutex: &sync.RWMutex{},
 	}

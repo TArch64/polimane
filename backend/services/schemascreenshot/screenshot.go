@@ -20,7 +20,7 @@ type ScreenshotOptions struct {
 	Schema *model.Schema
 }
 
-func (i *Impl) Screenshot(ctx context.Context, options *ScreenshotOptions) error {
+func (i *Service) Screenshot(ctx context.Context, options *ScreenshotOptions) error {
 	content, err := i.renderer.Render(&views.RenderOptions{
 		View:   views.TemplateSchemaPreview,
 		Data:   templates.NewSchemaPreviewData(options.Schema),

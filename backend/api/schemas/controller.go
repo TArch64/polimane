@@ -1,14 +1,13 @@
 package schemas
 
 import (
-	"polimane/backend/services/schemascreenshot"
-
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 
 	"polimane/backend/api/base"
 	repositoryschemas "polimane/backend/repository/schemas"
 	"polimane/backend/services/awssqs"
+	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/views"
 )
 
@@ -17,16 +16,16 @@ const schemaIdParam = "schemaId"
 type ControllerOptions struct {
 	fx.In
 	Schemas          *repositoryschemas.Client
-	SQS              awssqs.Client
-	Renderer         views.Renderer
-	SchemaScreenshot schemascreenshot.Interface
+	SQS              *awssqs.Client
+	Renderer         *views.Renderer
+	SchemaScreenshot *schemascreenshot.Service
 }
 
 type Controller struct {
 	schemas          *repositoryschemas.Client
-	sqs              awssqs.Client
-	renderer         views.Renderer
-	schemaScreenshot schemascreenshot.Interface
+	sqs              *awssqs.Client
+	renderer         *views.Renderer
+	schemaScreenshot *schemascreenshot.Service
 }
 
 func Provider(options ControllerOptions) base.Controller {

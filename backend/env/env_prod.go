@@ -11,7 +11,7 @@ import (
 
 const IsDev = false
 
-func loadEnvs(instance *Environment, bitwardenClient bitwarden.Client) error {
+func loadEnvs(instance *Environment, bitwardenClient *bitwarden.Client) error {
 	err := bitwardenClient.LoadToEnviron([]string{
 		"BACKEND_SECRET_KEY",
 		"BACKEND_SENTRY_DSN",

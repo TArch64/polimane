@@ -16,7 +16,7 @@ type SendOptions struct {
 	Body            interface{}
 }
 
-func (i *Impl) Send(ctx context.Context, options *SendOptions) (err error) {
+func (i *Client) Send(ctx context.Context, options *SendOptions) (err error) {
 	var body string
 	var deduplicationId *string
 

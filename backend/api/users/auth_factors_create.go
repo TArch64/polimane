@@ -22,7 +22,7 @@ func (c *Controller) apiAuthFactorCreate(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	response, err := c.workosClient.MFA().VerifyChallenge(ctx.Context(), mfa.VerifyChallengeOpts{
+	response, err := c.workosClient.MFA.VerifyChallenge(ctx.Context(), mfa.VerifyChallengeOpts{
 		Code:        body.Code,
 		ChallengeID: body.ChallengeID,
 	})
@@ -35,7 +35,7 @@ func (c *Controller) apiAuthFactorCreate(ctx *fiber.Ctx) (err error) {
 		return ErrInvalidAuthFactor
 	}
 
-	factor, err := c.workosClient.MFA().GetFactor(ctx.Context(), mfa.GetFactorOpts{
+	factor, err := c.workosClient.MFA.GetFactor(ctx.Context(), mfa.GetFactorOpts{
 		FactorID: response.Challenge.FactorID,
 	})
 

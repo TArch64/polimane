@@ -28,7 +28,7 @@ func (c *Controller) handleError(_ context.Context, err error) {
 type StartOptions struct {
 	fx.In
 	Ctx        context.Context
-	SQS        awssqs.Client
+	SQS        *awssqs.Client
 	Controller *Controller
 }
 
@@ -51,7 +51,7 @@ func watchQueue(
 	ctx context.Context,
 	q queue.Interface,
 	controller *Controller,
-	client awssqs.Client,
+	client *awssqs.Client,
 ) {
 	messagesChan := make(chan *events.Message, 100)
 	go controller.Process(ctx, q, messagesChan)

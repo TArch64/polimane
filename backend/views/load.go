@@ -11,7 +11,7 @@ import (
 //go:embed templates/*.tmpl
 var templatesFS embed.FS
 
-func (r *RendererImpl) load(view string) (*template.Template, error) {
+func (r *Renderer) load(view string) (*template.Template, error) {
 	r.cacheMutex.RLock()
 	if tmpl, ok := r.cache[view]; ok {
 		r.cacheMutex.RUnlock()

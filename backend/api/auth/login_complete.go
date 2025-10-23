@@ -18,7 +18,7 @@ func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error {
 	}
 
 	reqCtx := ctx.Context()
-	data, err := c.workosClient.UserManagement().AuthenticateWithCode(reqCtx, usermanagement.AuthenticateWithCodeOpts{
+	data, err := c.workosClient.UserManagement.AuthenticateWithCode(reqCtx, usermanagement.AuthenticateWithCodeOpts{
 		ClientID:  c.env.WorkOS.ClientID,
 		Code:      query.Code,
 		UserAgent: ctx.Get("User-Agent"),
@@ -33,7 +33,7 @@ func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	_, err = c.workosClient.UserManagement().UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
+	_, err = c.workosClient.UserManagement.UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
 		User:       data.User.ID,
 		ExternalID: user.ID.String(),
 	})
