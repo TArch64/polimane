@@ -1,22 +1,25 @@
 <template>
-  <Transition name="fade-transition-" :duration @after-leave="$emit('after-leave')">
+  <Transition
+    name="fade-transition-"
+    :duration
+    v-on="state?.listeners ?? {}"
+  >
     <slot />
   </Transition>
 </template>
 
 <script setup lang="ts">
 import { computed, type Slot } from 'vue';
+import type { ITransitionState } from '@/composables';
 import { normalizeDuration, type TransitionDuration } from './TransitionDuration';
 
 const props = withDefaults(defineProps<{
   duration?: TransitionDuration;
+  state?: ITransitionState;
 }>(), {
   duration: () => ({ enter: 150, leave: 100 }),
+  state: undefined,
 });
-
-defineEmits<{
-  'after-leave': [];
-}>();
 
 defineSlots<{
   default: Slot;

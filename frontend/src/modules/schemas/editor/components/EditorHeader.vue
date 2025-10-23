@@ -39,9 +39,10 @@
     </template>
 
     <Dropdown>
-      <template #activator="{ open, activatorStyle }">
+      <template #activator="{ open, isOpened, activatorStyle }">
         <Button
           icon
+          :active="isOpened"
           :style="mergeAnchorName(activatorStyle, deleteConfirm.anchorStyle)"
           @click="open"
         >
