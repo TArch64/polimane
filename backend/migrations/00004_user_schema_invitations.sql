@@ -1,5 +1,4 @@
 -- +goose Up
--- +goose StatementBegin
 CREATE TABLE schema_invitations
 (
   email      varchar(255) NOT NULL,
@@ -22,9 +21,6 @@ CREATE INDEX idx_schema_invitations_schema_id
 
 CREATE INDEX idx_schema_invitations_expires_at
   ON schema_invitations (expires_at);
--- +goose StatementEnd
 
 -- +goose Down
--- +goose StatementBegin
 DROP TABLE schema_invitations;
--- +goose StatementEnd

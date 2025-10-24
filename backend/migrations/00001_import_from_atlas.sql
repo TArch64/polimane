@@ -1,5 +1,4 @@
 -- +goose Up
--- +goose StatementBegin
 CREATE TABLE schemas
 (
   id               uuid                   NOT NULL DEFAULT gen_random_uuid(),
@@ -47,11 +46,8 @@ CREATE TABLE user_schemas
       ON UPDATE NO ACTION
       ON DELETE CASCADE
 );
--- +goose StatementEnd
 
 -- +goose Down
--- +goose StatementBegin
 DROP TABLE IF EXISTS user_schemas;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS schemas;
--- +goose StatementEnd
