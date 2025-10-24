@@ -76,14 +76,18 @@ func (c *Controller) inviteUser(
 
 	var httpError workos_errors.HTTPError
 	if errors.As(err, &httpError) && workos.GetErrorCode(&httpError) == workos.CodeEmailAlreadyInvited {
-		return &addResponse{
-			Invitation: &listInvitation{
-				Email:  email,
-				Access: model.AccessRead,
-			},
-		}, nil
-	}
-	if err != nil {
+		var response usermanagement.ListInvitationsResponse
+		response, err = c.workosClient.UserManagement.ListInvitations(ctx, usermanagement.ListInvitationsOpts{
+			Email: email,
+			Limit: 1,
+		})
+
+		if err != nil {
+			return nil, err
+		}
+
+		invitation = response.Data[0]
+	} else if err != nil {
 		return nil, err
 	}
 

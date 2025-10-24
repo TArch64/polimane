@@ -3,15 +3,14 @@ package users
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"polimane/backend/model"
 )
 
 func (c *Client) GetByID(ctx context.Context, id model.ID) (*model.User, error) {
-	var user model.User
-	err := c.db.WithContext(ctx).Take(&user, id).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return &user, nil
+	return gorm.
+		G[*model.User](c.db).
+		Where("id = ?", id).
+		Take(ctx)
 }

@@ -4,6 +4,7 @@
     variant="control"
     placeholder="Додати нового користувача (пошта)"
     :disabled="addUser.isActive"
+    @keyup.enter.prevent="addUser"
     v-model="email"
   >
     <template #append>

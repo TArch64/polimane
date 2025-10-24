@@ -2,26 +2,21 @@ package users
 
 import (
 	"context"
+	"errors"
 
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
+	"gorm.io/gorm"
 
 	"polimane/backend/model"
 )
 
-func (c *Client) CreateIfNeeded(ctx context.Context, workosUser usermanagement.User) (*model.User, error) {
-	user := model.User{
-		WorkosID:  workosUser.ID,
-		Email:     workosUser.Email,
-		FirstName: workosUser.FirstName,
-		LastName:  workosUser.LastName,
+func (c *Client) CreateIfNeeded(ctx context.Context, workosUser *usermanagement.User) (*model.User, error) {
+	user, err := c.GetByWorkosID(ctx, workosUser.ID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return c.CreateFromWorkos(ctx, workosUser)
 	}
-
-	err := c.db.
-		WithContext(ctx).
-		Where(user).
-		Attrs(user).
-		FirstOrCreate(&user).
-		Error
-
-	return &user, err
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }

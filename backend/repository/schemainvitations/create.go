@@ -17,7 +17,7 @@ type CreateOptions struct {
 	ExpiresAt time.Time
 }
 
-func (c Client) Create(ctx context.Context, options *CreateOptions) error {
+func (c *Client) Create(ctx context.Context, options *CreateOptions) error {
 	schemaInvitation := &model.SchemaInvitation{
 		Email:     options.Email,
 		SchemaID:  options.SchemaID,
@@ -25,6 +25,7 @@ func (c Client) Create(ctx context.Context, options *CreateOptions) error {
 		ExpiresAt: options.ExpiresAt,
 	}
 
-	return gorm.G[model.SchemaInvitation](c.db, clause.OnConflict{DoNothing: true}).
+	return gorm.
+		G[model.SchemaInvitation](c.db, clause.OnConflict{DoNothing: true}).
 		Create(ctx, schemaInvitation)
 }

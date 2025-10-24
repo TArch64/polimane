@@ -14,7 +14,8 @@ type DeleteOptions struct {
 }
 
 func (c *Client) DeleteTx(ctx context.Context, tx *gorm.DB, options *DeleteOptions) error {
-	_, err := gorm.G[model.UserSchema](tx).
+	_, err := gorm.
+		G[model.UserSchema](tx).
 		Where("user_id = ? AND schema_id = ?", options.UserID, options.SchemaID).
 		Delete(ctx)
 
