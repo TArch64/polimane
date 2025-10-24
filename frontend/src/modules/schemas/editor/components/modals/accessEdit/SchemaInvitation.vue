@@ -40,11 +40,11 @@ const props = defineProps<{
 const usersStore = useSchemaUsersStore();
 
 const updateAccess = useAsyncAction(async (access: AccessLevel) => {
-
+  await usersStore.updateInvitationAccess(props.invitation, access);
 });
 
 const deleteInvitation = useAsyncAction(async () => {
-
+  await usersStore.deleteInvitation(props.invitation);
 });
 </script>
 

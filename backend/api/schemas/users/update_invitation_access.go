@@ -6,44 +6,36 @@ import (
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
-	repositoryuserschemas "polimane/backend/repository/userschemas"
+	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 )
 
-type updateAccessBody struct {
+type updateInvitationAccess struct {
+	Email  string            `validate:"required,email,max=255" json:"email"`
 	Access model.AccessLevel `validate:"required,gte=1,lte=3" json:"access"`
 }
 
-func (c *Controller) apiUpdateAccess(ctx *fiber.Ctx) error {
-	userID, err := base.GetParamID(ctx, userIDParam)
-	if err != nil {
-		return err
-	}
-
-	currentUser := auth.GetSessionUser(ctx)
-	if currentUser.ID == userID {
-		return base.InvalidRequestErr
-	}
-
+func (c *Controller) apiUpdateInvitationAccess(ctx *fiber.Ctx) error {
 	schemaID, err := base.GetParamID(ctx, schemaIDParam)
 	if err != nil {
 		return err
 	}
 
-	var body updateAccessBody
+	var body updateInvitationAccess
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
+	currentUser := auth.GetSessionUser(ctx)
 	requestCtx := ctx.Context()
 	err = c.userSchemas.HasAccess(requestCtx, currentUser.ID, schemaID, model.AccessAdmin)
 	if err != nil {
 		return nil
 	}
 
-	err = c.userSchemas.Update(requestCtx, &repositoryuserschemas.UpdateOptions{
-		UserID:   userID,
+	err = c.schemaInvitations.Update(requestCtx, &repositoryschemainvitations.UpdateOptions{
+		Email:    body.Email,
 		SchemaID: schemaID,
-		Updates:  &model.UserSchema{Access: body.Access},
+		Updates:  &model.SchemaInvitation{Access: body.Access},
 	})
 
 	if err != nil {

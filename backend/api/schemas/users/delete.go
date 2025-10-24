@@ -5,6 +5,7 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/model"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
 
@@ -24,13 +25,15 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	err = c.userSchemas.DeleteWithAccessCheck(ctx.Context(), &repositoryuserschemas.DeleteWithAccessCheckOptions{
-		CurrentUser: currentUser,
+	requestCtx := ctx.Context()
+	err = c.userSchemas.HasAccess(requestCtx, currentUser.ID, schemaID, model.AccessAdmin)
+	if err != nil {
+		return nil
+	}
 
-		Operation: &repositoryuserschemas.DeleteOptions{
-			UserID:   userID,
-			SchemaID: schemaID,
-		},
+	err = c.userSchemas.Delete(requestCtx, &repositoryuserschemas.DeleteOptions{
+		UserID:   userID,
+		SchemaID: schemaID,
 	})
 
 	if err != nil {

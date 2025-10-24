@@ -38,17 +38,6 @@ func (c *Client) CreateTx(ctx context.Context, tx *gorm.DB, options *CreateOptio
 	return userSchema, nil
 }
 
-type CreateWithAccessCheckOptions = WithAccessCheck[CreateOptions]
-
-func (c *Client) CreateWithAccessCheck(ctx context.Context, options *CreateWithAccessCheckOptions) (*model.UserSchema, error) {
-	err := c.HasAccess(ctx, options.CurrentUser.ID, options.Operation.SchemaID, model.AccessAdmin)
-	if err != nil {
-		return nil, err
-	}
-
-	return c.Create(ctx, options.Operation)
-}
-
 func (c *Client) CreateManyTx(ctx context.Context, tx *gorm.DB, items []*CreateOptions) error {
 	userSchemas := make([]model.UserSchema, len(items))
 

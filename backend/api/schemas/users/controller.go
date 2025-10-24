@@ -45,6 +45,11 @@ func (c *Controller) Private(group fiber.Router) {
 		group.Get("", c.apiList)
 		group.Post("", c.apiAdd)
 
+		base.WithGroup(group, "invitations", func(group fiber.Router) {
+			group.Delete("", c.apiDeleteInvitation)
+			group.Patch("access", c.apiUpdateInvitationAccess)
+		})
+
 		base.WithGroup(group, ":"+userIDParam, func(group fiber.Router) {
 			group.Delete("", c.apiDelete)
 			group.Patch("access", c.apiUpdateAccess)

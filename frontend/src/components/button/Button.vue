@@ -11,15 +11,14 @@
       v-if="prependIcon"
     />
 
-    <slot v-if="icon" />
+    <template v-if="icon">
+      <LoaderIcon class="button__loading-icon" v-if="loading" />
+      <slot v-else />
+    </template>
 
-    <span v-else>
-      <slot />
-    </span>
-
-    <template v-if="loading">
-      <LoaderIcon v-if="icon" />
-      <ButtonLoading v-else />
+    <template v-else>
+      <ButtonLoading v-if="loading" />
+      <span v-else><slot /></span>
     </template>
   </ButtonRoot>
 </template>
@@ -124,14 +123,18 @@ const classes = computed(() => [
     transition: background-color 0.15s ease-out, color 0.15s ease-out;
     will-change: background-color, color;
 
-    &:where(:hover, .router-link-exact-active, .button--active):not([disabled], .button--loading) {
+    &:where(:hover, .router-link-exact-active, .button--active, .button--loading):not([disabled]) {
       color: var(--button-hover-foreground, var(--button-foreground));
       background-color: var(--button-hover-background);
     }
 
-    &:where([disabled], .button--loading) {
+    &[disabled] {
       background-color: var(--button-disabled-background);
       color: var(--button-disabled-foreground);
+      cursor: default;
+    }
+
+    &.button--loading {
       cursor: default;
     }
   }
@@ -166,7 +169,7 @@ const classes = computed(() => [
     }
   }
 
-  .button--loading > *:not(.button-loading__dot) {
+  .button--loading > *:not(.button-loading__dot):not(.button__loading-icon) {
     visibility: hidden;
   }
 }

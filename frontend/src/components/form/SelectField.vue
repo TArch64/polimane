@@ -33,6 +33,7 @@ const model = defineModel<V>({ required: true });
   .search-field :deep(.form-field__container) {
     padding: 0 8px 0 0;
     overflow: clip;
+    cursor: pointer;
   }
 
   .select-field__input {
@@ -40,6 +41,7 @@ const model = defineModel<V>({ required: true });
     border: 0;
     outline: none;
     background-color: transparent;
+    cursor: pointer;
   }
 }
 </style>

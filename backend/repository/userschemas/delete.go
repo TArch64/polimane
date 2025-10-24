@@ -25,14 +25,3 @@ func (c *Client) DeleteTx(ctx context.Context, tx *gorm.DB, options *DeleteOptio
 
 	return err
 }
-
-type DeleteWithAccessCheckOptions = WithAccessCheck[DeleteOptions]
-
-func (c *Client) DeleteWithAccessCheck(ctx context.Context, options *DeleteWithAccessCheckOptions) error {
-	err := c.HasAccess(ctx, options.CurrentUser.ID, options.Operation.SchemaID, model.AccessAdmin)
-	if err != nil {
-		return nil
-	}
-
-	return c.Delete(ctx, options.Operation)
-}

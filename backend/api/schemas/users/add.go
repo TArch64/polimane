@@ -41,14 +41,23 @@ func (c *Controller) apiAdd(ctx *fiber.Ctx) error {
 	requestCtx := ctx.Context()
 	user, err := c.users.GeyByEmail(requestCtx, body.Email)
 
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		user = nil
+		err = nil
+	}
+	if err != nil {
 		return err
 	}
 
 	var response *addResponse
 	currentUser := auth.GetSessionUser(ctx)
 
-	if user == nil || err != nil {
+	err = c.userSchemas.HasAccess(requestCtx, currentUser.ID, schemaID, model.AccessAdmin)
+	if err != nil {
+		return err
+	}
+
+	if user == nil {
 		response, err = c.inviteUser(requestCtx, currentUser, schemaID, body.Email)
 	} else {
 		response, err = c.addExistingUser(requestCtx, currentUser, schemaID, user)
@@ -121,14 +130,10 @@ func (c *Controller) addExistingUser(
 		return nil, base.InvalidRequestErr
 	}
 
-	userSchema, err := c.userSchemas.CreateWithAccessCheck(ctx, &repositoryuserschemas.CreateWithAccessCheckOptions{
-		CurrentUser: currentUser,
-
-		Operation: &repositoryuserschemas.CreateOptions{
-			UserID:   user.ID,
-			SchemaID: schemaID,
-			Access:   model.AccessRead,
-		},
+	userSchema, err := c.userSchemas.Create(ctx, &repositoryuserschemas.CreateOptions{
+		UserID:   user.ID,
+		SchemaID: schemaID,
+		Access:   model.AccessRead,
 	})
 
 	if err != nil {

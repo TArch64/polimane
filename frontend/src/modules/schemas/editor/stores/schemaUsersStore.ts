@@ -24,6 +24,14 @@ interface IUpdateAccessBody {
   access: AccessLevel;
 }
 
+type IDeleteInvitationParams = {
+  email: string;
+};
+
+interface IUpdateInvitationAccessBody extends IUpdateAccessBody {
+  email: string;
+}
+
 export const useSchemaUsersStore = defineStore('schemas/editor/users', () => {
   const editorStore = useEditorStore();
   const baseUrl = computed(() => ['/schemas', editorStore.schema.id, 'users'] as const satisfies UrlPath);
@@ -70,12 +78,33 @@ export const useSchemaUsersStore = defineStore('schemas/editor/users', () => {
     user.access = access;
   }
 
+  async function deleteInvitation(deletingInvitation: ISchemaUserInvitation): Promise<void> {
+    await http.delete<HttpBody, IDeleteInvitationParams>([...baseUrl.value, 'invitations'], {
+      email: deletingInvitation.email,
+    });
+
+    list.data.invitations = invitations.value.filter((invitation) => {
+      return invitation.email !== deletingInvitation.email;
+    });
+  }
+
+  async function updateInvitationAccess(invitation: ISchemaUserInvitation, access: AccessLevel): Promise<void> {
+    await http.patch<HttpBody, IUpdateInvitationAccessBody>([...baseUrl.value, 'invitations', 'access'], {
+      email: invitation.email,
+      access,
+    });
+
+    invitation.access = access;
+  }
+
   return {
     users,
     invitations,
     load: list.load,
-    deleteUser,
     addUser,
+    deleteUser,
     updateUserAccess,
+    deleteInvitation,
+    updateInvitationAccess,
   };
 });

@@ -1,4 +1,4 @@
-package userschemas
+package schemainvitations
 
 import (
 	"context"
@@ -9,15 +9,15 @@ import (
 )
 
 type UpdateOptions struct {
-	UserID   model.ID
+	Email    string
 	SchemaID model.ID
-	Updates  *model.UserSchema
+	Updates  *model.SchemaInvitation
 }
 
 func (c *Client) Update(ctx context.Context, options *UpdateOptions) error {
 	_, err := gorm.
-		G[model.UserSchema](c.db).
-		Where("user_id = ? AND schema_id = ?", options.UserID, options.SchemaID).
+		G[model.SchemaInvitation](c.db).
+		Where("email = ? AND schema_id = ?", options.Email, options.SchemaID).
 		Updates(ctx, *options.Updates)
 
 	return err
