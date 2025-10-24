@@ -1,4 +1,4 @@
-import { BeadKind, Direction } from '@/enums';
+import { AccessLevel, BeadKind, Direction } from '@/enums';
 import type { SchemaBead } from './ISchemaBead';
 import type { BeadCoord } from './SchemaBeadCoord';
 
@@ -11,6 +11,7 @@ export interface ISchema {
   palette: string[];
   createdAt: string;
   updatedAt: string;
+  access: AccessLevel;
   backgroundColor: string;
   screenshotedAt: string | null;
   screenshotPath: string | null;

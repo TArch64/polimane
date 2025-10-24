@@ -18,8 +18,8 @@ type AccessTokenClaims struct {
 	SessionID string
 }
 
-func (i *Impl) AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*AccessTokenClaims, error) {
-	jwksURL, err := i.UserManagement().GetJWKSURL(i.env.WorkOS.ClientID)
+func (i *Client) AuthenticateWithAccessToken(ctx context.Context, tokenStr string) (*AccessTokenClaims, error) {
+	jwksURL, err := i.UserManagement.GetJWKSURL(i.env.WorkOS.ClientID)
 	if err != nil {
 		return nil, err
 	}

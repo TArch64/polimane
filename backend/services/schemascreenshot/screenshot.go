@@ -20,7 +20,7 @@ type ScreenshotOptions struct {
 	Schema *model.Schema
 }
 
-func (i *Impl) Screenshot(ctx context.Context, options *ScreenshotOptions) error {
+func (i *Service) Screenshot(ctx context.Context, options *ScreenshotOptions) error {
 	content, err := i.renderer.Render(&views.RenderOptions{
 		View:   views.TemplateSchemaPreview,
 		Data:   templates.NewSchemaPreviewData(options.Schema),
@@ -47,8 +47,7 @@ func (i *Impl) Screenshot(ctx context.Context, options *ScreenshotOptions) error
 
 	screenshotedAt := time.Now()
 
-	return i.schemas.Update(&repositoryschemas.UpdateOptions{
-		Ctx:      ctx,
+	return i.schemas.Update(ctx, &repositoryschemas.UpdateOptions{
 		SchemaID: options.Schema.ID,
 		Updates:  &model.Schema{ScreenshotedAt: &screenshotedAt},
 	})

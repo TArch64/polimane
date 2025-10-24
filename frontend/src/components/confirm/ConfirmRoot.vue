@@ -1,7 +1,15 @@
 <template>
-  <Teleport to="body" :key="openedConfirm.id" v-if="openedConfirm">
+  <Teleport
+    :to="openedConfirm.getTopEl()"
+    :key="openedConfirm.id"
+    v-if="openedConfirm"
+  >
     <Confirm :model="openedConfirm" />
-    <VirtualTarget :model="openedConfirm" v-if="openedConfirm.virtualTarget" />
+
+    <VirtualTarget
+      :model="openedConfirm"
+      v-if="openedConfirm.virtualTarget"
+    />
   </Teleport>
 </template>
 

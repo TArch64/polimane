@@ -6,7 +6,7 @@ import (
 )
 
 func (c *Controller) apiLogin(ctx *fiber.Ctx) error {
-	url, err := c.workosClient.UserManagement().GetAuthorizationURL(usermanagement.GetAuthorizationURLOpts{
+	url, err := c.workosClient.UserManagement.GetAuthorizationURL(usermanagement.GetAuthorizationURLOpts{
 		ClientID:    c.env.WorkOS.ClientID,
 		RedirectURI: c.env.ApiURL.JoinPath("api/auth/login/complete").String(),
 		Provider:    "authkit",

@@ -7,10 +7,10 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
+	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
 
 type CreateOptions struct {
-	Ctx             context.Context
 	User            *model.User
 	Name            string
 	BackgroundColor string
@@ -19,7 +19,7 @@ type CreateOptions struct {
 	Beads           model.SchemaBeads
 }
 
-func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) {
+func (c *Client) Create(ctx context.Context, options *CreateOptions) (schema *model.Schema, err error) {
 	if options.Palette == nil {
 		options.Palette = make(model.SchemaPalette, model.SchemaPaletteSize)
 	}
@@ -37,7 +37,7 @@ func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) 
 		options.Beads = make(model.SchemaBeads)
 	}
 
-	err = i.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
+	err = c.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		schema = &model.Schema{
 			Name:            options.Name,
 			BackgroundColor: options.BackgroundColor,
@@ -50,13 +50,19 @@ func (i *Impl) Create(options *CreateOptions) (schema *model.Schema, err error) 
 			return err
 		}
 
-		return i.userSchemas.CreateTx(tx, options.User.ID, schema.ID)
+		_, err = c.userSchemas.CreateTx(ctx, tx, &repositoryuserschemas.CreateOptions{
+			UserID:   options.User.ID,
+			SchemaID: schema.ID,
+			Access:   model.AccessAdmin,
+		})
+
+		return err
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	i.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
+	c.signals.InvalidateUserCache.Emit(ctx, options.User.ID)
 	return schema, nil
 }

@@ -8,8 +8,10 @@ import (
 	"polimane/backend/api/base"
 	"polimane/backend/api/ping"
 	"polimane/backend/api/schemas"
+	schemasusers "polimane/backend/api/schemas/users"
 	"polimane/backend/api/users"
 	"polimane/backend/env"
+	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryusers "polimane/backend/repository/users"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
@@ -57,6 +59,7 @@ func main() {
 			repositoryuserschemas.Provider,
 			repositoryusers.Provider,
 			repositoryschemas.Provider,
+			repositoryschemainvitations.Provider,
 
 			// api
 			auth.MiddlewareProvider,
@@ -64,6 +67,7 @@ func main() {
 			Controller(auth.Provider),
 			Controller(users.Provider),
 			Controller(schemas.Provider),
+			schemasusers.Provider, // schemas child controller
 			api.OptionsProvider,
 			api.Provider,
 		),

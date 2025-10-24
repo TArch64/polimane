@@ -2,38 +2,45 @@
   <slot
     name="activator"
     :open
+    :isOpened
     :activatorStyle="{ anchorName }"
   />
 
-  <Teleport to="body" v-if="isOpened">
-    <DropdownMenu
-      ref="menuRef"
-      class="dropdown-menu"
-      :style="menuStyles"
-      v-popover-shift
-    >
-      <slot />
-    </DropdownMenu>
+  <Teleport to="body" :disabled="!isOpened && !transitionState.isActive">
+    <FadeTransition :state="transitionState">
+      <DropdownMenu
+        ref="menuRef"
+        class="dropdown-menu"
+        :style="menuStyles"
+        @click="close"
+        v-popover-shift
+        v-if="isOpened"
+      >
+        <slot />
+      </DropdownMenu>
+    </FadeTransition>
   </Teleport>
 </template>
 
 <script setup lang="ts">
 import { computed, nextTick, ref, type Slot } from 'vue';
 import { newId, waitClickComplete } from '@/helpers';
-import { useDomRef, useRouteTransition } from '@/composables';
+import { useDomRef, useTransitionState } from '@/composables';
 import { vPopoverShift } from '@/directives';
+import { FadeTransition } from '@/components/transition';
 import DropdownMenu from './DropdownMenu.vue';
 
 defineSlots<{
   activator: Slot<{
     open: () => void;
+    isOpened: boolean;
     activatorStyle: { anchorName: string };
   }>;
 
   default: Slot;
 }>();
 
-const routeTransition = useRouteTransition();
+const transitionState = useTransitionState();
 const menuRef = useDomRef<HTMLElement | null>();
 
 const anchorName = `--dropdown-${newId()}`;
@@ -45,32 +52,40 @@ const menuStyles = computed(() => ({
 
 let closeController: AbortController | null = null;
 
-function open() {
+function close(): void {
+  closeController?.abort();
+  isOpened.value = false;
+}
+
+function closeEvent(event: Event): void {
+  if (menuRef.value?.contains(event.target as Node)) {
+    return;
+  }
+
+  close();
+}
+
+async function open() {
   if (isOpened.value) {
     return;
   }
 
-  routeTransition.start(async () => {
-    isOpened.value = true;
-    await nextTick();
+  isOpened.value = true;
+  await nextTick();
 
-    menuRef.value!.showPopover();
-    await nextTick();
+  menuRef.value!.showPopover();
+  await waitClickComplete();
+
+  closeController = new AbortController();
+
+  window.addEventListener('click', closeEvent, {
+    signal: closeController.signal,
+    capture: true,
   });
 
-  waitClickComplete().then(() => {
-    closeController = new AbortController();
-    window.addEventListener('click', close, { signal: closeController.signal });
-    window.addEventListener('contextmenu', close, { signal: closeController.signal });
-  });
-}
-
-function close(): void {
-  closeController?.abort();
-
-  routeTransition.start(async () => {
-    isOpened.value = false;
-    await nextTick();
+  window.addEventListener('contextmenu', closeEvent, {
+    signal: closeController.signal,
+    capture: true,
   });
 }
 </script>

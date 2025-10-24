@@ -41,7 +41,7 @@ type Environment struct {
 
 type Options struct {
 	fx.In
-	BitWardenClient bitwarden.Client
+	BitWardenClient *bitwarden.Client
 }
 
 func Provider(options Options) (*Environment, error) {

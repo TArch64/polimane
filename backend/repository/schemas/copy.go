@@ -10,7 +10,6 @@ import (
 )
 
 type CopyOptions struct {
-	Ctx      context.Context
 	User     *model.User
 	SchemaID model.ID
 }
@@ -27,9 +26,8 @@ func makeCopyName(originalName string) string {
 	return strings.ReplaceAll(originalName, counterMatch[0], " ("+counterStr+")")
 }
 
-func (i *Impl) Copy(options *CopyOptions) (*model.Schema, error) {
-	original, err := i.ByID(&ByIDOptions{
-		Ctx:      options.Ctx,
+func (c *Client) Copy(ctx context.Context, options *CopyOptions) (*model.Schema, error) {
+	original, err := c.GetByID(ctx, &ByIDOptions{
 		SchemaID: options.SchemaID,
 		User:     options.User,
 	})
@@ -38,8 +36,7 @@ func (i *Impl) Copy(options *CopyOptions) (*model.Schema, error) {
 		return nil, err
 	}
 
-	return i.Create(&CreateOptions{
-		Ctx:             options.Ctx,
+	return c.Create(ctx, &CreateOptions{
 		User:            options.User,
 		Name:            makeCopyName(original.Name),
 		BackgroundColor: original.BackgroundColor,

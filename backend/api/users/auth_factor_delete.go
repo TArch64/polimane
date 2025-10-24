@@ -8,12 +8,12 @@ import (
 )
 
 func (c *Controller) apiAuthFactorDelete(ctx *fiber.Ctx) error {
-	factorID, err := base.GetRequiredParam(ctx, factorIdParam)
+	factorID, err := base.GetRequiredParam(ctx, factorIDParam)
 	if err != nil {
 		return err
 	}
 
-	err = c.workosClient.MFA().DeleteFactor(ctx.Context(), mfa.DeleteFactorOpts{
+	err = c.workosClient.MFA.DeleteFactor(ctx.Context(), mfa.DeleteFactorOpts{
 		FactorID: factorID,
 	})
 

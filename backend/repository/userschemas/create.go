@@ -1,16 +1,55 @@
 package userschemas
 
 import (
+	"context"
+
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
 )
 
-func (c *Impl) CreateTx(tx *gorm.DB, userID, schemaID model.ID) error {
+type CreateOptions struct {
+	UserID   model.ID
+	SchemaID model.ID
+	Access   model.AccessLevel
+}
+
+func (c *Client) Create(ctx context.Context, options *CreateOptions) (*model.UserSchema, error) {
+	return c.CreateTx(ctx, c.db, options)
+}
+
+func (c *Client) CreateTx(ctx context.Context, tx *gorm.DB, options *CreateOptions) (*model.UserSchema, error) {
 	userSchema := &model.UserSchema{
-		UserID:   userID,
-		SchemaID: schemaID,
+		UserID:   options.UserID,
+		SchemaID: options.SchemaID,
+		Access:   options.Access,
 	}
 
-	return tx.Create(userSchema).Error
+	result := gorm.WithResult()
+
+	err := gorm.
+		G[model.UserSchema](tx, result).
+		Create(ctx, userSchema)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return userSchema, nil
+}
+
+func (c *Client) CreateManyTx(ctx context.Context, tx *gorm.DB, items []*CreateOptions) error {
+	userSchemas := make([]model.UserSchema, len(items))
+
+	for i, item := range items {
+		userSchemas[i] = model.UserSchema{
+			UserID:   item.UserID,
+			SchemaID: item.SchemaID,
+			Access:   item.Access,
+		}
+	}
+
+	return gorm.
+		G[model.UserSchema](tx).
+		CreateInBatches(ctx, &userSchemas, 100)
 }

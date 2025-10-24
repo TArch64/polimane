@@ -17,8 +17,8 @@ type RefreshAuthOptions struct {
 	UserAgent string
 }
 
-func (i *Impl) AuthenticateWithRefreshToken(ctx context.Context, options *RefreshAuthOptions) (*usermanagement.RefreshAuthenticationResponse, error) {
-	res, err := i.userManagement.AuthenticateWithRefreshToken(ctx, usermanagement.AuthenticateWithRefreshTokenOpts{
+func (i *Client) AuthenticateWithRefreshToken(ctx context.Context, options *RefreshAuthOptions) (*usermanagement.RefreshAuthenticationResponse, error) {
+	res, err := i.UserManagement.AuthenticateWithRefreshToken(ctx, usermanagement.AuthenticateWithRefreshTokenOpts{
 		ClientID:     i.env.WorkOS.ClientID,
 		RefreshToken: options.Token,
 		UserAgent:    options.UserAgent,

@@ -1,6 +1,9 @@
 <template>
   <Teleport to="body" v-if="openedModal">
-    <ModalRender :key="openedModal.id" :modal="openedModal as ModalModel" />
+    <ModalRender
+      :key="openedModal.id"
+      :modal="openedModal as ModalModel"
+    />
   </Teleport>
 </template>
 

@@ -8,6 +8,7 @@ import (
 
 const (
 	CodeEmailVerificationCodeExpired = "email_verification_code_expired"
+	CodeEmailAlreadyInvited          = "email_already_invited"
 	CodeUnknownError                 = "unknown"
 )
 

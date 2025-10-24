@@ -18,9 +18,9 @@ resource "aws_cloudfront_origin_access_control" "cdn" {
 }
 
 resource "aws_cloudfront_distribution" "cdn" {
-  http_version = "http2and3"
-  price_class  = "PriceClass_100"
-  aliases = [local.cdn_domain]
+  http_version        = "http2and3"
+  price_class         = "PriceClass_100"
+  aliases             = [local.cdn_domain]
   enabled             = true
   wait_for_deployment = true
   comment             = local.app_name
@@ -49,21 +49,22 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   default_cache_behavior {
-    allowed_methods = ["HEAD", "GET", "OPTIONS"]
-    cached_methods = ["HEAD", "GET"]
+    allowed_methods        = ["HEAD", "GET", "OPTIONS"]
+    cached_methods         = ["HEAD", "GET"]
     target_origin_id       = aws_s3_bucket.bucket.id
     cache_policy_id        = data.aws_cloudfront_cache_policy.caching_optimized.id
     viewer_protocol_policy = "https-only"
   }
 
   ordered_cache_behavior {
-    allowed_methods = ["HEAD", "GET", "OPTIONS"]
-    cached_methods = ["HEAD", "GET"]
-    path_pattern           = "/images/*"
-    target_origin_id       = aws_s3_bucket.bucket.id
-    cache_policy_id        = data.aws_cloudfront_cache_policy.images.id
-    viewer_protocol_policy = "https-only"
-    compress               = false
+    allowed_methods            = ["HEAD", "GET", "OPTIONS"]
+    cached_methods             = ["HEAD", "GET"]
+    path_pattern               = "/images/*"
+    target_origin_id           = aws_s3_bucket.bucket.id
+    cache_policy_id            = data.aws_cloudfront_cache_policy.images.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.images.id
+    viewer_protocol_policy     = "https-only"
+    compress                   = false
   }
 }
 
@@ -90,3 +91,26 @@ resource "aws_s3_bucket_policy" "cdn" {
     ]
   })
 }
+
+resource "aws_cloudfront_response_headers_policy" "images" {
+  name = "${local.app_name}-images"
+
+  cors_config {
+    origin_override                  = false
+    access_control_max_age_sec       = 600
+    access_control_allow_credentials = false
+
+    access_control_allow_headers {
+      items = ["*"]
+    }
+
+    access_control_allow_methods {
+      items = ["GET", "OPTIONS"]
+    }
+
+    access_control_allow_origins {
+      items = ["https://${local.webapp_domain}"]
+    }
+  }
+}
+

@@ -67,7 +67,7 @@ onMounted(async () => {
   await nextTick();
 });
 
-onBackdropClick(dialogRef, decline);
+onBackdropClick(decline);
 </script>
 
 <style scoped>

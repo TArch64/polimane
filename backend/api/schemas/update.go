@@ -64,7 +64,7 @@ func (c *Controller) updateScreenshot(ctx context.Context, schemaID model.ID, ne
 		return c.sqs.Send(ctx, &awssqs.SendOptions{
 			Queue:           events.QueueDebounced,
 			Event:           events.EventSchemaScreenshot,
-			DeduplicationId: schemaID.String(),
+			DeduplicationID: schemaID.String(),
 
 			Body: events.SchemaScreenshotBody{
 				SchemaID: schemaID,
@@ -72,8 +72,7 @@ func (c *Controller) updateScreenshot(ctx context.Context, schemaID model.ID, ne
 		})
 	}
 
-	schema, err := c.schemas.ByID(&repositoryschemas.ByIDOptions{
-		Ctx:      ctx,
+	schema, err := c.schemas.GetByID(ctx, &repositoryschemas.ByIDOptions{
 		SchemaID: schemaID,
 	})
 
@@ -87,7 +86,7 @@ func (c *Controller) updateScreenshot(ctx context.Context, schemaID model.ID, ne
 }
 
 func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
-	schemaID, err := base.GetParamID(ctx, schemaIdParam)
+	schemaID, err := base.GetParamID(ctx, schemaIDParam)
 	if err != nil {
 		return err
 	}
@@ -102,8 +101,7 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
 		return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
 	}
 
-	err = c.schemas.Update(&repositoryschemas.UpdateOptions{
-		Ctx:      ctx.Context(),
+	err = c.schemas.Update(ctx.Context(), &repositoryschemas.UpdateOptions{
 		User:     auth.GetSessionUser(ctx),
 		SchemaID: schemaID,
 		Updates:  updates,

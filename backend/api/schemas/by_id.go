@@ -5,20 +5,22 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
-func (c *Controller) apiById(ctx *fiber.Ctx) error {
-	schemaId, err := base.GetParamID(ctx, schemaIdParam)
+func (c *Controller) apiByID(ctx *fiber.Ctx) error {
+	schemaID, err := base.GetParamID(ctx, schemaIDParam)
 	if err != nil {
 		return err
 	}
 
-	schema, err := c.schemas.ByID(&repositoryschemas.ByIDOptions{
-		Ctx:      ctx.Context(),
+	var schema model.SchemaWithAccess
+	err = c.schemas.GetByIDOut(ctx.Context(), &repositoryschemas.ByIDOptions{
 		User:     auth.GetSessionUser(ctx),
-		SchemaID: schemaId,
-	})
+		SchemaID: schemaID,
+		Select:   []string{"schemas.*", "user_schemas.access AS access"},
+	}, &schema)
 
 	if err != nil {
 		return err

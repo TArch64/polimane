@@ -1,35 +1,32 @@
 <template>
-  <label class="text-field">
-    <span class="text-field__label" v-if="label">
-      {{ placeholder }}
-    </span>
+  <FormField :label :placeholder :variant>
+    <input
+      :type
+      :placeholder
+      :required
+      :disabled
+      ref="inputRef"
+      class="text-field__input"
+      @blur="onBlur"
+      v-bind="inputAttrs"
+      v-model="model"
+    >
 
-    <span class="text-field__container" :class="containerClasses">
-      <input
-        :type
-        :placeholder
-        :required
-        ref="inputRef"
-        class="text-field__input"
-        @blur="onBlur"
-        v-bind="inputAttrs"
-        v-model="model"
-      >
-
-      <span class="text-field__append" @click.stop.prevent v-if="slots.append">
-        <slot name="append" />
-      </span>
-    </span>
-  </label>
+    <template #append v-if="slots.append">
+      <slot name="append" />
+    </template>
+  </FormField>
 </template>
 
 <script setup lang="ts">
-import { computed, type InputHTMLAttributes, ref, type Slot } from 'vue';
+import { type InputHTMLAttributes, ref, type Slot } from 'vue';
+import FormField from './FormField.vue';
 
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
   placeholder: string;
   label?: boolean;
   required?: boolean;
+  disabled?: boolean;
   type?: 'text' | 'password' | 'number' | 'email';
   variant?: 'main' | 'control';
   inputAttrs?: InputHTMLAttributes;
@@ -60,8 +57,6 @@ const slots = defineSlots<{
 const inputRef = ref<HTMLInputElement | null>(null);
 const isDirty = ref(false);
 
-const containerClasses = computed(() => `text-field__container--variant-${props.variant}`);
-
 function onBlur() {
   isDirty.value = true;
   inputRef.value?.reportValidity();
@@ -79,46 +74,6 @@ defineExpose({ setError });
 
 <style scoped>
 @layer components {
-  .text-field {
-    display: block;
-    max-width: 100%;
-  }
-
-  .text-field__label {
-    display: block;
-    margin-bottom: 2px;
-    margin-left: 2px;
-    font-size: var(--font-xs);
-    color: color-mix(in srgb, var(--color-black), transparent 40%);
-  }
-
-  .text-field__container {
-    border: var(--divider);
-    border-radius: var(--rounded-md);
-    padding: 4px 8px;
-    transition: border-color 0.15s ease-out;
-    will-change: border-color;
-    display: flex;
-    align-items: center;
-    max-width: 100%;
-
-    &:has(:focus:not(:user-invalid)) {
-      border-color: var(--color-hover-divider);
-    }
-
-    &:has(:user-invalid) {
-      border-color: var(--color-danger);
-    }
-  }
-
-  .text-field__container--variant-main {
-    background-color: var(--color-background-1);
-  }
-
-  .text-field__container--variant-control {
-    background-color: var(--color-background-2);
-  }
-
   .text-field__input {
     background-color: transparent;
     border: none;
@@ -126,10 +81,6 @@ defineExpose({ setError });
     outline: none;
     font-size: calc(var(--font-md) - 1px);
     line-height: 20px;
-  }
-
-  .text-field__append {
-    flex-shrink: 0;
   }
 }
 </style>

@@ -5,24 +5,31 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
 func (c *Controller) apiCopy(ctx *fiber.Ctx) error {
-	schemaId, err := base.GetParamID(ctx, schemaIdParam)
+	schemaID, err := base.GetParamID(ctx, schemaIDParam)
 	if err != nil {
 		return err
 	}
 
-	schema, err := c.schemas.Copy(&repositoryschemas.CopyOptions{
-		Ctx:      ctx.Context(),
+	schema, err := c.schemas.Copy(ctx.Context(), &repositoryschemas.CopyOptions{
 		User:     auth.GetSessionUser(ctx),
-		SchemaID: schemaId,
+		SchemaID: schemaID,
 	})
 
 	if err != nil {
 		return err
 	}
 
-	return ctx.JSON(newListItem(schema))
+	if err = c.updateScreenshot(ctx.Context(), schema.ID, false); err != nil {
+		return err
+	}
+
+	return ctx.JSON(newListItem(&model.SchemaWithAccess{
+		Schema: *schema,
+		Access: model.AccessAdmin,
+	}))
 }

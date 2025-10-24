@@ -14,7 +14,7 @@ resource "cloudflare_pages_project" "webapp" {
 }
 
 resource "cloudflare_pages_domain" "webapp" {
-  name = local.webapp_domain
+  name         = local.webapp_domain
   account_id   = local.cloudflare_account_id
   project_name = cloudflare_pages_project.webapp.name
 }
@@ -31,16 +31,16 @@ resource "null_resource" "webapp_deploy" {
     command = "bash ${path.module}/job/run.sh"
 
     environment = {
-      JOB_ID        = local.webapp_sources_hash
-      BUILD_IMAGE   = "polimane-prod-frontend-deploy"
+      JOB_ID           = local.webapp_sources_hash
+      BUILD_IMAGE      = "polimane-prod-frontend-deploy"
       BUILD_DOCKERFILE = abspath("${path.root}/job/frontend.Dockerfile")
-      BUILD_CONTEXT = local.webapp_sources_dir
+      BUILD_CONTEXT    = local.webapp_sources_dir
 
       BUILD_SECRET = jsonencode(["CLOUDFLARE_API_TOKEN"])
       # nonsensitive is safe here because values passed using build secrets
       CLOUDFLARE_API_TOKEN = nonsensitive(data.bitwarden_secret.cloudflare_api_token.value)
 
-      BUILD_ARGS = jsonencode(["CLOUDFLARE_ACCOUNT_ID", "PROJECT_NAME"])
+      BUILD_ARGS            = jsonencode(["CLOUDFLARE_ACCOUNT_ID", "PROJECT_NAME"])
       CLOUDFLARE_ACCOUNT_ID = local.cloudflare_account_id
       PROJECT_NAME          = cloudflare_pages_project.webapp.name
     }

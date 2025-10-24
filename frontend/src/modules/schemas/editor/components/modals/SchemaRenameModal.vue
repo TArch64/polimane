@@ -1,5 +1,5 @@
 <template>
-  <Modal title="Налаштування Схеми" @save="save">
+  <Modal title="Переназвати Схему" @save="save">
     <TextField
       required
       variant="control"

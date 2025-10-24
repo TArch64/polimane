@@ -7,7 +7,7 @@ locals {
   lambda_name = local.app_name
 
   lambda_environment = {
-    BACKEND_APP_DOMAIN = local.domain
+    BACKEND_APP_DOMAIN           = local.domain
     BACKEND_APP_PROTOCOL         = "https"
     BACKEND_SENTRY_RELEASE       = local.lambda_sources_hash,
     BACKEND_BITWARDEN_TOKEN      = var.bitwarden_token
@@ -22,13 +22,13 @@ locals {
 }
 
 resource "aws_lambda_function" "lambda" {
-  depends_on = [null_resource.lambda_build]
-  filename = local.lambda_build_zip
+  depends_on       = [null_resource.lambda_build]
+  filename         = local.lambda_build_zip
   function_name    = local.lambda_name
   role             = aws_iam_role.lambda_role.arn
   handler          = "lambda"
   runtime          = "provided.al2023"
-  architectures = ["arm64"]
+  architectures    = ["arm64"]
   timeout          = 30
   memory_size      = 128
   source_code_hash = local.lambda_sources_hash
@@ -50,21 +50,21 @@ resource "aws_cloudwatch_log_group" "lambda_logs" {
 }
 
 resource "null_resource" "lambda_migrations" {
-  triggers = { sources_hash = local.migrations_hash }
+  triggers   = { sources_hash = local.migrations_hash }
   depends_on = [aws_lambda_function.lambda]
 
   provisioner "local-exec" {
     command = "bash ${path.module}/job/run.sh"
 
     environment = {
-      JOB_ID        = local.migrations_hash
-      BUILD_IMAGE   = "polimane-prod-backend-migrations"
+      JOB_ID           = local.migrations_hash
+      BUILD_IMAGE      = "polimane-prod-backend-migrations"
       BUILD_DOCKERFILE = abspath("${path.root}/job/backend.Dockerfile")
-      BUILD_CONTEXT = local.lambda_sources_dir
+      BUILD_CONTEXT    = local.lambda_sources_dir
 
       BUILD_SECRET = jsonencode(["BACKEND_DATABASE_URL", "BACKEND_DATABASE_CERT"])
       # nonsensitive is safe here because values passed using build secrets
-      BACKEND_DATABASE_URL = nonsensitive(bitwarden_secret.backend_database_url.value)
+      BACKEND_DATABASE_URL  = nonsensitive(bitwarden_secret.backend_database_url.value)
       BACKEND_DATABASE_CERT = nonsensitive(bitwarden_secret.backend_database_cert.value)
     }
   }

@@ -9,45 +9,51 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
+	repositoryuserschemas "polimane/backend/repository/userschemas"
 	"polimane/backend/services/awsconfig"
 )
 
 type DeleteOptions struct {
-	Ctx      context.Context
 	User     *model.User
 	SchemaID model.ID
 }
 
-func (i *Impl) Delete(options *DeleteOptions) (err error) {
-	err = i.userSchemas.HasAccess(options.Ctx, options.User.ID, options.SchemaID)
+func (c *Client) Delete(ctx context.Context, options *DeleteOptions) (err error) {
+	err = c.userSchemas.HasAccess(ctx, options.User.ID, options.SchemaID, model.AccessAdmin)
 	if err != nil {
 		return err
 	}
 
-	err = i.db.WithContext(options.Ctx).Transaction(func(tx *gorm.DB) error {
-		if err = tx.Delete(&model.Schema{}, options.SchemaID).Error; err != nil {
+	err = c.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		err = tx.Delete(&model.Schema{}, options.SchemaID).Error
+		if err != nil {
 			return err
 		}
 
-		if err = i.userSchemas.DeleteTx(tx, options.User.ID, options.SchemaID); err != nil {
+		err = c.userSchemas.DeleteTx(ctx, tx, &repositoryuserschemas.DeleteOptions{
+			UserID:   options.User.ID,
+			SchemaID: options.SchemaID,
+		})
+
+		if err != nil {
 			return err
 		}
 
-		return i.deleteScreenshot(options.Ctx, options.SchemaID)
+		return c.deleteScreenshot(ctx, options.SchemaID)
 	})
 
 	if err != nil {
 		return err
 	}
 
-	i.signals.InvalidateUserCache.Emit(options.Ctx, options.User.ID)
+	c.signals.InvalidateUserCache.Emit(ctx, options.User.ID)
 	return nil
 }
 
-func (i *Impl) deleteScreenshot(ctx context.Context, schemaId model.ID) error {
-	key := model.SchemaScreenshotKey(schemaId)
+func (c *Client) deleteScreenshot(ctx context.Context, schemaID model.ID) error {
+	key := model.SchemaScreenshotKey(schemaID)
 
-	_, err := i.s3.DeleteObject(ctx, &s3.DeleteObjectInput{
+	_, err := c.s3.DeleteObject(ctx, &s3.DeleteObjectInput{
 		Key:    &key,
 		Bucket: &awsconfig.S3Bucket,
 	})

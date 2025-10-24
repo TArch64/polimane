@@ -14,13 +14,13 @@ import (
 
 type Controller struct {
 	queues []queue.Interface
-	sqs    awssqs.Client
+	sqs    *awssqs.Client
 }
 
 type ProviderOptions struct {
 	fx.In
 	Queues []queue.Interface `group:"queues"`
-	SQS    awssqs.Client
+	SQS    *awssqs.Client
 	Sentry *sentry.Container
 }
 
@@ -40,11 +40,9 @@ func (c *Controller) Process(
 	semaphore := make(chan struct{}, 10)
 
 	for message := range messages {
-		wg.Add(1)
 		semaphore <- struct{}{}
 
-		go func(q queue.Interface, message *events.Message) {
-			defer wg.Done()
+		wg.Go(func() {
 			defer func() { <-semaphore }()
 
 			if err := q.Process(ctx, message); err != nil {
@@ -58,7 +56,7 @@ func (c *Controller) Process(
 			}
 
 			message.OnEnd()
-		}(q, message)
+		})
 	}
 
 	wg.Wait()

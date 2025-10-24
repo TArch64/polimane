@@ -11,14 +11,14 @@ import (
 
 type Queue struct {
 	*queue.Base
-	schemas          repositoryschemas.Client
-	schemaScreenshot schemascreenshot.Interface
+	schemas          *repositoryschemas.Client
+	schemaScreenshot *schemascreenshot.Service
 }
 
 type ProviderOptions struct {
 	fx.In
-	Schemas          repositoryschemas.Client
-	SchemaScreenshot schemascreenshot.Interface
+	Schemas          *repositoryschemas.Client
+	SchemaScreenshot *schemascreenshot.Service
 }
 
 func Provider(options ProviderOptions) queue.Interface {

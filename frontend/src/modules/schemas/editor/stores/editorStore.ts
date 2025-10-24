@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia';
 import { onScopeDispose, type Ref, ref, toRef } from 'vue';
 import { type ISchema, isRefBead, isSpannableBead } from '@/models';
-import { type HttpBody, HttpTransport, useHttpClient } from '@/composables';
+import { type HttpBody, HttpTransport, useAccessPermissions, useHttpClient } from '@/composables';
 import { getObjectEntries } from '@/helpers';
+import { AccessLevel } from '@/enums';
 import { useEditorSaveDispatcher } from './composables';
-import useHistoryStore from './historyStore';
+import { useHistoryStore } from './historyStore';
 
 type UpdateSchemaRequest = Partial<Omit<ISchema, 'id'>>;
 
@@ -13,6 +14,7 @@ export const useEditorStore = defineStore('schemas/editor', () => {
   const schema: Ref<ISchema> = ref(null!);
 
   const historyStore = useHistoryStore();
+  const permissions = useAccessPermissions(() => schema.value?.access ?? AccessLevel.READ);
 
   function cleanupOrphanBeads(patch: Partial<ISchema>): void {
     if (!patch.beads) {
@@ -65,6 +67,9 @@ export const useEditorStore = defineStore('schemas/editor', () => {
     schema,
     loadSchema,
     deleteSchema,
+    canEdit: toRef(permissions, 'write'),
+    canEditAccess: toRef(permissions, 'admin'),
+    canDelete: toRef(permissions, 'admin'),
     hasUnsavedChanges: toRef(saveDispatcher, 'hasUnsavedChanges'),
     isSaving: toRef(saveDispatcher, 'isSaving'),
     save: saveDispatcher.flush,

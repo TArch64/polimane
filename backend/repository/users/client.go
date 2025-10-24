@@ -1,30 +1,30 @@
 package users
 
 import (
-	"context"
-
 	"go.uber.org/fx"
 	"gorm.io/gorm"
 
-	"polimane/backend/model"
+	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
+	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
-
-type Client interface {
-	ByID(ctx context.Context, id model.ID) (*model.User, error)
-	CreateIfNeeded(ctx context.Context, workosID string) (*model.User, error)
-}
 
 type ClientOptions struct {
 	fx.In
-	DB *gorm.DB
+	DB                *gorm.DB
+	SchemaInvitations *repositoryschemainvitations.Client
+	UserSchemas       *repositoryuserschemas.Client
 }
 
-type Impl struct {
-	db *gorm.DB
+type Client struct {
+	db                *gorm.DB
+	schemaInvitations *repositoryschemainvitations.Client
+	userSchemas       *repositoryuserschemas.Client
 }
 
-var _ Client = (*Impl)(nil)
-
-func Provider(options ClientOptions) Client {
-	return &Impl{db: options.DB}
+func Provider(options ClientOptions) *Client {
+	return &Client{
+		db:                options.DB,
+		schemaInvitations: options.SchemaInvitations,
+		userSchemas:       options.UserSchemas,
+	}
 }

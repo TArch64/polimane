@@ -43,7 +43,7 @@ resource "bitwarden_secret" "backend_database_cert" {
   note            = "backend_database_cert"
   project_id      = data.bitwarden_project.app.id
   organization_id = data.bitwarden_project.app.organization_id
-  value = sensitive(data.cockroach_cluster_cert.ca_cert.cert)
+  value           = sensitive(data.cockroach_cluster_cert.ca_cert.cert)
 }
 
 resource "bitwarden_secret" "backend_database_url" {
@@ -51,7 +51,7 @@ resource "bitwarden_secret" "backend_database_url" {
   note            = "backend_database_url"
   project_id      = data.bitwarden_project.app.id
   organization_id = data.bitwarden_project.app.organization_id
-  value = sensitive("${data.cockroach_connection_string.app.connection_string}&sslrootcert=/tmp/postgres/ca-cert.pem")
+  value           = sensitive("${data.cockroach_connection_string.app.connection_string}&sslrootcert=/tmp/postgres/ca-cert.pem")
 }
 
 data "bitwarden_secret" "backend_workos_client_id" {

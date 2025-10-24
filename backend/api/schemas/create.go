@@ -5,6 +5,7 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
@@ -19,8 +20,7 @@ func (c *Controller) apiCreate(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	schema, err := c.schemas.Create(&repositoryschemas.CreateOptions{
-		Ctx:  ctx.Context(),
+	schema, err := c.schemas.Create(ctx.Context(), &repositoryschemas.CreateOptions{
 		User: auth.GetSessionUser(ctx),
 		Name: body.Name,
 	})
@@ -29,5 +29,12 @@ func (c *Controller) apiCreate(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.JSON(newListItem(schema))
+	if err = c.updateScreenshot(ctx.Context(), schema.ID, false); err != nil {
+		return err
+	}
+
+	return ctx.JSON(newListItem(&model.SchemaWithAccess{
+		Schema: *schema,
+		Access: model.AccessAdmin,
+	}))
 }

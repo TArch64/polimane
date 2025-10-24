@@ -10,7 +10,7 @@ type RenderOptions struct {
 	Minify bool
 }
 
-func (r *RendererImpl) Render(options *RenderOptions) (string, error) {
+func (r *Renderer) Render(options *RenderOptions) (string, error) {
 	tmpl, err := r.load(options.View)
 	if err != nil {
 		return "", err

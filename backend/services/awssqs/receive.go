@@ -7,7 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
 )
 
-func (i *Impl) Receive(ctx context.Context, queue string) ([]types.Message, error) {
+func (i *Client) Receive(ctx context.Context, queue string) ([]types.Message, error) {
 	output, err := i.sqs.ReceiveMessage(ctx, &sqs.ReceiveMessageInput{
 		QueueUrl:              i.buildQueueUrl(queue),
 		MessageAttributeNames: []string{"All"},

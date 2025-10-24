@@ -58,6 +58,7 @@ export const UnlockIcon = makeIcon('UnlockIcon', () => import('~icons/eva/unlock
 export const RepeatIcon = makeIcon('RepeatIcon', () => import('~icons/eva/repeat-outline'));
 export const FileTextIcon = makeIcon('FileTextIcon', () => import('~icons/eva/file-text-outline'));
 export const DropletOffIcon = makeIcon('DropletOffIcon', () => import('~icons/eva/droplet-off-outline'));
+export const PeopleIcon = makeIcon('PeopleIcon', () => import('~icons/eva/people-outline'));
 
 export const PersonFillIcon = makeIcon('PersonFillIcon', () => import('~icons/eva/person-fill'));
 

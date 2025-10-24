@@ -21,5 +21,5 @@ func MustStringToID(str string) ID {
 }
 
 type Identifiable struct {
-	ID ID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
+	ID ID `gorm:"primaryKey;default:gen_random_uuid()" json:"id"`
 }

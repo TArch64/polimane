@@ -46,5 +46,6 @@ func NewReasonedError(code int, reason string) *CustomError {
 }
 
 var (
-	NotFoundErr = NewReasonedError(fiber.StatusNotFound, "NotFound")
+	NotFoundErr       = NewReasonedError(fiber.StatusNotFound, "NotFound")
+	InvalidRequestErr = NewReasonedError(fiber.StatusBadRequest, "InvalidRequest")
 )

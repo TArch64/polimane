@@ -16,7 +16,7 @@
           <slot :close />
         </main>
 
-        <footer class="modal__footer">
+        <footer class="modal__footer" v-if="footer">
           <Button
             variant="primary"
             type="submit"
@@ -46,10 +46,12 @@ withDefaults(defineProps<{
   saveButton?: string;
   saveDisabled?: boolean;
   loading?: boolean;
+  footer?: boolean;
 }>(), {
   width: ModalWidth.MD,
   saveButton: 'Зберегти',
   saveDisabled: false,
+  footer: true,
 });
 
 defineEmits<{
@@ -66,7 +68,7 @@ const close = () => modal.close(null);
 const dialogRef = ref<HTMLDialogElement>(null!);
 
 onMounted(() => dialogRef.value.showModal());
-onBackdropClick(dialogRef, close);
+onBackdropClick(close);
 </script>
 
 <style scoped>

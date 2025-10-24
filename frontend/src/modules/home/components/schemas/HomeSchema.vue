@@ -9,6 +9,8 @@
       v-if="screenshotUrl"
     >
 
+    <div class="home-schema__screenshot" v-else />
+
     {{ schema.name }}
   </Card>
 </template>
@@ -20,7 +22,7 @@ import { Card } from '@/components/card';
 import type { ISchema } from '@/models';
 import { makeBinding } from '@/components/binding';
 import { useContextMenu } from '@/components/contextMenu';
-import { useDomRef } from '@/composables';
+import { useAccessPermissions, useDomRef } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { CopyIcon, TrashIcon } from '@/components/icon';
 import { useSchemasStore } from '@/modules/home/stores';
@@ -33,8 +35,10 @@ const props = defineProps<{
 const router = useRouter();
 const schemasStore = useSchemasStore();
 const cardRef = useDomRef<HTMLElement>();
+const permissions = useAccessPermissions(() => props.schema.access);
 
 const cardBinding = makeBinding(RouterLink, () => ({
+  draggable: false,
   to: {
     name: 'schema-editor',
     params: { schemaId: props.schema.id },
@@ -72,7 +76,7 @@ useContextMenu({
       },
     },
 
-    {
+    permissions.admin && {
       danger: true,
       title: 'Видалити Схему',
       icon: TrashIcon,

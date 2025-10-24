@@ -28,7 +28,7 @@ resource "tls_cert_request" "aws_origin" {
 
 resource "cloudflare_origin_ca_certificate" "aws_origin" {
   csr                = tls_cert_request.aws_origin.cert_request_pem
-  hostnames = ["*.${local.domain}", local.domain]
+  hostnames          = ["*.${local.domain}", local.domain]
   request_type       = "origin-rsa"
   requested_validity = 5475
 }
@@ -54,7 +54,7 @@ resource "cloudflare_dns_record" "root" {
 }
 
 resource "cloudflare_dns_record" "webapp" {
-  name = local.webapp_domain
+  name    = local.webapp_domain
   type    = "CNAME"
   proxied = true
   ttl     = 1
@@ -76,9 +76,9 @@ resource "aws_acm_certificate" "cloudfront" {
 resource "cloudflare_dns_record" "cloudfront_validation" {
   for_each = {
     for dvo in aws_acm_certificate.cloudfront.domain_validation_options : dvo.domain_name => {
-      name = trimsuffix(dvo.resource_record_name, ".")
+      name   = trimsuffix(dvo.resource_record_name, ".")
       record = trimsuffix(dvo.resource_record_value, ".")
-      type = dvo.resource_record_type
+      type   = dvo.resource_record_type
     }
   }
 

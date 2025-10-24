@@ -1,43 +1,31 @@
 package schemas
 
 import (
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"go.uber.org/fx"
 	"gorm.io/gorm"
 
-	"polimane/backend/model"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
-	"polimane/backend/services/awss3"
 	"polimane/backend/signal"
 )
-
-type Client interface {
-	ByID(options *ByIDOptions) (*model.Schema, error)
-	ByUser(options *ByUserOptions) ([]*model.Schema, error)
-	Copy(options *CopyOptions) (*model.Schema, error)
-	Create(options *CreateOptions) (schema *model.Schema, err error)
-	Delete(options *DeleteOptions) (err error)
-	Update(options *UpdateOptions) (err error)
-}
 
 type ClientOptions struct {
 	fx.In
 	DB          *gorm.DB
-	UserSchemas repositoryuserschemas.Client
+	UserSchemas *repositoryuserschemas.Client
 	Signals     *signal.Container
-	S3          awss3.Client
+	S3          *s3.Client
 }
 
-type Impl struct {
+type Client struct {
 	db          *gorm.DB
-	userSchemas repositoryuserschemas.Client
+	userSchemas *repositoryuserschemas.Client
 	signals     *signal.Container
-	s3          awss3.Client
+	s3          *s3.Client
 }
 
-var _ Client = (*Impl)(nil)
-
-func Provider(options ClientOptions) Client {
-	return &Impl{
+func Provider(options ClientOptions) *Client {
+	return &Client{
 		db:          options.DB,
 		userSchemas: options.UserSchemas,
 		signals:     options.Signals,

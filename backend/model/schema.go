@@ -15,13 +15,21 @@ const (
 type Schema struct {
 	*Identifiable
 	*Timestamps
-	Name            string                    `gorm:"not null;index;size:255" json:"name"`
-	Palette         t.JSONType[SchemaPalette] `gorm:"not null;type:json" json:"palette,omitempty"`
-	Size            t.JSONType[*SchemaSize]   `gorm:"not null;type:json" json:"size,omitempty"`
-	Beads           t.JSONType[SchemaBeads]   `gorm:"not null;type:json" json:"beads,omitempty"`
-	BackgroundColor string                    `gorm:"not null;size:30;default:#f8f8f8" json:"backgroundColor"`
+	Name            string                    `json:"name"`
+	Palette         t.JSONType[SchemaPalette] `json:"palette,omitempty"`
+	Size            t.JSONType[*SchemaSize]   `json:"size,omitempty"`
+	Beads           t.JSONType[SchemaBeads]   `json:"beads,omitempty"`
+	BackgroundColor string                    `gorm:"default:#f8f8f8" json:"backgroundColor"`
 	ScreenshotedAt  *time.Time                `json:"screenshotedAt"`
-	Users           []User                    `gorm:"many2many:user_schemas;constraint:OnDelete:Cascade" json:"-"`
+
+	// Relations
+	Users       []User             `gorm:"many2many:user_schemas" json:"-"`
+	Invitations []SchemaInvitation `json:"-"`
+}
+
+type SchemaWithAccess struct {
+	Schema
+	Access AccessLevel `json:"access"`
 }
 
 func (s *Schema) ScreenshotPath() *string {

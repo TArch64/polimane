@@ -12,13 +12,13 @@ import (
 type SendOptions struct {
 	Queue           string
 	Event           string
-	DeduplicationId string
+	DeduplicationID string
 	Body            interface{}
 }
 
-func (i *Impl) Send(ctx context.Context, options *SendOptions) (err error) {
+func (i *Client) Send(ctx context.Context, options *SendOptions) (err error) {
 	var body string
-	var deduplicationId *string
+	var deduplicationID *string
 
 	if options.Body != nil {
 		var bodyJson []byte
@@ -32,15 +32,15 @@ func (i *Impl) Send(ctx context.Context, options *SendOptions) (err error) {
 		body = "{}"
 	}
 
-	if options.DeduplicationId != "" {
-		deduplicationId = aws.String(options.Event + "-" + options.DeduplicationId)
+	if options.DeduplicationID != "" {
+		deduplicationID = aws.String(options.Event + "-" + options.DeduplicationID)
 	}
 
 	_, err = i.sqs.SendMessage(ctx, &sqs.SendMessageInput{
 		QueueUrl:               i.buildQueueUrl(options.Queue),
 		MessageBody:            &body,
 		MessageGroupId:         &options.Event,
-		MessageDeduplicationId: deduplicationId,
+		MessageDeduplicationId: deduplicationID,
 
 		MessageAttributes: map[string]types.MessageAttributeValue{
 			"EventType": {

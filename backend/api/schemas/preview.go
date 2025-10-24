@@ -11,15 +11,14 @@ import (
 )
 
 func (c *Controller) apiPreview(ctx *fiber.Ctx) error {
-	schemaId, err := base.GetParamID(ctx, schemaIdParam)
+	schemaID, err := base.GetParamID(ctx, schemaIDParam)
 	if err != nil {
 		return err
 	}
 
-	schema, err := c.schemas.ByID(&repositoryschemas.ByIDOptions{
-		Ctx:      ctx.Context(),
+	schema, err := c.schemas.GetByID(ctx.Context(), &repositoryschemas.ByIDOptions{
 		User:     auth.GetSessionUser(ctx),
-		SchemaID: schemaId,
+		SchemaID: schemaID,
 	})
 
 	if err != nil {
