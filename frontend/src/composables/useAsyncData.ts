@@ -4,6 +4,7 @@ import { useAsyncState } from '@vueuse/core';
 export interface IAsyncDataOptions<V> {
   loader: () => Promise<V>;
   default: V;
+  once?: boolean;
   immediate?: boolean;
 }
 
@@ -24,10 +25,16 @@ export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
   const isInitial = ref(true);
   let temp: UnwrapRef<D> | null = null;
 
-  const { state: data, isLoading, execute } = useAsyncState(() => {
-    return options
-      .loader()
-      .finally(() => isInitial.value = false);
+  const { state, isLoading, execute } = useAsyncState(async (): Promise<D> => {
+    if (options.once && !isInitial.value) {
+      return state.value as D;
+    }
+
+    try {
+      return await options.loader();
+    } finally {
+      isInitial.value = false;
+    }
   }, options.default, {
     immediate: options.immediate ?? false,
     throwError: true,
@@ -39,12 +46,12 @@ export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
   }
 
   function setOptimisticUpdate(optimisticData: D): void {
-    temp = data.value;
-    data.value = optimisticData as UnwrapRef<D>;
+    temp = state.value;
+    state.value = optimisticData as UnwrapRef<D>;
   }
 
   function makeOptimisticUpdate(transform: OptimisticModify<D>): void {
-    setOptimisticUpdate(transform(data.value as D));
+    setOptimisticUpdate(transform(state.value as D));
   }
 
   function commitOptimisticUpdate(): void {
@@ -52,12 +59,12 @@ export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
   }
 
   function rollbackOptimisticUpdate(): void {
-    data.value = temp!;
+    state.value = temp!;
     temp = null;
   }
 
   return reactive({
-    data,
+    data: state,
     isInitial,
     isLoading,
     load,

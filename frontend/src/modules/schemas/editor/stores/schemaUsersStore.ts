@@ -14,13 +14,9 @@ export const useSchemaUsersStore = defineStore('schemas/editor/users', () => {
       const url: UrlPath = ['/schemas', editorStore.schema.id, 'users'];
       return http.get<ISchemaUser[]>(url);
     },
-
+    once: true,
     default: [],
   });
-
-  async function load() {
-    if (users.isInitial) await users.load();
-  }
 
   async function deleteUser(deletingUser: ISchemaUser): Promise<void> {
     await http.delete(['/schemas', editorStore.schema.id, 'users', deletingUser.id]);
@@ -28,7 +24,7 @@ export const useSchemaUsersStore = defineStore('schemas/editor/users', () => {
   }
 
   return {
-    load,
+    load: users.load,
     deleteUser,
     users: toRef(users, 'data'),
   };
