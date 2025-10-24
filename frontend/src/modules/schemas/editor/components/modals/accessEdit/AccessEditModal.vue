@@ -13,14 +13,29 @@
         :user
       />
     </ul>
+
+    <div class="access-edit__invitations" v-if="usersStore.invitations.length">
+      <p class="access-edit__description">
+        Користувачі, яким надіслані запрошення
+      </p>
+
+      <ul class="access-edit__list">
+        <SchemaInvitation
+          v-for="invitation of usersStore.invitations"
+          :key="invitation.email"
+          :invitation
+        />
+      </ul>
+    </div>
   </Modal>
 </template>
 
 <script setup lang="ts">
 import { useSchemaUsersStore } from '@editor/stores';
 import { Modal } from '@/components/modal';
-import SchemaUser from './SchemaUser.vue';
 import SchemaNewUser from './SchemaNewUser.vue';
+import SchemaUser from './SchemaUser.vue';
+import SchemaInvitation from './SchemaInvitation.vue';
 
 const usersStore = useSchemaUsersStore();
 </script>
@@ -41,9 +56,14 @@ const usersStore = useSchemaUsersStore();
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 0 0 8px 0;
+    padding: 0;
     margin: 0;
     list-style-type: none;
+  }
+
+  .access-edit__invitations {
+    margin-top: 16px;
+    padding-bottom: 8px;
   }
 }
 </style>

@@ -9,19 +9,10 @@
     </p>
 
     <div class="access-user__actions" v-if="!isCurrentUser">
-      <SelectField
-        variant="control"
+      <SchemaAccessField
         :model-value="user.access"
         @update:model-value="updateAccess"
-      >
-        <option
-          v-for="option of accessOptions"
-          :key="option.level"
-          :value="option.level"
-        >
-          {{ option.title }}
-        </option>
-      </SelectField>
+      />
 
       <Button
         icon
@@ -45,10 +36,10 @@ import type { ISchemaUser } from '@/models';
 import { useSessionStore } from '@/stores';
 import { Button } from '@/components/button';
 import { TrashIcon } from '@/components/icon';
-import { SelectField } from '@/components/form';
 import { useAsyncAction } from '@/composables';
 import { useConfirm } from '@/components/confirm';
-import { AccessLevel, AccessLeveList, getAccessLevelTitle } from '@/enums';
+import { AccessLevel } from '@/enums';
+import SchemaAccessField from './SchemaAccessField.vue';
 
 const props = defineProps<{
   user: ISchemaUser;
@@ -81,11 +72,6 @@ const deleteUser = useAsyncAction(async () => {
 async function deleteUserIntent(): Promise<void> {
   if (await deleteConfirm.ask()) await deleteUser();
 }
-
-const accessOptions = AccessLeveList.map((level) => ({
-  level,
-  title: getAccessLevelTitle(level),
-}));
 
 const updateAccess = useAsyncAction(async (access: AccessLevel) => {
   await usersStore.updateUserAccess(props.user, access);

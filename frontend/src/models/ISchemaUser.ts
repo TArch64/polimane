@@ -7,3 +7,8 @@ export interface ISchemaUser {
   lastName: string;
   access: AccessLevel;
 }
+
+export interface ISchemaUserInvitation {
+  email: string;
+  access: AccessLevel;
+}

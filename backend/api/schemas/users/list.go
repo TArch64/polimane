@@ -1,12 +1,21 @@
 package users
 
 import (
+	"context"
+
 	"github.com/gofiber/fiber/v2"
+	"golang.org/x/sync/errgroup"
 
 	"polimane/backend/api/base"
 	"polimane/backend/model"
+	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
+
+type listResponse struct {
+	Users       []*listUser       `json:"users"`
+	Invitations []*listInvitation `json:"invitations"`
+}
 
 type listUser struct {
 	ID        model.ID          `json:"id"`
@@ -37,8 +46,27 @@ func (c *Controller) apiList(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	var users []*listUser
-	err = c.userSchemas.ListBySchemaOut(ctx.Context(), &repositoryuserschemas.ListBySchemaOptions{
+	var response listResponse
+	requestCtx := ctx.Context()
+	eg := errgroup.Group{}
+
+	eg.Go(func() error {
+		return c.listUsers(requestCtx, schemaID, &response)
+	})
+
+	eg.Go(func() error {
+		return c.listInvitations(requestCtx, schemaID, &response)
+	})
+
+	if err = eg.Wait(); err != nil {
+		return err
+	}
+
+	return ctx.JSON(response)
+}
+
+func (c *Controller) listUsers(ctx context.Context, schemaID model.ID, res *listResponse) error {
+	return c.userSchemas.ListBySchemaIDOut(ctx, &repositoryuserschemas.ListBySchemaIDOptions{
 		SchemaID: schemaID,
 
 		Select: []string{
@@ -48,7 +76,12 @@ func (c *Controller) apiList(ctx *fiber.Ctx) error {
 			"first_name",
 			"last_name",
 		},
-	}, &users)
+	}, &res.Users)
+}
 
-	return ctx.JSON(users)
+func (c *Controller) listInvitations(ctx context.Context, schemaID model.ID, res *listResponse) error {
+	return c.schemaInvitations.ListBySchemaIDOut(ctx, &repositoryschemainvitations.ListBySchemaIDOptions{
+		SchemaID: schemaID,
+		Select:   []string{"email", "access"},
+	}, &res.Invitations)
 }

@@ -6,12 +6,12 @@ import (
 	"polimane/backend/model"
 )
 
-type ListBySchemaOptions struct {
+type ListBySchemaIDOptions struct {
 	SchemaID model.ID
 	Select   []string
 }
 
-func (c *Client) ListBySchemaOut(ctx context.Context, options *ListBySchemaOptions, out interface{}) error {
+func (c *Client) ListBySchemaIDOut(ctx context.Context, options *ListBySchemaIDOptions, out interface{}) error {
 	query := c.db.
 		WithContext(ctx).
 		Table("user_schemas").

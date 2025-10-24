@@ -1,14 +1,19 @@
 import { defineStore } from 'pinia';
-import { computed, toRef } from 'vue';
+import { computed } from 'vue';
 import { type HttpBody, useAsyncData, useHttpClient } from '@/composables';
-import type { ISchemaUser } from '@/models';
+import type { ISchemaUser, ISchemaUserInvitation } from '@/models';
 import type { UrlPath } from '@/helpers';
 import { AccessLevel } from '@/enums';
 import { useEditorStore } from './editorStore';
 
+interface ISchemaUserList {
+  users: ISchemaUser[];
+  invitations: ISchemaUserInvitation[];
+}
+
 interface IAddUserResponse {
-  invited: boolean;
   user?: ISchemaUser;
+  invitation?: ISchemaUserInvitation;
 }
 
 interface IAddUserBody {
@@ -24,23 +29,37 @@ export const useSchemaUsersStore = defineStore('schemas/editor/users', () => {
   const baseUrl = computed(() => ['/schemas', editorStore.schema.id, 'users'] as const satisfies UrlPath);
   const http = useHttpClient();
 
-  const users = useAsyncData({
-    loader: async () => http.get<ISchemaUser[]>(baseUrl.value),
+  const list = useAsyncData({
+    async loader() {
+      const { users, invitations } = await http.get<ISchemaUserList>(baseUrl.value);
+      return { users, invitations: invitations ?? [] };
+    },
+
     once: true,
-    default: [],
+
+    default: {
+      users: [],
+      invitations: [],
+    },
   });
+
+  const users = computed(() => list.data.users);
+  const invitations = computed(() => list.data.invitations);
 
   async function addUser(email: string): Promise<IAddUserResponse> {
     const response = await http.post<IAddUserResponse, IAddUserBody>(baseUrl.value, { email });
     if (response.user) {
-      users.data = [...users.data, response.user];
+      list.data.users = [...users.value, response.user];
+    }
+    if (response.invitation) {
+      list.data.invitations = [...invitations.value, response.invitation];
     }
     return response;
   }
 
   async function deleteUser(deletingUser: ISchemaUser): Promise<void> {
     await http.delete([...baseUrl.value, deletingUser.id]);
-    users.data = users.data.filter((user) => user.id !== deletingUser.id);
+    list.data.users = users.value.filter((user) => user.id !== deletingUser.id);
   }
 
   async function updateUserAccess(user: ISchemaUser, access: AccessLevel): Promise<void> {
@@ -52,8 +71,9 @@ export const useSchemaUsersStore = defineStore('schemas/editor/users', () => {
   }
 
   return {
-    users: toRef(users, 'data'),
-    load: users.load,
+    users,
+    invitations,
+    load: list.load,
     deleteUser,
     addUser,
     updateUserAccess,
