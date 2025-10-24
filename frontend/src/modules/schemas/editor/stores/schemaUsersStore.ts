@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia';
 import { computed, toRef } from 'vue';
-import { useAsyncData, useHttpClient } from '@/composables';
+import { type HttpBody, useAsyncData, useHttpClient } from '@/composables';
 import type { ISchemaUser } from '@/models';
 import type { UrlPath } from '@/helpers';
+import { AccessLevel } from '@/enums';
 import { useEditorStore } from './editorStore';
 
 interface IAddUserResponse {
@@ -12,6 +13,10 @@ interface IAddUserResponse {
 
 interface IAddUserBody {
   email: string;
+}
+
+interface IUpdateAccessBody {
+  access: AccessLevel;
 }
 
 export const useSchemaUsersStore = defineStore('schemas/editor/users', () => {
@@ -38,10 +43,19 @@ export const useSchemaUsersStore = defineStore('schemas/editor/users', () => {
     users.data = users.data.filter((user) => user.id !== deletingUser.id);
   }
 
+  async function updateUserAccess(user: ISchemaUser, access: AccessLevel): Promise<void> {
+    await http.patch<HttpBody, IUpdateAccessBody>([...baseUrl.value, user.id, 'access'], {
+      access,
+    });
+
+    user.access = access;
+  }
+
   return {
     users: toRef(users, 'data'),
     load: users.load,
     deleteUser,
     addUser,
+    updateUserAccess,
   };
 });

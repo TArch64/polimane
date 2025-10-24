@@ -26,10 +26,6 @@ export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
   let temp: UnwrapRef<D> | null = null;
 
   const { state, isLoading, execute } = useAsyncState(async (): Promise<D> => {
-    if (options.once && !isInitial.value) {
-      return state.value as D;
-    }
-
     try {
       return await options.loader();
     } finally {
@@ -42,6 +38,10 @@ export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
   });
 
   async function load() {
+    if (options.once && !isInitial.value) {
+      return;
+    }
+
     await execute();
   }
 

@@ -13,6 +13,10 @@ type DeleteOptions struct {
 	SchemaID model.ID
 }
 
+func (c *Client) Delete(ctx context.Context, options *DeleteOptions) error {
+	return c.DeleteTx(ctx, c.db, options)
+}
+
 func (c *Client) DeleteTx(ctx context.Context, tx *gorm.DB, options *DeleteOptions) error {
 	_, err := gorm.
 		G[model.UserSchema](tx).
@@ -30,5 +34,5 @@ func (c *Client) DeleteWithAccessCheck(ctx context.Context, options *DeleteWithA
 		return nil
 	}
 
-	return c.DeleteTx(ctx, c.db, options.Operation)
+	return c.Delete(ctx, options.Operation)
 }

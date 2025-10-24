@@ -88,6 +88,7 @@ const accessOptions = AccessLeveList.map((level) => ({
 }));
 
 const updateAccess = useAsyncAction(async (access: AccessLevel) => {
+  await usersStore.updateUserAccess(props.user, access);
 });
 </script>
 

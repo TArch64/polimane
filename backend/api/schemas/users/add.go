@@ -5,8 +5,6 @@ import (
 	"errors"
 	"time"
 
-	"polimane/backend/services/workos"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
 	"github.com/workos/workos-go/v4/pkg/workos_errors"
@@ -17,6 +15,7 @@ import (
 	"polimane/backend/model"
 	repositoryschemasinvitations "polimane/backend/repository/schemainvitations"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
+	"polimane/backend/services/workos"
 )
 
 type addUserBody struct {

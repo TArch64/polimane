@@ -14,6 +14,10 @@ type CreateOptions struct {
 	Access   model.AccessLevel
 }
 
+func (c *Client) Create(ctx context.Context, options *CreateOptions) (*model.UserSchema, error) {
+	return c.CreateTx(ctx, c.db, options)
+}
+
 func (c *Client) CreateTx(ctx context.Context, tx *gorm.DB, options *CreateOptions) (*model.UserSchema, error) {
 	userSchema := &model.UserSchema{
 		UserID:   options.UserID,
@@ -42,7 +46,7 @@ func (c *Client) CreateWithAccessCheck(ctx context.Context, options *CreateWithA
 		return nil, err
 	}
 
-	return c.CreateTx(ctx, c.db, options.Operation)
+	return c.Create(ctx, options.Operation)
 }
 
 func (c *Client) CreateManyTx(ctx context.Context, tx *gorm.DB, items []*CreateOptions) error {
