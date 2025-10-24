@@ -39,10 +39,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket  = "polimane-prod"
-    key     = "ci/terraform"
-    region  = "eu-central-1"
-    encrypt = true
+    bucket                   = "polimane-prod"
+    key                      = "ci/terraform"
+    region                   = "eu-central-1"
+    encrypt                  = true
     shared_credentials_files = [".aws-credentials"]
   }
 }
@@ -71,15 +71,14 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias  = "us_east_1"
-  region = "us-east-1"
+  alias                    = "us_east_1"
+  region                   = "us-east-1"
   shared_credentials_files = [".aws-credentials"]
 
   default_tags {
     tags = { app = "polimane" }
   }
 }
-
 
 provider "cloudflare" {
   api_token = data.bitwarden_secret.cloudflare_api_token.value
@@ -90,8 +89,8 @@ provider "cockroach" {
 }
 
 locals {
-  domain   = "polimane.com"
-  app_name = "polimane-prod"
+  domain          = "polimane.com"
+  app_name        = "polimane-prod"
   aws_common_tags = aws_servicecatalogappregistry_application.app.application_tag
 }
 

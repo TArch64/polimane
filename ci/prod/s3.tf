@@ -5,7 +5,7 @@ import {
 
 resource "aws_s3_bucket" "bucket" {
   bucket = local.app_name
-  tags = local.aws_common_tags
+  tags   = local.aws_common_tags
 }
 
 resource "aws_s3_bucket_ownership_controls" "bucket" {

@@ -3,13 +3,13 @@ locals {
 }
 
 resource "aws_lambda_function" "worker" {
-  depends_on = [null_resource.worker_build]
+  depends_on       = [null_resource.worker_build]
   filename         = local.worker_build_zip
   function_name    = local.worker_name
   role             = aws_iam_role.lambda_role.arn
   handler          = "lambda"
   runtime          = "provided.al2023"
-  architectures = ["arm64"]
+  architectures    = ["arm64"]
   timeout          = 30
   memory_size      = 128
   source_code_hash = local.worker_sources_hash
