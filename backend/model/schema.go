@@ -23,7 +23,8 @@ type Schema struct {
 	ScreenshotedAt  *time.Time                `json:"screenshotedAt"`
 
 	// Relations
-	Users []User `gorm:"many2many:user_schemas" json:"-"`
+	Users       []User             `gorm:"many2many:user_schemas" json:"-"`
+	Invitations []SchemaInvitation `json:"-"`
 }
 
 type SchemaWithAccess struct {

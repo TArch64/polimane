@@ -9,14 +9,14 @@ import (
 )
 
 func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
-	schemaId, err := base.GetParamID(ctx, schemaIdParam)
+	schemaID, err := base.GetParamID(ctx, schemaIDParam)
 	if err != nil {
 		return err
 	}
 
 	err = c.schemas.Delete(ctx.Context(), &repositoryschemas.DeleteOptions{
 		User:     auth.GetSessionUser(ctx),
-		SchemaID: schemaId,
+		SchemaID: schemaID,
 	})
 
 	if err != nil {

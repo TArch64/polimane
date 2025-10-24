@@ -7,7 +7,8 @@ ALTER TABLE user_schemas
 ALTER TABLE user_schemas
   ALTER COLUMN access DROP DEFAULT;
 
-CREATE INDEX idx_user_schemas_users_access ON user_schemas (user_id, access);
+CREATE INDEX idx_user_schemas_users_access
+  ON user_schemas (user_id, access);
 -- +goose StatementEnd
 
 -- +goose Down

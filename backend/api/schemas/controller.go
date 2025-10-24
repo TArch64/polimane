@@ -12,7 +12,7 @@ import (
 	"polimane/backend/views"
 )
 
-const schemaIdParam = "schemaId"
+const schemaIDParam = "schemaID"
 
 type ControllerOptions struct {
 	fx.In
@@ -48,8 +48,8 @@ func (c *Controller) Private(group fiber.Router) {
 		group.Get("", c.apiList)
 		group.Post("", c.apiCreate)
 
-		base.WithGroup(group, ":"+schemaIdParam, func(group fiber.Router) {
-			group.Get("", c.apiById)
+		base.WithGroup(group, ":"+schemaIDParam, func(group fiber.Router) {
+			group.Get("", c.apiByID)
 			group.Delete("", c.apiDelete)
 			group.Patch("", c.apiUpdate)
 			group.Post("copy", c.apiCopy)

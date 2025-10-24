@@ -8,7 +8,7 @@ import (
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
 
-type userListItem struct {
+type listUser struct {
 	ID        model.ID          `json:"id"`
 	Email     string            `json:"email"`
 	FirstName string            `json:"firstName"`
@@ -16,8 +16,13 @@ type userListItem struct {
 	Access    model.AccessLevel `json:"access"`
 }
 
-func newUserListItem(user *model.User, schemaUser *model.UserSchema) *userListItem {
-	return &userListItem{
+type listInvitation struct {
+	Email  string            `json:"email"`
+	Access model.AccessLevel `json:"access"`
+}
+
+func newUserListItem(user *model.User, schemaUser *model.UserSchema) *listUser {
+	return &listUser{
 		ID:        user.ID,
 		Email:     user.Email,
 		FirstName: user.FirstName,
@@ -27,14 +32,14 @@ func newUserListItem(user *model.User, schemaUser *model.UserSchema) *userListIt
 }
 
 func (c *Controller) apiList(ctx *fiber.Ctx) error {
-	schemaId, err := base.GetParamID(ctx, schemaIdParam)
+	schemaID, err := base.GetParamID(ctx, schemaIDParam)
 	if err != nil {
 		return err
 	}
 
-	var users []*userListItem
+	var users []*listUser
 	err = c.userSchemas.ListBySchemaOut(ctx.Context(), &repositoryuserschemas.ListBySchemaOptions{
-		SchemaID: schemaId,
+		SchemaID: schemaID,
 
 		Select: []string{
 			"user_id AS id",

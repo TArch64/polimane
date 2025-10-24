@@ -10,7 +10,7 @@ import (
 	"polimane/backend/signal"
 )
 
-const factorIdParam = "factorId"
+const factorIDParam = "factorID"
 
 type ControllerOptions struct {
 	fx.In
@@ -51,7 +51,7 @@ func (c *Controller) Private(group fiber.Router) {
 			group.Get("", c.apiListAuthFactors)
 			group.Post("", c.apiAuthFactorCreate)
 			group.Post("init", c.apiAuthFactorsInit)
-			group.Delete(":"+factorIdParam, c.apiAuthFactorDelete)
+			group.Delete(":"+factorIDParam, c.apiAuthFactorDelete)
 		})
 	})
 }

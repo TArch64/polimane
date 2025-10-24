@@ -50,8 +50,8 @@ func (c *Client) Delete(ctx context.Context, options *DeleteOptions) (err error)
 	return nil
 }
 
-func (c *Client) deleteScreenshot(ctx context.Context, schemaId model.ID) error {
-	key := model.SchemaScreenshotKey(schemaId)
+func (c *Client) deleteScreenshot(ctx context.Context, schemaID model.ID) error {
+	key := model.SchemaScreenshotKey(schemaID)
 
 	_, err := c.s3.DeleteObject(ctx, &s3.DeleteObjectInput{
 		Key:    &key,

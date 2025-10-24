@@ -21,7 +21,9 @@ func OptionsProvider() *Options {
 }
 
 func getErrorHandlerMiddleware() fiber.Handler {
-	return recover.New()
+	return recover.New(recover.Config{
+		EnableStackTrace: true,
+	})
 }
 
 func Start(app *fiber.App) error {

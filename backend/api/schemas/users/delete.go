@@ -9,17 +9,17 @@ import (
 )
 
 func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
-	userId, err := base.GetParamID(ctx, userIdParam)
+	userID, err := base.GetParamID(ctx, userIDParam)
 	if err != nil {
 		return err
 	}
 
 	currentUser := auth.GetSessionUser(ctx)
-	if currentUser.ID == userId {
+	if currentUser.ID == userID {
 		return base.InvalidRequestErr
 	}
 
-	schemaId, err := base.GetParamID(ctx, schemaIdParam)
+	schemaID, err := base.GetParamID(ctx, schemaIDParam)
 	if err != nil {
 		return err
 	}
@@ -28,8 +28,8 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 		CurrentUser: currentUser,
 
 		Operation: &repositoryuserschemas.DeleteOptions{
-			UserID:   userId,
-			SchemaID: schemaId,
+			UserID:   userID,
+			SchemaID: schemaID,
 		},
 	})
 

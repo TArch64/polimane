@@ -8,7 +8,7 @@ import (
 )
 
 type authFactorListItem struct {
-	Id        string `json:"id"`
+	ID        string `json:"id"`
 	CreatedAt string `json:"createdAt"`
 }
 
@@ -26,7 +26,7 @@ func (c *Controller) apiListAuthFactors(ctx *fiber.Ctx) error {
 	response := make([]authFactorListItem, len(factors.Data))
 	for i, factor := range factors.Data {
 		response[i] = authFactorListItem{
-			Id:        factor.ID,
+			ID:        factor.ID,
 			CreatedAt: factor.CreatedAt,
 		}
 	}

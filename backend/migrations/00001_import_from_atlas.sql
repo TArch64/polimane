@@ -14,7 +14,8 @@ CREATE TABLE schemas
   PRIMARY KEY (id)
 );
 
-CREATE INDEX idx_schemas_name ON schemas (name);
+CREATE INDEX idx_schemas_name
+  ON schemas (name);
 
 CREATE TABLE users
 (
@@ -23,7 +24,8 @@ CREATE TABLE users
   PRIMARY KEY (id)
 );
 
-CREATE UNIQUE INDEX idx_users_workos_id ON users (workos_id);
+CREATE UNIQUE INDEX idx_users_workos_id
+  ON users (workos_id);
 
 CREATE TABLE user_schemas
 (
@@ -32,8 +34,18 @@ CREATE TABLE user_schemas
   user_id    uuid        NOT NULL,
   schema_id  uuid        NOT NULL,
   PRIMARY KEY (user_id, schema_id),
-  CONSTRAINT fk_user_schemas_schema FOREIGN KEY (schema_id) REFERENCES schemas (id) ON UPDATE NO ACTION ON DELETE CASCADE,
-  CONSTRAINT fk_user_schemas_user FOREIGN KEY (user_id) REFERENCES users (id) ON UPDATE NO ACTION ON DELETE CASCADE
+
+  CONSTRAINT fk_user_schemas_schema
+    FOREIGN KEY (schema_id)
+      REFERENCES schemas (id)
+      ON UPDATE NO ACTION
+      ON DELETE CASCADE,
+
+  CONSTRAINT fk_user_schemas_user
+    FOREIGN KEY (user_id)
+      REFERENCES users (id)
+      ON UPDATE NO ACTION
+      ON DELETE CASCADE
 );
 -- +goose StatementEnd
 
