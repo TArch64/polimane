@@ -6,9 +6,9 @@ import (
 	"polimane/backend/model"
 )
 
-func (i *Client) GetByID(ctx context.Context, id model.ID) (*model.User, error) {
+func (c *Client) GetByID(ctx context.Context, id model.ID) (*model.User, error) {
 	var user model.User
-	err := i.db.WithContext(ctx).Take(&user, id).Error
+	err := c.db.WithContext(ctx).Take(&user, id).Error
 	if err != nil {
 		return nil, err
 	}

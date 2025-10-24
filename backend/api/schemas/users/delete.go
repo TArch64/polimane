@@ -8,10 +8,6 @@ import (
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
 
-var (
-	InvalidRequestErr = base.NewReasonedError(fiber.StatusBadRequest, "InvalidRequest")
-)
-
 func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 	userId, err := base.GetParamID(ctx, userIdParam)
 	if err != nil {
@@ -20,7 +16,7 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 
 	currentUser := auth.GetSessionUser(ctx)
 	if currentUser.ID == userId {
-		return InvalidRequestErr
+		return base.InvalidRequestErr
 	}
 
 	schemaId, err := base.GetParamID(ctx, schemaIdParam)
@@ -29,9 +25,12 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 	}
 
 	err = c.userSchemas.DeleteWithAccessCheck(ctx.Context(), &repositoryuserschemas.DeleteWithAccessCheckOptions{
-		User:     currentUser,
-		UserID:   userId,
-		SchemaID: schemaId,
+		CurrentUser: currentUser,
+
+		Operation: &repositoryuserschemas.DeleteOptions{
+			UserID:   userId,
+			SchemaID: schemaId,
+		},
 	})
 
 	if err != nil {

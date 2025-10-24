@@ -8,7 +8,7 @@ import (
 	"polimane/backend/model"
 )
 
-func (i *Client) CreateIfNeeded(ctx context.Context, workosUser usermanagement.User) (*model.User, error) {
+func (c *Client) CreateIfNeeded(ctx context.Context, workosUser usermanagement.User) (*model.User, error) {
 	user := model.User{
 		WorkosID:  workosUser.ID,
 		Email:     workosUser.Email,
@@ -16,7 +16,7 @@ func (i *Client) CreateIfNeeded(ctx context.Context, workosUser usermanagement.U
 		LastName:  workosUser.LastName,
 	}
 
-	err := i.db.
+	err := c.db.
 		WithContext(ctx).
 		Where(user).
 		Attrs(user).

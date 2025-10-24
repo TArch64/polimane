@@ -12,7 +12,7 @@ type ByIDOptions struct {
 	Select   []string
 }
 
-func (c *Client) GetOutByID(ctx context.Context, options *ByIDOptions, out interface{}) error {
+func (c *Client) GetByIDOut(ctx context.Context, options *ByIDOptions, out interface{}) error {
 	query := c.db.WithContext(ctx).
 		Table("schemas")
 
@@ -29,6 +29,6 @@ func (c *Client) GetOutByID(ctx context.Context, options *ByIDOptions, out inter
 
 func (c *Client) GetByID(ctx context.Context, options *ByIDOptions) (*model.Schema, error) {
 	var schema model.Schema
-	err := c.GetOutByID(ctx, options, &schema)
+	err := c.GetByIDOut(ctx, options, &schema)
 	return &schema, err
 }

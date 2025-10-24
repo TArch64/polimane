@@ -17,14 +17,17 @@
       <slot />
     </span>
 
-    <ButtonLoading v-if="loading" />
+    <template v-if="loading">
+      <LoaderIcon v-if="icon" />
+      <ButtonLoading v-else />
+    </template>
   </ButtonRoot>
 </template>
 
 <script setup lang="ts">
 import { computed, type Slot } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
-import type { IconComponent } from '../icon';
+import { type IconComponent, LoaderIcon } from '../icon';
 import ButtonRoot from './ButtonRoot.vue';
 import type { ButtonSize } from './ButtonSize';
 import type { ButtonVariant } from './ButtonVariant';

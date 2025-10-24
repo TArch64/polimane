@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
+	repositoryuserschemas "polimane/backend/repository/userschemas"
 	"polimane/backend/services/awsconfig"
 )
 
@@ -24,11 +25,17 @@ func (c *Client) Delete(ctx context.Context, options *DeleteOptions) (err error)
 	}
 
 	err = c.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if err = tx.Delete(&model.Schema{}, options.SchemaID).Error; err != nil {
+		err = tx.Delete(&model.Schema{}, options.SchemaID).Error
+		if err != nil {
 			return err
 		}
 
-		if err = c.userSchemas.DeleteTx(tx, options.User.ID, options.SchemaID); err != nil {
+		err = c.userSchemas.DeleteTx(ctx, tx, &repositoryuserschemas.DeleteOptions{
+			UserID:   options.User.ID,
+			SchemaID: options.SchemaID,
+		})
+
+		if err != nil {
 			return err
 		}
 

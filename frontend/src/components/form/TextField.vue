@@ -9,6 +9,7 @@
         :type
         :placeholder
         :required
+        :disabled
         ref="inputRef"
         class="text-field__input"
         @blur="onBlur"
@@ -30,6 +31,7 @@ const props = withDefaults(defineProps<{
   placeholder: string;
   label?: boolean;
   required?: boolean;
+  disabled?: boolean;
   type?: 'text' | 'password' | 'number' | 'email';
   variant?: 'main' | 'control';
   inputAttrs?: InputHTMLAttributes;
@@ -130,6 +132,16 @@ defineExpose({ setError });
 
   .text-field__append {
     flex-shrink: 0;
+
+    &:has(.button--icon) {
+      display: flex;
+    }
+
+    :deep(.button--icon) {
+      margin: -3px -6px -3px 0;
+      padding: 3px;
+      min-height: 0;
+    }
   }
 }
 </style>

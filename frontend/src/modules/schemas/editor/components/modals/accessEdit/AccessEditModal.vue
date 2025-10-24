@@ -1,5 +1,7 @@
 <template>
   <Modal :footer="false" title="Редагувати Доступ">
+    <SchemaNewUser class="access-edit__new-user" />
+
     <p class="access-edit__description">
       Користувачі, які мають доступ до цієї схеми
     </p>
@@ -18,23 +20,28 @@
 import { useSchemaUsersStore } from '@editor/stores';
 import { Modal } from '@/components/modal';
 import SchemaUser from './SchemaUser.vue';
+import SchemaNewUser from './SchemaNewUser.vue';
 
 const usersStore = useSchemaUsersStore();
 </script>
 
 <style scoped>
 @layer page {
-  .access-edit__description {
+  .access-edit__new-user {
     margin-bottom: 16px;
-    color: var(--color-text-2);
+  }
+
+  .access-edit__description {
+    margin-bottom: 4px;
+    color: var(--color-text-3);
+    font-size: var(--font-sm);
   }
 
   .access-edit__list {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 0;
-    padding-bottom: 8px;
+    padding: 0 0 8px 0;
     margin: 0;
     list-style-type: none;
   }

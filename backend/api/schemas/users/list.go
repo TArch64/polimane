@@ -9,11 +9,21 @@ import (
 )
 
 type userListItem struct {
-	ID        string            `json:"id"`
+	ID        model.ID          `json:"id"`
 	Email     string            `json:"email"`
 	FirstName string            `json:"firstName"`
 	LastName  string            `json:"lastName"`
 	Access    model.AccessLevel `json:"access"`
+}
+
+func newUserListItem(user *model.User, schemaUser *model.UserSchema) *userListItem {
+	return &userListItem{
+		ID:        user.ID,
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Access:    schemaUser.Access,
+	}
 }
 
 func (c *Controller) apiList(ctx *fiber.Ctx) error {

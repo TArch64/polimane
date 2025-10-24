@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
+	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
 
 type CreateOptions struct {
@@ -49,7 +50,13 @@ func (c *Client) Create(ctx context.Context, options *CreateOptions) (schema *mo
 			return err
 		}
 
-		return c.userSchemas.CreateTx(tx, options.User.ID, schema.ID, model.AccessAdmin)
+		_, err = c.userSchemas.CreateTx(ctx, tx, &repositoryuserschemas.CreateOptions{
+			UserID:   options.User.ID,
+			SchemaID: schema.ID,
+			Access:   model.AccessAdmin,
+		})
+
+		return err
 	})
 
 	if err != nil {
