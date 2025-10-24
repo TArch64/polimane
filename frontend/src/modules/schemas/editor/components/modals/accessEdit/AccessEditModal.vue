@@ -27,6 +27,8 @@
         />
       </ul>
     </div>
+
+    <div class="access-edit__footer" />
   </Modal>
 </template>
 
@@ -63,6 +65,9 @@ const usersStore = useSchemaUsersStore();
 
   .access-edit__invitations {
     margin-top: 16px;
+  }
+
+  .access-edit__footer {
     padding-bottom: 8px;
   }
 }
