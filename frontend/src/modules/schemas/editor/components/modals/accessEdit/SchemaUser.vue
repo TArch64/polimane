@@ -8,7 +8,21 @@
       </span>
     </p>
 
-    <div class="access-user__actions">
+    <div class="access-user__actions" v-if="!isCurrentUser">
+      <SelectField
+        variant="control"
+        :model-value="user.access"
+        @update:model-value="updateAccess"
+      >
+        <option
+          v-for="option of accessOptions"
+          :key="option.level"
+          :value="option.level"
+        >
+          {{ option.title }}
+        </option>
+      </SelectField>
+
       <Button
         icon
         danger
@@ -17,7 +31,6 @@
         :loading="deleteUser.isActive"
         :style="deleteConfirm.anchorStyle"
         @click="deleteUserIntent"
-        v-if="!isCurrentUser"
       >
         <TrashIcon />
       </Button>
@@ -32,8 +45,10 @@ import type { ISchemaUser } from '@/models';
 import { useSessionStore } from '@/stores';
 import { Button } from '@/components/button';
 import { TrashIcon } from '@/components/icon';
+import { SelectField } from '@/components/form';
 import { useAsyncAction } from '@/composables';
 import { useConfirm } from '@/components/confirm';
+import { AccessLevel, AccessLeveList, getAccessLevelTitle } from '@/enums';
 
 const props = defineProps<{
   user: ISchemaUser;
@@ -66,6 +81,14 @@ const deleteUser = useAsyncAction(async () => {
 async function deleteUserIntent(): Promise<void> {
   if (await deleteConfirm.ask()) await deleteUser();
 }
+
+const accessOptions = AccessLeveList.map((level) => ({
+  level,
+  title: getAccessLevelTitle(level),
+}));
+
+const updateAccess = useAsyncAction(async (access: AccessLevel) => {
+});
 </script>
 
 <style scoped>
@@ -74,10 +97,17 @@ async function deleteUserIntent(): Promise<void> {
     display: flex;
     align-items: center;
     min-height: 32px;
+    gap: 8px;
   }
 
   .access-user__name {
     font-weight: 500;
+    flex-basis: 0;
+    flex-grow: 1;
+    min-width: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 
   .access-user__name-label {
@@ -87,6 +117,9 @@ async function deleteUserIntent(): Promise<void> {
 
   .access-user__actions {
     margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 }
 </style>

@@ -12,7 +12,7 @@
         icon
         size="md"
         variant="secondary"
-        @click.prevent.stop="addUser"
+        @click="addUser"
       >
         <PlusIcon />
       </Button>

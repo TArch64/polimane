@@ -6,7 +6,7 @@
     :activatorStyle="{ anchorName }"
   />
 
-  <Teleport to="body" :disabled="!isTeleportActive">
+  <Teleport to="body" :disabled="!isOpened && !transitionState.isActive">
     <FadeTransition :state="transitionState">
       <DropdownMenu
         ref="menuRef"
@@ -45,7 +45,6 @@ const menuRef = useDomRef<HTMLElement | null>();
 
 const anchorName = `--dropdown-${newId()}`;
 const isOpened = ref(false);
-const isTeleportActive = computed(() => isOpened.value || transitionState.isActive);
 
 const menuStyles = computed(() => ({
   positionAnchor: anchorName,

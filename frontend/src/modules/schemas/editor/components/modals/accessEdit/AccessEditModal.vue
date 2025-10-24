@@ -32,7 +32,7 @@ const usersStore = useSchemaUsersStore();
   }
 
   .access-edit__description {
-    margin-bottom: 4px;
+    margin-bottom: 16px;
     color: var(--color-text-3);
     font-size: var(--font-sm);
   }

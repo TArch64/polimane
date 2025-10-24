@@ -12,15 +12,24 @@ export interface ITransitionState {
 
 export function useTransitionState(): ITransitionState {
   const isActive = ref(false);
+  const on = () => isActive.value = true;
+  const off = () => isActive.value = false;
 
   return reactive({
     isActive,
 
     listeners: {
-      'before-enter': () => isActive.value = true,
-      'after-enter': () => isActive.value = false,
-      'before-leave': () => isActive.value = true,
-      'after-leave': () => isActive.value = false,
+      'before-enter': on,
+      'after-enter': off,
+      'enter-cancelled': off,
+
+      'before-leave': on,
+      'after-leave': off,
+      'leave-cancelled': off,
+
+      'before-appear': on,
+      'after-appear': off,
+      'appear-cancelled': off,
     },
   });
 }

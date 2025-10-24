@@ -1,7 +1,8 @@
 <template>
   <Transition
-    name="fade-transition-"
+    :appear
     :duration
+    name="fade-transition-"
     v-on="state?.listeners ?? {}"
   >
     <slot />
@@ -16,6 +17,7 @@ import { normalizeDuration, type TransitionDuration } from './TransitionDuration
 const props = withDefaults(defineProps<{
   duration?: TransitionDuration;
   state?: ITransitionState;
+  appear?: boolean;
 }>(), {
   duration: () => ({ enter: 150, leave: 100 }),
   state: undefined,

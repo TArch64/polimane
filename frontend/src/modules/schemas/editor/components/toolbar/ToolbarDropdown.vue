@@ -2,8 +2,8 @@
   <div ref="containerRef" class="toolbar-dropdown">
     <slot :open name="activator" />
 
-    <Teleport to="body">
-      <FadeTransition>
+    <Teleport to="body" :disabled="!isOpened && !transitionState.isActive">
+      <FadeTransition appear :state="transitionState">
         <Card
           as="dialog"
           ref="dropdownRef"
@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, type Slot, useId } from 'vue';
-import { onBackdropClick, useDomRef } from '@/composables';
+import { onBackdropClick, useDomRef, useTransitionState } from '@/composables';
 import { FadeTransition } from '@/components/transition';
 import { Card } from '@/components/card';
 import { useToolbarRef } from './toolbarRef';
@@ -42,6 +42,7 @@ const containerRef = useDomRef<HTMLElement>();
 const dropdownRef = useDomRef<HTMLDialogElement | null>();
 
 const isOpened = ref(false);
+const transitionState = useTransitionState();
 
 const offsetTop = ref(0);
 const offsetLeft = ref(0);
