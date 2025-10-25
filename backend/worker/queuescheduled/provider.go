@@ -10,7 +10,6 @@ import (
 
 type Queue struct {
 	*queue.Base
-	handlerCleanupInvitations *handlercleanupinvitations.Handler
 }
 
 type ProviderOptions struct {
@@ -19,11 +18,7 @@ type ProviderOptions struct {
 }
 
 func Provider(options ProviderOptions) queue.Interface {
-	q := &Queue{
-		Base:                      queue.NewBase(),
-		handlerCleanupInvitations: options.HandlerCleanupInvitations,
-	}
-
+	q := &Queue{Base: queue.NewBase()}
 	q.HandleEvent(events.EventCleanupInvitations, options.HandlerCleanupInvitations.Handle)
 	return q
 }

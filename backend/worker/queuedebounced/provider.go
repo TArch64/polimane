@@ -10,7 +10,6 @@ import (
 
 type Queue struct {
 	*queue.Base
-	handlerSchemaScreenshot *handlerschemascreenshot.Handler
 }
 
 type ProviderOptions struct {
@@ -19,11 +18,7 @@ type ProviderOptions struct {
 }
 
 func Provider(options ProviderOptions) queue.Interface {
-	q := &Queue{
-		Base:                    queue.NewBase(),
-		handlerSchemaScreenshot: options.SchemaScreenshotHandler,
-	}
-
+	q := &Queue{Base: queue.NewBase()}
 	q.HandleEvent(events.EventSchemaScreenshot, options.SchemaScreenshotHandler.Handle)
 	return q
 }
