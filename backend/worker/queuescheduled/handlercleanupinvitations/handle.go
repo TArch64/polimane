@@ -6,7 +6,6 @@ import (
 	"polimane/backend/worker/events"
 )
 
-func (q *Handler) Handle(ctx context.Context, _ *events.Message) error {
-	println("Cleaning up invitations...")
-	return nil
+func (h *Handler) Handle(ctx context.Context, _ *events.Message) error {
+	return h.schemaInvitations.DeleteExpired(ctx)
 }

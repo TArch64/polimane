@@ -4,6 +4,7 @@ import (
 	"go.uber.org/fx"
 
 	"polimane/backend/env"
+	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 	"polimane/backend/services/appcontext"
@@ -53,6 +54,7 @@ func main() {
 			// repositories
 			repositoryschemas.Provider,
 			repositoryuserschemas.Provider,
+			repositoryschemainvitations.Provider,
 
 			// queues
 			handlerschemascreenshot.Provider,
