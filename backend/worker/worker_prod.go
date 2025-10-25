@@ -4,6 +4,8 @@ package worker
 
 import (
 	"context"
+	"encoding/json"
+	"log"
 	"strings"
 	"sync"
 
@@ -12,6 +14,7 @@ import (
 	"github.com/getsentry/sentry-go"
 	"go.uber.org/fx"
 
+	"polimane/backend/services/awssqs"
 	"polimane/backend/worker/events"
 	"polimane/backend/worker/queue"
 )
@@ -66,12 +69,19 @@ func Start(options StartOptions) {
 				}
 			}
 
+			var body awssqs.QueueEvent
+			err := json.Unmarshal([]byte(message.Body), &body)
+			if err != nil {
+				log.Println("error unmarshaling message body:", err)
+				continue
+			}
+
 			wg.Add(1)
 
 			subscription.Chan <- &events.Message{
-				Body:          message.Body,
+				Body:          string(body.Payload),
 				ReceiptHandle: message.ReceiptHandle,
-				EventType:     *message.MessageAttributes["EventType"].StringValue,
+				EventType:     body.EventType,
 				OnEnd: func() {
 					wg.Done()
 				},

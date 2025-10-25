@@ -6,7 +6,6 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
-	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
 )
 
 type SendOptions struct {
@@ -16,39 +15,55 @@ type SendOptions struct {
 	Body            interface{}
 }
 
-func (i *Client) Send(ctx context.Context, options *SendOptions) (err error) {
-	var body string
+type QueueEvent struct {
+	EventType string          `json:"eventType"`
+	Payload   json.RawMessage `json:"payload"`
+}
+
+func (c *Client) Send(ctx context.Context, options *SendOptions) (err error) {
 	var deduplicationID *string
-
-	if options.Body != nil {
-		var bodyJson []byte
-		bodyJson, err = json.Marshal(options.Body)
-		if err != nil {
-			return err
-		}
-
-		body = string(bodyJson)
-	} else {
-		body = "{}"
-	}
-
 	if options.DeduplicationID != "" {
 		deduplicationID = aws.String(options.Event + "-" + options.DeduplicationID)
 	}
 
-	_, err = i.sqs.SendMessage(ctx, &sqs.SendMessageInput{
-		QueueUrl:               i.buildQueueUrl(options.Queue),
-		MessageBody:            &body,
+	payload, err := c.serializeEventPayload(options.Body)
+	if err != nil {
+		return err
+	}
+
+	bodyJson, err := c.serializeEventBody(options.Event, payload)
+	if err != nil {
+		return err
+	}
+
+	_, err = c.sqs.SendMessage(ctx, &sqs.SendMessageInput{
+		QueueUrl:               c.buildQueueUrl(options.Queue),
+		MessageBody:            &bodyJson,
 		MessageGroupId:         &options.Event,
 		MessageDeduplicationId: deduplicationID,
-
-		MessageAttributes: map[string]types.MessageAttributeValue{
-			"EventType": {
-				DataType:    aws.String("String"),
-				StringValue: &options.Event,
-			},
-		},
 	})
 
 	return err
+}
+
+func (c *Client) serializeEventPayload(body interface{}) (json.RawMessage, error) {
+	if body != nil {
+		return json.Marshal(body)
+	} else {
+		return []byte("{}"), nil
+	}
+}
+
+func (c *Client) serializeEventBody(eventType string, payload json.RawMessage) (string, error) {
+	body := QueueEvent{
+		EventType: eventType,
+		Payload:   payload,
+	}
+
+	bodyJson, err := json.Marshal(body)
+	if err != nil {
+		return "", err
+	}
+
+	return string(bodyJson), nil
 }

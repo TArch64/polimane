@@ -21,8 +21,8 @@ type Client struct {
 	env *env.Environment
 }
 
-func (i *Client) buildQueueUrl(queue string) *string {
-	url := i.env.AWS.SQSBaseURL + "/" + queue
+func (c *Client) buildQueueUrl(queue string) *string {
+	url := c.env.AWS.SQSBaseURL + "/" + queue
 	return &url
 }
 

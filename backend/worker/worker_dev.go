@@ -4,6 +4,7 @@ package worker
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -12,10 +13,9 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"polimane/backend/base"
-
 	"go.uber.org/fx"
 
+	"polimane/backend/base"
 	"polimane/backend/services/awssqs"
 	"polimane/backend/worker/events"
 	"polimane/backend/worker/queue"
@@ -75,16 +75,21 @@ func watchQueue(
 
 		if len(messages) > 0 {
 			for _, message := range messages {
-				actionType := *message.MessageAttributes["EventType"].StringValue
+				var body awssqs.QueueEvent
+				err = json.Unmarshal([]byte(*message.Body), &body)
+				if err != nil {
+					log.Println("error unmarshaling message body:", err)
+					continue
+				}
 
 				messagesChan <- &events.Message{
-					Body:          *message.Body,
+					Body:          string(body.Payload),
 					ReceiptHandle: *message.ReceiptHandle,
-					EventType:     actionType,
+					EventType:     body.EventType,
 					OnEnd:         func() {},
 				}
 
-				log.Printf("Processing %s action from %s queue\n", actionType, q.Name())
+				log.Printf("Processing %s action from %s queue\n", body.EventType, q.Name())
 			}
 		}
 	}
