@@ -30,6 +30,12 @@ resource "aws_lambda_event_source_mapping" "sqs_worker_debounced" {
   tags             = local.aws_common_tags
 }
 
+resource "aws_lambda_event_source_mapping" "sqs_worker_scheduled" {
+  function_name    = aws_lambda_function.worker.function_name
+  event_source_arn = aws_sqs_queue.scheduled.arn
+  tags             = local.aws_common_tags
+}
+
 resource "aws_cloudwatch_log_group" "worker_logs" {
   name              = "/aws/lambda/${local.worker_name}"
   retention_in_days = 1

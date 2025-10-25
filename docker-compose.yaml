@@ -54,6 +54,12 @@ services:
     <<: *backend-common
     command: make dev_worker
 
+  scheduler:
+    <<: *common
+    build: ./ci/dev/scheduler
+    depends_on:
+    - sqs
+
   db:
     <<: *common
     image: cockroachdb/cockroach:latest-v25.3

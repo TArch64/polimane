@@ -4,6 +4,7 @@ import (
 	"go.uber.org/fx"
 
 	"polimane/backend/env"
+	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 	"polimane/backend/services/appcontext"
@@ -19,6 +20,9 @@ import (
 	"polimane/backend/worker"
 	"polimane/backend/worker/queue"
 	"polimane/backend/worker/queuedebounced"
+	"polimane/backend/worker/queuedebounced/handlerschemascreenshot"
+	"polimane/backend/worker/queuescheduled"
+	"polimane/backend/worker/queuescheduled/handlercleanupinvitations"
 )
 
 func Queue(f any) any {
@@ -50,9 +54,15 @@ func main() {
 			// repositories
 			repositoryschemas.Provider,
 			repositoryuserschemas.Provider,
+			repositoryschemainvitations.Provider,
 
 			// queues
+			handlerschemascreenshot.Provider,
 			Queue(queuedebounced.Provider),
+
+			handlercleanupinvitations.Provider,
+			Queue(queuescheduled.Provider),
+
 			worker.Provider,
 		),
 		fx.Invoke(worker.Start),

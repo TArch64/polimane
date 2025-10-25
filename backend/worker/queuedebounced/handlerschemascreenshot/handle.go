@@ -1,4 +1,4 @@
-package queuedebounced
+package handlerschemascreenshot
 
 import (
 	"context"
@@ -12,13 +12,13 @@ import (
 	"polimane/backend/worker/queue"
 )
 
-func (q *Queue) ProcessSchemaScreenshot(ctx context.Context, message *events.Message) error {
+func (h *Handler) Handle(ctx context.Context, message *events.Message) error {
 	var body events.SchemaScreenshotBody
 	if err := queue.ParseBody(message, &body); err != nil {
 		return err
 	}
 
-	schema, err := q.schemas.GetByID(ctx, &repositoryschemas.ByIDOptions{
+	schema, err := h.schemas.GetByID(ctx, &repositoryschemas.ByIDOptions{
 		SchemaID: body.SchemaID,
 	})
 
@@ -30,7 +30,7 @@ func (q *Queue) ProcessSchemaScreenshot(ctx context.Context, message *events.Mes
 		return err
 	}
 
-	return q.schemaScreenshot.Screenshot(ctx, &schemascreenshot.ScreenshotOptions{
+	return h.schemaScreenshot.Screenshot(ctx, &schemascreenshot.ScreenshotOptions{
 		Schema: schema,
 	})
 }

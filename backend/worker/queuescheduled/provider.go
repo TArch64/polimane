@@ -1,11 +1,11 @@
-package queuedebounced
+package queuescheduled
 
 import (
 	"go.uber.org/fx"
 
 	"polimane/backend/worker/events"
 	"polimane/backend/worker/queue"
-	"polimane/backend/worker/queuedebounced/handlerschemascreenshot"
+	"polimane/backend/worker/queuescheduled/handlercleanupinvitations"
 )
 
 type Queue struct {
@@ -14,15 +14,15 @@ type Queue struct {
 
 type ProviderOptions struct {
 	fx.In
-	SchemaScreenshotHandler *handlerschemascreenshot.Handler
+	HandlerCleanupInvitations *handlercleanupinvitations.Handler
 }
 
 func Provider(options ProviderOptions) queue.Interface {
 	q := &Queue{Base: queue.NewBase()}
-	q.HandleEvent(events.EventSchemaScreenshot, options.SchemaScreenshotHandler.Handle)
+	q.HandleEvent(events.EventCleanupInvitations, options.HandlerCleanupInvitations.Handle)
 	return q
 }
 
 func (q *Queue) Name() string {
-	return events.QueueDebounced
+	return events.QueueScheduled
 }
