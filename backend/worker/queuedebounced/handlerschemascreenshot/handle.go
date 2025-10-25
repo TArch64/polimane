@@ -1,4 +1,4 @@
-package queuedebounced
+package handlerschemascreenshot
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"polimane/backend/worker/queue"
 )
 
-func (q *Queue) ProcessSchemaScreenshot(ctx context.Context, message *events.Message) error {
+func (q *Handler) Handle(ctx context.Context, message *events.Message) error {
 	var body events.SchemaScreenshotBody
 	if err := queue.ParseBody(message, &body); err != nil {
 		return err
