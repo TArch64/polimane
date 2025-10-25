@@ -1,1 +1,1 @@
-*/1 * * * * /app/send-message.sh cleanup-invitations >> /var/log/cron.log 2>&1
+0 */1 * * * /app/send-message.sh cleanup-invitations >> /var/log/cron.log 2>&1
