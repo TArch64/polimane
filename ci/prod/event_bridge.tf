@@ -1,6 +1,6 @@
 resource "aws_scheduler_schedule" "cleanup_invitations" {
   name                         = "${local.app_name}-cleanup-invitations"
-  schedule_expression          = "cron(0 2 * * ? *)"
+  schedule_expression          = "cron(0 2 ? * MON *)"
   schedule_expression_timezone = "Europe/Kyiv"
 
   flexible_time_window {
