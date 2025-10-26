@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { computed, toRef } from 'vue';
+import { type Component, computed, toRef } from 'vue';
 import { useHotKeys } from '@editor/composables';
 import { Button } from '@/components/button';
 import {
@@ -94,13 +94,12 @@ import {
   CornerUpRightIcon,
   EditIcon,
   FileTextIcon,
-  type IconComponent,
-  LoaderIcon,
   MoreHorizontalIcon,
   PeopleIcon,
   SaveIcon,
   TrashIcon,
 } from '@/components/icon';
+import Spinner from '@/components/Spinner.vue';
 import { useAsyncAction, useProgressBar } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { Dropdown, DropdownAction } from '@/components/dropdown';
@@ -119,9 +118,9 @@ const renameModal = useModal(SchemaRenameModal);
 const exportModal = useModal(SchemaExportModal);
 const accessEditModal = useModal(AccessEditModal);
 
-const SavingIcon = computed((): IconComponent => {
+const SavingIcon = computed((): Component => {
   if (editorStore.isSaving) {
-    return LoaderIcon;
+    return Spinner;
   }
   if (editorStore.hasUnsavedChanges) {
     return SaveIcon;

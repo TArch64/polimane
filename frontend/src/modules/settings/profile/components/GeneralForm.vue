@@ -56,5 +56,12 @@ const save = useAsyncAction(async () => {
   .row__column {
     flex: 1;
   }
+
+  @media (max-width: 768px) {
+    .row {
+      flex-direction: column;
+      gap: 16px;
+    }
+  }
 }
 </style>

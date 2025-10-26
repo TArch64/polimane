@@ -21,7 +21,7 @@
 import type { RouteLocationRaw } from 'vue-router';
 import { CommonLayout } from '@/components/layout';
 import { Button } from '@/components/button';
-import { type IconComponent, PersonFillIcon, UnlockIcon } from '@/components/icon';
+import { type IconComponent, PersonIcon, UnlockIcon } from '@/components/icon';
 
 interface ISettingsRoute {
   title: string;
@@ -33,7 +33,7 @@ const routes: ISettingsRoute[] = [
   {
     title: 'Профіль',
     to: { name: 'settings-profile' },
-    icon: PersonFillIcon,
+    icon: PersonIcon,
   },
   {
     title: 'Безпека',
