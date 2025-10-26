@@ -10,7 +10,7 @@ import (
 
 	"polimane/backend/model"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
-	"polimane/backend/services/awsconfig"
+	"polimane/backend/services/awss3"
 )
 
 type DeleteOptions struct {
@@ -55,7 +55,7 @@ func (c *Client) deleteScreenshot(ctx context.Context, schemaID model.ID) error 
 
 	_, err := c.s3.DeleteObject(ctx, &s3.DeleteObjectInput{
 		Key:    &key,
-		Bucket: &awsconfig.S3Bucket,
+		Bucket: &awss3.Bucket,
 	})
 
 	var notFound *types.NotFound

@@ -74,9 +74,22 @@ services:
     <<: *common
     image: softwaremill/elasticmq-native:1.6.15
     volumes:
+    - sqs_data:/data
     - ./ci/dev/sqs/elasticmq.conf:/opt/elasticmq.conf
     ports:
     - "9325:9325"
+
+  s3:
+    <<: *common
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin1
+      MINIO_ROOT_PASSWORD: minioadmin1
+    ports:
+    - "9001:9001"
+    volumes:
+    - s3_data:/data
 
 volumes:
   bun_cache:
@@ -84,4 +97,8 @@ volumes:
   gomod_cache:
     driver: local
   cockroach_data:
+    driver: local
+  sqs_data:
+    driver: local
+  s3_data:
     driver: local

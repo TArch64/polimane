@@ -8,8 +8,4 @@ import (
 	"polimane/backend/env"
 )
 
-var S3Bucket = "polimane-prod"
-
-func configure(_ *env.Environment, _ *config.LoadOptions) error {
-	return nil
-}
+func configure(_ *env.Environment, _ *config.LoadOptions) {}

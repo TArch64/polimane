@@ -9,10 +9,7 @@ import (
 	"polimane/backend/env"
 )
 
-var S3Bucket = "polimane-dev"
-
-func configure(e *env.Environment, options *config.LoadOptions) error {
+func configure(e *env.Environment, options *config.LoadOptions) {
 	options.DefaultRegion = e.AWS.Region
 	options.Credentials = credentials.NewStaticCredentialsProvider(e.AWS.AccessKeyID, e.AWS.SecretAccessKey, "")
-	return nil
 }

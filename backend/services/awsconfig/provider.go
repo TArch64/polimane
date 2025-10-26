@@ -18,7 +18,8 @@ type Options struct {
 
 func Provider(options Options) (*aws.Config, error) {
 	cfg, err := config.LoadDefaultConfig(options.Ctx, func(loadOptions *config.LoadOptions) error {
-		return configure(options.Env, loadOptions)
+		configure(options.Env, loadOptions)
+		return nil
 	})
 
 	if err != nil {

@@ -7,11 +7,10 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 
 	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
-	"polimane/backend/services/awsconfig"
+	"polimane/backend/services/awss3"
 	"polimane/backend/views"
 	"polimane/backend/views/templates"
 )
@@ -35,8 +34,8 @@ func (i *Service) Screenshot(ctx context.Context, options *ScreenshotOptions) er
 
 	_, err = i.s3.PutObject(ctx, &s3.PutObjectInput{
 		Key:         &key,
-		Bucket:      &awsconfig.S3Bucket,
-		ACL:         types.ObjectCannedACLPrivate,
+		Bucket:      &awss3.Bucket,
+		ACL:         awss3.ObjectACL,
 		Body:        strings.NewReader(content),
 		ContentType: aws.String("image/svg+xml"),
 	})

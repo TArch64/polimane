@@ -14,5 +14,5 @@ type ClientOptions struct {
 }
 
 func Provider(options ClientOptions) *s3.Client {
-	return s3.NewFromConfig(*options.Config)
+	return s3.NewFromConfig(*options.Config, configure)
 }
