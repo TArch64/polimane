@@ -2,14 +2,14 @@
   <Card as="header" class="editor-header">
     <Button
       icon
-      class="editor-header-back"
+      class="editor-header__back"
       :to="{ name: 'home' }"
       :prepend-icon="ArrowBackIcon"
     >
       Едітор
     </Button>
 
-    <template v-if="editorStore.canEdit">
+    <template v-if="editorStore.canEdit && !isMobile">
       <Button
         icon
         :disabled="isSaveDisabled"
@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { type Component, computed, toRef } from 'vue';
+import { type Component, computed } from 'vue';
 import { useHotKeys } from '@editor/composables';
 import { Button } from '@/components/button';
 import {
@@ -100,7 +100,7 @@ import {
   TrashIcon,
 } from '@/components/icon';
 import Spinner from '@/components/Spinner.vue';
-import { useAsyncAction, useProgressBar } from '@/composables';
+import { useAsyncAction, useMobileScreen, useProgressBar } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { mergeAnchorName } from '@/helpers';
@@ -113,6 +113,8 @@ const router = useRouter();
 const historyStore = useHistoryStore();
 const editorStore = useEditorStore();
 const schemaUsersStore = useSchemaUsersStore();
+
+const isMobile = useMobileScreen();
 
 const renameModal = useModal(SchemaRenameModal);
 const exportModal = useModal(SchemaExportModal);
@@ -169,7 +171,7 @@ useHotKeys({
   Meta_Z: historyStore.undo,
   Meta_Shift_Z: historyStore.redo,
 }, {
-  isActive: toRef(editorStore, 'canEdit'),
+  isActive: () => editorStore.canEdit && !isMobile.value,
 });
 
 useProgressBar(deleteSchema);
@@ -188,7 +190,7 @@ useProgressBar(deleteSchema);
     gap: 4px;
   }
 
-  .editor-header-back {
+  .editor-header__back {
     margin-right: 40px;
   }
 }

@@ -20,7 +20,7 @@
       :item
     />
 
-    <FadeTransition v-if="editorStore.canEdit">
+    <FadeTransition v-if="editorStore.canEdit && isMobile">
       <CanvasSelection
         :key="`${selected.from}-${selected.to}`"
         v-if="selected"
@@ -34,6 +34,7 @@ import { computed, ref, useId } from 'vue';
 import { useEditorStore, useSelectionStore } from '@editor/stores';
 import { BEAD_BUGLE_CORNER_RADIUS } from '@editor/const';
 import { FadeTransition } from '@/components/transition';
+import { useMobileScreen } from '@/composables';
 import { type IBeadsGrid, useBeadTools } from '../../composables';
 import { CanvasBead } from './CanvasBead';
 import CanvasBackgroundPattern from './CanvasBackgroundPattern.vue';
@@ -51,11 +52,13 @@ const editorStore = useEditorStore();
 const selectionStore = useSelectionStore();
 const selected = computed(() => selectionStore.selected);
 
+const isMobile = useMobileScreen();
+
 const backgroundPatternId = `editorEmptyBeads-${useId()}`;
 const backgroundPatternFill = `url(#${backgroundPatternId})`;
 const backgroundRef = ref<SVGRectElement>(null!);
 
-const listeners = editorStore.canEdit
+const listeners = editorStore.canEdit && !isMobile.value
   ? useBeadTools({
       backgroundRef,
       beadsGrid: props.beadsGrid,

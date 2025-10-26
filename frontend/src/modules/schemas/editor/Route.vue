@@ -1,6 +1,6 @@
 <template>
   <EditorHeader />
-  <EditorToolbar v-if="editorStore.canEdit" />
+  <EditorToolbar v-if="editorStore.canEdit && !isMobile" />
   <EditorCanvas class="editor__fill" />
 </template>
 
@@ -10,6 +10,7 @@ import './colorLib';
 import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
 import { destroyStore, lazyDestroyStore } from '@/helpers';
+import { useMobileScreen } from '@/composables';
 import {
   useBeadsStore,
   useCanvasStore,
@@ -45,6 +46,7 @@ defineOptions({
 });
 
 const editorStore = useEditorStore();
+const isMobile = useMobileScreen();
 useEditorBackgroundRenderer();
 
 useEventListener(window, 'beforeunload', (event) => {
