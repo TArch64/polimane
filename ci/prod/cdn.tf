@@ -6,10 +6,6 @@ data "aws_cloudfront_cache_policy" "caching_optimized" {
   name = "Managed-CachingOptimized"
 }
 
-data "aws_cloudfront_cache_policy" "images" {
-  name = "polimane-images"
-}
-
 resource "aws_cloudfront_origin_access_control" "cdn" {
   name                              = "${local.app_name}-cdn-oac"
   origin_access_control_origin_type = "s3"
@@ -61,7 +57,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     cached_methods             = ["HEAD", "GET"]
     path_pattern               = "/images/*"
     target_origin_id           = aws_s3_bucket.bucket.id
-    cache_policy_id            = data.aws_cloudfront_cache_policy.images.id
+    cache_policy_id            = aws_cloudfront_cache_policy.images.id
     response_headers_policy_id = aws_cloudfront_response_headers_policy.images.id
     viewer_protocol_policy     = "https-only"
     compress                   = false
@@ -92,6 +88,34 @@ resource "aws_s3_bucket_policy" "cdn" {
   })
 }
 
+resource "aws_cloudfront_cache_policy" "images" {
+  name        = "${local.app_name}-images"
+  min_ttl     = 31536000
+  default_ttl = 31536000
+  max_ttl     = 31536000
+
+  parameters_in_cache_key_and_forwarded_to_origin {
+    enable_accept_encoding_brotli = true
+    enable_accept_encoding_gzip   = true
+
+    query_strings_config {
+      query_string_behavior = "whitelist"
+
+      query_strings {
+        items = ["v"]
+      }
+    }
+
+    cookies_config {
+      cookie_behavior = "none"
+    }
+
+    headers_config {
+      header_behavior = "none"
+    }
+  }
+}
+
 resource "aws_cloudfront_response_headers_policy" "images" {
   name = "${local.app_name}-images"
 
@@ -110,6 +134,14 @@ resource "aws_cloudfront_response_headers_policy" "images" {
 
     access_control_allow_origins {
       items = ["https://${local.webapp_domain}"]
+    }
+  }
+
+  custom_headers_config {
+    items {
+      header   = "Cache-Control"
+      value    = "public, max-age=31536000, immutable"
+      override = true
     }
   }
 }
