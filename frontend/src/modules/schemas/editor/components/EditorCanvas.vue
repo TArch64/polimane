@@ -8,9 +8,7 @@
       :width="wrapperRect.width"
       :height="wrapperRect.height"
       :viewBox
-      @wheel="onWheel"
-      @touchmove="canvasNavigation.navigateTouch"
-      @touchend="canvasNavigation.navigateTouchEnd"
+      v-on="canvasEvents.listeners"
       v-if="wrapperRect"
     >
       <defs id="editorCanvasDefs" />
@@ -37,7 +35,7 @@ import { computed, onMounted, ref } from 'vue';
 import { FadeTransition } from '@/components/transition';
 import { useMobileScreen } from '@/composables';
 import { useCanvasStore, useEditorStore, useSelectionStore, useToolsStore } from '../stores';
-import { useBeadsGrid, useCanvasNavigation, useCanvasZoom, useHotKeys } from '../composables';
+import { useBeadsGrid, useCanvasEvents, useHotKeys } from '../composables';
 import { CanvasContent } from './content';
 import EditorSelection from './EditorSelection.vue';
 
@@ -68,14 +66,8 @@ const viewBox = computed((): string => {
   return `${x} ${y} ${width} ${height}`;
 });
 
-const canvasZoom = useCanvasZoom();
-const canvasNavigation = useCanvasNavigation();
+const canvasEvents = useCanvasEvents();
 const beadsGrid = useBeadsGrid();
-
-function onWheel(event: WheelEvent): void {
-  event.preventDefault();
-  event.ctrlKey ? canvasZoom.zoom(event) : canvasNavigation.navigateWheel(event);
-}
 
 useHotKeys({
   Backspace: selectionStore.removeSelected,
