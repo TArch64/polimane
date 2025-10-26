@@ -5,7 +5,7 @@
 
       <Button
         variant="inline"
-        :style="deleteConfirm.anchorStyle"
+        :style="resetPasswordConfirm.anchorStyle"
         @click="resetPasswordIntent"
       >
         натисніть тут.
@@ -28,7 +28,7 @@ import { useSecurityStore } from '../stores';
 const router = useRouter();
 const securityStore = useSecurityStore();
 
-const deleteConfirm = useConfirm({
+const resetPasswordConfirm = useConfirm({
   message: 'Ви впевнені, що хочете скинути пароль?',
   acceptButton: 'Так',
   danger: true,
@@ -41,7 +41,7 @@ const resetPassword = useAsyncAction(async (): Promise<void> => {
 });
 
 async function resetPasswordIntent() {
-  if (await deleteConfirm.ask()) {
+  if (await resetPasswordConfirm.ask()) {
     await resetPassword();
   }
 }
