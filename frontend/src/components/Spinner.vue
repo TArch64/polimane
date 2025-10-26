@@ -13,10 +13,10 @@ const props = withDefaults(defineProps<IIconProps>(), {
 <style scoped>
 @layer components {
   .spinner {
-    animation: button-loading-icon 3s linear infinite;
+    animation: spinner 3s linear infinite;
   }
 
-  @keyframes button-loading-icon {
+  @keyframes spinner {
     from {
       rotate: 0deg
     }
