@@ -8,7 +8,7 @@
       :width="wrapperRect.width"
       :height="wrapperRect.height"
       :viewBox
-      @wheel="onWheel"
+      v-on="canvasEvents.listeners"
       v-if="wrapperRect"
     >
       <defs id="editorCanvasDefs" />
@@ -20,7 +20,7 @@
       />
     </svg>
 
-    <Teleport to="body" v-if="editorStore.canEdit">
+    <Teleport to="body" v-if="editorStore.canEdit && !isMobile">
       <FadeTransition>
         <EditorSelection
           v-if="toolsStore.isSelection && selectionStore.isSelecting"
@@ -33,8 +33,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { FadeTransition } from '@/components/transition';
+import { useMobileScreen } from '@/composables';
 import { useCanvasStore, useEditorStore, useSelectionStore, useToolsStore } from '../stores';
-import { useBeadsGrid, useCanvasNavigation, useCanvasZoom, useHotKeys } from '../composables';
+import { useBeadsGrid, useCanvasEvents, useHotKeys } from '../composables';
 import { CanvasContent } from './content';
 import EditorSelection from './EditorSelection.vue';
 
@@ -42,6 +43,8 @@ const editorStore = useEditorStore();
 const toolsStore = useToolsStore();
 const selectionStore = useSelectionStore();
 const canvasStore = useCanvasStore();
+
+const isMobile = useMobileScreen();
 
 const canvasRef = ref<SVGSVGElement | null>(null);
 const wrapperRef = ref<HTMLElement | null>(null);
@@ -63,14 +66,8 @@ const viewBox = computed((): string => {
   return `${x} ${y} ${width} ${height}`;
 });
 
-const canvasZoom = useCanvasZoom();
-const canvasNavigation = useCanvasNavigation();
+const canvasEvents = useCanvasEvents();
 const beadsGrid = useBeadsGrid();
-
-function onWheel(event: WheelEvent): void {
-  event.preventDefault();
-  event.ctrlKey ? canvasZoom.zoom(event) : canvasNavigation.navigate(event);
-}
 
 useHotKeys({
   Backspace: selectionStore.removeSelected,

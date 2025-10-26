@@ -81,7 +81,7 @@ onBackdropClick(close);
     position: fixed;
     inset: 0;
     padding: 0;
-    width: 100%;
+    width: calc(100% - 32px);
     overflow-y: auto;
     max-width: v-bind("width + 'px'");
     max-height: 100%;

@@ -13,7 +13,7 @@
     </p>
 
     <div class="new-auth-factor__code-row">
-      <div class="new-auth-factor__image-container">
+      <div class="new-auth-factor__image-container new-auth-factor__qr-code-related">
         <img
           :src="init.qrCode"
           class="new-auth-factor__image"
@@ -21,10 +21,10 @@
         />
       </div>
 
-      <div>
+      <div class="new-auth-factor__hint-column">
         <p class="new-auth-factor__image-hint">
-          Не виходить скористатися QR-кодом? Скопіюйте цей код та вставте його у ваш додаток для
-          автентифікації
+          <span class="new-auth-factor__qr-code-related">Не виходить скористатися QR-кодом? </span>
+          Тицьніть щоб скопіювати цей код та вставте його у ваш додаток для автентифікації
         </p>
 
         <CopyBadge :text="init.secret" />
@@ -110,6 +110,30 @@ useProgressBar(create);
 
   .new-auth-factor__enter-code {
     margin-bottom: 12px;
+  }
+
+  @media (max-width: 768px) {
+    .new-auth-factor__start {
+      margin-bottom: 24px;
+    }
+
+    .new-auth-factor__code-row {
+      flex-direction: column;
+      margin-bottom: 24px;
+      padding-left: 0;
+    }
+
+    .new-auth-factor__qr-code-related {
+      display: none;
+    }
+
+    .new-auth-factor__hint-column {
+      width: 100%;
+    }
+
+    .new-auth-factor__image-hint {
+      margin-top: 0;
+    }
   }
 }
 </style>

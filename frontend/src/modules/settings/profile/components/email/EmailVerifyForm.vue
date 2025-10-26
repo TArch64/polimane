@@ -94,6 +94,7 @@ const verify = useAsyncAction(async () => {
     color: var(--color-text-2);
     font-size: 14px;
     padding-left: 2px;
+    margin-top: 4px;
   }
 
   .profile-settings-verify-email__change {

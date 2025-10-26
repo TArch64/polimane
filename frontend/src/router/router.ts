@@ -37,3 +37,17 @@ router.beforeResolve(async (_, __, next) => {
 
   await transition.ready;
 });
+
+router.onError((error) => {
+  if (error.message.includes('Failed to fetch dynamically imported module')) {
+    const reloadKey = 'router-reload-attempted';
+
+    if (sessionStorage.getItem(reloadKey)) {
+      sessionStorage.removeItem(reloadKey);
+      throw new Error('Failed to load module after reload:', error);
+    }
+
+    sessionStorage.setItem(reloadKey, '1');
+    window.location.reload();
+  }
+});

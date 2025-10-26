@@ -1,4 +1,5 @@
 import type { Ref } from 'vue';
+import { requestIdleCallback } from '@/helpers';
 import { useAuthorized } from '../useAuthorized';
 import type { HttpClient } from './HttpClient';
 import type { HttpMiddleware, IHttpBeforeRequestInterceptor } from './HttpMiddlewareExecutor';

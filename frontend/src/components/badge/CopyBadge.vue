@@ -1,6 +1,8 @@
 <template>
   <Badge interactable :binding class="copy-badge">
-    {{ text }}
+    <span class="copy-badge__text">
+      {{ text }}
+    </span>
 
     <CheckmarkIcon
       size="inline"
@@ -39,7 +41,19 @@ const binding = makeBinding('button', () => ({
     display: flex;
     align-items: center;
     line-height: 1;
+    max-width: 100%;
     transition: width 0.1s ease-out;
+  }
+
+  .copy-badge__text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+
+    &:has(+ .copy-badge__text) {
+      max-width: calc(100% - 1em - 3px);
+    }
   }
 
   .copy-badge__icon {

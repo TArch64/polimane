@@ -6,31 +6,29 @@
     :disabled="disabled ? 'disabled' : undefined"
   >
     <Component
-      class="button__prepend-icon"
       :is="prependIcon"
+      class="button__prepend-icon"
       v-if="prependIcon"
     />
 
-    <template v-if="icon">
-      <LoaderIcon class="button__loading-icon" v-if="loading" />
-      <slot v-else />
-    </template>
+    <Spinner class="button__loading-icon" v-if="loading" />
 
-    <template v-else>
-      <ButtonLoading v-if="loading" />
-      <span v-else><slot /></span>
-    </template>
+    <slot v-if="icon" />
+
+    <span class="button__text" v-else>
+      <slot />
+    </span>
   </ButtonRoot>
 </template>
 
 <script setup lang="ts">
 import { computed, type Slot } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
-import { type IconComponent, LoaderIcon } from '../icon';
+import type { IconComponent } from '../icon';
+import Spinner from '../Spinner.vue';
 import ButtonRoot from './ButtonRoot.vue';
 import type { ButtonSize } from './ButtonSize';
 import type { ButtonVariant } from './ButtonVariant';
-import ButtonLoading from './ButtonLoading.vue';
 
 const props = withDefaults(defineProps<{
   to?: RouteLocationRaw;
@@ -38,6 +36,7 @@ const props = withDefaults(defineProps<{
   size?: ButtonSize;
   variant?: ButtonVariant;
   prependIcon?: IconComponent;
+  mobileIconOnly?: boolean;
   danger?: boolean;
   disabled?: boolean;
   loading?: boolean;
@@ -47,6 +46,7 @@ const props = withDefaults(defineProps<{
   danger: false,
   variant: 'secondary',
   size: 'md',
+  mobileIconOnly: false,
 });
 
 defineSlots<{
@@ -61,6 +61,7 @@ const classes = computed(() => [
     'button--danger': props.danger,
     'button--loading': props.loading,
     'button--active': props.active,
+    'button--icon-only': props.mobileIconOnly,
   },
 ]);
 </script>
@@ -169,8 +170,29 @@ const classes = computed(() => [
     }
   }
 
-  .button--loading > *:not(.button-loading__dot):not(.button__loading-icon) {
+  .button__loading-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+  }
+
+  .button--loading > *:not(.button__loading-icon) {
     visibility: hidden;
+  }
+
+  @media (max-width: 768px) {
+    .button--icon-only {
+      padding: 6px;
+
+      .button__text {
+        display: none;
+      }
+
+      .button__prepend-icon {
+        margin-right: 0;
+      }
+    }
   }
 }
 </style>

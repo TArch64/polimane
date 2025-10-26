@@ -2,14 +2,14 @@
   <Card as="header" class="editor-header">
     <Button
       icon
-      class="editor-header-back"
+      class="editor-header__back"
       :to="{ name: 'home' }"
       :prepend-icon="ArrowBackIcon"
     >
       Едітор
     </Button>
 
-    <template v-if="editorStore.canEdit">
+    <template v-if="editorStore.canEdit && !isMobile">
       <Button
         icon
         :disabled="isSaveDisabled"
@@ -23,7 +23,7 @@
         icon
         :disabled="!historyStore.canUndo"
         title="Відмінити зміни"
-        @click="historyStore.undo"
+        @click="undo"
       >
         <CornerUpLeftIcon />
       </Button>
@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { computed, toRef } from 'vue';
+import { type Component, computed } from 'vue';
 import { useHotKeys } from '@editor/composables';
 import { Button } from '@/components/button';
 import {
@@ -94,34 +94,36 @@ import {
   CornerUpRightIcon,
   EditIcon,
   FileTextIcon,
-  type IconComponent,
-  LoaderIcon,
   MoreHorizontalIcon,
   PeopleIcon,
   SaveIcon,
   TrashIcon,
 } from '@/components/icon';
-import { useAsyncAction, useProgressBar } from '@/composables';
+import Spinner from '@/components/Spinner.vue';
+import { useAsyncAction, useMobileScreen, useProgressBar } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
-import { useEditorStore, useHistoryStore, useSchemaUsersStore } from '../stores';
+import { useEditorStore, useHistoryStore, useSchemaUsersStore, useSelectionStore } from '../stores';
 import { AccessEditModal, SchemaExportModal, SchemaRenameModal } from './modals';
 
 const router = useRouter();
 const historyStore = useHistoryStore();
 const editorStore = useEditorStore();
 const schemaUsersStore = useSchemaUsersStore();
+const selectionStore = useSelectionStore();
+
+const isMobile = useMobileScreen();
 
 const renameModal = useModal(SchemaRenameModal);
 const exportModal = useModal(SchemaExportModal);
 const accessEditModal = useModal(AccessEditModal);
 
-const SavingIcon = computed((): IconComponent => {
+const SavingIcon = computed((): Component => {
   if (editorStore.isSaving) {
-    return LoaderIcon;
+    return Spinner;
   }
   if (editorStore.hasUnsavedChanges) {
     return SaveIcon;
@@ -166,11 +168,16 @@ async function deleteSchemaIntent() {
   }
 }
 
+function undo() {
+  selectionStore.reset();
+  historyStore.undo();
+}
+
 useHotKeys({
-  Meta_Z: historyStore.undo,
+  Meta_Z: undo,
   Meta_Shift_Z: historyStore.redo,
 }, {
-  isActive: toRef(editorStore, 'canEdit'),
+  isActive: () => editorStore.canEdit && !isMobile.value,
 });
 
 useProgressBar(deleteSchema);
@@ -189,7 +196,7 @@ useProgressBar(deleteSchema);
     gap: 4px;
   }
 
-  .editor-header-back {
+  .editor-header__back {
     margin-right: 40px;
   }
 }

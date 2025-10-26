@@ -21,11 +21,24 @@ const schemasStore = useSchemasStore();
   .schemas-list {
     flex-grow: 1;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(var(--list-columns), 1fr);
     align-content: start;
     align-items: end;
     gap: 20px;
     padding: 12px;
+    --list-columns: 4;
+  }
+
+  @media (max-width: 992px) {
+    .schemas-list {
+      --list-columns: 3;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .schemas-list {
+      --list-columns: 2;
+    }
   }
 }
 </style>

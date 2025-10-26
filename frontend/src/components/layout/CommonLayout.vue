@@ -72,5 +72,22 @@ usePageClass('app--common-layout');
     padding: 20px;
     min-width: 0;
   }
+
+  @media (max-width: 768px) {
+    .common-layout__row {
+      display: block;
+      padding: 16px;
+    }
+
+    .common-layout__submenu {
+      position: static;
+      width: 100%;
+      margin: 0 0 16px;
+    }
+
+    .common-layout__main--aside-menu {
+      padding: 0;
+    }
+  }
 }
 </style>

@@ -4,7 +4,7 @@
     popover="manual"
     class="confirm"
     @keydown.esc="decline"
-    v-popover-shift
+    v-popover-shift.defer
   >
     <p class="confirm__message">
       {{ model.message }}
