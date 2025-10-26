@@ -37,7 +37,7 @@ export function useCanvasEvents(): ICanvasEvents {
 
   function onTouchEnd() {
     if (!lastEvent) return;
-    touchHandlers[lastEvent.touches.length]?.touchend?.();
+    touchHandlers[lastEvent.touches.length]?.touchend();
     lastEvent = null;
   }
 
