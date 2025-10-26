@@ -15,10 +15,14 @@ type UpdateOptions struct {
 }
 
 func (c *Client) Update(ctx context.Context, options *UpdateOptions) error {
-	_, err := gorm.
+	rowsAffected, err := gorm.
 		G[model.SchemaInvitation](c.db).
 		Where("email = ? AND schema_id = ?", options.Email, options.SchemaID).
 		Updates(ctx, *options.Updates)
+
+	if rowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
 
 	return err
 }
