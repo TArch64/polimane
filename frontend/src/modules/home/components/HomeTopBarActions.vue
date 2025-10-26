@@ -1,5 +1,6 @@
 <template>
   <Button
+    mobile-icon-only
     variant="primary"
     class="home-top-bar__create-schema"
     :prepend-icon="PlusIcon"
@@ -72,6 +73,12 @@ useProgressBar(logout);
 
   .home-top-bar__horizontal-divider {
     border-bottom: var(--divider);
+  }
+
+  @media (max-width: 768px) {
+    .home-top-bar__create-schema {
+      margin-right: 0;
+    }
   }
 }
 </style>

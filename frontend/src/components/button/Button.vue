@@ -6,8 +6,8 @@
     :disabled="disabled ? 'disabled' : undefined"
   >
     <Component
-      class="button__prepend-icon"
       :is="prependIcon"
+      class="button__prepend-icon"
       v-if="prependIcon"
     />
 
@@ -18,7 +18,7 @@
 
     <template v-else>
       <ButtonLoading v-if="loading" />
-      <span v-else><slot /></span>
+      <span class="button__text" v-else><slot /></span>
     </template>
   </ButtonRoot>
 </template>
@@ -38,6 +38,7 @@ const props = withDefaults(defineProps<{
   size?: ButtonSize;
   variant?: ButtonVariant;
   prependIcon?: IconComponent;
+  mobileIconOnly?: boolean;
   danger?: boolean;
   disabled?: boolean;
   loading?: boolean;
@@ -47,6 +48,7 @@ const props = withDefaults(defineProps<{
   danger: false,
   variant: 'secondary',
   size: 'md',
+  mobileIconOnly: false,
 });
 
 defineSlots<{
@@ -61,6 +63,7 @@ const classes = computed(() => [
     'button--danger': props.danger,
     'button--loading': props.loading,
     'button--active': props.active,
+    'button--icon-only': props.mobileIconOnly,
   },
 ]);
 </script>
@@ -171,6 +174,20 @@ const classes = computed(() => [
 
   .button--loading > *:not(.button-loading__dot):not(.button__loading-icon) {
     visibility: hidden;
+  }
+
+  @media (max-width: 768px) {
+    .button--icon-only {
+      padding: 6px;
+
+      .button__text {
+        display: none;
+      }
+
+      .button__prepend-icon {
+        margin-right: 0;
+      }
+    }
   }
 }
 </style>
