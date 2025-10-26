@@ -37,3 +37,9 @@ router.beforeResolve(async (_, __, next) => {
 
   await transition.ready;
 });
+
+router.onError((error) => {
+  if (error.message.includes('Failed to fetch dynamically imported module')) {
+    window.location.reload();
+  }
+});
