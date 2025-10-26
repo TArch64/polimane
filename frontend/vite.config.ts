@@ -43,7 +43,7 @@ export default defineConfig({
 
   build: {
     cssMinify: 'lightningcss',
-    sourcemap: true,
+    sourcemap: 'hidden',
   },
 
   server: {
