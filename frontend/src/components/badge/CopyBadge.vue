@@ -51,7 +51,7 @@ const binding = makeBinding('button', () => ({
     text-overflow: ellipsis;
     max-width: 100%;
 
-    &:has(+ .copy-badge__text) {
+    &:has(+ .copy-badge__icon) {
       max-width: calc(100% - 1em - 3px);
     }
   }

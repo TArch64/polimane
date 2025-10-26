@@ -35,6 +35,4 @@ const VirtualTarget: FunctionalComponent<{ menu: ContextMenuModel }> = (props) =
     width: `${props.menu.menuRect!.width}px`,
   },
 });
-
-VirtualTarget.displayName = 'VirtualTarget';
 </script>

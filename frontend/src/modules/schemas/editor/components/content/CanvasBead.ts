@@ -28,8 +28,6 @@ const CanvasBeadCircle: BeadComponent = (props) => {
   });
 };
 
-CanvasBeadCircle.displayName = 'CanvasBeadCircle';
-
 const CanvasBeadBugle: BeadComponent = (props) => {
   const { shape } = props.item.precomputed as IBeadsGridBugle;
   const settings = getBeadSettings(props.item.bead as SchemaBead<BeadKind.BUGLE>);
@@ -54,8 +52,6 @@ const CanvasBeadBugle: BeadComponent = (props) => {
   ];
 };
 
-CanvasBeadBugle.displayName = 'CanvasBeadBugle';
-
 const CanvasBeadRef: BeadComponent = (props) => {
   const { hitbox } = props.item.precomputed as IBeadsGridRef;
 
@@ -69,8 +65,6 @@ const CanvasBeadRef: BeadComponent = (props) => {
     coord: props.item.coord,
   });
 };
-
-CanvasBeadRef.displayName = 'CanvasBeadRef';
 
 const beadComponentMap: Record<BeadKind, BeadComponent> = {
   [BeadKind.CIRCLE]: CanvasBeadCircle,

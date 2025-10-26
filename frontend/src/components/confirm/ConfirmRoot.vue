@@ -42,6 +42,4 @@ const VirtualTarget: FunctionalComponent<{ model: ConfirmModel }> = (props) => h
     width: `${props.model.virtualTarget!.width}px`,
   },
 });
-
-VirtualTarget.displayName = 'VirtualTarget';
 </script>

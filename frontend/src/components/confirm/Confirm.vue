@@ -52,8 +52,6 @@ const ConfirmButton: FunctionalComponent<IConfirmButtonProps> = (props) => {
   }, () => props.button);
 };
 
-ConfirmButton.displayName = 'ConfirmButton';
-
 const dialogRef = ref<HTMLDialogElement>(null!);
 const decline = () => props.model.complete(false);
 const accept = () => props.model.complete(true);
