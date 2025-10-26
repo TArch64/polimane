@@ -1,6 +1,8 @@
-import type { FunctionDirective } from 'vue';
+import { type FunctionDirective, nextTick } from 'vue';
 import { type IPadding, type PaddingInput, resolvePadding } from '@/helpers';
 import { NodeRect } from '@/models';
+
+type Modifiers = 'defer';
 
 interface IPopoverShiftProps {
   padding?: PaddingInput;
@@ -24,12 +26,16 @@ function getOffsetY(rect: NodeRect, padding: IPadding): number {
   return offset > 0 ? 0 : offset;
 }
 
-export const vPopoverShift: FunctionDirective<HTMLElement, IPopoverShiftProps> = (el, binding) => {
-  const padding = resolvePadding(binding.value?.padding ?? 8);
-  const rect = new NodeRect(el.getBoundingClientRect());
+export const vPopoverShift: FunctionDirective<HTMLElement, IPopoverShiftProps, Modifiers> = (el, binding) => {
+  function render() {
+    const padding = resolvePadding(binding.value?.padding ?? 8);
+    const rect = new NodeRect(el.getBoundingClientRect());
 
-  const offsetX = getOffsetX(rect, padding);
-  const offsetY = getOffsetY(rect, padding);
+    const offsetX = getOffsetX(rect, padding);
+    const offsetY = getOffsetY(rect, padding);
 
-  el.style.translate = `${offsetX}px ${offsetY}px`;
+    el.style.translate = `${offsetX}px ${offsetY}px`;
+  }
+
+  binding.modifiers.defer ? nextTick(render) : render();
 };
