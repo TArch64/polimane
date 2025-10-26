@@ -20,7 +20,7 @@
       :item
     />
 
-    <FadeTransition v-if="editorStore.canEdit && isMobile">
+    <FadeTransition v-if="editorStore.canEdit && !isMobile">
       <CanvasSelection
         :key="`${selected.from}-${selected.to}`"
         v-if="selected"

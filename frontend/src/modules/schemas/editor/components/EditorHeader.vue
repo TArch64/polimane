@@ -23,7 +23,7 @@
         icon
         :disabled="!historyStore.canUndo"
         title="Відмінити зміни"
-        @click="historyStore.undo"
+        @click="undo"
       >
         <CornerUpLeftIcon />
       </Button>
@@ -106,13 +106,14 @@ import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
-import { useEditorStore, useHistoryStore, useSchemaUsersStore } from '../stores';
+import { useEditorStore, useHistoryStore, useSchemaUsersStore, useSelectionStore } from '../stores';
 import { AccessEditModal, SchemaExportModal, SchemaRenameModal } from './modals';
 
 const router = useRouter();
 const historyStore = useHistoryStore();
 const editorStore = useEditorStore();
 const schemaUsersStore = useSchemaUsersStore();
+const selectionStore = useSelectionStore();
 
 const isMobile = useMobileScreen();
 
@@ -167,8 +168,13 @@ async function deleteSchemaIntent() {
   }
 }
 
+function undo() {
+  selectionStore.reset();
+  historyStore.undo();
+}
+
 useHotKeys({
-  Meta_Z: historyStore.undo,
+  Meta_Z: undo,
   Meta_Shift_Z: historyStore.redo,
 }, {
   isActive: () => editorStore.canEdit && !isMobile.value,
