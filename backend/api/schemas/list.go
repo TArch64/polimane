@@ -55,16 +55,16 @@ func (c *Controller) apiList(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	eg := errgroup.Group{}
+	eg, egCtx := errgroup.WithContext(ctx.Context())
 	res := &listResponse{}
 	user := auth.GetSessionUser(ctx)
 
 	eg.Go(func() error {
-		return c.queryList(ctx.Context(), user, &query, res)
+		return c.queryList(egCtx, user, &query, res)
 	})
 
 	eg.Go(func() error {
-		return c.countList(ctx.Context(), user, res)
+		return c.countList(egCtx, user, res)
 	})
 
 	if err := eg.Wait(); err != nil {

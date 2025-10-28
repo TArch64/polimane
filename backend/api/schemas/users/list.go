@@ -47,15 +47,14 @@ func (c *Controller) apiList(ctx *fiber.Ctx) error {
 	}
 
 	var response listResponse
-	requestCtx := ctx.Context()
-	eg := errgroup.Group{}
+	eg, egCtx := errgroup.WithContext(ctx.Context())
 
 	eg.Go(func() error {
-		return c.listUsers(requestCtx, schemaID, &response)
+		return c.listUsers(egCtx, schemaID, &response)
 	})
 
 	eg.Go(func() error {
-		return c.listInvitations(requestCtx, schemaID, &response)
+		return c.listInvitations(egCtx, schemaID, &response)
 	})
 
 	if err = eg.Wait(); err != nil {
