@@ -71,6 +71,10 @@ func (c *Controller) apiList(ctx *fiber.Ctx) error {
 		return err
 	}
 
+	if res.List == nil {
+		res.List = make([]*listItem, 0)
+	}
+
 	return ctx.JSON(res)
 }
 
