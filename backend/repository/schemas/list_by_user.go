@@ -33,3 +33,15 @@ func (c *Client) ListByUser(ctx context.Context, options *ByUserOptions) ([]*mod
 	err := c.ListByUserOut(ctx, options, &schemas)
 	return schemas, err
 }
+
+func (c *Client) CountByUser(ctx context.Context, options *ByUserOptions) (int64, error) {
+	var count int64
+	err := c.db.
+		WithContext(ctx).
+		Table("schemas").
+		Scopes(IncludeUserSchemaScope(options.User.ID)).
+		Count(&count).
+		Error
+
+	return count, err
+}

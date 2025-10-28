@@ -1,7 +1,7 @@
 <template>
   <div class="schemas-list">
     <HomeSchema
-      v-for="schema of schemasStore.schemas.data"
+      v-for="schema of schemasStore.schemas"
       :key="schema.id"
       :schema="schema as ISchema"
     />

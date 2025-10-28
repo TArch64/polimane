@@ -32,18 +32,14 @@ type SchemaWithAccess struct {
 	Access AccessLevel `json:"access"`
 }
 
-func (s *Schema) ScreenshotPath() *string {
-	if s.ScreenshotedAt == nil {
+func SchemaScreenshotPath(id ID, timestamp *time.Time) *string {
+	if timestamp == nil {
 		return nil
 	}
-	path := schemaScreenshotPath(s.ID)
+	path := schemaScreenshotPath(id)
 	path += "?v="
-	path += strconv.FormatInt(s.ScreenshotedAt.Unix(), 10)
+	path += strconv.FormatInt(timestamp.Unix(), 10)
 	return &path
-}
-
-func (s *Schema) ScreenshotKey() string {
-	return SchemaScreenshotKey(s.ID)
 }
 
 func schemaScreenshotPath(id ID) string {
