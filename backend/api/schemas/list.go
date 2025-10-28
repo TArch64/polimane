@@ -99,14 +99,7 @@ func (c *Controller) queryList(
 }
 
 func (c *Controller) countList(ctx context.Context, user *model.User, res *listResponse) error {
-	count, err := c.schemas.CountByUser(ctx, &repositoryschemas.CountByUserOptions{
+	return c.schemas.CountByUserOut(ctx, &repositoryschemas.CountByUserOptions{
 		User: user,
-	})
-
-	if err != nil {
-		return err
-	}
-
-	res.Total = count
-	return nil
+	}, &res.Total)
 }
