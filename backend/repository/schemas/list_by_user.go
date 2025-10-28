@@ -6,16 +6,20 @@ import (
 	"polimane/backend/model"
 )
 
-type ByUserOptions struct {
-	User   *model.User
-	Select []string
+type ListByUserOptions struct {
+	User       *model.User
+	Pagination *model.Pagination
+	Select     []string
 }
 
-func (c *Client) ListByUserOut(ctx context.Context, options *ByUserOptions, out interface{}) error {
+func (c *Client) ListByUserOut(ctx context.Context, options *ListByUserOptions, out interface{}) error {
 	query := c.db.
 		WithContext(ctx).
 		Table("schemas").
-		Scopes(IncludeUserSchemaScope(options.User.ID))
+		Scopes(
+			IncludeUserSchemaScope(options.User.ID),
+			model.PaginationScope(options.Pagination),
+		)
 
 	if len(options.Select) > 0 {
 		query = query.Select(options.Select)
@@ -28,7 +32,7 @@ func (c *Client) ListByUserOut(ctx context.Context, options *ByUserOptions, out 
 		Error
 }
 
-func (c *Client) ListByUser(ctx context.Context, options *ByUserOptions) ([]*model.Schema, error) {
+func (c *Client) ListByUser(ctx context.Context, options *ListByUserOptions) ([]*model.Schema, error) {
 	var schemas []*model.Schema
 	err := c.ListByUserOut(ctx, options, &schemas)
 	return schemas, err

@@ -17,8 +17,7 @@ import { useSchemasStore } from './stores';
 
 defineOptions({
   beforeRouteEnter: definePreload<'home'>(async () => {
-    const store = useSchemasStore();
-    await store.schemas.load();
+    await useSchemasStore().load();
   }),
 });
 

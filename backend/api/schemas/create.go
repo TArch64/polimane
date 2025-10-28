@@ -33,8 +33,5 @@ func (c *Controller) apiCreate(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.JSON(newListItem(&model.SchemaWithAccess{
-		Schema: *schema,
-		Access: model.AccessAdmin,
-	}))
+	return ctx.JSON(newListItem(schema, model.AccessAdmin))
 }

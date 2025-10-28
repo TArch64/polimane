@@ -30,7 +30,7 @@ func (i *Service) Screenshot(ctx context.Context, options *ScreenshotOptions) er
 		return err
 	}
 
-	key := options.Schema.ScreenshotKey()
+	key := model.SchemaScreenshotKey(options.Schema.ID)
 
 	_, err = i.s3.PutObject(ctx, &s3.PutObjectInput{
 		Key:         &key,

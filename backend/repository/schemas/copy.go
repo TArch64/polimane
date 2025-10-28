@@ -23,7 +23,7 @@ func makeCopyName(originalName string) string {
 	}
 	counter, _ := strconv.Atoi(counterMatch[1])
 	counterStr := strconv.Itoa(counter + 1)
-	return strings.ReplaceAll(originalName, counterMatch[0], " ("+counterStr+")")
+	return strings.ReplaceAll(originalName, counterMatch[0], "("+counterStr+")")
 }
 
 func (c *Client) Copy(ctx context.Context, options *CopyOptions) (*model.Schema, error) {

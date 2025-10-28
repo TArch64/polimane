@@ -18,10 +18,19 @@ const plugin = ModalPlugin.inject();
 const routeTransition = useRouteTransition();
 const openedModal: Ref<ModalModel | null> = ref(null);
 
-watch(() => plugin.openedModal?.id, () => {
+watch(() => plugin.openedModal?.id, (modal, oldModal) => {
   routeTransition.start(async () => {
     const previousModal = openedModal.value;
     openedModal.value = plugin.openedModal;
+
+    if (modal && !oldModal) {
+      const scrollbarWidth = window.innerWidth - document.body.offsetWidth;
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    if (!modal && oldModal) {
+      document.body.style.paddingRight = '';
+    }
 
     await previousModal?.completeClose();
 
