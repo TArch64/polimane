@@ -13,3 +13,4 @@ export * from './useAccessPermissions';
 export * from './useTransitionState';
 export * from './useTopElement';
 export * from './useDeviceScreen';
+export * from './useInfinityScroll';

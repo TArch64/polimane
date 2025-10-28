@@ -2,7 +2,7 @@ import { reactive, ref, type UnwrapRef } from 'vue';
 import { useAsyncState } from '@vueuse/core';
 
 export interface IAsyncDataOptions<V> {
-  loader: () => Promise<V>;
+  loader: (current: V) => Promise<V>;
   default: V;
   once?: boolean;
   immediate?: boolean;
@@ -27,12 +27,13 @@ export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
 
   const { state, isLoading, execute } = useAsyncState(async (): Promise<D> => {
     try {
-      return await options.loader();
+      return await options.loader(state.value as D);
     } finally {
       isInitial.value = false;
     }
   }, options.default, {
     immediate: options.immediate ?? false,
+    resetOnExecute: false,
     throwError: true,
     shallow: false,
   });

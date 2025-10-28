@@ -9,9 +9,15 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/api/auth"
+	"polimane/backend/api/base"
 	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
 )
+
+type listQuery struct {
+	Offset uint16 `query:"offset" validate:"gte=0,lte=65535"`
+	Limit  uint8  `query:"limit" validate:"gte=1,lte=100"`
+}
 
 type listResponse struct {
 	List  []*listItem `json:"list"`
@@ -44,12 +50,17 @@ func (l *listItem) AfterFind(_ *gorm.DB) error {
 }
 
 func (c *Controller) apiList(ctx *fiber.Ctx) error {
+	var query listQuery
+	if err := base.ParseQuery(ctx, &query); err != nil {
+		return err
+	}
+
 	eg := errgroup.Group{}
 	res := &listResponse{}
 	user := auth.GetSessionUser(ctx)
 
 	eg.Go(func() error {
-		return c.queryList(ctx.Context(), user, res)
+		return c.queryList(ctx.Context(), user, &query, res)
 	})
 
 	eg.Go(func() error {
@@ -63,9 +74,20 @@ func (c *Controller) apiList(ctx *fiber.Ctx) error {
 	return ctx.JSON(res)
 }
 
-func (c *Controller) queryList(ctx context.Context, user *model.User, res *listResponse) error {
-	return c.schemas.ListByUserOut(ctx, &repositoryschemas.ByUserOptions{
+func (c *Controller) queryList(
+	ctx context.Context,
+	user *model.User,
+	query *listQuery,
+	res *listResponse,
+) error {
+	return c.schemas.ListByUserOut(ctx, &repositoryschemas.ListByUserOptions{
 		User: user,
+
+		Pagination: &model.Pagination{
+			Offset: query.Offset,
+			Limit:  query.Limit,
+		},
+
 		Select: []string{
 			"id",
 			"name",
@@ -77,7 +99,7 @@ func (c *Controller) queryList(ctx context.Context, user *model.User, res *listR
 }
 
 func (c *Controller) countList(ctx context.Context, user *model.User, res *listResponse) error {
-	count, err := c.schemas.CountByUser(ctx, &repositoryschemas.ByUserOptions{
+	count, err := c.schemas.CountByUser(ctx, &repositoryschemas.CountByUserOptions{
 		User: user,
 	})
 
