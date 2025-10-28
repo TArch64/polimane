@@ -46,13 +46,14 @@ export const useSchemasStore = defineStore('schemas/list', () => {
   const canLoadNext = computed(() => schemas.value.length < list.data.total);
 
   function load(): Promise<void> {
+    list.reset();
     return list.load();
   }
 
   async function loadNext(): Promise<void> {
     if (list.isLoading) return;
     if (!canLoadNext.value) return;
-    return load();
+    return list.load();
   }
 
   async function createSchema(input: ICreateSchemaInput): Promise<SchemaListItem> {

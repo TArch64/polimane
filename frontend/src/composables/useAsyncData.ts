@@ -5,7 +5,6 @@ export interface IAsyncDataOptions<V> {
   loader: (current: V) => Promise<V>;
   default: V;
   once?: boolean;
-  immediate?: boolean;
 }
 
 export type OptimisticModify<D> = (data: D) => D;
@@ -13,6 +12,7 @@ export type OptimisticModify<D> = (data: D) => D;
 export interface IAsyncData<D> {
   data: D;
   load: () => Promise<void>;
+  reset: () => void;
   makeOptimisticUpdate: (transform: OptimisticModify<D>) => void;
   setOptimisticUpdate: (data: D) => void;
   commitOptimisticUpdate: () => void;
@@ -32,11 +32,16 @@ export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
       isInitial.value = false;
     }
   }, options.default, {
-    immediate: options.immediate ?? false,
+    immediate: false,
     resetOnExecute: false,
     throwError: true,
     shallow: false,
   });
+
+  function reset() {
+    state.value = options.default as UnwrapRef<D>;
+    isInitial.value = true;
+  }
 
   async function load() {
     if (options.once && !isInitial.value) {
@@ -68,6 +73,7 @@ export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
     data: state,
     isInitial,
     isLoading,
+    reset,
     load,
     setOptimisticUpdate,
     makeOptimisticUpdate,

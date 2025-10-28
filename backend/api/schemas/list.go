@@ -93,7 +93,7 @@ func (c *Controller) queryList(
 			"name",
 			"screenshoted_at",
 			"background_color",
-			"user_schemas.access AS access",
+			"user_schemas.access",
 		},
 	}, &res.List)
 }
