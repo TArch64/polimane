@@ -31,7 +31,9 @@ const slots = defineSlots<{
   append?: Slot;
 }>();
 
-const containerClasses = computed(() => `form-field__container--variant-${props.variant}`);
+const containerClasses = computed(() => [
+  `form-field__container--variant-${props.variant}`,
+]);
 </script>
 
 <style scoped>

@@ -3,7 +3,8 @@
   "include": [
     "env.d.ts",
     "vite.config.ts",
-    "src/**/*"
+    "src/**/*",
+    "vite/**/*"
   ],
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",

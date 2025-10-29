@@ -13,8 +13,7 @@
     "lint": "run-s lint:*",
     "update-deps": "npm-check-updates -u",
     "svgo": "svgo --config ./svgo.js",
-    "svgo:assets": "bun svgo -rf src/assets",
-    "deploy": "wrangler pages deploy ./dist --branch main --project-name $PROJECT_NAME"
+    "svgo:assets": "bun svgo -rf src/assets"
   },
   "dependencies": {
     "@iconify-json/eva": "^1.2.3",

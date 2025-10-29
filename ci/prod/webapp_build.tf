@@ -32,14 +32,14 @@ resource "null_resource" "webapp_build" {
 
       BUILD_ARGS = jsonencode([
         "FRONTEND_PUBLIC_API_URL",
-        "FRONTEND_PUBLIC_SENTRY_RELEASE",
+        "FRONTEND_RELEASE",
         "FRONTEND_PUBLIC_CDN_HOST",
         "SENTRY_COMMIT_SHA"
       ])
-      FRONTEND_PUBLIC_API_URL        = "https://${local.api_domain}/api",
-      FRONTEND_PUBLIC_CDN_HOST       = local.cdn_domain,
-      FRONTEND_PUBLIC_SENTRY_RELEASE = local.webapp_sources_hash
-      SENTRY_COMMIT_SHA              = local.git_commit_sha
+      FRONTEND_PUBLIC_API_URL  = "https://${local.api_domain}/api",
+      FRONTEND_PUBLIC_CDN_HOST = local.cdn_domain,
+      FRONTEND_RELEASE         = local.webapp_sources_hash
+      SENTRY_COMMIT_SHA        = local.git_commit_sha
     }
   }
 }

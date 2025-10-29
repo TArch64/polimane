@@ -6,11 +6,12 @@ import type { InlineCollection } from 'unplugin-icons';
 import icons from 'unplugin-icons/vite';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { VitePluginRadar } from 'vite-plugin-radar';
+import { htmlReleaseCookie } from './vite/plugins';
 
 const {
   SENTRY_AUTH_TOKEN,
   SENTRY_COMMIT_SHA,
-  FRONTEND_PUBLIC_SENTRY_RELEASE,
+  FRONTEND_RELEASE,
   FRONTEND_GOOGLE_ANALYTICS_ID,
 } = process.env;
 
@@ -42,8 +43,9 @@ export default defineConfig({
   },
 
   build: {
-    cssMinify: 'lightningcss',
+    outDir: 'dist/public',
     sourcemap: 'hidden',
+    cssMinify: 'lightningcss',
   },
 
   server: {
@@ -75,9 +77,14 @@ export default defineConfig({
       project: 'polimane-frontend',
       authToken: SENTRY_AUTH_TOKEN,
       telemetry: false,
+
       release: {
-        name: FRONTEND_PUBLIC_SENTRY_RELEASE,
-        deploy: { env: 'production' },
+        name: FRONTEND_RELEASE,
+
+        deploy: {
+          env: 'production',
+        },
+
         setCommits: {
           repo: 'TArch64/polimane',
           commit: SENTRY_COMMIT_SHA!,
@@ -88,5 +95,7 @@ export default defineConfig({
     !!FRONTEND_GOOGLE_ANALYTICS_ID && VitePluginRadar({
       analytics: { id: FRONTEND_GOOGLE_ANALYTICS_ID },
     }),
+
+    !!FRONTEND_RELEASE && htmlReleaseCookie(FRONTEND_RELEASE),
   ],
 });

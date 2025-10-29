@@ -53,15 +53,6 @@ resource "cloudflare_dns_record" "root" {
   content = "192.0.2.1" # Dummy IP (TEST-NET-1). Cloudflare redirect before origin is used.
 }
 
-resource "cloudflare_dns_record" "webapp" {
-  name    = local.webapp_domain
-  type    = "CNAME"
-  proxied = true
-  ttl     = 1
-  zone_id = local.cloudflare_zone_id
-  content = "${cloudflare_pages_project.webapp.name}.pages.dev"
-}
-
 resource "aws_acm_certificate" "cloudfront" {
   provider          = aws.us_east_1
   domain_name       = "*.${local.domain}"
