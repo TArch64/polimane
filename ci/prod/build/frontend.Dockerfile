@@ -22,11 +22,6 @@ ENV FRONTEND_PUBLIC_API_URL=$FRONTEND_PUBLIC_API_URL
 ARG FRONTEND_PUBLIC_CDN_HOST
 ENV FRONTEND_PUBLIC_CDN_HOST=$FRONTEND_PUBLIC_CDN_HOST
 
-RUN <<EOF
-mkdir -p ./dist
-echo 'export default {fetch:(request, env)=>env.ASSETS.fetch(request)}' > ./dist/worker.js
-EOF
-
 COPY . /app
 
 ARG FRONTEND_RELEASE
@@ -40,4 +35,5 @@ RUN --mount=type=cache,target=/root/.bun/install/cache \
     --mount=type=secret,id=FRONTEND_GOOGLE_ANALYTICS_ID,env=FRONTEND_GOOGLE_ANALYTICS_ID \
     --mount=type=secret,id=SENTRY_AUTH_TOKEN,env=SENTRY_AUTH_TOKEN \
     bun run build && \
+    cp ./cloudflare.js ./dist/worker.js && \
     find ./dist/public/assets/*.map -exec rm {} \;

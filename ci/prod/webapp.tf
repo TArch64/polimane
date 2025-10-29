@@ -88,3 +88,26 @@ resource "cloudflare_ruleset" "set_webapp_worker_version" {
     }
   ]
 }
+
+resource "cloudflare_ruleset" "webapp_cache" {
+  zone_id = local.cloudflare_zone_id
+  kind    = "zone"
+  name    = "Webapp Cache"
+  phase   = "http_response_headers_transform"
+
+  rules = [
+    {
+      action     = "rewrite"
+      expression = "starts_with(http.request.uri.path, \"/assets/\")"
+
+      action_parameters = {
+        headers = {
+          "Cache-Control" = {
+            operation = "set"
+            value     = "public, max-age=31536000, immutable"
+          }
+        }
+      }
+    }
+  ]
+}
