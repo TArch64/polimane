@@ -1,10 +1,11 @@
 <template>
-  <main ref="wrapperRef" :class="wrapperClasses" @contextmenu.prevent>
+  <main ref="wrapperRef" @contextmenu.prevent>
     <svg
       ref="canvasRef"
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMin slice"
       class="canvas-editor"
+      :class="canvasClasses"
       :width="wrapperRect.width"
       :height="wrapperRect.height"
       :viewBox
@@ -14,6 +15,7 @@
       <defs id="editorCanvasDefs" />
 
       <CanvasContent
+        :canvasRef
         :beadsGrid
         :wrapperRect
         v-if="canvasRef"
@@ -32,6 +34,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { EditorCursor } from '@editor/enums';
 import { FadeTransition } from '@/components/transition';
 import { useMobileScreen } from '@/composables';
 import { useCanvasStore, useEditorStore, useSelectionStore, useToolsStore } from '../stores';
@@ -50,10 +53,13 @@ const canvasRef = ref<SVGSVGElement | null>(null);
 const wrapperRef = ref<HTMLElement | null>(null);
 const wrapperRect = ref<DOMRect | null>(null);
 
-const wrapperClasses = computed(() => ({
-  'canvas-editor--selection': toolsStore.isSelection,
-  'canvas-editor--readonly': !editorStore.canEdit,
-}));
+const cursor = computed(() => {
+  return editorStore.canEdit ? canvasStore.cursor : EditorCursor.DEFAULT;
+});
+
+const canvasClasses = computed(() => [
+  `canvas-editor--cursor-${canvasStore.cursorTarget}`,
+]);
 
 onMounted(() => {
   wrapperRect.value = wrapperRef.value!.getBoundingClientRect();
@@ -70,8 +76,8 @@ const canvasEvents = useCanvasEvents();
 const beadsGrid = useBeadsGrid();
 
 useHotKeys({
-  Backspace: selectionStore.removeSelected,
-  Delete: selectionStore.removeSelected,
+  KeyBackspace: selectionStore.removeSelected,
+  KeyDelete: selectionStore.removeSelected,
 }, {
   isActive: () => toolsStore.isSelection,
 });
@@ -79,9 +85,16 @@ useHotKeys({
 
 <style scoped>
 @layer page {
-  .canvas-editor--readonly,
-  .canvas-editor--selection {
-    --editor-cursor: default;
+  .canvas-editor {
+    --editor-cursor: v-bind("cursor");
+  }
+
+  .canvas-editor--cursor-canvas {
+    cursor: var(--editor-cursor);
+  }
+
+  .canvas-editor--cursor-content:deep(.canvas-content) {
+    cursor: var(--editor-cursor);
   }
 }
 </style>

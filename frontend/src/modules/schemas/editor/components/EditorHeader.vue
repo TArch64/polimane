@@ -174,8 +174,8 @@ function undo() {
 }
 
 useHotKeys({
-  Meta_Z: undo,
-  Meta_Shift_Z: historyStore.redo,
+  Meta_KeyZ: undo,
+  Meta_Shift_KeyZ: historyStore.redo,
 }, {
   isActive: () => editorStore.canEdit && !isMobile.value,
 });

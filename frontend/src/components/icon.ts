@@ -57,6 +57,7 @@ export const FileTextIcon = makeIcon(() => import('~icons/eva/file-text-outline'
 export const DropletOffIcon = makeIcon(() => import('~icons/eva/droplet-off-outline'));
 export const PersonIcon = makeIcon(() => import('~icons/eva/person-outline'));
 export const PeopleIcon = makeIcon(() => import('~icons/eva/people-outline'));
+export const MoveIcon = makeIcon(() => import('~icons/eva/move-outline'));
 
 export const PersonFillIcon = makeIcon(() => import('~icons/eva/person-fill'));
 

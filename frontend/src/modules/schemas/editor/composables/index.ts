@@ -3,7 +3,7 @@ export * from './useEditorBackgroundRenderer';
 export * from './useCanvasEvents';
 export * from './useHotKeys';
 export * from './useContrast';
-export * from './painting';
+export * from './tools';
 export * from './useSelectionColor';
 export * from './useBackgroundContrast';
 export * from './useBackgroundCanvasColor';

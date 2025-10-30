@@ -1,7 +1,7 @@
 import { useCanvasStore, useEditorStore } from '@editor/stores';
 import { BEAD_CIRCLE_CENTER, BEAD_CIRCLE_RADIUS, BEAD_SIZE } from '@editor/const';
 import { type IPoint, parseBeadCoord } from '@/models';
-import type { IBeadToolsOptions } from './IBeadToolsOptions';
+import type { IToolsOptions } from './tool';
 
 export interface IBeadResolveOptions {
   checkShape?: boolean;
@@ -13,7 +13,7 @@ export interface IBeadCoord {
   clearCache: () => void;
 }
 
-export function useBeadCoord(options: IBeadToolsOptions): IBeadCoord {
+export function useBeadCoord(options: IToolsOptions): IBeadCoord {
   const canvasStore = useCanvasStore();
   const editorStore = useEditorStore();
 

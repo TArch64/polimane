@@ -11,6 +11,7 @@ export const useToolsStore = defineStore('schemas/editor/tools', () => {
   const isBead = computed(() => activeTool.value === EditorTool.BEAD);
   const isEraser = computed(() => activeTool.value === EditorTool.ERASER);
   const isSelection = computed(() => activeTool.value === EditorTool.SELECTION);
+  const isNavigate = computed(() => activeTool.value === EditorTool.NAVIGATE);
   const activateTool = (tool: EditorTool) => activeTool.value = tool;
 
   const palette = computed({
@@ -30,6 +31,7 @@ export const useToolsStore = defineStore('schemas/editor/tools', () => {
     isBead,
     isEraser,
     isSelection,
+    isNavigate,
     activateTool,
     activeColor,
     activateColor,

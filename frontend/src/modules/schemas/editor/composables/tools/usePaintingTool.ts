@@ -1,4 +1,4 @@
-import { computed, ref, type Ref } from 'vue';
+import { computed, ref } from 'vue';
 import { createAnimatedFrame } from '@/helpers';
 import {
   type BeadCoord,
@@ -19,13 +19,8 @@ import {
   useEditorStore,
   useToolsStore,
 } from '../../stores';
-import type { IBeadToolsOptions } from './IBeadToolsOptions';
+import type { UseEditorTool } from './tool';
 import { useBeadCoord } from './useBeadCoord';
-
-export interface IBeadPaintingListeners {
-  mousedown: (event: MouseEvent) => void;
-  mousemove?: (event: MouseEvent) => void;
-}
 
 interface ISpanningBead {
   coord: BeadCoord;
@@ -34,7 +29,7 @@ interface ISpanningBead {
   direction?: Direction;
 }
 
-export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingListeners> {
+export const usePaintingTool: UseEditorTool = (options) => {
   const toolsStore = useToolsStore();
   const beadsStore = useBeadsStore();
   const editorStore = useEditorStore();
@@ -183,7 +178,11 @@ export function useBeadPainting(options: IBeadToolsOptions): Ref<IBeadPaintingLi
   }
 
   return computed(() => ({
-    mousedown: onMousedown,
-    ...(isPainting.value ? { mousemove: onMousemove } : {}),
+    level: 'content',
+
+    listeners: {
+      mousedown: onMousedown,
+      ...(isPainting.value ? { mousemove: onMousemove } : {}),
+    },
   }));
-}
+};

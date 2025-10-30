@@ -1,4 +1,4 @@
-import { computed, type Ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 import {
   type IBeadSelection,
   useBeadsStore,
@@ -8,14 +8,10 @@ import {
 import { BEAD_SIZE } from '@editor/const';
 import { type IPoint, parseBeadCoord, Point, serializeBeadCoord } from '@/models';
 import { getObjectKeys } from '@/helpers';
-import type { IBeadToolsOptions } from './IBeadToolsOptions';
+import type { UseEditorTool } from './tool';
 import { type IBeadResolveOptions, useBeadCoord } from './useBeadCoord';
 
-export interface IBeadSelectionListeners {
-  mousedown: (event: MouseEvent) => void;
-}
-
-export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelectionListeners> {
+export const useSelectionTool: UseEditorTool = (options) => {
   const selectionStore = useSelectionStore();
   const toolsStore = useToolsStore();
   const beadsStore = useBeadsStore();
@@ -105,6 +101,7 @@ export function useBeadSelection(options: IBeadToolsOptions): Ref<IBeadSelection
   });
 
   return computed(() => ({
-    mousedown: onMouseDown,
+    level: 'content',
+    listeners: { mousedown: onMouseDown },
   }));
-}
+};

@@ -11,6 +11,8 @@ export interface IHotKeysOptions {
 
 interface IHotKey {
   meta: boolean;
+  alt: boolean;
+  ctrl: boolean;
   shift: boolean;
   key: string;
   exec: HotKeyExec;
@@ -21,26 +23,34 @@ export function useHotKeys(def: HotKeysDef | HotKeyDef[], options: IHotKeysOptio
   const isActive = computed(() => toValue(options.isActive) ?? true);
 
   const hotKeys = entries.map(([expr, exec]): IHotKey => {
-    const parts = expr.toLowerCase().split('_');
+    const parts = expr.split('_');
 
     const hotKey: IHotKey = {
       meta: false,
       shift: false,
+      alt: false,
+      ctrl: false,
       key: '',
       exec,
     };
 
-    let parsing = parts.shift();
+    function next() {
+      return parts.shift();
+    }
+
+    let parsing = next();
 
     while (parsing) {
-      if (parsing in hotKey) {
+      const modifier = parsing.toLowerCase();
+
+      if (modifier in hotKey) {
         // @ts-expect-error -- dynamic key
-        hotKey[parsing] = true;
+        hotKey[modifier] = true;
       } else {
         hotKey.key = parsing;
       }
 
-      parsing = parts.shift();
+      parsing = next();
     }
 
     return hotKey;
@@ -49,17 +59,17 @@ export function useHotKeys(def: HotKeysDef | HotKeyDef[], options: IHotKeysOptio
   const target = computed(() => isActive.value ? document.documentElement : null);
 
   useEventListener(target, 'keydown', (event) => {
-    const key = event.key.toLowerCase();
-
     const hotKey = hotKeys.find((hotKey) => {
       return hotKey.meta === event.metaKey
         && hotKey.shift === event.shiftKey
-        && hotKey.key === key;
+        && hotKey.alt === event.altKey
+        && hotKey.ctrl === event.ctrlKey
+        && hotKey.key === event.code;
     });
 
     if (hotKey) {
       event.preventDefault();
       hotKey.exec();
     }
-  });
+  }, { capture: true });
 }
