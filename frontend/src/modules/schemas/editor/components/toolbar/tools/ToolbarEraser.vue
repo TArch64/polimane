@@ -24,6 +24,7 @@ function activate() {
 }
 
 useHotKeys({
-  Meta_Digit0: activate,
+  mac: { Meta_Digit0: activate },
+  win: { Ctrl_Digit0: activate },
 });
 </script>

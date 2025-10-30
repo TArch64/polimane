@@ -26,6 +26,7 @@ import { type HotKeyDef, useHotKeys } from '@editor/composables';
 import { EditorTool } from '@editor/enums';
 import { Card } from '@/components/card';
 import { useDomRef } from '@/composables';
+import { isMac } from '@/config';
 import { ToolbarPalette } from './palette';
 import {
   ToolbarBead,
@@ -50,7 +51,7 @@ const toolbarTopShift = computed(() => `${toolbarSize.height.value / 2}px`);
 
 useHotKeys(
   toolsStore.palette.slice(0, 9).map((_, index): HotKeyDef => [
-    `Meta_Digit${index + 1}`,
+    isMac ? `Meta_Digit${index + 1}` : `Ctrl_Digit${index + 1}`,
     () => {
       toolsStore.activateTool(EditorTool.BEAD);
       toolsStore.activateColor(toolsStore.palette[index]!);

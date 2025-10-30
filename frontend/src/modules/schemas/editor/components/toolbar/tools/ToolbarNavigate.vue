@@ -24,6 +24,7 @@ function activate() {
 }
 
 useHotKeys({
-  Alt_KeyH: activate,
+  mac: { Alt_KeyH: activate },
+  win: { Ctrl_KeyH: activate },
 });
 </script>

@@ -51,8 +51,14 @@ export function useCanvasZoom(): ICanvasEventListeners {
   }
 
   useHotKeys({
-    Meta_Equal: () => zoomInPoint(ZOOM_IN_STEP),
-    Meta_Minus: () => zoomInPoint(ZOOM_OUT_STEP),
+    mac: {
+      Meta_Equal: () => zoomInPoint(ZOOM_IN_STEP),
+      Meta_Minus: () => zoomInPoint(ZOOM_OUT_STEP),
+    },
+    win: {
+      Ctrl_Equal: () => zoomInPoint(ZOOM_IN_STEP),
+      Ctrl_Minus: () => zoomInPoint(ZOOM_OUT_STEP),
+    },
   });
 
   return {

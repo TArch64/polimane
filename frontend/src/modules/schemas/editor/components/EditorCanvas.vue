@@ -78,8 +78,8 @@ const canvasEvents = useCanvasEvents();
 const beadsGrid = useBeadsGrid();
 
 useHotKeys({
-  KeyBackspace: selectionStore.removeSelected,
-  KeyDelete: selectionStore.removeSelected,
+  Backspace: selectionStore.removeSelected,
+  Delete: selectionStore.removeSelected,
 }, {
   isActive: () => toolsStore.isSelection,
 });

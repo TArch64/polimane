@@ -10,10 +10,13 @@ import {
   watch,
 } from 'vue';
 import { newId } from '@/helpers';
+import { isMac } from '@/config';
 
 export type HotKeyExec = (event: KeyboardEvent) => void;
 export type HotKeyDef = [expr: string, exec: HotKeyExec];
 export type HotKeysDef = Record<HotKeyDef[0], HotKeyDef[1]>;
+export type HotKeysVariantsDef = Record<'win' | 'mac', HotKeysDef>;
+export type AnyHotKeysDef = HotKeysVariantsDef | HotKeysDef | HotKeyDef[];
 
 export interface IHotKeysOptions {
   isActive?: MaybeRefOrGetter<boolean>;
@@ -73,11 +76,23 @@ export function provideHotKeysHandler(): void {
   });
 }
 
-export function useHotKeys(def: HotKeysDef | HotKeyDef[], options: IHotKeysOptions = {}): void {
+function normalizeDefs(def: AnyHotKeysDef): HotKeyDef[] {
+  if (Array.isArray(def)) {
+    return def;
+  }
+
+  if ('win' in def && 'mac' in def) {
+    return isMac ? Object.entries(def.mac) : Object.entries(def.win);
+  }
+
+  return Object.entries(def);
+}
+
+export function useHotKeys(def: AnyHotKeysDef, options: IHotKeysOptions = {}): void {
   const clientId = newId();
   const handler = inject(HOT_KEYS_HANDLER)!;
 
-  const entries = Array.isArray(def) ? def : Object.entries(def);
+  const entries = normalizeDefs(def);
   const isActive = computed(() => toValue(options.isActive) ?? true);
 
   const hotKeys = entries.map(([expr, exec]): IHotKey => {

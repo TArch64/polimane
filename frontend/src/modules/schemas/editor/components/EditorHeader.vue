@@ -174,8 +174,14 @@ function undo() {
 }
 
 useHotKeys({
-  Meta_KeyZ: undo,
-  Meta_Shift_KeyZ: historyStore.redo,
+  mac: {
+    Meta_KeyZ: undo,
+    Meta_Shift_KeyZ: historyStore.redo,
+  },
+  win: {
+    Ctrl_KeyZ: undo,
+    Ctrl_Shift_KeyZ: historyStore.redo,
+  },
 }, {
   isActive: () => editorStore.canEdit && !isMobile.value,
 });
