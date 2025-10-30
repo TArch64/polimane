@@ -1,9 +1,9 @@
 import { computed } from 'vue';
 import { EditorCursor, EditorCursorTarget } from '@editor/enums';
 import { useCanvasStore } from '@editor/stores';
-import type { UseEditorTool } from './tool';
+import type { IEditorTool } from './tool';
 
-export const useNavigateTool: UseEditorTool = (options) => {
+export function useNavigateTool() {
   const canvasStore = useCanvasStore();
   let lastEvent: MouseEvent | null = null;
 
@@ -31,8 +31,8 @@ export const useNavigateTool: UseEditorTool = (options) => {
     addEventListener('mousemove', onMouseMove);
   }
 
-  return computed(() => ({
+  return computed((): IEditorTool => ({
     level: 'canvas',
     listeners: { mousedown: onMouseDown },
   }));
-};
+}

@@ -1,20 +1,23 @@
 import type { Ref } from 'vue';
 import type { IBeadsGrid } from '@editor/composables';
 
-type ToolListenerEvent = 'mousedown' | 'mousemove' | 'mouseup';
-type ToolListener = (event: MouseEvent) => void;
-export type ToolListeners = Partial<Record<ToolListenerEvent, ToolListener>>;
+type ToolListenerEvent = 'mousedown' | 'mousemove' | 'mouseup' | 'click';
+type ToolListener<E extends Event> = (event: E) => void;
 
-export interface IEditorTool {
-  level: 'canvas' | 'content';
-  listeners: ToolListeners;
-}
+export type EditorToolListeners = Partial<{
+  [K in ToolListenerEvent]: ToolListener<SVGElementEventMap[K]>;
+}>;
 
-export interface IToolsOptions {
+export interface IEditorToolOptions {
   canvasRef: Ref<SVGSVGElement>;
   groupRef: Ref<SVGGElement>;
   backgroundRef: Ref<SVGRectElement>;
   beadsGrid: IBeadsGrid;
 }
 
-export type UseEditorTool = (options: IToolsOptions) => Ref<IEditorTool>;
+export interface IEditorTool {
+  level: 'canvas' | 'content';
+  onActivated?: (abortController: AbortController) => void;
+  onDeactivated?: () => void;
+  listeners: EditorToolListeners;
+}

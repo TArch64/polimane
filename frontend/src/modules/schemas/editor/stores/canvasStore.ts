@@ -13,14 +13,20 @@ export const useCanvasStore = defineStore('schemas/editor/canvas', () => {
   const cursor = ref<EditorCursor>(EditorCursor.CROSSHAIR);
   const cursorTarget = ref<EditorCursorTarget>(EditorCursorTarget.CONTENT);
 
-  function setScale(value: number): number {
-    scale.value = clamp(value, MIN_SCALE, MAX_SCALE);
-    return scale.value;
-  }
-
   function navigate(deltaX: number, deltaY: number): void {
     translation.x += deltaX / scale.value;
     translation.y += deltaY / scale.value;
+  }
+
+  function zoom(pointX: number, pointY: number, deltaY: number): void {
+    const mousePointToX = (pointX / scale.value) + translation.x;
+    const mousePointToY = (pointY / scale.value) + translation.y;
+
+    const scaleFactor = 1 - deltaY * 0.01;
+    scale.value = clamp(scale.value * scaleFactor, MIN_SCALE, MAX_SCALE);
+
+    translation.x = mousePointToX - (pointX / scale.value);
+    translation.y = mousePointToY - (pointY / scale.value);
   }
 
   function setCursor(
@@ -33,7 +39,7 @@ export const useCanvasStore = defineStore('schemas/editor/canvas', () => {
 
   return {
     scale,
-    setScale,
+    zoom,
     translation,
     navigate,
     cursor,

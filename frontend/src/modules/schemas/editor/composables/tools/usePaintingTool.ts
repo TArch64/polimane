@@ -19,7 +19,7 @@ import {
   useEditorStore,
   useToolsStore,
 } from '../../stores';
-import type { UseEditorTool } from './tool';
+import type { IEditorTool, IEditorToolOptions } from './tool';
 import { useBeadCoord } from './useBeadCoord';
 
 interface ISpanningBead {
@@ -29,7 +29,7 @@ interface ISpanningBead {
   direction?: Direction;
 }
 
-export const usePaintingTool: UseEditorTool = (options) => {
+export const usePaintingTool = (options: IEditorToolOptions) => {
   const toolsStore = useToolsStore();
   const beadsStore = useBeadsStore();
   const editorStore = useEditorStore();
@@ -177,7 +177,7 @@ export const usePaintingTool: UseEditorTool = (options) => {
     paint(event, toolsStore.isEraser ? null : toolsStore.activeColor);
   }
 
-  return computed(() => ({
+  return computed((): IEditorTool => ({
     level: 'content',
 
     listeners: {

@@ -8,10 +8,10 @@ import {
 import { BEAD_SIZE } from '@editor/const';
 import { type IPoint, parseBeadCoord, Point, serializeBeadCoord } from '@/models';
 import { getObjectKeys } from '@/helpers';
-import type { UseEditorTool } from './tool';
+import type { IEditorTool, IEditorToolOptions } from './tool';
 import { type IBeadResolveOptions, useBeadCoord } from './useBeadCoord';
 
-export const useSelectionTool: UseEditorTool = (options) => {
+export const useSelectionTool = (options: IEditorToolOptions) => {
   const selectionStore = useSelectionStore();
   const toolsStore = useToolsStore();
   const beadsStore = useBeadsStore();
@@ -100,7 +100,7 @@ export const useSelectionTool: UseEditorTool = (options) => {
     if (!isSelectionTool) selectionStore.setSelected(null);
   });
 
-  return computed(() => ({
+  return computed((): IEditorTool => ({
     level: 'content',
     listeners: { mousedown: onMouseDown },
   }));

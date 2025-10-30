@@ -3,4 +3,5 @@ export enum EditorTool {
   BEAD = 'bead',
   SELECTION = 'selection',
   NAVIGATE = 'navigate',
+  ZOOM = 'zoom',
 }

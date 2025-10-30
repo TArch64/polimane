@@ -3,6 +3,8 @@ export enum EditorCursor {
   GRAB = 'grab',
   GRABBING = 'grabbing',
   CROSSHAIR = 'crosshair',
+  ZOOM_IN = 'zoom-in',
+  ZOOM_OUT = 'zoom-out',
 }
 
 export enum EditorCursorTarget {

@@ -12,6 +12,7 @@ export const useToolsStore = defineStore('schemas/editor/tools', () => {
   const isEraser = computed(() => activeTool.value === EditorTool.ERASER);
   const isSelection = computed(() => activeTool.value === EditorTool.SELECTION);
   const isNavigate = computed(() => activeTool.value === EditorTool.NAVIGATE);
+  const isZoom = computed(() => activeTool.value === EditorTool.ZOOM);
   const activateTool = (tool: EditorTool) => activeTool.value = tool;
 
   const palette = computed({
@@ -32,6 +33,7 @@ export const useToolsStore = defineStore('schemas/editor/tools', () => {
     isEraser,
     isSelection,
     isNavigate,
+    isZoom,
     activateTool,
     activeColor,
     activateColor,

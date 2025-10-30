@@ -1,6 +1,7 @@
 <template>
   <Card as="aside" ref="toolbarRef" class="editor-toolbar">
     <ToolbarNavigate />
+    <ToolbarZoom />
     <ToolbarEraser />
     <ToolbarBead />
     <ToolbarSelection />
@@ -26,7 +27,13 @@ import { EditorTool } from '@editor/enums';
 import { Card } from '@/components/card';
 import { useDomRef } from '@/composables';
 import { ToolbarPalette } from './palette';
-import { ToolbarBead, ToolbarEraser, ToolbarNavigate, ToolbarSelection } from './tools';
+import {
+  ToolbarBead,
+  ToolbarEraser,
+  ToolbarNavigate,
+  ToolbarSelection,
+  ToolbarZoom,
+} from './tools';
 import ToolbarBackgroundColor from './ToolbarBackgroundColor.vue';
 import { provideToolbarRef } from './toolbarRef';
 
