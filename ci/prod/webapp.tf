@@ -15,6 +15,10 @@ resource "cloudflare_worker_version" "webapp" {
   compatibility_date = "2025-01-01"
   main_module        = "worker.js"
 
+  annotations = {
+    workers_tag = substr(local.webapp_sources_hash, 0, 25)
+  }
+
   assets = {
     directory = "${local.webapp_build_dir}/public"
 
