@@ -1,6 +1,6 @@
 <template>
   <ToolbarButton
-    title="Очистити"
+    :title="tooltip"
     :active="toolsStore.isEraser"
     @click="activate"
   >
@@ -12,6 +12,7 @@
 import { useCanvasStore, useToolsStore } from '@editor/stores';
 import { useHotKeys } from '@editor/composables';
 import { EditorCursor, EditorTool } from '@editor/enums';
+import { computed } from 'vue';
 import { DropletOffIcon } from '@/components/icon';
 import ToolbarButton from '../ToolbarButton.vue';
 
@@ -23,8 +24,13 @@ function activate() {
   canvasStore.setCursor(EditorCursor.CROSSHAIR);
 }
 
-useHotKeys({
+const hotKeys = useHotKeys({
   mac: { Meta_Digit0: activate },
   win: { Ctrl_Digit0: activate },
+});
+
+const tooltip = computed(() => {
+  const hotKey = hotKeys.titles.Meta_Digit0 || hotKeys.titles.Ctrl_Digit0;
+  return `Очистити (${hotKey})`;
 });
 </script>

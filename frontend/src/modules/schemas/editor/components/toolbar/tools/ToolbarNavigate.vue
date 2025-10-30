@@ -1,6 +1,6 @@
 <template>
   <ToolbarButton
-    title="Переміщення Полотна"
+    :title="tooltip"
     :active="toolsStore.isNavigate"
     @click="activate"
   >
@@ -12,6 +12,7 @@
 import { useCanvasStore, useToolsStore } from '@editor/stores';
 import { EditorCursor, EditorCursorTarget, EditorTool } from '@editor/enums';
 import { useHotKeys } from '@editor/composables';
+import { computed } from 'vue';
 import { MoveIcon } from '@/components/icon';
 import ToolbarButton from '../ToolbarButton.vue';
 
@@ -23,8 +24,13 @@ function activate() {
   canvasStore.setCursor(EditorCursor.GRAB, EditorCursorTarget.CANVAS);
 }
 
-useHotKeys({
+const hotKeys = useHotKeys({
   mac: { Alt_KeyH: activate },
   win: { Ctrl_KeyH: activate },
+});
+
+const tooltip = computed(() => {
+  const hotKey = hotKeys.titles.Alt_KeyH || hotKeys.titles.Ctrl_KeyH;
+  return `Переміщення Полотна (${hotKey})`;
 });
 </script>

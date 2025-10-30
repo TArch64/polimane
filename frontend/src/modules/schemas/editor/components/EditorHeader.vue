@@ -22,7 +22,7 @@
       <Button
         icon
         :disabled="!historyStore.canUndo"
-        title="Відмінити зміни"
+        :title="undoTooltip"
         @click="undo"
       >
         <CornerUpLeftIcon />
@@ -31,7 +31,7 @@
       <Button
         icon
         :disabled="!historyStore.canRedo"
-        title="Повернути назад зміни"
+        :title="redoTooltip"
         @click="historyStore.redo"
       >
         <CornerUpRightIcon />
@@ -131,16 +131,6 @@ const SavingIcon = computed((): Component => {
   return CheckmarkCircleIcon;
 });
 
-const savingTitle = computed((): string => {
-  if (editorStore.isSaving) {
-    return 'Зміни зберігаються прямо зараз';
-  }
-  if (editorStore.hasUnsavedChanges) {
-    return 'Є незбережені зміни';
-  }
-  return 'Всі зміни збережено';
-});
-
 const isSaveDisabled = computed(() => {
   return !editorStore.hasUnsavedChanges || editorStore.isSaving;
 });
@@ -173,17 +163,43 @@ function undo() {
   historyStore.undo();
 }
 
-useHotKeys({
+const hotKeys = useHotKeys({
   mac: {
     Meta_KeyZ: undo,
     Meta_Shift_KeyZ: historyStore.redo,
+    Meta_KeyS: editorStore.save,
   },
   win: {
     Ctrl_KeyZ: undo,
     Ctrl_Shift_KeyZ: historyStore.redo,
+    Ctrl_KeyS: editorStore.save,
   },
 }, {
   isActive: () => editorStore.canEdit && !isMobile.value,
+});
+
+const undoTooltip = computed(() => {
+  const hotKey = hotKeys.titles.Meta_KeyZ || hotKeys.titles.Ctrl_KeyZ;
+  return `Відмінити зміни (${hotKey})`;
+});
+
+const redoTooltip = computed(() => {
+  const hotKey = hotKeys.titles.Meta_Shift_KeyZ || hotKeys.titles.Ctrl_Shift_KeyZ;
+  return `Повернути назад зміни (${hotKey})`;
+});
+
+const savingTitle = computed((): string => {
+  const hotKey = hotKeys.titles.Meta_KeyS || hotKeys.titles.Ctrl_KeyS;
+
+  if (editorStore.isSaving) {
+    return 'Зміни зберігаються прямо зараз';
+  }
+
+  if (editorStore.hasUnsavedChanges) {
+    return `Зберегти зміни (${hotKey})`;
+  }
+
+  return 'Всі зміни збережено';
 });
 
 useProgressBar(deleteSchema);

@@ -28,6 +28,7 @@ interface IHotKey {
   ctrl: boolean;
   shift: boolean;
   key: string;
+  expr: string;
   exec: HotKeyExec;
 }
 
@@ -88,7 +89,11 @@ function normalizeDefs(def: AnyHotKeysDef): HotKeyDef[] {
   return Object.entries(def);
 }
 
-export function useHotKeys(def: AnyHotKeysDef, options: IHotKeysOptions = {}): void {
+export interface IHotKeysMeta {
+  titles: Record<string, string>;
+}
+
+export function useHotKeys(def: AnyHotKeysDef, options: IHotKeysOptions = {}): IHotKeysMeta {
   const clientId = newId();
   const handler = inject(HOT_KEYS_HANDLER)!;
 
@@ -104,6 +109,7 @@ export function useHotKeys(def: AnyHotKeysDef, options: IHotKeysOptions = {}): v
       alt: false,
       ctrl: false,
       key: '',
+      expr,
       exec,
     };
 
@@ -134,4 +140,19 @@ export function useHotKeys(def: AnyHotKeysDef, options: IHotKeysOptions = {}): v
       ? handler.activate(clientId, hotKeys)
       : handler.deactivate(clientId);
   }, { immediate: true });
+
+  const titles = computed(() => Object.fromEntries(
+    hotKeys.map((hotKey) => [
+      hotKey.expr,
+      [
+        hotKey.meta && (isMac ? '⌘' : 'Він'),
+        hotKey.ctrl && (isMac ? '⌃' : 'Ктрл'),
+        hotKey.alt && (isMac ? '⌥' : 'Альт'),
+        hotKey.shift && (isMac ? '⇧' : 'Шфифт'),
+        hotKey.key.replace('Key', '').replace('Digit', ''),
+      ].filter(Boolean).join(' '),
+    ]),
+  ));
+
+  return reactive({ titles });
 }
