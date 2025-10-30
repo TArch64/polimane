@@ -1,5 +1,7 @@
 <template>
   <Card as="aside" ref="toolbarRef" class="editor-toolbar">
+    <ToolbarNavigate />
+    <ToolbarZoom />
     <ToolbarEraser />
     <ToolbarBead />
     <ToolbarSelection />
@@ -10,7 +12,7 @@
       </div>
 
       <Transition name="editor-toolbar__color-foreground-" :duration="150">
-        <ToolbarPalette class="editor-toolbar__color-foreground" v-if="store.isBead" />
+        <ToolbarPalette class="editor-toolbar__color-foreground" v-if="toolsStore.isBead" />
       </Transition>
     </div>
   </Card>
@@ -20,14 +22,23 @@
 import { useToolsStore } from '@editor/stores';
 import { useElementBounding } from '@vueuse/core';
 import { computed } from 'vue';
+import { type HotKeyDef, useHotKeys } from '@editor/composables';
+import { EditorTool } from '@editor/enums';
 import { Card } from '@/components/card';
 import { useDomRef } from '@/composables';
+import { isMac } from '@/config';
 import { ToolbarPalette } from './palette';
-import { ToolbarBead, ToolbarEraser, ToolbarSelection } from './tools';
+import {
+  ToolbarBead,
+  ToolbarEraser,
+  ToolbarNavigate,
+  ToolbarSelection,
+  ToolbarZoom,
+} from './tools';
 import ToolbarBackgroundColor from './ToolbarBackgroundColor.vue';
 import { provideToolbarRef } from './toolbarRef';
 
-const store = useToolsStore();
+const toolsStore = useToolsStore();
 
 const toolbarRef = useDomRef<HTMLElement>();
 provideToolbarRef(toolbarRef);
@@ -37,6 +48,16 @@ const toolbarSize = useElementBounding(toolbarRef, {
 });
 
 const toolbarTopShift = computed(() => `${toolbarSize.height.value / 2}px`);
+
+useHotKeys(
+  toolsStore.palette.slice(0, 9).map((_, index): HotKeyDef => [
+    isMac ? `Meta_Digit${index + 1}` : `Ctrl_Digit${index + 1}`,
+    () => {
+      toolsStore.activateTool(EditorTool.BEAD);
+      toolsStore.activateColor(toolsStore.palette[index]!);
+    },
+  ]),
+);
 </script>
 
 <style scoped>

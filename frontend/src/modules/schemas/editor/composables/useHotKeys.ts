@@ -1,9 +1,22 @@
 import { useEventListener } from '@vueuse/core';
-import { computed, type MaybeRefOrGetter, toValue } from 'vue';
+import {
+  computed,
+  inject,
+  type InjectionKey,
+  type MaybeRefOrGetter,
+  provide,
+  reactive,
+  toValue,
+  watch,
+} from 'vue';
+import { newId } from '@/helpers';
+import { isMac } from '@/config';
 
-export type HotKeyExec = () => void;
+export type HotKeyExec = (event: KeyboardEvent) => void;
 export type HotKeyDef = [expr: string, exec: HotKeyExec];
 export type HotKeysDef = Record<HotKeyDef[0], HotKeyDef[1]>;
+export type HotKeysVariantsDef = Record<'win' | 'mac', HotKeysDef>;
+export type AnyHotKeysDef = HotKeysVariantsDef | HotKeysDef | HotKeyDef[];
 
 export interface IHotKeysOptions {
   isActive?: MaybeRefOrGetter<boolean>;
@@ -11,55 +24,135 @@ export interface IHotKeysOptions {
 
 interface IHotKey {
   meta: boolean;
+  alt: boolean;
+  ctrl: boolean;
   shift: boolean;
   key: string;
+  expr: string;
   exec: HotKeyExec;
 }
 
-export function useHotKeys(def: HotKeysDef | HotKeyDef[], options: IHotKeysOptions = {}): void {
-  const entries = Array.isArray(def) ? def : Object.entries(def);
+interface IHotKeysHandler {
+  activate: (clientId: string, hotKeys: IHotKey[]) => void;
+  deactivate: (clientId: string) => void;
+}
+
+const HOT_KEYS_HANDLER = Symbol('HotKeysHandler') as InjectionKey<IHotKeysHandler>;
+
+export function provideHotKeysHandler(): void {
+  const register = reactive(new Map<string, IHotKey[]>());
+
+  function activate(clientId: string, hotKeys: IHotKey[]): void {
+    register.set(clientId, hotKeys);
+  }
+
+  function deactivate(clientId: string): void {
+    register.delete(clientId);
+  }
+
+  const isActive = computed(() => register.size > 0);
+  const target = computed(() => isActive.value ? document.documentElement : null);
+
+  useEventListener(target, 'keydown', (event) => {
+    for (const hotKeys of register.values()) {
+      const hotKey = hotKeys.find((hotKey) => {
+        return hotKey.meta === event.metaKey
+          && hotKey.shift === event.shiftKey
+          && hotKey.alt === event.altKey
+          && hotKey.ctrl === event.ctrlKey
+          && hotKey.key === event.code;
+      });
+
+      if (hotKey) {
+        event.preventDefault();
+        hotKey.exec(event);
+        return;
+      }
+    }
+  }, { capture: true });
+
+  provide(HOT_KEYS_HANDLER, {
+    activate,
+    deactivate,
+  });
+}
+
+function normalizeDefs(def: AnyHotKeysDef): HotKeyDef[] {
+  if (Array.isArray(def)) {
+    return def;
+  }
+
+  if ('win' in def && 'mac' in def) {
+    return isMac ? Object.entries(def.mac) : Object.entries(def.win);
+  }
+
+  return Object.entries(def);
+}
+
+export interface IHotKeysMeta {
+  titles: Record<string, string>;
+}
+
+export function useHotKeys(def: AnyHotKeysDef, options: IHotKeysOptions = {}): IHotKeysMeta {
+  const clientId = newId();
+  const handler = inject(HOT_KEYS_HANDLER)!;
+
+  const entries = normalizeDefs(def);
   const isActive = computed(() => toValue(options.isActive) ?? true);
 
   const hotKeys = entries.map(([expr, exec]): IHotKey => {
-    const parts = expr.toLowerCase().split('_');
+    const parts = expr.split('_');
 
     const hotKey: IHotKey = {
       meta: false,
       shift: false,
+      alt: false,
+      ctrl: false,
       key: '',
+      expr,
       exec,
     };
 
-    let parsing = parts.shift();
+    function next() {
+      return parts.shift();
+    }
+
+    let parsing = next();
 
     while (parsing) {
-      if (parsing in hotKey) {
+      const modifier = parsing.toLowerCase();
+
+      if (modifier in hotKey) {
         // @ts-expect-error -- dynamic key
-        hotKey[parsing] = true;
+        hotKey[modifier] = true;
       } else {
         hotKey.key = parsing;
       }
 
-      parsing = parts.shift();
+      parsing = next();
     }
 
     return hotKey;
   });
 
-  const target = computed(() => isActive.value ? document.documentElement : null);
+  watch(isActive, (isActive) => {
+    isActive
+      ? handler.activate(clientId, hotKeys)
+      : handler.deactivate(clientId);
+  }, { immediate: true });
 
-  useEventListener(target, 'keydown', (event) => {
-    const key = event.key.toLowerCase();
+  const titles = computed(() => Object.fromEntries(
+    hotKeys.map((hotKey) => [
+      hotKey.expr,
+      [
+        hotKey.meta && (isMac ? '⌘' : 'Він'),
+        hotKey.ctrl && (isMac ? '⌃' : 'Ктрл'),
+        hotKey.alt && (isMac ? '⌥' : 'Альт'),
+        hotKey.shift && (isMac ? '⇧' : 'Шфифт'),
+        hotKey.key.replace('Key', '').replace('Digit', ''),
+      ].filter(Boolean).join(' '),
+    ]),
+  ));
 
-    const hotKey = hotKeys.find((hotKey) => {
-      return hotKey.meta === event.metaKey
-        && hotKey.shift === event.shiftKey
-        && hotKey.key === key;
-    });
-
-    if (hotKey) {
-      event.preventDefault();
-      hotKey.exec();
-    }
-  });
+  return reactive({ titles });
 }

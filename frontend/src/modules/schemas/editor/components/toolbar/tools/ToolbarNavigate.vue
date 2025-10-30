@@ -1,36 +1,36 @@
 <template>
   <ToolbarButton
     :title="tooltip"
-    :active="toolsStore.isEraser"
+    :active="toolsStore.isNavigate"
     @click="activate"
   >
-    <DropletOffIcon />
+    <MoveIcon />
   </ToolbarButton>
 </template>
 
 <script setup lang="ts">
 import { useCanvasStore, useToolsStore } from '@editor/stores';
+import { EditorCursor, EditorCursorTarget, EditorTool } from '@editor/enums';
 import { useHotKeys } from '@editor/composables';
-import { EditorCursor, EditorTool } from '@editor/enums';
 import { computed } from 'vue';
-import { DropletOffIcon } from '@/components/icon';
+import { MoveIcon } from '@/components/icon';
 import ToolbarButton from '../ToolbarButton.vue';
 
 const toolsStore = useToolsStore();
 const canvasStore = useCanvasStore();
 
 function activate() {
-  toolsStore.activateTool(EditorTool.ERASER);
-  canvasStore.setCursor(EditorCursor.CROSSHAIR);
+  toolsStore.activateTool(EditorTool.NAVIGATE);
+  canvasStore.setCursor(EditorCursor.GRAB, EditorCursorTarget.CANVAS);
 }
 
 const hotKeys = useHotKeys({
-  mac: { Meta_Digit0: activate },
-  win: { Ctrl_Digit0: activate },
+  mac: { Alt_KeyH: activate },
+  win: { Ctrl_KeyH: activate },
 });
 
 const tooltip = computed(() => {
-  const hotKey = hotKeys.titles.Meta_Digit0 || hotKeys.titles.Ctrl_Digit0;
-  return `Очистити (${hotKey})`;
+  const hotKey = hotKeys.titles.Alt_KeyH || hotKeys.titles.Ctrl_KeyH;
+  return `Переміщення Полотна (${hotKey})`;
 });
 </script>

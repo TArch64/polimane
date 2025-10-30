@@ -3,10 +3,10 @@
     <template #activator>
       <ToolbarButton
         title="Бісер"
-        :active="store.isBead"
+        :active="toolsStore.isBead"
         @click="onActivatorClick"
       >
-        <BeadIcon :kind="store.activeBead" />
+        <BeadIcon :kind="toolsStore.activeBead" />
       </ToolbarButton>
     </template>
 
@@ -15,7 +15,7 @@
         v-for="kind of BeadContentList"
         :key="kind"
         :title="getBeadKindTitle(kind)"
-        :active="store.activeBead === kind"
+        :active="toolsStore.activeBead === kind"
         @click="activateBead(kind)"
       >
         <BeadIcon :kind />
@@ -25,8 +25,8 @@
 </template>
 
 <script setup lang="ts">
-import { useToolsStore } from '@editor/stores';
-import { EditorTool } from '@editor/enums';
+import { useCanvasStore, useToolsStore } from '@editor/stores';
+import { EditorCursor, EditorTool } from '@editor/enums';
 import { ref } from 'vue';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import { type BeadContentKind, BeadContentList, getBeadKindTitle } from '@/enums';
@@ -35,18 +35,24 @@ import ToolbarDropdown from '../ToolbarDropdown.vue';
 import ToolbarGrid from '../ToolbarGrid.vue';
 import { BeadIcon } from './BeadIcon';
 
-const store = useToolsStore();
+const toolsStore = useToolsStore();
+const canvasStore = useCanvasStore();
 
 const dropdownRef = ref<ComponentExposed<typeof ToolbarDropdown>>(null!);
 
+function activate() {
+  toolsStore.activateTool(EditorTool.BEAD);
+  canvasStore.setCursor(EditorCursor.CROSSHAIR);
+}
+
 function onActivatorClick(): void {
-  store.isBead
+  toolsStore.isBead
     ? dropdownRef.value.open()
-    : store.activateTool(EditorTool.BEAD);
+    : activate();
 }
 
 function activateBead(bead: BeadContentKind): void {
-  store.activateBead(bead);
+  toolsStore.activateBead(bead);
   dropdownRef.value.close();
 }
 </script>
