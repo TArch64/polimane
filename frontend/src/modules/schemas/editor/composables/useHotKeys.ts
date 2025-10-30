@@ -149,7 +149,10 @@ export function useHotKeys(def: AnyHotKeysDef, options: IHotKeysOptions = {}): I
         hotKey.ctrl && (isMac ? '⌃' : 'Ктрл'),
         hotKey.alt && (isMac ? '⌥' : 'Альт'),
         hotKey.shift && (isMac ? '⇧' : 'Шфифт'),
-        hotKey.key.replace('Key', '').replace('Digit', ''),
+        hotKey.key
+          .replace('Key', '')
+          .replace('Digit', '')
+          .replace('=', hotKey.meta ? '+' : '='),
       ].filter(Boolean).join(' '),
     ]),
   ));
