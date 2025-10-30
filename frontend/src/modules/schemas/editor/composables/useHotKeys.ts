@@ -1,7 +1,17 @@
 import { useEventListener } from '@vueuse/core';
-import { computed, type MaybeRefOrGetter, toValue } from 'vue';
+import {
+  computed,
+  inject,
+  type InjectionKey,
+  type MaybeRefOrGetter,
+  provide,
+  reactive,
+  toValue,
+  watch,
+} from 'vue';
+import { newId } from '@/helpers';
 
-export type HotKeyExec = () => void;
+export type HotKeyExec = (event: KeyboardEvent) => void;
 export type HotKeyDef = [expr: string, exec: HotKeyExec];
 export type HotKeysDef = Record<HotKeyDef[0], HotKeyDef[1]>;
 
@@ -18,7 +28,55 @@ interface IHotKey {
   exec: HotKeyExec;
 }
 
+interface IHotKeysHandler {
+  activate: (clientId: string, hotKeys: IHotKey[]) => void;
+  deactivate: (clientId: string) => void;
+}
+
+const HOT_KEYS_HANDLER = Symbol('HotKeysHandler') as InjectionKey<IHotKeysHandler>;
+
+export function provideHotKeysHandler(): void {
+  const register = reactive(new Map<string, IHotKey[]>());
+
+  function activate(clientId: string, hotKeys: IHotKey[]): void {
+    register.set(clientId, hotKeys);
+  }
+
+  function deactivate(clientId: string): void {
+    register.delete(clientId);
+  }
+
+  const isActive = computed(() => register.size > 0);
+  const target = computed(() => isActive.value ? document.documentElement : null);
+
+  useEventListener(target, 'keydown', (event) => {
+    for (const hotKeys of register.values()) {
+      const hotKey = hotKeys.find((hotKey) => {
+        return hotKey.meta === event.metaKey
+          && hotKey.shift === event.shiftKey
+          && hotKey.alt === event.altKey
+          && hotKey.ctrl === event.ctrlKey
+          && hotKey.key === event.code;
+      });
+
+      if (hotKey) {
+        event.preventDefault();
+        hotKey.exec(event);
+        return;
+      }
+    }
+  }, { capture: true });
+
+  provide(HOT_KEYS_HANDLER, {
+    activate,
+    deactivate,
+  });
+}
+
 export function useHotKeys(def: HotKeysDef | HotKeyDef[], options: IHotKeysOptions = {}): void {
+  const clientId = newId();
+  const handler = inject(HOT_KEYS_HANDLER)!;
+
   const entries = Array.isArray(def) ? def : Object.entries(def);
   const isActive = computed(() => toValue(options.isActive) ?? true);
 
@@ -56,20 +114,9 @@ export function useHotKeys(def: HotKeysDef | HotKeyDef[], options: IHotKeysOptio
     return hotKey;
   });
 
-  const target = computed(() => isActive.value ? document.documentElement : null);
-
-  useEventListener(target, 'keydown', (event) => {
-    const hotKey = hotKeys.find((hotKey) => {
-      return hotKey.meta === event.metaKey
-        && hotKey.shift === event.shiftKey
-        && hotKey.alt === event.altKey
-        && hotKey.ctrl === event.ctrlKey
-        && hotKey.key === event.code;
-    });
-
-    if (hotKey) {
-      event.preventDefault();
-      hotKey.exec();
-    }
-  }, { capture: true });
+  watch(isActive, (isActive) => {
+    isActive
+      ? handler.activate(clientId, hotKeys)
+      : handler.deactivate(clientId);
+  }, { immediate: true });
 }

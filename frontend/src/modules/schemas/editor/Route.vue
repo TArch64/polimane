@@ -21,7 +21,7 @@ import {
   useToolsStore,
 } from './stores';
 import { EditorCanvas, EditorHeader, EditorToolbar } from './components';
-import { useEditorBackgroundRenderer } from './composables';
+import { provideHotKeysHandler, useEditorBackgroundRenderer } from './composables';
 
 defineProps<{
   schemaId: string;
@@ -48,6 +48,7 @@ defineOptions({
 const editorStore = useEditorStore();
 const isMobile = useMobileScreen();
 useEditorBackgroundRenderer();
+provideHotKeysHandler();
 
 useEventListener(window, 'beforeunload', (event) => {
   if (editorStore.hasUnsavedChanges) {

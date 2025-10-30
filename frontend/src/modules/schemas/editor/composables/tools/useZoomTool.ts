@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 import { EditorCursor, EditorCursorTarget } from '@editor/enums';
-import { useCanvasStore } from '@editor/stores';
+import { useCanvasStore, ZOOM_IN_STEP, ZOOM_OUT_STEP } from '@editor/stores';
 import type { IEditorTool } from './tool';
 
 export const useZoomTool = () => {
@@ -8,7 +8,7 @@ export const useZoomTool = () => {
   let isZoomOut = false;
 
   function onClick(event: PointerEvent) {
-    const deltaY = isZoomOut ? 25 : -50;
+    const deltaY = isZoomOut ? ZOOM_OUT_STEP : ZOOM_IN_STEP;
     canvasStore.zoom(event.clientX, event.clientY, deltaY);
   }
 

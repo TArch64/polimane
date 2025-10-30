@@ -4,6 +4,7 @@
       ref="canvasRef"
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMin slice"
+      tabindex="0"
       class="canvas-editor"
       :class="canvasClasses"
       :width="wrapperRect.width"
@@ -63,6 +64,7 @@ const canvasClasses = computed(() => [
 
 onMounted(() => {
   wrapperRect.value = wrapperRef.value!.getBoundingClientRect();
+  canvasRef.value?.focus();
 });
 
 const viewBox = computed((): string => {
@@ -86,6 +88,7 @@ useHotKeys({
 <style scoped>
 @layer page {
   .canvas-editor {
+    outline: none;
     --editor-cursor: v-bind("cursor");
   }
 

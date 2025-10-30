@@ -1,5 +1,7 @@
-import { useCanvasStore } from '@editor/stores';
+import { useCanvasStore, ZOOM_IN_STEP, ZOOM_OUT_STEP } from '@editor/stores';
+import { useMouse } from '@vueuse/core';
 import type { ICanvasEventListeners } from './useCanvasEvents';
+import { useHotKeys } from './useHotKeys';
 
 export function useCanvasZoom(): ICanvasEventListeners {
   const canvasStore = useCanvasStore();
@@ -41,6 +43,17 @@ export function useCanvasZoom(): ICanvasEventListeners {
     lastTouches = [];
     lastDistance = 0;
   }
+
+  const mouse = useMouse();
+
+  function zoomInPoint(step: number) {
+    canvasStore.zoom(mouse.x.value, mouse.y.value, step);
+  }
+
+  useHotKeys({
+    Meta_Equal: () => zoomInPoint(ZOOM_IN_STEP),
+    Meta_Minus: () => zoomInPoint(ZOOM_OUT_STEP),
+  });
 
   return {
     wheel: onWheel,

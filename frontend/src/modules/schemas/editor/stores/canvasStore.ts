@@ -6,6 +6,8 @@ import type { IPoint } from '@/models';
 
 export const MIN_SCALE = 0.5;
 export const MAX_SCALE = 10;
+export const ZOOM_IN_STEP = -50;
+export const ZOOM_OUT_STEP = 25;
 
 export const useCanvasStore = defineStore('schemas/editor/canvas', () => {
   const scale = ref(1);
