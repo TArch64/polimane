@@ -2,7 +2,7 @@
   <Teleport
     :to="openedConfirm.getTopEl()"
     :key="openedConfirm.id"
-    v-if="openedConfirm"
+    v-if="openedConfirm && openedConfirm.getTopEl()"
   >
     <Confirm :model="openedConfirm" />
 
