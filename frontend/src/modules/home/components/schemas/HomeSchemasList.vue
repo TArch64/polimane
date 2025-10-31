@@ -1,10 +1,12 @@
 <template>
   <div class="schemas-list">
-    <HomeSchema
-      v-for="schema of schemasStore.schemas"
-      :key="schema.id"
-      :schema="schema as ISchema"
-    />
+    <CursorSelection
+      :list="schemasStore.schemas"
+      v-model="schemasStore.selected"
+      v-slot="{ item, itemRef }"
+    >
+      <HomeSchema :ref="itemRef" :schema="item" />
+    </CursorSelection>
   </div>
 
   <div class="schemas-list-loader" v-visible="schemasStore.isLoading">
@@ -15,8 +17,8 @@
 <script setup lang="ts">
 import { toRef } from 'vue';
 import { useSchemasStore } from '@/modules/home/stores';
-import type { ISchema } from '@/models';
 import { useInfinityScroll } from '@/composables';
+import { CursorSelection } from '@/components/selection';
 import Spinner from '@/components/Spinner.vue';
 import { vVisible } from '@/directives';
 import HomeSchema from './HomeSchema.vue';

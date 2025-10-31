@@ -1,5 +1,11 @@
 <template>
-  <Card ref="cardRef" class="home-schema" interactable :binding="cardBinding">
+  <Card
+    interactable
+    ref="cardRef"
+    class="home-schema"
+    :active="isSelected"
+    :binding="cardBinding"
+  >
     <img
       :src="screenshotUrl"
       :alt="`Скріншот схеми ${schema.name}`"
@@ -20,7 +26,6 @@
 import { RouterLink, useRouter } from 'vue-router';
 import { computed } from 'vue';
 import { Card } from '@/components/card';
-import type { ISchema } from '@/models';
 import { makeBinding } from '@/components/binding';
 import { useContextMenu } from '@/components/contextMenu';
 import { useAccessPermissions, useDomRef } from '@/composables';
@@ -33,10 +38,11 @@ import {
   SchemaAccessEditModal,
   useSchemaUsersStore,
 } from '@/modules/schemas/shared/modals/accessEdit';
-import { useSchemasStore } from '../../stores';
+import type { ISchema } from '@/models';
+import { type SchemaListItem, useSchemasStore } from '../../stores';
 
 const props = defineProps<{
-  schema: ISchema;
+  schema: SchemaListItem;
 }>();
 
 const router = useRouter();
@@ -46,6 +52,7 @@ const schemaUsersStore = useSchemaUsersStore();
 
 const cardRef = useDomRef<HTMLElement>();
 
+const isSelected = computed(() => schemasStore.selected.has(props.schema.id));
 const permissions = useAccessPermissions(() => props.schema.access);
 
 const renameModal = useModal(SchemaRenameModal);
@@ -53,6 +60,7 @@ const accessEditModal = useModal(SchemaAccessEditModal);
 
 const cardBinding = makeBinding(RouterLink, () => ({
   draggable: false,
+
   to: {
     name: 'schema-editor',
     params: { schemaId: props.schema.id },
@@ -80,7 +88,7 @@ useContextMenu({
 
       onAction() {
         renameModal.open({
-          schema: props.schema,
+          schema: props.schema as ISchema,
           updateSchema: (attrs) => schemasStore.updateSchema(props.schema, attrs),
         });
       },

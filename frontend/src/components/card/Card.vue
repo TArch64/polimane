@@ -32,12 +32,14 @@ const props = withDefaults(defineProps<{
   as?: ComponentAs;
   binding?: AnyBinding;
   interactable?: boolean;
+  active?: boolean;
   variant?: 'main' | 'control';
   title?: string;
   footerTransition?: Partial<ICardFooterTransition>;
 }>(), {
   as: 'div',
   interactable: false,
+  active: false,
   variant: 'main',
   title: '',
 
@@ -59,7 +61,10 @@ const slots = defineSlots<{
 
 const classes = computed(() => [
   `card--variant-${props.variant}`,
-  { 'card--interactable': props.interactable },
+  {
+    'card--interactable': props.interactable,
+    'card--active': props.active,
+  },
 ]);
 </script>
 
@@ -89,10 +94,14 @@ const classes = computed(() => [
     transition: border-color 0.15s ease-out;
     will-change: border-color;
 
-    &:hover,
-    &:focus,
-    &:focus-within {
+    &:hover:not(.card--active),
+    &:focus:not(.card--active),
+    &:focus-within:not(.card--active) {
       border-color: var(--color-hover-divider);
+    }
+
+    &.card--active {
+      border-color: var(--color-primary);
     }
   }
 

@@ -1,7 +1,23 @@
 <template>
-  <CommonLayoutTopBar :title>
-    <slot name="top-bar-actions" />
-  </CommonLayoutTopBar>
+  <FadeTransition switch>
+    <CommonLayoutSelectionBar
+      :selected
+      @clear-selection="$emit('clear-selection')"
+      v-if="selected"
+    >
+      <template #title="ctx">
+        <slot name="selection-title" v-bind="ctx" />
+      </template>
+
+      <template #actions>
+        <slot name="selection-actions" />
+      </template>
+    </CommonLayoutSelectionBar>
+
+    <CommonLayoutTopBar :title v-else>
+      <slot name="top-bar-actions" />
+    </CommonLayoutTopBar>
+  </FadeTransition>
 
   <div class="common-layout__row common-layout__content" v-if="slots.submenu">
     <CommonLayoutSubmenu class="common-layout__submenu">
@@ -21,17 +37,29 @@
 <script setup lang="ts">
 import type { Slot } from 'vue';
 import { usePageClass } from '@/composables';
+import { FadeTransition } from '../transition';
 import CommonLayoutTopBar from './CommonLayoutTopBar.vue';
+import CommonLayoutSelectionBar from './CommonLayoutSelectionBar.vue';
 import CommonLayoutSubmenu from './CommonLayoutSubmenu.vue';
 
-defineProps<{
+withDefaults(defineProps<{
   title?: string;
+  selected?: number;
+}>(), {
+  title: '',
+  selected: 0,
+});
+
+defineEmits<{
+  'clear-selection': [];
 }>();
 
 const slots = defineSlots<{
   'default': Slot;
   'submenu'?: Slot;
   'top-bar-actions'?: Slot;
+  'selection-title'?: Slot<{ count: number }>;
+  'selection-actions'?: Slot;
 }>();
 
 usePageClass('app--common-layout');

@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
-import { computed, nextTick, toRef } from 'vue';
+import { computed, nextTick, ref, type Ref, toRef } from 'vue';
 import { type HttpBody, useAsyncData, useHttpClient, useRouteTransition } from '@/composables';
 import type { ISchema, SchemaUpdate } from '@/models';
+import { AccessLevel } from '@/enums';
 
 const PAGINATION_PAGE = 100;
 
@@ -21,9 +22,16 @@ export interface ICreateSchemaRequest {
   name: string;
 }
 
+interface IDeleteManySchemasBody {
+  ids: string[];
+}
+
 export const useSchemasStore = defineStore('schemas/list', () => {
   const routeTransition = useRouteTransition();
   const http = useHttpClient();
+
+  const selected: Ref<Set<string>> = ref(new Set());
+  const clearSelection = () => selected.value = new Set();
 
   const list = useAsyncData({
     loader: async (current): Promise<IListResponse> => {
@@ -61,18 +69,36 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     return item;
   }
 
-  async function deleteSchema(deletingSchema: ISchema): Promise<void> {
+  async function deleteMany(ids: Set<string>): Promise<void> {
+    const idToAccess = Object.fromEntries(
+      schemas.value.map((schema) => [schema.id, schema.access]),
+    );
+
+    for (const id of Array.from(ids)) {
+      if (idToAccess[id] !== AccessLevel.ADMIN) {
+        ids.delete(id);
+      }
+    }
+
     routeTransition.start(() => {
       list.makeOptimisticUpdate(({ list, total }) => ({
-        list: list.filter((schema) => schema.id !== deletingSchema.id),
-        total: total - 1,
+        list: list.filter((schema) => !ids.has(schema.id)),
+        total: total - ids.size,
       }));
+
       return nextTick();
     });
 
     try {
-      await http.delete(['/schemas', deletingSchema.id]);
+      await http.delete<HttpBody, IDeleteManySchemasBody>(['/schemas', 'delete-many'], {
+        ids: Array.from(ids),
+      });
+
       list.commitOptimisticUpdate();
+
+      if (canLoadNext.value && schemas.value.length < PAGINATION_PAGE) {
+        await loadNext();
+      }
     } catch (error) {
       routeTransition.start(() => {
         list.rollbackOptimisticUpdate();
@@ -82,13 +108,17 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     }
   }
 
-  async function copySchema(copyingSchema: ISchema): Promise<SchemaListItem> {
+  async function deleteSchema(deletingSchema: SchemaListItem): Promise<void> {
+    return deleteMany(new Set([deletingSchema.id]));
+  }
+
+  async function copySchema(copyingSchema: SchemaListItem): Promise<SchemaListItem> {
     const item = await http.post<SchemaListItem, HttpBody>(['/schemas', copyingSchema.id, 'copy'], {});
     list.data.total++;
     return item;
   }
 
-  async function updateSchema(updatingSchema: ISchema, patch: SchemaUpdate): Promise<void> {
+  async function updateSchema(updatingSchema: SchemaListItem, patch: SchemaUpdate): Promise<void> {
     await http.patch<HttpBody, SchemaUpdate>(['/schemas', updatingSchema.id], patch);
     Object.assign(updatingSchema, patch);
   }
@@ -100,8 +130,11 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     canLoadNext,
     load,
     loadNext,
+    selected,
+    clearSelection,
     createSchema,
     deleteSchema,
+    deleteMany,
     copySchema,
     updateSchema,
   };

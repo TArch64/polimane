@@ -23,9 +23,9 @@ interface IUpdateAccessBody {
   access: AccessLevel;
 }
 
-type IDeleteInvitationParams = {
+interface IDeleteInvitationBody {
   email: string;
-};
+}
 
 interface IUpdateInvitationAccessBody extends IUpdateAccessBody {
   email: string;
@@ -87,7 +87,7 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
   }
 
   async function deleteInvitation(deletingInvitation: ISchemaUserInvitation): Promise<void> {
-    await http.delete<HttpBody, IDeleteInvitationParams>([...baseUrl.value, 'invitations'], {
+    await http.delete<HttpBody, IDeleteInvitationBody>([...baseUrl.value, 'invitations'], {
       email: deletingInvitation.email,
     });
 

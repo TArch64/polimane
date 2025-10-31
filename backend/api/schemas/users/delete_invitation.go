@@ -9,7 +9,7 @@ import (
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 )
 
-type deleteInvitationQuery struct {
+type deleteInvitationBody struct {
 	Email string `query:"email" validate:"required,email,max=255"`
 }
 
@@ -19,8 +19,8 @@ func (c *Controller) apiDeleteInvitation(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	var query deleteInvitationQuery
-	if err = base.ParseQuery(ctx, &query); err != nil {
+	var body deleteInvitationBody
+	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
@@ -32,7 +32,7 @@ func (c *Controller) apiDeleteInvitation(ctx *fiber.Ctx) error {
 	}
 
 	err = c.schemaInvitations.Delete(requestCtx, &repositoryschemainvitations.DeleteOptions{
-		Email:    query.Email,
+		Email:    body.Email,
 		SchemaID: schemaID,
 	})
 

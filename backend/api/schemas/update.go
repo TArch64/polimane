@@ -96,13 +96,19 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
 		return err
 	}
 
+	user := auth.GetSessionUser(ctx)
+	requestCtx := ctx.Context()
+	err = c.userSchemas.HasAccess(requestCtx, user.ID, schemaID, model.AccessWrite)
+	if err != nil {
+		return err
+	}
+
 	updates := collectUpdates(&body)
 	if updates == nil {
 		return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
 	}
 
-	err = c.schemas.Update(ctx.Context(), &repositoryschemas.UpdateOptions{
-		User:     auth.GetSessionUser(ctx),
+	err = c.schemas.Update(requestCtx, &repositoryschemas.UpdateOptions{
 		SchemaID: schemaID,
 		Updates:  updates,
 	})
@@ -112,7 +118,7 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
 	}
 
 	needImmediateScreenshotUpdate := body.BackgroundColor != ""
-	if err = c.updateScreenshot(ctx.Context(), schemaID, needImmediateScreenshotUpdate); err != nil {
+	if err = c.updateScreenshot(requestCtx, schemaID, needImmediateScreenshotUpdate); err != nil {
 		return err
 	}
 

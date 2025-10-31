@@ -63,6 +63,13 @@ export class NodeRect implements INodeRect {
       && this.height === other.height;
   }
 
+  isIntersecting(other: NodeRect): boolean {
+    return this.left < other.right
+      && this.right > other.left
+      && this.top < other.bottom
+      && this.bottom > other.top;
+  }
+
   toJSON(): INodeRect {
     return {
       x: this.x,
