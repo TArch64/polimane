@@ -4,7 +4,7 @@
     variant="primary"
     class="home-top-bar__create-schema"
     :prepend-icon="PlusIcon"
-    @click="createSchemaModal.open()"
+    @click="createModal.open()"
     v-if="schemasStore.hasSchemas"
   >
     Нова Схема
@@ -43,7 +43,7 @@ import { Dropdown, DropdownAction, DropdownText } from '@/components/dropdown';
 import { useSessionStore } from '@/stores';
 import { useAsyncAction, useProgressBar } from '@/composables';
 import { useSchemasStore } from '../stores';
-import { HomeCreateSchemaModal } from './schemas';
+import { SchemaCreateModal } from './modals';
 
 const schemasStore = useSchemasStore();
 const sessionStore = useSessionStore();
@@ -59,7 +59,7 @@ const displayName = computed(() => {
 });
 
 const settingsProfileRoute: RouteLocationRaw = { name: 'settings-profile' };
-const createSchemaModal = useModal(HomeCreateSchemaModal);
+const createModal = useModal(SchemaCreateModal);
 
 const logout = useAsyncAction(sessionStore.logout);
 useProgressBar(logout);

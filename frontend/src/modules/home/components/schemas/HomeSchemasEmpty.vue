@@ -4,7 +4,7 @@
       Поки що не створено жодної схеми для бісеру
     </p>
 
-    <Button variant="primary" @click="createSchemaModal.open()">
+    <Button variant="primary" @click="createModal.open()">
       Додати Схему
     </Button>
   </div>
@@ -13,9 +13,9 @@
 <script setup lang="ts">
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
-import HomeCreateSchemaModal from './HomeCreateSchemaModal.vue';
+import { SchemaCreateModal } from '../modals';
 
-const createSchemaModal = useModal(HomeCreateSchemaModal);
+const createModal = useModal(SchemaCreateModal);
 </script>
 
 <style scoped>

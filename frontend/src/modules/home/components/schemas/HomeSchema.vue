@@ -25,18 +25,25 @@ import { makeBinding } from '@/components/binding';
 import { useContextMenu } from '@/components/contextMenu';
 import { useAccessPermissions, useDomRef } from '@/composables';
 import { useConfirm } from '@/components/confirm';
-import { CopyIcon, TrashIcon } from '@/components/icon';
-import { useSchemasStore } from '@/modules/home/stores';
+import { CopyIcon, EditIcon, TrashIcon } from '@/components/icon';
 import { buildCdnUrl } from '@/helpers/buildCdnUrl';
+import { useModal } from '@/components/modal';
+import { useSchemasStore } from '../../stores';
+import { SchemaRenameModal } from '../modals';
 
 const props = defineProps<{
   schema: ISchema;
 }>();
 
 const router = useRouter();
+
 const schemasStore = useSchemasStore();
+
 const cardRef = useDomRef<HTMLElement>();
+
 const permissions = useAccessPermissions(() => props.schema.access);
+
+const renameModal = useModal(SchemaRenameModal);
 
 const cardBinding = makeBinding(RouterLink, () => ({
   draggable: false,
@@ -61,6 +68,17 @@ useContextMenu({
   control: false,
 
   actions: [
+    {
+      title: 'Переназвати',
+      icon: EditIcon,
+
+      onAction() {
+        renameModal.open({
+          schema: props.schema,
+        });
+      },
+    },
+
     {
       title: 'Зробити Копію',
       icon: CopyIcon,

@@ -17,10 +17,11 @@ type ListRequestParams = {
   limit: number;
 };
 
-export interface ICreateSchemaInput {
+export interface ICreateSchemaRequest {
   name: string;
-  palette?: string[];
 }
+
+type UpdateSchemaRequest = Partial<Omit<ISchema, 'id'>>;
 
 export const useSchemasStore = defineStore('schemas/list', () => {
   const routeTransition = useRouteTransition();
@@ -56,8 +57,8 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     return list.load();
   }
 
-  async function createSchema(input: ICreateSchemaInput): Promise<SchemaListItem> {
-    const item = await http.post<SchemaListItem, ICreateSchemaInput>('/schemas', input);
+  async function createSchema(input: ICreateSchemaRequest): Promise<SchemaListItem> {
+    const item = await http.post<SchemaListItem, ICreateSchemaRequest>('/schemas', input);
     list.data.total++;
     return item;
   }
@@ -89,6 +90,11 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     return item;
   }
 
+  async function updateSchema(updatingSchema: ISchema, patch: UpdateSchemaRequest): Promise<void> {
+    await http.patch<HttpBody, UpdateSchemaRequest>(['/schemas', updatingSchema.id], patch);
+    Object.assign(updatingSchema, patch);
+  }
+
   return {
     schemas,
     hasSchemas,
@@ -99,5 +105,6 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     createSchema,
     deleteSchema,
     copySchema,
+    updateSchema,
   };
 });
