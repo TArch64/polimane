@@ -33,8 +33,8 @@
 </template>
 
 <script setup lang="ts">
-import { useSchemaUsersStore } from '@editor/stores';
 import { Modal } from '@/components/modal';
+import { useSchemaUsersStore } from './schemaUsersStore';
 import SchemaNewUser from './SchemaNewUser.vue';
 import SchemaUser from './SchemaUser.vue';
 import SchemaInvitation from './SchemaInvitation.vue';

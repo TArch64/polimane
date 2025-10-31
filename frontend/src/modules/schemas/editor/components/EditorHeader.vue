@@ -107,8 +107,12 @@ import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
 import SchemaRenameModal from '@/modules/schemas/shared/modals/SchemaRenameModal.vue';
-import { useEditorStore, useHistoryStore, useSchemaUsersStore, useSelectionStore } from '../stores';
-import { AccessEditModal, SchemaExportModal } from './modals';
+import {
+  SchemaAccessEditModal,
+  useSchemaUsersStore,
+} from '@/modules/schemas/shared/modals/accessEdit';
+import { useEditorStore, useHistoryStore, useSelectionStore } from '../stores';
+import { SchemaExportModal } from './modals';
 
 const router = useRouter();
 const historyStore = useHistoryStore();
@@ -120,7 +124,7 @@ const isMobile = useMobileScreen();
 
 const renameModal = useModal(SchemaRenameModal);
 const exportModal = useModal(SchemaExportModal);
-const accessEditModal = useModal(AccessEditModal);
+const accessEditModal = useModal(SchemaAccessEditModal);
 
 const SavingIcon = computed((): Component => {
   if (editorStore.isSaving) {
@@ -142,8 +146,8 @@ const openRenameModal = () => renameModal.open({
 });
 
 const openAccessEditModal = useAsyncAction(async () => {
-  await schemaUsersStore.load();
-  accessEditModal.open();
+  await schemaUsersStore.load(editorStore.schema.id);
+  accessEditModal.open({});
 });
 
 const deleteConfirm = useConfirm({

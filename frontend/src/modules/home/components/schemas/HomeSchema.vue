@@ -25,10 +25,14 @@ import { makeBinding } from '@/components/binding';
 import { useContextMenu } from '@/components/contextMenu';
 import { useAccessPermissions, useDomRef } from '@/composables';
 import { useConfirm } from '@/components/confirm';
-import { CopyIcon, EditIcon, TrashIcon } from '@/components/icon';
+import { CopyIcon, EditIcon, PeopleIcon, TrashIcon } from '@/components/icon';
 import { buildCdnUrl } from '@/helpers/buildCdnUrl';
 import { useModal } from '@/components/modal';
 import SchemaRenameModal from '@/modules/schemas/shared/modals/SchemaRenameModal.vue';
+import {
+  SchemaAccessEditModal,
+  useSchemaUsersStore,
+} from '@/modules/schemas/shared/modals/accessEdit';
 import { useSchemasStore } from '../../stores';
 
 const props = defineProps<{
@@ -38,12 +42,14 @@ const props = defineProps<{
 const router = useRouter();
 
 const schemasStore = useSchemasStore();
+const schemaUsersStore = useSchemaUsersStore();
 
 const cardRef = useDomRef<HTMLElement>();
 
 const permissions = useAccessPermissions(() => props.schema.access);
 
 const renameModal = useModal(SchemaRenameModal);
+const accessEditModal = useModal(SchemaAccessEditModal);
 
 const cardBinding = makeBinding(RouterLink, () => ({
   draggable: false,
@@ -68,7 +74,7 @@ useContextMenu({
   control: false,
 
   actions: [
-    {
+    permissions.write && {
       title: 'Переназвати',
       icon: EditIcon,
 
@@ -93,6 +99,16 @@ useContextMenu({
             schemaId: created.id,
           },
         });
+      },
+    },
+
+    permissions.admin && {
+      title: 'Редагувати Доступ',
+      icon: PeopleIcon,
+
+      async onAction() {
+        await schemaUsersStore.load(props.schema.id);
+        accessEditModal.open();
       },
     },
 

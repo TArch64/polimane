@@ -25,12 +25,12 @@
 </template>
 
 <script setup lang="ts">
-import { useSchemaUsersStore } from '@editor/stores';
 import type { ISchemaUserInvitation } from '@/models';
 import { Button } from '@/components/button';
 import { TrashIcon } from '@/components/icon';
 import { useAsyncAction } from '@/composables';
 import { AccessLevel } from '@/enums';
+import { useSchemaUsersStore } from './schemaUsersStore';
 import SchemaAccessField from './SchemaAccessField.vue';
 
 const props = defineProps<{

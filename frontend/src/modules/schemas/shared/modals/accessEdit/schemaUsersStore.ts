@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { type HttpBody, useAsyncData, useHttpClient } from '@/composables';
 import type { ISchemaUser, ISchemaUserInvitation } from '@/models';
 import type { UrlPath } from '@/helpers';
 import { AccessLevel } from '@/enums';
-import { useEditorStore } from './editorStore';
 
 interface ISchemaUserList {
   users: ISchemaUser[];
@@ -32,9 +31,9 @@ interface IUpdateInvitationAccessBody extends IUpdateAccessBody {
   email: string;
 }
 
-export const useSchemaUsersStore = defineStore('schemas/editor/users', () => {
-  const editorStore = useEditorStore();
-  const baseUrl = computed(() => ['/schemas', editorStore.schema.id, 'users'] as const satisfies UrlPath);
+export const useSchemaUsersStore = defineStore('schemas/users', () => {
+  const schemaId = ref<string>('');
+  const baseUrl = computed(() => ['/schemas', schemaId.value, 'users'] as const satisfies UrlPath);
   const http = useHttpClient();
 
   const list = useAsyncData({
@@ -50,6 +49,15 @@ export const useSchemaUsersStore = defineStore('schemas/editor/users', () => {
       invitations: [],
     },
   });
+
+  async function load(_schemaId: string): Promise<void> {
+    if (_schemaId !== schemaId.value) {
+      schemaId.value = _schemaId;
+      list.reset();
+    }
+
+    await list.load();
+  }
 
   const users = computed(() => list.data.users);
   const invitations = computed(() => list.data.invitations);
@@ -100,7 +108,7 @@ export const useSchemaUsersStore = defineStore('schemas/editor/users', () => {
   return {
     users,
     invitations,
-    load: list.load,
+    load,
     addUser,
     deleteUser,
     updateUserAccess,

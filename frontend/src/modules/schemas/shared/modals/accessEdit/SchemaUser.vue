@@ -31,7 +31,6 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useSchemaUsersStore } from '@editor/stores';
 import type { ISchemaUser } from '@/models';
 import { useSessionStore } from '@/stores';
 import { Button } from '@/components/button';
@@ -39,6 +38,7 @@ import { TrashIcon } from '@/components/icon';
 import { useAsyncAction } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { AccessLevel } from '@/enums';
+import { useSchemaUsersStore } from './schemaUsersStore';
 import SchemaAccessField from './SchemaAccessField.vue';
 
 const props = defineProps<{

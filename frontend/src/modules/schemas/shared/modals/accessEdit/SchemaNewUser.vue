@@ -22,11 +22,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useSchemaUsersStore } from '@editor/stores';
 import { TextField } from '@/components/form';
 import { Button } from '@/components/button';
 import { PlusIcon } from '@/components/icon';
 import { useAsyncAction } from '@/composables';
+import { useSchemaUsersStore } from './schemaUsersStore';
 
 const usersStore = useSchemaUsersStore();
 const email = ref('');

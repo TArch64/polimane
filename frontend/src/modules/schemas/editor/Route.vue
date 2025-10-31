@@ -16,7 +16,6 @@ import {
   useCanvasStore,
   useEditorStore,
   useHistoryStore,
-  useSchemaUsersStore,
   useSelectionStore,
   useToolsStore,
 } from './stores';
@@ -40,7 +39,6 @@ defineOptions({
     lazyDestroyStore(useToolsStore);
     lazyDestroyStore(useSelectionStore);
     lazyDestroyStore(useBeadsStore);
-    lazyDestroyStore(useSchemaUsersStore);
     next();
   },
 });
