@@ -1,13 +1,11 @@
 import { defineStore } from 'pinia';
 import { onScopeDispose, type Ref, ref, toRef } from 'vue';
-import { type ISchema, isRefBead, isSpannableBead } from '@/models';
+import { type ISchema, isRefBead, isSpannableBead, type SchemaUpdate } from '@/models';
 import { type HttpBody, HttpTransport, useAccessPermissions, useHttpClient } from '@/composables';
 import { getObjectEntries } from '@/helpers';
 import { AccessLevel } from '@/enums';
 import { useEditorSaveDispatcher } from './composables';
 import { useHistoryStore } from './historyStore';
-
-type UpdateSchemaRequest = Partial<Omit<ISchema, 'id'>>;
 
 export const useEditorStore = defineStore('schemas/editor', () => {
   const http = useHttpClient();
@@ -35,7 +33,7 @@ export const useEditorStore = defineStore('schemas/editor', () => {
   const saveDispatcher = useEditorSaveDispatcher(schema, async (patch) => {
     cleanupOrphanBeads(patch);
 
-    await http.patch<HttpBody, UpdateSchemaRequest>(['/schemas', schema.value.id], patch, {
+    await http.patch<HttpBody, SchemaUpdate>(['/schemas', schema.value.id], patch, {
       // Chrome has issues with fetch sending big request body
       transport: HttpTransport.LEGACY,
     });

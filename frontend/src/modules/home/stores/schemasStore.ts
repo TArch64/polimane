@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, nextTick, toRef } from 'vue';
 import { type HttpBody, useAsyncData, useHttpClient, useRouteTransition } from '@/composables';
-import type { ISchema } from '@/models';
+import type { ISchema, SchemaUpdate } from '@/models';
 
 const PAGINATION_PAGE = 100;
 
@@ -20,8 +20,6 @@ type ListRequestParams = {
 export interface ICreateSchemaRequest {
   name: string;
 }
-
-type UpdateSchemaRequest = Partial<Omit<ISchema, 'id'>>;
 
 export const useSchemasStore = defineStore('schemas/list', () => {
   const routeTransition = useRouteTransition();
@@ -90,8 +88,8 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     return item;
   }
 
-  async function updateSchema(updatingSchema: ISchema, patch: UpdateSchemaRequest): Promise<void> {
-    await http.patch<HttpBody, UpdateSchemaRequest>(['/schemas', updatingSchema.id], patch);
+  async function updateSchema(updatingSchema: ISchema, patch: SchemaUpdate): Promise<void> {
+    await http.patch<HttpBody, SchemaUpdate>(['/schemas', updatingSchema.id], patch);
     Object.assign(updatingSchema, patch);
   }
 

@@ -13,14 +13,14 @@
 import { reactive } from 'vue';
 import { Modal, useActiveModal } from '@/components/modal';
 import { TextField } from '@/components/form';
-import type { ISchema } from '@/models';
-import { useSchemasStore } from '../../stores';
+import type { ISchema, SchemaUpdate } from '@/models';
+import type { MaybePromise } from '@/types';
 
 const props = defineProps<{
   schema: ISchema;
+  updateSchema: (attrs: SchemaUpdate) => MaybePromise<void>;
 }>();
 
-const schemasStore = useSchemasStore();
 const modal = useActiveModal();
 
 const form = reactive({
@@ -28,7 +28,7 @@ const form = reactive({
 });
 
 function save(): void {
-  schemasStore.updateSchema(props.schema, {
+  props.updateSchema({
     name: form.name.trim(),
   });
 

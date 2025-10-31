@@ -28,8 +28,8 @@ import { useConfirm } from '@/components/confirm';
 import { CopyIcon, EditIcon, TrashIcon } from '@/components/icon';
 import { buildCdnUrl } from '@/helpers/buildCdnUrl';
 import { useModal } from '@/components/modal';
+import SchemaRenameModal from '@/modules/schemas/shared/modals/SchemaRenameModal.vue';
 import { useSchemasStore } from '../../stores';
-import { SchemaRenameModal } from '../modals';
 
 const props = defineProps<{
   schema: ISchema;
@@ -75,6 +75,7 @@ useContextMenu({
       onAction() {
         renameModal.open({
           schema: props.schema,
+          updateSchema: (attrs) => schemasStore.updateSchema(props.schema, attrs),
         });
       },
     },
