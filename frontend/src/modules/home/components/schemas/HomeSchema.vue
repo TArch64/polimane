@@ -5,6 +5,7 @@
       :alt="`Скріншот схеми ${schema.name}`"
       draggable="false"
       decoding="async"
+      loading="lazy"
       class="home-schema__screenshot"
       v-if="screenshotUrl"
     >
