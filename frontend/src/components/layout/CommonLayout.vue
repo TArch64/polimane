@@ -2,6 +2,7 @@
   <FadeTransition switch>
     <CommonLayoutSelectionBar
       :selected
+      data-cursor-selection-ignore
       @clear-selection="$emit('clear-selection')"
       v-if="selected"
     >
@@ -14,7 +15,7 @@
       </template>
     </CommonLayoutSelectionBar>
 
-    <CommonLayoutTopBar :title v-else>
+    <CommonLayoutTopBar :title data-cursor-selection-ignore v-else>
       <slot name="top-bar-actions" />
     </CommonLayoutTopBar>
   </FadeTransition>

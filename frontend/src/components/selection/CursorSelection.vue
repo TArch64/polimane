@@ -111,6 +111,10 @@ function selectItems(area: NodeRect) {
 }
 
 useEventListener('mousedown', (event: MouseEvent) => {
+  if ((event.target as Element).closest('[data-cursor-selection-ignore]')) {
+    return;
+  }
+
   const handler = onMouseMove(event);
   addEventListener('mousemove', handler);
 

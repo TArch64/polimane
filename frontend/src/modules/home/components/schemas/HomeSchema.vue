@@ -115,7 +115,7 @@ useContextMenu({
       icon: PeopleIcon,
 
       async onAction() {
-        await schemaUsersStore.load(props.schema.id);
+        await schemaUsersStore.load([props.schema.id]);
         accessEditModal.open();
       },
     },

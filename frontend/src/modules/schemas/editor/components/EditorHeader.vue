@@ -146,7 +146,7 @@ const openRenameModal = () => renameModal.open({
 });
 
 const openAccessEditModal = useAsyncAction(async () => {
-  await schemaUsersStore.load(editorStore.schema.id);
+  await schemaUsersStore.load([editorStore.schema.id]);
   accessEditModal.open({});
 });
 
