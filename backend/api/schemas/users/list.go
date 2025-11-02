@@ -12,6 +12,10 @@ import (
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
 
+type listQuery struct {
+	IDs []string `query:"ids"`
+}
+
 type listResponse struct {
 	Users       []*listUser       `json:"users"`
 	Invitations []*listInvitation `json:"invitations"`
@@ -41,20 +45,27 @@ func newUserListItem(user *model.User, schemaUser *model.UserSchema) *listUser {
 }
 
 func (c *Controller) apiList(ctx *fiber.Ctx) error {
-	schemaID, err := base.GetParamID(ctx, schemaIDParam)
+	var err error
+	var query listQuery
+	if err = base.ParseQuery(ctx, &query); err != nil {
+		return err
+	}
+
+	IDs, err := model.StringsToIDs(query.IDs)
 	if err != nil {
 		return err
 	}
 
 	var response listResponse
 	eg, egCtx := errgroup.WithContext(ctx.Context())
+	_, _ = eg, egCtx
 
 	eg.Go(func() error {
-		return c.listUsers(egCtx, schemaID, &response)
+		return c.listUsers(egCtx, IDs, &response)
 	})
 
 	eg.Go(func() error {
-		return c.listInvitations(egCtx, schemaID, &response)
+		return c.listInvitations(egCtx, IDs, &response)
 	})
 
 	if err = eg.Wait(); err != nil {
@@ -64,23 +75,38 @@ func (c *Controller) apiList(ctx *fiber.Ctx) error {
 	return ctx.JSON(response)
 }
 
-func (c *Controller) listUsers(ctx context.Context, schemaID model.ID, res *listResponse) error {
-	return c.userSchemas.ListBySchemaIDOut(ctx, &repositoryuserschemas.ListBySchemaIDOptions{
-		SchemaID: schemaID,
+func (c *Controller) listUsers(ctx context.Context, schemaIDs []model.ID, res *listResponse) error {
+	return c.userSchemas.ListBySchemaIDsOut(ctx, &repositoryuserschemas.ListBySchemaIDsOptions{
+		SchemaIDs: schemaIDs,
+
+		Scopes: []model.Scope{
+			repositoryuserschemas.IncludeUsersScope,
+		},
 
 		Select: []string{
-			"user_id AS id",
+			"DISTINCT ON (user_id) user_id AS id",
 			"access",
 			"email",
 			"first_name",
 			"last_name",
 		},
+
+		Order: []string{
+			"user_id",
+			"user_schemas.created_at ASC",
+		},
 	}, &res.Users)
 }
 
-func (c *Controller) listInvitations(ctx context.Context, schemaID model.ID, res *listResponse) error {
-	return c.schemaInvitations.ListBySchemaIDOut(ctx, &repositoryschemainvitations.ListBySchemaIDOptions{
-		SchemaID: schemaID,
-		Select:   []string{"email", "access"},
+func (c *Controller) listInvitations(ctx context.Context, schemaIDs []model.ID, res *listResponse) error {
+	return c.schemaInvitations.ListBySchemaIDsOut(ctx, &repositoryschemainvitations.ListBySchemaIDsOptions{
+		SchemaIDs: schemaIDs,
+
+		Select: []string{
+			"DISTINCT ON (email) email",
+			"access",
+		},
+
+		Order: []string{"email"},
 	}, &res.Invitations)
 }

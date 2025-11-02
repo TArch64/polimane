@@ -55,7 +55,7 @@ defineSlots<{
   }
 
   .common-layout-selection-bar__title {
-    font-size: 18px;
+    font-size: var(--font-md);
     font-weight: 450;
   }
 
@@ -65,6 +65,7 @@ defineSlots<{
     display: flex;
     gap: 8px;
     align-items: center;
+    font-size: var(--font-sm);
   }
 }
 </style>

@@ -8,15 +8,14 @@ export interface IConfirm {
   anchorStyle: { anchorName: string };
 }
 
-export type ConfirmCreateOptions = Omit<ConfirmCreateInternalOptions, 'getTopEl'>;
+export type ConfirmCreateOptions = Omit<ConfirmCreateInternalOptions, 'topEl'>;
 
 export function useConfirm(options: ConfirmCreateOptions): IConfirm {
   const plugin = ConfirmPlugin.inject();
-  const topEl = useTopElement();
 
   const confirm = plugin.create({
     ...options,
-    getTopEl: () => topEl.value,
+    topEl: useTopElement(),
   });
 
   const ask = (options: IConfirmAskOptions = {}) => confirm.ask(options);

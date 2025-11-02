@@ -30,9 +30,6 @@ export const useSchemasStore = defineStore('schemas/list', () => {
   const routeTransition = useRouteTransition();
   const http = useHttpClient();
 
-  const selected: Ref<Set<string>> = ref(new Set());
-  const clearSelection = () => selected.value = new Set();
-
   const list = useAsyncData({
     loader: async (current): Promise<IListResponse> => {
       const response = await http.get<IListResponse, ListRequestParams>('/schemas', {
@@ -45,12 +42,19 @@ export const useSchemasStore = defineStore('schemas/list', () => {
         total: response.total,
       };
     },
-    default: { list: [], total: 0 },
+
+    default: {
+      list: [],
+      total: 0,
+    },
   });
 
   const schemas = computed(() => list.data.list);
   const hasSchemas = computed(() => !!schemas.value.length);
   const canLoadNext = computed(() => schemas.value.length < list.data.total);
+
+  const selected: Ref<Set<string>> = ref(new Set());
+  const clearSelection = () => selected.value = new Set();
 
   function load(): Promise<void> {
     list.reset();
@@ -69,17 +73,19 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     return item;
   }
 
-  async function deleteMany(ids: Set<string>): Promise<void> {
-    const idToAccess = Object.fromEntries(
-      schemas.value.map((schema) => [schema.id, schema.access]),
-    );
+  function filterIdsByAccess(ids: Set<string>, access: AccessLevel): Set<string> {
+    const result = new Set<string>();
 
-    for (const id of Array.from(ids)) {
-      if (idToAccess[id] !== AccessLevel.ADMIN) {
-        ids.delete(id);
+    for (const schema of schemas.value) {
+      if (ids.has(schema.id) && schema.access >= access) {
+        result.add(schema.id);
       }
     }
 
+    return result;
+  }
+
+  async function deleteMany(ids: Set<string>): Promise<void> {
     routeTransition.start(() => {
       list.makeOptimisticUpdate(({ list, total }) => ({
         list: list.filter((schema) => !ids.has(schema.id)),
@@ -137,5 +143,6 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     deleteMany,
     copySchema,
     updateSchema,
+    filterIdsByAccess,
   };
 });

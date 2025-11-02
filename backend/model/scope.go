@@ -2,7 +2,7 @@ package model
 
 import "gorm.io/gorm"
 
-type Scope func(*gorm.DB) *gorm.DB
+type Scope = func(*gorm.DB) *gorm.DB
 
 type Pagination struct {
 	Offset uint16

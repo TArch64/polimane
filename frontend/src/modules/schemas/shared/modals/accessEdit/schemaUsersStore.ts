@@ -5,6 +5,10 @@ import type { ISchemaUser, ISchemaUserInvitation } from '@/models';
 import type { UrlPath } from '@/helpers';
 import { AccessLevel } from '@/enums';
 
+type SchemaUserParams = {
+  ids: string[];
+};
+
 interface ISchemaUserList {
   users: ISchemaUser[];
   invitations: ISchemaUserInvitation[];
@@ -32,17 +36,24 @@ interface IUpdateInvitationAccessBody extends IUpdateAccessBody {
 }
 
 export const useSchemaUsersStore = defineStore('schemas/users', () => {
-  const schemaId = ref<string>('');
-  const baseUrl = computed(() => ['/schemas', schemaId.value, 'users'] as const satisfies UrlPath);
+  const schemaIds = ref<string[]>([]);
+  const baseUrl = computed(() => ['/schemas', 'users'] as const satisfies UrlPath);
   const http = useHttpClient();
 
   const list = useAsyncData({
     async loader() {
-      const { users, invitations } = await http.get<ISchemaUserList>(baseUrl.value);
-      return { users, invitations: invitations ?? [] };
-    },
+      const {
+        users,
+        invitations,
+      } = await http.get<ISchemaUserList, SchemaUserParams>(baseUrl.value, {
+        ids: schemaIds.value,
+      });
 
-    once: true,
+      return {
+        users,
+        invitations: invitations ?? [],
+      };
+    },
 
     default: {
       users: [],
@@ -50,13 +61,14 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
     },
   });
 
-  async function load(_schemaId: string): Promise<void> {
-    if (_schemaId !== schemaId.value) {
-      schemaId.value = _schemaId;
-      list.reset();
-    }
+  async function load(ids: string[]): Promise<void> {
+    const existing = new Set(schemaIds.value);
+    const loading = new Set(ids);
 
-    await list.load();
+    if (existing.symmetricDifference(loading).size) {
+      schemaIds.value = Array.from(loading);
+      await list.load();
+    }
   }
 
   const users = computed(() => list.data.users);

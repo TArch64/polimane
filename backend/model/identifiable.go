@@ -12,6 +12,18 @@ func StringToID(str string) (ID, error) {
 	return id, err
 }
 
+func StringsToIDs(strs []string) ([]ID, error) {
+	ids := make([]ID, len(strs))
+	for i, str := range strs {
+		id, err := StringToID(str)
+		if err != nil {
+			return nil, err
+		}
+		ids[i] = id
+	}
+	return ids, nil
+}
+
 func MustStringToID(str string) ID {
 	id, err := StringToID(str)
 	if err != nil {

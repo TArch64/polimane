@@ -53,13 +53,13 @@ func (c *Controller) Private(group fiber.Router) {
 		group.Post("", c.apiCreate)
 		group.Delete("delete-many", c.apiDelete)
 
+		c.usersController.Private(group)
+
 		base.WithGroup(group, ":"+schemaIDParam, func(group fiber.Router) {
 			group.Get("", c.apiByID)
 			group.Patch("", c.apiUpdate)
 			group.Post("copy", c.apiCopy)
 			group.Get("preview", c.apiPreview)
-
-			c.usersController.Private(group)
 		})
 	})
 }
