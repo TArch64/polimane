@@ -5,7 +5,7 @@ import type { ISchemaUser, ISchemaUserInvitation } from '@/models';
 import type { UrlPath } from '@/helpers';
 import { AccessLevel } from '@/enums';
 
-type SchemaUserParams = {
+type SchemaIdParams = {
   ids: string[];
 };
 
@@ -19,15 +19,15 @@ interface IAddUserResponse {
   invitation?: ISchemaUserInvitation;
 }
 
-interface IAddUserBody {
+interface IAddUserBody extends SchemaIdParams {
   email: string;
 }
 
-interface IUpdateAccessBody {
+interface IUpdateAccessBody extends SchemaIdParams {
   access: AccessLevel;
 }
 
-interface IDeleteInvitationBody {
+interface IDeleteInvitationBody extends SchemaIdParams {
   email: string;
 }
 
@@ -45,7 +45,7 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
       const {
         users,
         invitations,
-      } = await http.get<ISchemaUserList, SchemaUserParams>(baseUrl.value, {
+      } = await http.get<ISchemaUserList, SchemaIdParams>(baseUrl.value, {
         ids: schemaIds.value,
       });
 
@@ -75,7 +75,11 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
   const invitations = computed(() => list.data.invitations);
 
   async function addUser(email: string): Promise<IAddUserResponse> {
-    const response = await http.post<IAddUserResponse, IAddUserBody>(baseUrl.value, { email });
+    const response = await http.post<IAddUserResponse, IAddUserBody>(baseUrl.value, {
+      ids: schemaIds.value,
+      email,
+    });
+
     if (response.user) {
       list.data.users = [...users.value, response.user];
     }
@@ -92,6 +96,7 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
 
   async function updateUserAccess(user: ISchemaUser, access: AccessLevel): Promise<void> {
     await http.patch<HttpBody, IUpdateAccessBody>([...baseUrl.value, user.id, 'access'], {
+      ids: schemaIds.value,
       access,
     });
 
@@ -100,6 +105,7 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
 
   async function deleteInvitation(deletingInvitation: ISchemaUserInvitation): Promise<void> {
     await http.delete<HttpBody, IDeleteInvitationBody>([...baseUrl.value, 'invitations'], {
+      ids: schemaIds.value,
       email: deletingInvitation.email,
     });
 
@@ -110,6 +116,7 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
 
   async function updateInvitationAccess(invitation: ISchemaUserInvitation, access: AccessLevel): Promise<void> {
     await http.patch<HttpBody, IUpdateInvitationAccessBody>([...baseUrl.value, 'invitations', 'access'], {
+      ids: schemaIds.value,
       email: invitation.email,
       access,
     });
