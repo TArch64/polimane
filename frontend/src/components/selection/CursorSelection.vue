@@ -97,17 +97,13 @@ function selectItems(area: NodeRect) {
     return;
   }
 
-  const newSelection = new Set<I['id']>();
-
   for (const item of registry.values()) {
     const rect = new NodeRect(item.el.getBoundingClientRect()).delta({ y: window.scrollY });
 
     if (area.isIntersecting(rect)) {
-      newSelection.add(item.data.id);
+      selected.value.add(item.data.id);
     }
   }
-
-  selected.value = newSelection;
 }
 
 useEventListener('mousedown', (event: MouseEvent) => {
@@ -115,6 +111,7 @@ useEventListener('mousedown', (event: MouseEvent) => {
     return;
   }
 
+  selected.value = new Set();
   const handler = onMouseMove(event);
   addEventListener('mousemove', handler);
 
