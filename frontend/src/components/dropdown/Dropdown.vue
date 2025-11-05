@@ -78,7 +78,7 @@ async function open() {
 
   closeController = new AbortController();
 
-  window.addEventListener('click', closeEvent, {
+  window.addEventListener('mousedown', closeEvent, {
     signal: closeController.signal,
     capture: true,
   });

@@ -22,7 +22,7 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 
 	user := auth.GetSessionUser(ctx)
 	requestCtx := ctx.Context()
-	body.IDs, err = c.userSchemas.FilterByAccess(requestCtx, user.ID, body.IDs, model.AccessAdmin)
+	err = c.userSchemas.FilterByAccess(requestCtx, user, &body.IDs, model.AccessAdmin)
 	if err != nil {
 		return err
 	}

@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/sync/errgroup"
 
+	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
@@ -29,19 +30,19 @@ type listUser struct {
 	Access    model.AccessLevel `json:"access"`
 }
 
-type listInvitation struct {
-	Email  string            `json:"email"`
-	Access model.AccessLevel `json:"access"`
-}
-
-func newUserListItem(user *model.User, schemaUser *model.UserSchema) *listUser {
+func newUserListItem(user *model.User, access model.AccessLevel) *listUser {
 	return &listUser{
 		ID:        user.ID,
 		Email:     user.Email,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
-		Access:    schemaUser.Access,
+		Access:    access,
 	}
+}
+
+type listInvitation struct {
+	Email  string            `json:"email"`
+	Access model.AccessLevel `json:"access"`
 }
 
 func (c *Controller) apiList(ctx *fiber.Ctx) error {
@@ -52,6 +53,12 @@ func (c *Controller) apiList(ctx *fiber.Ctx) error {
 	}
 
 	IDs, err := model.StringsToIDs(query.IDs)
+	if err != nil {
+		return err
+	}
+
+	user := auth.GetSessionUser(ctx)
+	err = c.userSchemas.FilterByAccess(ctx.Context(), user, &IDs, model.AccessAdmin)
 	if err != nil {
 		return err
 	}

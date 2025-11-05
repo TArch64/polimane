@@ -1,4 +1,6 @@
 <template>
+  <div inert hidden ref="anchorRef" />
+
   <CursorSelectionItem
     v-for="item of list"
     :key="item.id"
@@ -19,7 +21,7 @@
 </template>
 
 <script setup lang="ts" generic="I extends SelectionItem">
-import { computed, type Ref, ref, type Slot, type VNodeRef } from 'vue';
+import { computed, nextTick, type Ref, ref, type Slot, type VNodeRef } from 'vue';
 import { useEventListener } from '@vueuse/core';
 import { NodeRect } from '@/models';
 import CursorSelectionItem from './CursorSelectionItem.vue';
@@ -35,6 +37,9 @@ defineSlots<{
     itemRef: VNodeRef;
   }>;
 }>();
+
+const anchorRef = ref<HTMLElement>(null!);
+const currentEl = computed(() => anchorRef.value.parentElement!);
 
 const SCROLL_OFFSET = 200;
 const SCROLL_STEP = 10;
@@ -106,12 +111,18 @@ function selectItems(area: NodeRect) {
   }
 }
 
-useEventListener('mousedown', (event: MouseEvent) => {
-  if ((event.target as Element).closest('[data-cursor-selection-ignore]')) {
+useEventListener('mousedown', async (event: MouseEvent) => {
+  const target = event.target as Element;
+  const canSelect = currentEl.value.contains(target) || target.matches('#app');
+  if (!canSelect) return;
+
+  await nextTick();
+  selected.value.clear();
+
+  if (event.buttons !== 1) {
     return;
   }
 
-  selected.value = new Set();
   const handler = onMouseMove(event);
   addEventListener('mousemove', handler);
 

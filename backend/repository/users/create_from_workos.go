@@ -7,7 +7,6 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
-	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
 
 func (c *Client) CreateFromWorkos(ctx context.Context, workosUser *usermanagement.User) (*model.User, error) {
@@ -31,17 +30,17 @@ func (c *Client) CreateFromWorkos(ctx context.Context, workosUser *usermanagemen
 				return err
 			}
 
-			userSchemasOptions := make([]*repositoryuserschemas.CreateOptions, len(schemaInvitations))
+			userSchemas := make([]model.UserSchema, len(schemaInvitations))
 
 			for i, invitation := range schemaInvitations {
-				userSchemasOptions[i] = &repositoryuserschemas.CreateOptions{
+				userSchemas[i] = model.UserSchema{
 					UserID:   user.ID,
 					SchemaID: invitation.SchemaID,
 					Access:   invitation.Access,
 				}
 			}
 
-			err = c.userSchemas.CreateManyTx(ctx, tx, userSchemasOptions)
+			err = c.userSchemas.CreateManyTx(ctx, tx, &userSchemas)
 			if err != nil {
 				return err
 			}

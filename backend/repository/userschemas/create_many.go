@@ -4,22 +4,17 @@ import (
 	"context"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"polimane/backend/model"
 )
 
-func (c *Client) CreateManyTx(ctx context.Context, tx *gorm.DB, items []*CreateOptions) error {
-	userSchemas := make([]model.UserSchema, len(items))
+func (c *Client) CreateMany(ctx context.Context, userSchemas *[]model.UserSchema) error {
+	return c.CreateManyTx(ctx, c.db, userSchemas)
+}
 
-	for i, item := range items {
-		userSchemas[i] = model.UserSchema{
-			UserID:   item.UserID,
-			SchemaID: item.SchemaID,
-			Access:   item.Access,
-		}
-	}
-
+func (c *Client) CreateManyTx(ctx context.Context, tx *gorm.DB, userSchemas *[]model.UserSchema) error {
 	return gorm.
-		G[model.UserSchema](tx).
-		CreateInBatches(ctx, &userSchemas, 100)
+		G[model.UserSchema](tx, clause.OnConflict{DoNothing: true}).
+		CreateInBatches(ctx, userSchemas, 100)
 }

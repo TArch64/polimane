@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted } from 'vue';
-import { onClickOutside } from '@vueuse/core';
+import { useEventListener } from '@vueuse/core';
 import { NodeRect } from '@/models';
 import { useDomRef, useRouteTransition } from '@/composables';
 import { vPopoverShift } from '@/directives';
@@ -83,7 +83,15 @@ function closeGroup(): void {
   });
 }
 
-onClickOutside(menuRef, () => emit('close'));
+function closeEvent(event: Event): void {
+  if (menuRef.value?.contains(event.target as Node)) {
+    return;
+  }
+
+  emit('close');
+}
+
+useEventListener('mousedown', closeEvent, { capture: true });
 </script>
 
 <style scoped>
