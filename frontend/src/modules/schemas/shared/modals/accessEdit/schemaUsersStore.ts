@@ -80,10 +80,10 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
       email,
     });
 
-    if (response.user) {
+    if (response.user && !users.value.find((user) => user.email === email)) {
       list.data.users = [...users.value, response.user];
     }
-    if (response.invitation) {
+    if (response.invitation && !invitations.value.find((invitation) => invitation.email === email)) {
       list.data.invitations = [...invitations.value, response.invitation];
     }
     return response;
