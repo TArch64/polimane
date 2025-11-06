@@ -110,8 +110,8 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     }
   }
 
-  async function deleteSchema(deletingSchema: SchemaListItem): Promise<void> {
-    return deleteMany(new Set([deletingSchema.id]));
+  async function deleteSchema(deleting: SchemaListItem): Promise<void> {
+    return deleteMany(new Set([deleting.id]));
   }
 
   async function copySchema(copyingSchema: SchemaListItem): Promise<SchemaListItem> {

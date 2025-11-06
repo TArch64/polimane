@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { type HttpBody, useAsyncData, useHttpClient } from '@/composables';
 import type { ISchemaUser, ISchemaUserInvitation } from '@/models';
-import type { UrlPath } from '@/helpers';
+import { type UrlPath } from '@/helpers';
 import { AccessLevel } from '@/enums';
 
 type SchemaIdParams = {
@@ -89,47 +89,50 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
     return response;
   }
 
-  async function deleteUser(deletingUser: ISchemaUser): Promise<void> {
+  async function deleteUser(deleting: ISchemaUser): Promise<void> {
     list.makeOptimisticUpdate((current) => ({
       ...current,
-      users: current.users.filter((user) => user.id !== deletingUser.id),
+      users: current.users.filter((user) => user.id !== deleting.id),
     }));
 
     await list.executeOptimisticUpdate(async () => {
-      await http.delete<HttpBody, SchemaIdParams>([...baseUrl.value, deletingUser.id], {
+      await http.delete<HttpBody, SchemaIdParams>([...baseUrl.value, deleting.id], {
         ids: schemaIds.value,
       });
     });
   }
 
-  async function updateUserAccess(user: ISchemaUser, access: AccessLevel): Promise<void> {
-    await http.patch<HttpBody, IUpdateAccessBody>([...baseUrl.value, user.id, 'access'], {
+  async function updateUserAccess(updating: ISchemaUser, access: AccessLevel): Promise<void> {
+    await http.patch<HttpBody, IUpdateAccessBody>([...baseUrl.value, updating.id, 'access'], {
       ids: schemaIds.value,
       access,
     });
 
-    user.access = access;
+    updating.access = access;
   }
 
-  async function deleteInvitation(deletingInvitation: ISchemaUserInvitation): Promise<void> {
-    await http.delete<HttpBody, IDeleteInvitationBody>([...baseUrl.value, 'invitations'], {
-      ids: schemaIds.value,
-      email: deletingInvitation.email,
-    });
+  async function deleteInvitation(deleting: ISchemaUserInvitation): Promise<void> {
+    list.makeOptimisticUpdate((current) => ({
+      ...current,
+      invitations: current.invitations.filter((invitation) => invitation.email !== deleting.email),
+    }));
 
-    list.data.invitations = invitations.value.filter((invitation) => {
-      return invitation.email !== deletingInvitation.email;
+    await list.executeOptimisticUpdate(async () => {
+      await http.delete<HttpBody, IDeleteInvitationBody>([...baseUrl.value, 'invitations'], {
+        ids: schemaIds.value,
+        email: deleting.email,
+      });
     });
   }
 
-  async function updateInvitationAccess(invitation: ISchemaUserInvitation, access: AccessLevel): Promise<void> {
+  async function updateInvitationAccess(updating: ISchemaUserInvitation, access: AccessLevel): Promise<void> {
     await http.patch<HttpBody, IUpdateInvitationAccessBody>([...baseUrl.value, 'invitations', 'access'], {
       ids: schemaIds.value,
-      email: invitation.email,
+      email: updating.email,
       access,
     });
 
-    invitation.access = access;
+    updating.access = access;
   }
 
   return {

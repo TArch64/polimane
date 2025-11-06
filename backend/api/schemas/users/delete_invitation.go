@@ -10,30 +10,27 @@ import (
 )
 
 type deleteInvitationBody struct {
+	bulkOperationBody
 	Email string `query:"email" validate:"required,email,max=255"`
 }
 
 func (c *Controller) apiDeleteInvitation(ctx *fiber.Ctx) error {
-	schemaID, err := base.GetParamID(ctx, schemaIDParam)
-	if err != nil {
-		return err
-	}
-
+	var err error
 	var body deleteInvitationBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
-	currentUser := auth.GetSessionUser(ctx)
 	requestCtx := ctx.Context()
-	err = c.userSchemas.HasAccess(requestCtx, currentUser.ID, schemaID, model.AccessAdmin)
+	currentUser := auth.GetSessionUser(ctx)
+	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.IDs, model.AccessAdmin)
 	if err != nil {
 		return nil
 	}
 
-	err = c.schemaInvitations.Delete(requestCtx, &repositoryschemainvitations.DeleteOptions{
-		Email:    body.Email,
-		SchemaID: schemaID,
+	err = c.schemaInvitations.DeleteMany(requestCtx, &repositoryschemainvitations.DeleteManyOptions{
+		Email:     body.Email,
+		SchemaIDs: body.IDs,
 	})
 
 	if err != nil {

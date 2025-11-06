@@ -7,5 +7,5 @@ import (
 )
 
 func (h *Handler) Handle(ctx context.Context, _ *events.Message) error {
-	return h.schemaInvitations.DeleteExpired(ctx)
+	return h.schemaInvitations.DeleteManyExpired(ctx)
 }

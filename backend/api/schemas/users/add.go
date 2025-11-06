@@ -18,7 +18,7 @@ import (
 )
 
 type addUserBody struct {
-	*bulkOperationBody
+	bulkOperationBody
 	Email string `validate:"required,email,max=255" json:"email"`
 }
 

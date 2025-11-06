@@ -8,7 +8,7 @@ import (
 	"polimane/backend/model"
 )
 
-func (c *Client) DeleteExpired(ctx context.Context) error {
+func (c *Client) DeleteManyExpired(ctx context.Context) error {
 	_, err := gorm.
 		G[model.SchemaInvitation](c.db).
 		Where("expires_at < now()").

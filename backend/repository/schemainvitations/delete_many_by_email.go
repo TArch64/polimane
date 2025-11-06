@@ -8,7 +8,7 @@ import (
 	"polimane/backend/model"
 )
 
-func (c *Client) DeleteByEmailTx(ctx context.Context, tx *gorm.DB, email string) error {
+func (c *Client) DeleteManyByEmailTx(ctx context.Context, tx *gorm.DB, email string) error {
 	_, err := gorm.
 		G[model.SchemaInvitation](tx).
 		Where("email = ?", email).
