@@ -18,8 +18,8 @@ import (
 )
 
 type addUserBody struct {
-	IDs   []model.ID `json:"ids"`
-	Email string     `validate:"required,email,max=255" json:"email"`
+	*bulkOperationBody
+	Email string `validate:"required,email,max=255" json:"email"`
 }
 
 type addResponse struct {

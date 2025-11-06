@@ -1,4 +1,4 @@
-import { onUnmounted } from 'vue';
+import { onBeforeUnmount } from 'vue';
 import { useTopElement } from '@/composables';
 import { type ConfirmCreateInternalOptions, ConfirmPlugin } from './ConfirmPlugin';
 import type { IConfirmAskOptions } from './Confirm';
@@ -20,7 +20,7 @@ export function useConfirm(options: ConfirmCreateOptions): IConfirm {
 
   const ask = (options: IConfirmAskOptions = {}) => confirm.ask(options);
 
-  onUnmounted(() => plugin.remove(confirm));
+  onBeforeUnmount(() => plugin.remove(confirm));
 
   return {
     ask,

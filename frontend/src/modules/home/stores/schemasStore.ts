@@ -1,6 +1,12 @@
 import { defineStore } from 'pinia';
-import { computed, nextTick, ref, type Ref, toRef } from 'vue';
-import { type HttpBody, useAsyncData, useHttpClient, useRouteTransition } from '@/composables';
+import { computed, ref, type Ref, toRef } from 'vue';
+import {
+  type HttpBody,
+  type IOptimisticOptions,
+  useAsyncData,
+  useHttpClient,
+  useRouteTransition,
+} from '@/composables';
 import type { ISchema, SchemaUpdate } from '@/models';
 import { AccessLevel } from '@/enums';
 
@@ -86,31 +92,21 @@ export const useSchemasStore = defineStore('schemas/list', () => {
   }
 
   async function deleteMany(ids: Set<string>): Promise<void> {
-    routeTransition.start(() => {
-      list.makeOptimisticUpdate(({ list, total }) => ({
-        list: list.filter((schema) => !ids.has(schema.id)),
-        total: total - ids.size,
-      }));
+    const optimisticOptions: IOptimisticOptions = { transition: true };
 
-      return nextTick();
-    });
+    list.makeOptimisticUpdate(({ list, total }) => ({
+      list: list.filter((schema) => !ids.has(schema.id)),
+      total: total - ids.size,
+    }), optimisticOptions);
 
-    try {
+    await list.executeOptimisticUpdate(async () => {
       await http.delete<HttpBody, IDeleteManySchemasBody>(['/schemas', 'delete-many'], {
         ids: Array.from(ids),
       });
+    }, optimisticOptions);
 
-      list.commitOptimisticUpdate();
-
-      if (canLoadNext.value && schemas.value.length < PAGINATION_PAGE) {
-        await loadNext();
-      }
-    } catch (error) {
-      routeTransition.start(() => {
-        list.rollbackOptimisticUpdate();
-        return nextTick();
-      });
-      throw error;
+    if (canLoadNext.value && schemas.value.length < PAGINATION_PAGE) {
+      await loadNext();
     }
   }
 

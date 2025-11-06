@@ -90,8 +90,16 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
   }
 
   async function deleteUser(deletingUser: ISchemaUser): Promise<void> {
-    await http.delete([...baseUrl.value, deletingUser.id]);
-    list.data.users = users.value.filter((user) => user.id !== deletingUser.id);
+    list.makeOptimisticUpdate((current) => ({
+      ...current,
+      users: current.users.filter((user) => user.id !== deletingUser.id),
+    }));
+
+    await list.executeOptimisticUpdate(async () => {
+      await http.delete<HttpBody, SchemaIdParams>([...baseUrl.value, deletingUser.id], {
+        ids: schemaIds.value,
+      });
+    });
   }
 
   async function updateUserAccess(user: ISchemaUser, access: AccessLevel): Promise<void> {

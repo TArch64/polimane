@@ -20,20 +20,20 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 		return base.InvalidRequestErr
 	}
 
-	schemaID, err := base.GetParamID(ctx, schemaIDParam)
-	if err != nil {
+	var body bulkOperationBody
+	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
 	requestCtx := ctx.Context()
-	err = c.userSchemas.HasAccess(requestCtx, currentUser.ID, schemaID, model.AccessAdmin)
+	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.IDs, model.AccessAdmin)
 	if err != nil {
-		return nil
+		return err
 	}
 
-	err = c.userSchemas.Delete(requestCtx, &repositoryuserschemas.DeleteOptions{
-		UserID:   userID,
-		SchemaID: schemaID,
+	err = c.userSchemas.DeleteMany(requestCtx, &repositoryuserschemas.DeleteManyOptions{
+		UserID:    userID,
+		SchemaIDs: body.IDs,
 	})
 
 	if err != nil {

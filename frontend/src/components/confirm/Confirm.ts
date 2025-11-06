@@ -17,6 +17,7 @@ export interface IConfirmAskOptions {
 
 interface IConfirmState {
   isOpened: boolean;
+  isRemoved: boolean;
   virtualTarget?: NodeRect;
 }
 
@@ -45,6 +46,7 @@ export class Confirm {
 
     this.state = reactive({
       isOpened: false,
+      isRemoved: false,
     });
   }
 
@@ -58,6 +60,10 @@ export class Confirm {
 
   get isOpened(): boolean {
     return this.state.isOpened;
+  }
+
+  get isRemoved(): boolean {
+    return this.state.isRemoved;
   }
 
   get virtualTarget(): NodeRect | undefined {
@@ -77,5 +83,9 @@ export class Confirm {
   complete(accepted: boolean): void {
     this.state.isOpened = false;
     this.resolvePromise(accepted);
+  }
+
+  markAsRemoved(): void {
+    this.state.isRemoved = true;
   }
 }
