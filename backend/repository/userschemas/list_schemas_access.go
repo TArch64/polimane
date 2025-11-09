@@ -6,7 +6,7 @@ import (
 	"polimane/backend/model"
 )
 
-func (c *Client) ListUserSchemaAccessOut(ctx context.Context, schemaIDs []model.ID, out interface{}) error {
+func (c *Client) ListSchemasAccessOut(ctx context.Context, schemaIDs []model.ID, out interface{}) error {
 	const userColumns = "users.id, email, first_name, last_name"
 	const accessColumns = "MIN(access) AS access, MIN(access) != MAX(access) AS is_uneven_access"
 	const createdAtColumn = "MIN(user_schemas.created_at) AS created_at"

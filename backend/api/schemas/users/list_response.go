@@ -29,6 +29,7 @@ func newUserListItem(user *model.User, access model.AccessLevel) *listUser {
 }
 
 type listInvitation struct {
-	Email  string            `json:"email"`
-	Access model.AccessLevel `json:"access"`
+	Email          string            `json:"email"`
+	Access         model.AccessLevel `json:"access"`
+	IsUnevenAccess bool              `json:"isUnevenAccess"`
 }

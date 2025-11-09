@@ -1,15 +1,12 @@
 package users
 
 import (
-	"context"
-
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/sync/errgroup"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
-	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 )
 
 type listQuery struct {
@@ -39,11 +36,11 @@ func (c *Controller) apiList(ctx *fiber.Ctx) error {
 	_, _ = eg, egCtx
 
 	eg.Go(func() error {
-		return c.listUsers(egCtx, IDs, &response)
+		return c.userSchemas.ListSchemasAccessOut(egCtx, IDs, &response.Users)
 	})
 
 	eg.Go(func() error {
-		return c.listInvitations(egCtx, IDs, &response)
+		return c.schemaInvitations.ListSchemasAccessOut(egCtx, IDs, &response.Invitations)
 	})
 
 	if err = eg.Wait(); err != nil {
@@ -51,21 +48,4 @@ func (c *Controller) apiList(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.JSON(response)
-}
-
-func (c *Controller) listUsers(ctx context.Context, schemaIDs []model.ID, res *listResponse) error {
-	return c.userSchemas.ListUserSchemaAccessOut(ctx, schemaIDs, &res.Users)
-}
-
-func (c *Controller) listInvitations(ctx context.Context, schemaIDs []model.ID, res *listResponse) error {
-	return c.schemaInvitations.ListBySchemaIDsOut(ctx, &repositoryschemainvitations.ListBySchemaIDsOptions{
-		SchemaIDs: schemaIDs,
-
-		Select: []string{
-			"DISTINCT ON (email) email",
-			"access",
-		},
-
-		Order: []string{"email"},
-	}, &res.Invitations)
 }

@@ -12,4 +12,5 @@ export interface ISchemaUser {
 export interface ISchemaUserInvitation {
   email: string;
   access: AccessLevel;
+  isUnevenAccess: boolean;
 }
