@@ -69,17 +69,21 @@ function scrollingSelect(step: number) {
   window.scrollTo({ top: window.scrollY + step });
 }
 
+function isSafeZone(area: NodeRect) {
+  return area.width < 10 && area.height < 10;
+}
+
 function onMouseMove(downEvent: MouseEvent): (event: MouseEvent) => void {
   return (event) => {
-    if (!downEvent.defaultPrevented) {
+    clearInterval(scrollInterval);
+    area.value.width += event.movementX;
+    area.value.height += event.movementY;
+
+    if (!downEvent.defaultPrevented && !isSafeZone(area.value)) {
       downEvent.preventDefault();
       area.value.x = downEvent.clientX;
       area.value.y = downEvent.clientY + window.scrollY;
     }
-
-    clearInterval(scrollInterval);
-    area.value.width += event.movementX;
-    area.value.height += event.movementY;
 
     if (event.clientY < SCROLL_OFFSET) {
       if (window.scrollY === 0) {
@@ -98,7 +102,7 @@ function onMouseMove(downEvent: MouseEvent): (event: MouseEvent) => void {
 }
 
 function selectItems(area: NodeRect) {
-  if (area.width < 5 && area.height < 5) {
+  if (isSafeZone(area)) {
     return;
   }
 
