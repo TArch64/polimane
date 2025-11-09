@@ -1,6 +1,7 @@
 package schemas
 
 import (
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 
@@ -20,6 +21,7 @@ type ControllerOptions struct {
 	Schemas          *repositoryschemas.Client
 	UserSchemas      *repositoryuserschemas.Client
 	SQS              *awssqs.Client
+	S3               *s3.Client
 	Renderer         *views.Renderer
 	SchemaScreenshot *schemascreenshot.Service
 	UsersController  *users.Controller
@@ -29,6 +31,7 @@ type Controller struct {
 	schemas          *repositoryschemas.Client
 	userSchemas      *repositoryuserschemas.Client
 	sqs              *awssqs.Client
+	s3               *s3.Client
 	renderer         *views.Renderer
 	schemaScreenshot *schemascreenshot.Service
 	usersController  *users.Controller
@@ -39,6 +42,7 @@ func Provider(options ControllerOptions) base.Controller {
 		schemas:          options.Schemas,
 		userSchemas:      options.UserSchemas,
 		sqs:              options.SQS,
+		s3:               options.S3,
 		renderer:         options.Renderer,
 		schemaScreenshot: options.SchemaScreenshot,
 		usersController:  options.UsersController,
