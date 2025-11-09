@@ -10,39 +10,10 @@ import (
 	"polimane/backend/api/base"
 	"polimane/backend/model"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
-	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
 
 type listQuery struct {
 	IDs []string `query:"ids"`
-}
-
-type listResponse struct {
-	Users       []*listUser       `json:"users"`
-	Invitations []*listInvitation `json:"invitations"`
-}
-
-type listUser struct {
-	ID        model.ID          `json:"id"`
-	Email     string            `json:"email"`
-	FirstName string            `json:"firstName"`
-	LastName  string            `json:"lastName"`
-	Access    model.AccessLevel `json:"access"`
-}
-
-func newUserListItem(user *model.User, access model.AccessLevel) *listUser {
-	return &listUser{
-		ID:        user.ID,
-		Email:     user.Email,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Access:    access,
-	}
-}
-
-type listInvitation struct {
-	Email  string            `json:"email"`
-	Access model.AccessLevel `json:"access"`
 }
 
 func (c *Controller) apiList(ctx *fiber.Ctx) error {
@@ -83,26 +54,7 @@ func (c *Controller) apiList(ctx *fiber.Ctx) error {
 }
 
 func (c *Controller) listUsers(ctx context.Context, schemaIDs []model.ID, res *listResponse) error {
-	return c.userSchemas.ListBySchemaIDsOut(ctx, &repositoryuserschemas.ListBySchemaIDsOptions{
-		SchemaIDs: schemaIDs,
-
-		Scopes: []model.Scope{
-			repositoryuserschemas.IncludeUsersScope,
-		},
-
-		Select: []string{
-			"DISTINCT ON (user_id) user_id AS id",
-			"access",
-			"email",
-			"first_name",
-			"last_name",
-		},
-
-		Order: []string{
-			"user_id",
-			"user_schemas.created_at ASC",
-		},
-	}, &res.Users)
+	return c.userSchemas.ListUserSchemaAccessOut(ctx, schemaIDs, &res.Users)
 }
 
 func (c *Controller) listInvitations(ctx context.Context, schemaIDs []model.ID, res *listResponse) error {

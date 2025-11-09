@@ -6,6 +6,7 @@ export interface ISchemaUser {
   firstName: string;
   lastName: string;
   access: AccessLevel;
+  isUnevenAccess: boolean;
 }
 
 export interface ISchemaUserInvitation {

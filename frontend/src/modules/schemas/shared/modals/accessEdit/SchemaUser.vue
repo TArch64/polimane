@@ -6,6 +6,10 @@
       <span v-if="isCurrentUser" class="access-user__name-label">
         (Ви)
       </span>
+
+      <span class="access-user__name-label" v-else-if="user.isUnevenAccess">
+        *
+      </span>
     </p>
 
     <div class="access-user__actions" v-if="!isCurrentUser">
