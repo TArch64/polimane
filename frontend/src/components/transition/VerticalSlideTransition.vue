@@ -1,5 +1,5 @@
 <template>
-  <Transition name="vertical-slice-transition-" :duration>
+  <Transition name="vertical-slide-transition-" :duration>
     <slot />
   </Transition>
 </template>
@@ -22,25 +22,23 @@ defineSlots<{
 
 <style scoped>
 @layer components {
-  .vertical-slice-transition--enter-from,
-  .vertical-slice-transition--leave-to {
+  .vertical-slide-transition--enter-from,
+  .vertical-slide-transition--leave-to {
     height: 0 !important;
     padding: 0 !important;
     margin: v-bind("shift + 'px'") 0 0 !important;
     opacity: 0 !important;
 
-    :deep(.vertical-slice-transition__item) {
-      scale: 0.7;
-      translate: calc(0px - v-bind("shift + 'px'"));
+    :deep(.vertical-slide-transition__item) {
+      translate: 0 calc(0px - v-bind("shift + 'px'"));
     }
   }
 
-  .vertical-slice-transition--enter-active,
-  .vertical-slice-transition--leave-active {
+  .vertical-slide-transition--enter-active,
+  .vertical-slide-transition--leave-active {
     --duration: v-bind("duration + 'ms'");
 
     overflow: hidden;
-    transform-origin: center center;
     will-change: height, padding, margin, opacity;
 
     transition: var(--duration) height ease-out,
@@ -48,17 +46,16 @@ defineSlots<{
     var(--duration) margin ease-out,
     var(--duration-2) opacity ease-out;
 
-    :deep(.vertical-slice-transition__item) {
-      transition: var(--duration) scale ease-out, var(--duration) translate ease-out;
-      transform-origin: center center;
+    :deep(.vertical-slide-transition__item) {
+      transition: var(--duration) translate ease-out;
     }
   }
 
-  .vertical-slice-transition--enter-active {
+  .vertical-slide-transition--enter-active {
     --duration-2: var(--duration);
   }
 
-  .vertical-slice-transition--leave-active {
+  .vertical-slide-transition--leave-active {
     --duration-2: calc(var(--duration) / 2);
   }
 }
