@@ -7,10 +7,11 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
+	"polimane/backend/repository"
 )
 
 func (c *Client) CreateFromWorkos(ctx context.Context, workosUser *usermanagement.User) (*model.User, error) {
-	schemaInvitations, err := c.schemaInvitations.ListByEmail(ctx, workosUser.Email)
+	schemaInvitations, err := c.schemaInvitations.List(ctx, repository.EqEmail(workosUser.Email))
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +46,7 @@ func (c *Client) CreateFromWorkos(ctx context.Context, workosUser *usermanagemen
 				return err
 			}
 
-			return c.schemaInvitations.DeleteManyByEmailTx(ctx, tx, workosUser.Email)
+			return c.schemaInvitations.DeleteManyTx(ctx, tx, repository.EqEmail(workosUser.Email))
 		})
 	}
 

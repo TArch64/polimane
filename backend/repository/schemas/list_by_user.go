@@ -26,7 +26,7 @@ func (c *Client) ListByUserOut(ctx context.Context, options *ListByUserOptions, 
 	}
 
 	return query.
-		Limit(100).
+		Limit(model.DefaultBatch).
 		Order("schemas.created_at DESC").
 		Find(out).
 		Error

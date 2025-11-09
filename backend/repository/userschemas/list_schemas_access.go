@@ -20,7 +20,7 @@ func (c *Client) ListSchemasAccessOut(ctx context.Context, schemaIDs []model.ID,
 		Where("schema_id IN (?)", schemaIDs).
 		Group(userColumns).
 		Order("created_at").
-		Limit(100).
+		Limit(model.DefaultBatch).
 		Scan(out).
 		Error
 }

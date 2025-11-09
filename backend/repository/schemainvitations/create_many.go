@@ -30,5 +30,5 @@ func (c *Client) CreateMany(ctx context.Context, options *CreateManyOptions) err
 
 	return gorm.
 		G[model.SchemaInvitation](c.db, clause.OnConflict{DoNothing: true}).
-		CreateInBatches(ctx, &invitations, 100)
+		CreateInBatches(ctx, &invitations, model.DefaultBatch)
 }

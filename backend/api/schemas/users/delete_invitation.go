@@ -6,7 +6,7 @@ import (
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
-	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
+	"polimane/backend/repository"
 )
 
 type deleteInvitationBody struct {
@@ -28,10 +28,10 @@ func (c *Controller) apiDeleteInvitation(ctx *fiber.Ctx) error {
 		return nil
 	}
 
-	err = c.schemaInvitations.DeleteMany(requestCtx, &repositoryschemainvitations.DeleteManyOptions{
-		Email:     body.Email,
-		SchemaIDs: body.IDs,
-	})
+	err = c.schemaInvitations.DeleteMany(requestCtx,
+		repository.EqEmail(body.Email),
+		repository.InSchemaIDs(body.IDs),
+	)
 
 	if err != nil {
 		return err
