@@ -14,14 +14,14 @@ type DeleteManyOptions struct {
 	SchemaIDs []model.ID
 }
 
-func (c *Client) DeleteMany(ctx context.Context, filters ...repository.Filter) error {
-	return c.DeleteManyTx(ctx, c.db, filters...)
+func (c *Client) DeleteMany(ctx context.Context, scopes ...repository.Scope) error {
+	return c.DeleteManyTx(ctx, c.db, scopes...)
 }
 
-func (c *Client) DeleteManyTx(ctx context.Context, tx *gorm.DB, filters ...repository.Filter) error {
+func (c *Client) DeleteManyTx(ctx context.Context, tx *gorm.DB, scopes ...repository.Scope) error {
 	_, err := gorm.
 		G[model.SchemaInvitation](tx).
-		Scopes(filters...).
+		Scopes(scopes...).
 		Delete(ctx)
 
 	return err

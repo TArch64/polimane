@@ -6,7 +6,7 @@ import (
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
-	repositoryuserschemas "polimane/backend/repository/userschemas"
+	"polimane/backend/repository"
 )
 
 func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
@@ -31,10 +31,11 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	err = c.userSchemas.DeleteMany(requestCtx, &repositoryuserschemas.DeleteManyOptions{
-		UserID:    userID,
-		SchemaIDs: body.IDs,
-	})
+	err = c.userSchemas.DeleteMany(
+		requestCtx,
+		repository.UserIDEq(userID),
+		repository.SchemaIDsIn(body.IDs),
+	)
 
 	if err != nil {
 		return err

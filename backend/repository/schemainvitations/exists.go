@@ -10,13 +10,13 @@ import (
 	"polimane/backend/repository"
 )
 
-func (c *Client) Exists(ctx context.Context, filters ...repository.Filter) (bool, error) {
+func (c *Client) Exists(ctx context.Context, scopes ...repository.Scope) (bool, error) {
 	var exists bool
 
 	err := gorm.
 		G[model.SchemaInvitation](c.db).
 		Select("1 AS exists").
-		Scopes(filters...).
+		Scopes(scopes...).
 		Scan(ctx, &exists)
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {

@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
+	"polimane/backend/repository"
 )
 
 func (c *Client) FilterByAccess(
@@ -17,6 +18,10 @@ func (c *Client) FilterByAccess(
 	return gorm.
 		G[model.UserSchema](c.db).
 		Select("schema_id").
-		Where("user_id = ? AND schema_id IN (?) AND access >= ?", user.ID, *schemaIDs, access).
+		Scopes(
+			repository.UserIDEq(user.ID),
+			repository.SchemaIDsIn(*schemaIDs),
+		).
+		Where("access >= ?", access).
 		Scan(ctx, schemaIDs)
 }

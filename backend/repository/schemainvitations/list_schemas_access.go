@@ -13,7 +13,7 @@ func (c *Client) ListSchemasAccessOut(ctx context.Context, schemaIDs []model.ID,
 	return gorm.
 		G[*model.SchemaInvitation](c.db).
 		Select("email, MIN(access) AS access, MIN(access) != MAX(access) as is_uneven_access").
-		Scopes(repository.InSchemaIDs(schemaIDs)).
+		Scopes(repository.SchemaIDsIn(schemaIDs)).
 		Group("email").
 		Order("email").
 		Scan(ctx, out)

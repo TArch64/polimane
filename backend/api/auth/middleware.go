@@ -15,6 +15,7 @@ import (
 	"polimane/backend/api/base"
 	"polimane/backend/env"
 	"polimane/backend/model"
+	"polimane/backend/repository"
 	repositoryusers "polimane/backend/repository/users"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
@@ -154,7 +155,7 @@ func (m *Middleware) getWorkosUser(ctx context.Context, accessTokenClaims *worko
 
 func (m *Middleware) getUser(ctx context.Context, id model.ID) (*model.User, error) {
 	return m.userCache.Get(ctx, id.String(), func() (*model.User, *time.Duration, error) {
-		user, err := m.users.GetByID(ctx, id)
+		user, err := m.users.Get(ctx, repository.IDEq(id))
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil, m.newUnauthorizedErr(err, base.CustomErrorData{

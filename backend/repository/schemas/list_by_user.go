@@ -31,9 +31,3 @@ func (c *Client) ListByUserOut(ctx context.Context, options *ListByUserOptions, 
 		Find(out).
 		Error
 }
-
-func (c *Client) ListByUser(ctx context.Context, options *ListByUserOptions) ([]*model.Schema, error) {
-	var schemas []*model.Schema
-	err := c.ListByUserOut(ctx, options, &schemas)
-	return schemas, err
-}

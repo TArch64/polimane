@@ -29,8 +29,8 @@ func (c *Controller) apiDeleteInvitation(ctx *fiber.Ctx) error {
 	}
 
 	err = c.schemaInvitations.DeleteMany(requestCtx,
-		repository.EqEmail(body.Email),
-		repository.InSchemaIDs(body.IDs),
+		repository.EmailEq(body.Email),
+		repository.SchemaIDsIn(body.IDs),
 	)
 
 	if err != nil {

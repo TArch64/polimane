@@ -13,8 +13,8 @@ import (
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
+	"polimane/backend/repository"
 	repositoryschemasinvitations "polimane/backend/repository/schemainvitations"
-	repositoryusers "polimane/backend/repository/users"
 	"polimane/backend/services/workos"
 )
 
@@ -42,10 +42,11 @@ func (c *Controller) apiAdd(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := c.users.GeyByEmail(requestCtx, &repositoryusers.GetByEmailOptions{
-		Email: body.Email,
-	})
-
+	user, err := c.users.Get(
+		requestCtx,
+		repository.Select("id"),
+		repository.EmailEq(body.Email),
+	)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		user = nil
 		err = nil

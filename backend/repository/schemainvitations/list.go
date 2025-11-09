@@ -9,10 +9,10 @@ import (
 	"polimane/backend/repository"
 )
 
-func (c *Client) List(ctx context.Context, filters ...repository.Filter) ([]*model.SchemaInvitation, error) {
+func (c *Client) List(ctx context.Context, scopes ...repository.Scope) ([]*model.SchemaInvitation, error) {
 	return gorm.
 		G[*model.SchemaInvitation](c.db).
 		Scopes(FilterAvailable).
-		Scopes(filters...).
+		Scopes(scopes...).
 		Find(ctx)
 }

@@ -12,7 +12,7 @@ import (
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
-	repositoryschemas "polimane/backend/repository/schemas"
+	"polimane/backend/repository"
 	"polimane/backend/services/awss3"
 )
 
@@ -34,9 +34,7 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	err = c.schemas.DeleteMany(ctx.Context(), &repositoryschemas.DeleteOptions{
-		SchemaIDs: body.IDs,
-	})
+	err = c.schemas.DeleteMany(ctx.Context(), repository.IDsIn(body.IDs))
 
 	if err != nil {
 		return err

@@ -6,16 +6,13 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
+	"polimane/backend/repository"
 )
 
-type DeleteOptions struct {
-	SchemaIDs []model.ID
-}
-
-func (c *Client) DeleteMany(ctx context.Context, options *DeleteOptions) error {
+func (c *Client) DeleteMany(ctx context.Context, scopes ...repository.Scope) error {
 	_, err := gorm.
 		G[model.Schema](c.db).
-		Where("id IN (?)", options.SchemaIDs).
+		Scopes(scopes...).
 		Delete(ctx)
 
 	return err

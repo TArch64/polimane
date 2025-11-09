@@ -10,7 +10,6 @@ import (
 	"polimane/backend/model"
 	"polimane/backend/repository"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
-	repositoryusers "polimane/backend/repository/users"
 )
 
 type updateInvitationAccessBody struct {
@@ -33,7 +32,7 @@ func (c *Controller) apiUpdateInvitationAccess(ctx *fiber.Ctx) error {
 		return nil
 	}
 
-	hasInvitations, err := c.schemaInvitations.Exists(requestCtx, repository.EqEmail(body.Email))
+	hasInvitations, err := c.schemaInvitations.Exists(requestCtx, repository.EmailEq(body.Email))
 	if err != nil {
 		return err
 	}
@@ -56,10 +55,11 @@ func (c *Controller) apiUpdateInvitationAccess(ctx *fiber.Ctx) error {
 }
 
 func (c *Controller) updateAlreadyAcceptedUser(ctx context.Context, body *updateInvitationAccessBody) error {
-	user, err := c.users.GeyByEmail(ctx, &repositoryusers.GetByEmailOptions{
-		Email: body.Email,
-	})
-
+	user, err := c.users.Get(
+		ctx,
+		repository.Select("id"),
+		repository.EmailEq(body.Email),
+	)
 	if err != nil {
 		return err
 	}
