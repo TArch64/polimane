@@ -29,7 +29,7 @@ func (c *Controller) apiUpdateInvitationAccess(ctx *fiber.Ctx) error {
 	requestCtx := ctx.Context()
 	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.IDs, model.AccessAdmin)
 	if err != nil {
-		return nil
+		return err
 	}
 	if len(body.IDs) == 0 {
 		return fiber.ErrBadRequest
