@@ -2,6 +2,18 @@
   <Modal :footer="false" title="Редагувати Доступ">
     <SchemaNewUser class="access-edit__new-user" />
 
+    <ModalBanner class="access-edit__banner">
+      <p>
+        Одночасне редагування схеми кількома користувачами не підтримується і може призвести до
+        втрати ваших змін
+      </p>
+
+      <p>
+        Якщо працюєте разом над однією схемою, радимо щоб інший користувач зберіг свої зміни та ви
+        перезавантажили сторінку
+      </p>
+    </ModalBanner>
+
     <p class="access-edit__description">
       Користувачі, які мають доступ до цієї схеми
     </p>
@@ -33,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { Modal } from '@/components/modal';
+import { Modal, ModalBanner } from '@/components/modal';
 import { useSchemaUsersStore } from './schemaUsersStore';
 import SchemaNewUser from './SchemaNewUser.vue';
 import SchemaUser from './SchemaUser.vue';
@@ -44,12 +56,13 @@ const usersStore = useSchemaUsersStore();
 
 <style scoped>
 @layer page {
-  .access-edit__new-user {
+  .access-edit__new-user,
+  .access-edit__banner,
+  .access-edit__description {
     margin-bottom: 16px;
   }
 
   .access-edit__description {
-    margin-bottom: 16px;
     color: var(--color-text-3);
     font-size: var(--font-sm);
   }
