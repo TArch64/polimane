@@ -44,7 +44,7 @@ func (c *Controller) apiAdd(ctx *fiber.Ctx) error {
 
 	user, err := c.users.Get(
 		requestCtx,
-		repository.Select("id"),
+		repository.Select("id", "email", "first_name", "last_name"),
 		repository.EmailEq(body.Email),
 	)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
