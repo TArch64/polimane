@@ -35,8 +35,11 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 	}
 
 	err = c.schemas.DeleteMany(ctx.Context(), repository.IDsIn(body.IDs))
-
 	if err != nil {
+		return err
+	}
+
+	if err = c.deleteScreenshots(requestCtx, body.IDs); err != nil {
 		return err
 	}
 
