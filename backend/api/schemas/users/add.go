@@ -41,6 +41,9 @@ func (c *Controller) apiAdd(ctx *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	if len(body.IDs) == 0 {
+		return fiber.ErrBadRequest
+	}
 
 	user, err := c.users.Get(
 		requestCtx,

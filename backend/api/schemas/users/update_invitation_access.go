@@ -31,6 +31,9 @@ func (c *Controller) apiUpdateInvitationAccess(ctx *fiber.Ctx) error {
 	if err != nil {
 		return nil
 	}
+	if len(body.IDs) == 0 {
+		return fiber.ErrBadRequest
+	}
 
 	hasInvitations, err := c.schemaInvitations.Exists(requestCtx, repository.EmailEq(body.Email))
 	if err != nil {

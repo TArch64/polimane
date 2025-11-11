@@ -30,6 +30,9 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	if len(body.IDs) == 0 {
+		return fiber.ErrBadRequest
+	}
 
 	err = c.userSchemas.DeleteMany(
 		requestCtx,
