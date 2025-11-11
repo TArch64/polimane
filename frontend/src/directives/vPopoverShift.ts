@@ -29,6 +29,7 @@ function getOffsetY(rect: NodeRect, padding: IPadding): number {
 function resolveShiftPadding(input?: PaddingInput): IPadding {
   const padding = { ...resolvePadding(input ?? 8) };
   padding.right += window.innerWidth - document.body.offsetWidth;
+  padding.horizontal = padding.left + padding.right;
   return padding;
 }
 
