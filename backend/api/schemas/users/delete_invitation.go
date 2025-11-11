@@ -11,7 +11,7 @@ import (
 
 type deleteInvitationBody struct {
 	bulkOperationBody
-	Email string `query:"email" validate:"required,email,max=255"`
+	Email string `json:"email" validate:"required,email,max=255"`
 }
 
 func (c *Controller) apiDeleteInvitation(ctx *fiber.Ctx) error {
