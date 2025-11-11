@@ -43,17 +43,12 @@ const currentEl = computed(() => anchorRef.value.parentElement!);
 
 const SCROLL_OFFSET = 200;
 const SCROLL_STEP = 10;
+
 const area = ref<NodeRect>(NodeRect.BLANK.clone());
+const visibleArea = computed(() => area.value.normalized);
 
 const selected: Ref<Set<I['id']>> = defineModel({ required: true });
 const registry: SelectionListRegistry<I> = new Map();
-
-const visibleArea = computed(() => ({
-  x: Math.min(area.value.x, area.value.x + area.value.width),
-  y: Math.min(area.value.y, area.value.y + area.value.height),
-  width: Math.abs(area.value.width),
-  height: Math.abs(area.value.height),
-}));
 
 const selectionStyles = computed(() => ({
   top: `${visibleArea.value.y}px`,
@@ -70,7 +65,7 @@ function scrollingSelect(step: number) {
 }
 
 function isSafeZone(area: NodeRect) {
-  return area.width < 10 && area.height < 10;
+  return Math.abs(area.width) < 10 && Math.abs(area.height) < 10;
 }
 
 function onMouseMove(downEvent: MouseEvent): (event: MouseEvent) => void {
