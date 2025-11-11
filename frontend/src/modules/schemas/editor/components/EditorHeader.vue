@@ -53,7 +53,7 @@
       <DropdownAction
         title="Переназвати"
         :icon="EditIcon"
-        @click="renameModal.open()"
+        @click="openRenameModal"
         v-if="editorStore.canEdit"
       />
 
@@ -106,8 +106,13 @@ import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
-import { useEditorStore, useHistoryStore, useSchemaUsersStore, useSelectionStore } from '../stores';
-import { AccessEditModal, SchemaExportModal, SchemaRenameModal } from './modals';
+import SchemaRenameModal from '@/modules/schemas/shared/modals/SchemaRenameModal.vue';
+import {
+  SchemaAccessEditModal,
+  useSchemaUsersStore,
+} from '@/modules/schemas/shared/modals/accessEdit';
+import { useEditorStore, useHistoryStore, useSelectionStore } from '../stores';
+import { SchemaExportModal } from './modals';
 
 const router = useRouter();
 const historyStore = useHistoryStore();
@@ -119,7 +124,7 @@ const isMobile = useMobileScreen();
 
 const renameModal = useModal(SchemaRenameModal);
 const exportModal = useModal(SchemaExportModal);
-const accessEditModal = useModal(AccessEditModal);
+const accessEditModal = useModal(SchemaAccessEditModal);
 
 const SavingIcon = computed((): Component => {
   if (editorStore.isSaving) {
@@ -135,9 +140,14 @@ const isSaveDisabled = computed(() => {
   return !editorStore.hasUnsavedChanges || editorStore.isSaving;
 });
 
+const openRenameModal = () => renameModal.open({
+  schema: editorStore.schema,
+  updateSchema: (attrs) => void Object.assign(editorStore.schema, attrs),
+});
+
 const openAccessEditModal = useAsyncAction(async () => {
-  await schemaUsersStore.load();
-  accessEditModal.open();
+  await schemaUsersStore.load([editorStore.schema.id]);
+  accessEditModal.open({});
 });
 
 const deleteConfirm = useConfirm({

@@ -1,7 +1,18 @@
 <template>
-  <CommonLayout>
+  <CommonLayout
+    :selected="schemasStore.selected.size"
+    @clear-selection="schemasStore.clearSelection"
+  >
     <template #top-bar-actions>
       <HomeTopBarActions />
+    </template>
+
+    <template #selection-title="{ count }">
+      Обрано {{ count }} схем
+    </template>
+
+    <template #selection-actions>
+      <HomeSelectionBarActions />
     </template>
 
     <HomeSchemasList v-if="schemasStore.hasSchemas" />
@@ -12,7 +23,12 @@
 <script setup lang="ts">
 import { definePreload } from '@/router/define';
 import { CommonLayout } from '@/components/layout';
-import { HomeSchemasEmpty, HomeSchemasList, HomeTopBarActions } from './components';
+import {
+  HomeSchemasEmpty,
+  HomeSchemasList,
+  HomeSelectionBarActions,
+  HomeTopBarActions,
+} from './components';
 import { useSchemasStore } from './stores';
 
 defineOptions({

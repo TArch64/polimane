@@ -55,15 +55,15 @@ export class HttpClient {
     });
   }
 
-  delete<R extends HttpBody, P extends UrlParams = UrlParams>(
+  delete<R extends HttpBody, B extends HttpBody = HttpBody>(
     path: UrlPath,
-    params: P = {} as P,
+    body: B = {} as B,
     config: IHttpRequestConfig = {},
   ): Promise<R> {
     return this.request({
       method: 'DELETE',
       path,
-      params,
+      body,
       ...config,
     });
   }

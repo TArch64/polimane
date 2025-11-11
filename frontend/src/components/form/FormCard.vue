@@ -6,7 +6,7 @@
       <div class="form-card__spacer" />
 
       <Button
-        class="vertical-slice-transition__item"
+        class="vertical-slide-transition__item"
         :disabled="loading"
         @click="$emit('reset')"
         v-if="cancelable"
@@ -18,7 +18,7 @@
         :loading
         type="submit"
         variant="primary"
-        class="vertical-slice-transition__item"
+        class="vertical-slide-transition__item"
       >
         {{ submitText }}
       </Button>

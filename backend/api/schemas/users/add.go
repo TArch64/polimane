@@ -13,12 +13,13 @@ import (
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
+	"polimane/backend/repository"
 	repositoryschemasinvitations "polimane/backend/repository/schemainvitations"
-	repositoryuserschemas "polimane/backend/repository/userschemas"
 	"polimane/backend/services/workos"
 )
 
 type addUserBody struct {
+	bulkOperationBody
 	Email string `validate:"required,email,max=255" json:"email"`
 }
 
@@ -28,19 +29,27 @@ type addResponse struct {
 }
 
 func (c *Controller) apiAdd(ctx *fiber.Ctx) error {
-	schemaID, err := base.GetParamID(ctx, schemaIDParam)
-	if err != nil {
-		return err
-	}
-
+	var err error
 	var body addUserBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
 	requestCtx := ctx.Context()
-	user, err := c.users.GeyByEmail(requestCtx, body.Email)
+	currentUser := auth.GetSessionUser(ctx)
+	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.IDs, model.AccessAdmin)
+	if err != nil {
+		return err
+	}
+	if len(body.IDs) == 0 {
+		return fiber.ErrBadRequest
+	}
 
+	user, err := c.users.Get(
+		requestCtx,
+		repository.Select("id", "email", "first_name", "last_name"),
+		repository.EmailEq(body.Email),
+	)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		user = nil
 		err = nil
@@ -50,17 +59,11 @@ func (c *Controller) apiAdd(ctx *fiber.Ctx) error {
 	}
 
 	var response *addResponse
-	currentUser := auth.GetSessionUser(ctx)
-
-	err = c.userSchemas.HasAccess(requestCtx, currentUser.ID, schemaID, model.AccessAdmin)
-	if err != nil {
-		return err
-	}
 
 	if user == nil {
-		response, err = c.inviteUser(requestCtx, currentUser, schemaID, body.Email)
+		response, err = c.inviteUser(requestCtx, currentUser, body.IDs, body.Email)
 	} else {
-		response, err = c.addExistingUser(requestCtx, currentUser, schemaID, user)
+		response, err = c.addExistingUser(requestCtx, currentUser, body.IDs, user)
 	}
 
 	if err != nil {
@@ -73,7 +76,7 @@ func (c *Controller) apiAdd(ctx *fiber.Ctx) error {
 func (c *Controller) inviteUser(
 	ctx context.Context,
 	currentUser *model.User,
-	schemaID model.ID,
+	schemaIDs []model.ID,
 	email string,
 ) (*addResponse, error) {
 	invitation, err := c.workosClient.UserManagement.SendInvitation(ctx, usermanagement.SendInvitationOpts{
@@ -101,9 +104,9 @@ func (c *Controller) inviteUser(
 
 	expiresAt, _ := time.Parse(time.RFC3339, invitation.ExpiresAt)
 
-	err = c.schemaInvitations.Create(ctx, &repositoryschemasinvitations.CreateOptions{
+	err = c.schemaInvitations.CreateMany(ctx, &repositoryschemasinvitations.CreateManyOptions{
 		Email:     email,
-		SchemaID:  schemaID,
+		SchemaIDs: schemaIDs,
 		Access:    model.AccessRead,
 		ExpiresAt: expiresAt,
 	})
@@ -123,24 +126,27 @@ func (c *Controller) inviteUser(
 func (c *Controller) addExistingUser(
 	ctx context.Context,
 	currentUser *model.User,
-	schemaID model.ID,
+	schemaIDs []model.ID,
 	user *model.User,
 ) (*addResponse, error) {
 	if currentUser.ID == user.ID {
 		return nil, base.InvalidRequestErr
 	}
 
-	userSchema, err := c.userSchemas.Create(ctx, &repositoryuserschemas.CreateOptions{
-		UserID:   user.ID,
-		SchemaID: schemaID,
-		Access:   model.AccessRead,
-	})
+	userSchemas := make([]model.UserSchema, len(schemaIDs))
+	for idx, schemaID := range schemaIDs {
+		userSchemas[idx] = model.UserSchema{
+			UserID:   user.ID,
+			SchemaID: schemaID,
+			Access:   model.AccessRead,
+		}
+	}
 
-	if err != nil {
+	if err := c.userSchemas.CreateMany(ctx, &userSchemas); err != nil {
 		return nil, err
 	}
 
 	return &addResponse{
-		User: newUserListItem(user, userSchema),
+		User: newUserListItem(user, model.AccessRead),
 	}, nil
 }

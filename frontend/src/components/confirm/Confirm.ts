@@ -1,10 +1,10 @@
-import { reactive } from 'vue';
+import { type MaybeRefOrGetter, reactive } from 'vue';
 import { NodeRect } from '@/models';
 
 export interface IConfirmOptions {
   id: string;
-  message: string;
-  getTopEl: () => HTMLElement;
+  message: MaybeRefOrGetter<string>;
+  topEl: MaybeRefOrGetter<HTMLElement>;
   danger?: boolean;
   control?: boolean;
   declineButton?: string;
@@ -17,13 +17,14 @@ export interface IConfirmAskOptions {
 
 interface IConfirmState {
   isOpened: boolean;
+  isRemoved: boolean;
   virtualTarget?: NodeRect;
 }
 
 export class Confirm {
   readonly id;
   readonly message;
-  readonly getTopEl;
+  readonly topEl;
   readonly danger;
   readonly control;
   readonly declineButton;
@@ -37,7 +38,7 @@ export class Confirm {
   constructor(options: IConfirmOptions) {
     this.id = options.id;
     this.message = options.message;
-    this.getTopEl = options.getTopEl;
+    this.topEl = options.topEl;
     this.danger = options.danger ?? false;
     this.control = options.control ?? true;
     this.declineButton = options.declineButton ?? 'Відмінити';
@@ -45,6 +46,7 @@ export class Confirm {
 
     this.state = reactive({
       isOpened: false,
+      isRemoved: false,
     });
   }
 
@@ -58,6 +60,10 @@ export class Confirm {
 
   get isOpened(): boolean {
     return this.state.isOpened;
+  }
+
+  get isRemoved(): boolean {
+    return this.state.isRemoved;
   }
 
   get virtualTarget(): NodeRect | undefined {
@@ -77,5 +83,9 @@ export class Confirm {
   complete(accepted: boolean): void {
     this.state.isOpened = false;
     this.resolvePromise(accepted);
+  }
+
+  markAsRemoved(): void {
+    this.state.isRemoved = true;
   }
 }

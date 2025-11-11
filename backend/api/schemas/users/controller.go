@@ -5,6 +5,7 @@ import (
 	"go.uber.org/fx"
 
 	"polimane/backend/api/base"
+	"polimane/backend/model"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryusers "polimane/backend/repository/users"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
@@ -55,4 +56,8 @@ func (c *Controller) Private(group fiber.Router) {
 			group.Patch("access", c.apiUpdateAccess)
 		})
 	})
+}
+
+type bulkOperationBody struct {
+	IDs []model.ID `json:"ids" validate:"required"`
 }

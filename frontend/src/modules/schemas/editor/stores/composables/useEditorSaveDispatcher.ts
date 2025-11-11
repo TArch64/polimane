@@ -16,7 +16,14 @@ export interface IEditorSaveDispatcher {
 
 type EditorSaveCallback = (patch: Partial<ISchema>) => Promise<void>;
 
-const NON_WATCHABLE_ATTRIBUTES = ['id', 'createdAt', 'updatedAt', 'screenshotedAt'] as const;
+const NON_WATCHABLE_ATTRIBUTES = [
+  'id',
+  'updatedAt',
+  'createdAt',
+  'screenshotedAt',
+  'screenshotPath',
+  'access',
+] as const;
 
 function isNonWatchableAttribute(attr: string): attr is NonWatchableAttribute {
   return NON_WATCHABLE_ATTRIBUTES.includes(attr as NonWatchableAttribute);

@@ -18,3 +18,5 @@ export interface ISchema {
   size: SchemaSize;
   beads: SchemaBeads;
 }
+
+export type SchemaUpdate = Partial<Omit<ISchema, 'id' | 'updatedAt' | 'createdAt' | 'screenshotedAt' | 'screenshotPath' | 'access'>>;

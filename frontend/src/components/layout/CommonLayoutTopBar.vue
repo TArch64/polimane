@@ -31,7 +31,7 @@ import { ArrowBackIcon, LogoIcon } from '../icon';
 import { Button } from '../button';
 
 defineProps<{
-  title?: string;
+  title: string;
 }>();
 
 defineSlots<{
@@ -54,6 +54,7 @@ const isHomeRoute = route.name === homeRoute.name;
     min-height: 60px;
     background-color: var(--color-background-1);
     border-bottom: var(--divider);
+    z-index: 10;
   }
 
   .common-layout-top-bar__title {

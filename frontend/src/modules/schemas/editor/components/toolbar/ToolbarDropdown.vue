@@ -26,13 +26,8 @@ import { Card } from '@/components/card';
 import { useToolbarRef } from './toolbarRef';
 
 defineSlots<{
-  default: Slot<{
-    close: () => void;
-  }>;
-
-  activator: Slot<{
-    open: () => Promise<void>;
-  }>;
+  default: Slot<{ close: () => void }>;
+  activator: Slot<{ open: () => Promise<void> }>;
 }>();
 
 const positionAnchor = `--toolbar-dropdown-${useId()}`;

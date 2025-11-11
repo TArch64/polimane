@@ -1,6 +1,8 @@
 package users
 
 import (
+	"context"
+
 	"github.com/gofiber/fiber/v2"
 
 	"polimane/backend/api/auth"
@@ -10,6 +12,7 @@ import (
 )
 
 type updateAccessBody struct {
+	bulkOperationBody
 	Access model.AccessLevel `validate:"required,gte=1,lte=3" json:"access"`
 }
 
@@ -24,31 +27,37 @@ func (c *Controller) apiUpdateAccess(ctx *fiber.Ctx) error {
 		return base.InvalidRequestErr
 	}
 
-	schemaID, err := base.GetParamID(ctx, schemaIDParam)
-	if err != nil {
-		return err
-	}
-
 	var body updateAccessBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
 	requestCtx := ctx.Context()
-	err = c.userSchemas.HasAccess(requestCtx, currentUser.ID, schemaID, model.AccessAdmin)
+	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.IDs, model.AccessAdmin)
 	if err != nil {
-		return nil
+		return err
+	}
+	if len(body.IDs) == 0 {
+		return fiber.ErrBadRequest
 	}
 
-	err = c.userSchemas.Update(requestCtx, &repositoryuserschemas.UpdateOptions{
-		UserID:   userID,
-		SchemaID: schemaID,
-		Updates:  &model.UserSchema{Access: body.Access},
-	})
-
+	err = c.updateUserAccess(requestCtx, userID, body.IDs, body.Access)
 	if err != nil {
 		return err
 	}
 
 	return base.NewSuccessResponse(ctx)
+}
+
+func (c *Controller) updateUserAccess(
+	ctx context.Context,
+	userID model.ID,
+	schemaIDs []model.ID,
+	access model.AccessLevel,
+) error {
+	return c.userSchemas.UpsertMany(ctx, &repositoryuserschemas.UpsertManyOptions{
+		UserID:    userID,
+		SchemaIDs: schemaIDs,
+		Updates:   &model.UserSchema{Access: access},
+	})
 }

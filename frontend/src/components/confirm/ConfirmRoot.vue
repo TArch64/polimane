@@ -1,8 +1,8 @@
 <template>
   <Teleport
-    :to="openedConfirm.getTopEl()"
+    :to="openedConfirmTopEl"
     :key="openedConfirm.id"
-    v-if="openedConfirm && openedConfirm.getTopEl()"
+    v-if="openedConfirm && openedConfirmTopEl && !openedConfirm.isRemoved"
   >
     <Confirm :model="openedConfirm" />
 
@@ -14,7 +14,16 @@
 </template>
 
 <script setup lang="ts">
-import { type FunctionalComponent, h, nextTick, type Ref, ref, watch } from 'vue';
+import {
+  computed,
+  type FunctionalComponent,
+  h,
+  nextTick,
+  type Ref,
+  ref,
+  toValue,
+  watch,
+} from 'vue';
 import { useRouteTransition } from '@/composables';
 import { ConfirmPlugin } from './ConfirmPlugin';
 import type { Confirm as ConfirmModel } from './Confirm';
@@ -22,7 +31,9 @@ import Confirm from './Confirm.vue';
 
 const plugin = ConfirmPlugin.inject();
 const routeTransition = useRouteTransition();
+
 const openedConfirm: Ref<ConfirmModel | null> = ref(null);
+const openedConfirmTopEl = computed(() => toValue(openedConfirm.value?.topEl));
 
 watch(() => plugin.openedConfirm?.id, async () => {
   routeTransition.start(async () => {

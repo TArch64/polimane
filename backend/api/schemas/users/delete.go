@@ -6,7 +6,7 @@ import (
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
-	repositoryuserschemas "polimane/backend/repository/userschemas"
+	"polimane/backend/repository"
 )
 
 func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
@@ -20,21 +20,25 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 		return base.InvalidRequestErr
 	}
 
-	schemaID, err := base.GetParamID(ctx, schemaIDParam)
-	if err != nil {
+	var body bulkOperationBody
+	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
 	requestCtx := ctx.Context()
-	err = c.userSchemas.HasAccess(requestCtx, currentUser.ID, schemaID, model.AccessAdmin)
+	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.IDs, model.AccessAdmin)
 	if err != nil {
-		return nil
+		return err
+	}
+	if len(body.IDs) == 0 {
+		return fiber.ErrBadRequest
 	}
 
-	err = c.userSchemas.Delete(requestCtx, &repositoryuserschemas.DeleteOptions{
-		UserID:   userID,
-		SchemaID: schemaID,
-	})
+	err = c.userSchemas.DeleteMany(
+		requestCtx,
+		repository.UserIDEq(userID),
+		repository.SchemaIDsIn(body.IDs),
+	)
 
 	if err != nil {
 		return err

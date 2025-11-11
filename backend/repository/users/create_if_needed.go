@@ -11,7 +11,7 @@ import (
 )
 
 func (c *Client) CreateIfNeeded(ctx context.Context, workosUser *usermanagement.User) (*model.User, error) {
-	user, err := c.GetByWorkosID(ctx, workosUser.ID)
+	user, err := c.Get(ctx, WorkosIDEq(workosUser.ID))
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return c.CreateFromWorkos(ctx, workosUser)
 	}

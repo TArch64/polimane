@@ -1,10 +1,17 @@
 <template>
-  <Card ref="cardRef" class="home-schema" interactable :binding="cardBinding">
+  <Card
+    interactable
+    ref="cardRef"
+    class="home-schema"
+    :active="isSelected"
+    :binding="cardBinding"
+  >
     <img
       :src="screenshotUrl"
       :alt="`Скріншот схеми ${schema.name}`"
       draggable="false"
       decoding="async"
+      loading="lazy"
       class="home-schema__screenshot"
       v-if="screenshotUrl"
     >
@@ -19,26 +26,41 @@
 import { RouterLink, useRouter } from 'vue-router';
 import { computed } from 'vue';
 import { Card } from '@/components/card';
-import type { ISchema } from '@/models';
 import { makeBinding } from '@/components/binding';
 import { useContextMenu } from '@/components/contextMenu';
 import { useAccessPermissions, useDomRef } from '@/composables';
 import { useConfirm } from '@/components/confirm';
-import { CopyIcon, TrashIcon } from '@/components/icon';
-import { useSchemasStore } from '@/modules/home/stores';
+import { CopyIcon, EditIcon, PeopleIcon, TrashIcon } from '@/components/icon';
 import { buildCdnUrl } from '@/helpers/buildCdnUrl';
+import { useModal } from '@/components/modal';
+import SchemaRenameModal from '@/modules/schemas/shared/modals/SchemaRenameModal.vue';
+import {
+  SchemaAccessEditModal,
+  useSchemaUsersStore,
+} from '@/modules/schemas/shared/modals/accessEdit';
+import type { ISchema } from '@/models';
+import { type SchemaListItem, useSchemasStore } from '../../stores';
 
 const props = defineProps<{
-  schema: ISchema;
+  schema: SchemaListItem;
 }>();
 
 const router = useRouter();
+
 const schemasStore = useSchemasStore();
+const schemaUsersStore = useSchemaUsersStore();
+
 const cardRef = useDomRef<HTMLElement>();
+
+const isSelected = computed(() => schemasStore.selected.has(props.schema.id));
 const permissions = useAccessPermissions(() => props.schema.access);
+
+const renameModal = useModal(SchemaRenameModal);
+const accessEditModal = useModal(SchemaAccessEditModal);
 
 const cardBinding = makeBinding(RouterLink, () => ({
   draggable: false,
+
   to: {
     name: 'schema-editor',
     params: { schemaId: props.schema.id },
@@ -60,6 +82,18 @@ useContextMenu({
   control: false,
 
   actions: [
+    permissions.write && {
+      title: 'Переназвати',
+      icon: EditIcon,
+
+      onAction() {
+        renameModal.open({
+          schema: props.schema as ISchema,
+          updateSchema: (attrs) => schemasStore.updateSchema(props.schema, attrs),
+        });
+      },
+    },
+
     {
       title: 'Зробити Копію',
       icon: CopyIcon,
@@ -73,6 +107,16 @@ useContextMenu({
             schemaId: created.id,
           },
         });
+      },
+    },
+
+    permissions.admin && {
+      title: 'Редагувати Доступ',
+      icon: PeopleIcon,
+
+      async onAction() {
+        await schemaUsersStore.load([props.schema.id]);
+        accessEditModal.open();
       },
     },
 

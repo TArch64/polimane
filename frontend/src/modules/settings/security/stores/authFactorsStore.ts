@@ -31,9 +31,9 @@ export const useAuthFactorsStore = defineStore('settings/auth-factors', () => {
     list.value.push(factor);
   }
 
-  async function deleteFactor(deletingFactor: IAuthFactor): Promise<void> {
-    await http.delete(['/users/current/auth-factors', deletingFactor.id]);
-    list.value = list.value.filter((factor) => factor.id !== deletingFactor.id);
+  async function deleteFactor(deleting: IAuthFactor): Promise<void> {
+    await http.delete(['/users/current/auth-factors', deleting.id]);
+    list.value = list.value.filter((factor) => factor.id !== deleting.id);
   }
 
   return { list, load, initNewFactor, createFactor, addFactor, deleteFactor };

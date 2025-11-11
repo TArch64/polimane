@@ -1,7 +1,14 @@
 import { defineStore } from 'pinia';
-import { computed, nextTick, toRef } from 'vue';
-import { type HttpBody, useAsyncData, useHttpClient, useRouteTransition } from '@/composables';
-import type { ISchema } from '@/models';
+import { computed, ref, type Ref, toRef } from 'vue';
+import {
+  type HttpBody,
+  type IOptimisticOptions,
+  useAsyncData,
+  useHttpClient,
+  useRouteTransition,
+} from '@/composables';
+import type { ISchema, SchemaUpdate } from '@/models';
+import { AccessLevel } from '@/enums';
 
 const PAGINATION_PAGE = 100;
 
@@ -17,9 +24,12 @@ type ListRequestParams = {
   limit: number;
 };
 
-export interface ICreateSchemaInput {
+export interface ICreateSchemaRequest {
   name: string;
-  palette?: string[];
+}
+
+interface IDeleteManySchemasBody {
+  ids: string[];
 }
 
 export const useSchemasStore = defineStore('schemas/list', () => {
@@ -38,12 +48,19 @@ export const useSchemasStore = defineStore('schemas/list', () => {
         total: response.total,
       };
     },
-    default: { list: [], total: 0 },
+
+    default: {
+      list: [],
+      total: 0,
+    },
   });
 
   const schemas = computed(() => list.data.list);
   const hasSchemas = computed(() => !!schemas.value.length);
   const canLoadNext = computed(() => schemas.value.length < list.data.total);
+
+  const selected: Ref<Set<string>> = ref(new Set());
+  const clearSelection = () => selected.value = new Set();
 
   function load(): Promise<void> {
     list.reset();
@@ -56,37 +73,56 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     return list.load();
   }
 
-  async function createSchema(input: ICreateSchemaInput): Promise<SchemaListItem> {
-    const item = await http.post<SchemaListItem, ICreateSchemaInput>('/schemas', input);
+  async function createSchema(input: ICreateSchemaRequest): Promise<SchemaListItem> {
+    const item = await http.post<SchemaListItem, ICreateSchemaRequest>('/schemas', input);
     list.data.total++;
     return item;
   }
 
-  async function deleteSchema(deletingSchema: ISchema): Promise<void> {
-    routeTransition.start(() => {
-      list.makeOptimisticUpdate(({ list, total }) => ({
-        list: list.filter((schema) => schema.id !== deletingSchema.id),
-        total: total - 1,
-      }));
-      return nextTick();
-    });
+  function filterIdsByAccess(ids: Set<string>, access: AccessLevel): Set<string> {
+    const result = new Set<string>();
 
-    try {
-      await http.delete(['/schemas', deletingSchema.id]);
-      list.commitOptimisticUpdate();
-    } catch (error) {
-      routeTransition.start(() => {
-        list.rollbackOptimisticUpdate();
-        return nextTick();
+    for (const schema of schemas.value) {
+      if (ids.has(schema.id) && schema.access >= access) {
+        result.add(schema.id);
+      }
+    }
+
+    return result;
+  }
+
+  async function deleteMany(ids: Set<string>): Promise<void> {
+    const optimisticOptions: IOptimisticOptions = { transition: true };
+
+    list.makeOptimisticUpdate(({ list, total }) => ({
+      list: list.filter((schema) => !ids.has(schema.id)),
+      total: total - ids.size,
+    }), optimisticOptions);
+
+    await list.executeOptimisticUpdate(async () => {
+      await http.delete<HttpBody, IDeleteManySchemasBody>(['/schemas', 'delete-many'], {
+        ids: Array.from(ids),
       });
-      throw error;
+    }, optimisticOptions);
+
+    if (canLoadNext.value && schemas.value.length < PAGINATION_PAGE) {
+      await loadNext();
     }
   }
 
-  async function copySchema(copyingSchema: ISchema): Promise<SchemaListItem> {
+  async function deleteSchema(deleting: SchemaListItem): Promise<void> {
+    return deleteMany(new Set([deleting.id]));
+  }
+
+  async function copySchema(copyingSchema: SchemaListItem): Promise<SchemaListItem> {
     const item = await http.post<SchemaListItem, HttpBody>(['/schemas', copyingSchema.id, 'copy'], {});
     list.data.total++;
     return item;
+  }
+
+  async function updateSchema(updatingSchema: SchemaListItem, patch: SchemaUpdate): Promise<void> {
+    await http.patch<HttpBody, SchemaUpdate>(['/schemas', updatingSchema.id], patch);
+    Object.assign(updatingSchema, patch);
   }
 
   return {
@@ -96,8 +132,13 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     canLoadNext,
     load,
     loadNext,
+    selected,
+    clearSelection,
     createSchema,
     deleteSchema,
+    deleteMany,
     copySchema,
+    updateSchema,
+    filterIdsByAccess,
   };
 });

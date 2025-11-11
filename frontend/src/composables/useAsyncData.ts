@@ -1,5 +1,6 @@
-import { reactive, ref, type UnwrapRef } from 'vue';
+import { nextTick, reactive, ref, type UnwrapRef } from 'vue';
 import { useAsyncState } from '@vueuse/core';
+import { useRouteTransition } from './useRouteTransition';
 
 export interface IAsyncDataOptions<V> {
   loader: (current: V) => Promise<V>;
@@ -8,20 +9,25 @@ export interface IAsyncDataOptions<V> {
 }
 
 export type OptimisticModify<D> = (data: D) => D;
+export type OptimisticExecute = () => Promise<void>;
+
+export interface IOptimisticOptions {
+  transition?: boolean;
+}
 
 export interface IAsyncData<D> {
   data: D;
   load: () => Promise<void>;
   reset: () => void;
-  makeOptimisticUpdate: (transform: OptimisticModify<D>) => void;
-  setOptimisticUpdate: (data: D) => void;
-  commitOptimisticUpdate: () => void;
-  rollbackOptimisticUpdate: () => void;
+  makeOptimisticUpdate: (transform: OptimisticModify<D>, options?: IOptimisticOptions) => void;
+  executeOptimisticUpdate: (execute: OptimisticExecute, options?: IOptimisticOptions) => Promise<void>;
   isInitial: boolean;
   isLoading: boolean;
 }
 
 export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
+  const routeTransition = useRouteTransition();
+
   const isInitial = ref(true);
   let temp: UnwrapRef<D> | null = null;
 
@@ -51,22 +57,36 @@ export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
     await execute();
   }
 
-  function setOptimisticUpdate(optimisticData: D): void {
-    temp = state.value;
-    state.value = optimisticData as UnwrapRef<D>;
+  function withTransition(enabled: boolean | undefined, fn: () => void): void {
+    if (!enabled) {
+      return fn();
+    }
+
+    routeTransition.start(() => {
+      fn();
+      return nextTick();
+    });
   }
 
-  function makeOptimisticUpdate(transform: OptimisticModify<D>): void {
-    setOptimisticUpdate(transform(state.value as D));
+  function makeOptimisticUpdate(transform: OptimisticModify<D>, options: IOptimisticOptions = {}): void {
+    withTransition(options.transition, () => {
+      temp = state.value;
+      state.value = transform(state.value as D) as UnwrapRef<D>;
+    });
   }
 
-  function commitOptimisticUpdate(): void {
-    temp = null;
-  }
+  async function executeOptimisticUpdate(execute: OptimisticExecute, options: IOptimisticOptions = {}): Promise<void> {
+    try {
+      await execute();
+      temp = null;
+    } catch (error) {
+      withTransition(options.transition, () => {
+        state.value = temp!;
+        temp = null;
+      });
 
-  function rollbackOptimisticUpdate(): void {
-    state.value = temp!;
-    temp = null;
+      throw error;
+    }
   }
 
   return reactive({
@@ -75,9 +95,7 @@ export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
     isLoading,
     reset,
     load,
-    setOptimisticUpdate,
     makeOptimisticUpdate,
-    commitOptimisticUpdate,
-    rollbackOptimisticUpdate,
+    executeOptimisticUpdate,
   }) as IAsyncData<D>;
 }

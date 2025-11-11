@@ -1,4 +1,4 @@
-import { onUnmounted } from 'vue';
+import { onBeforeUnmount } from 'vue';
 import { useTopElement } from '@/composables';
 import { type ConfirmCreateInternalOptions, ConfirmPlugin } from './ConfirmPlugin';
 import type { IConfirmAskOptions } from './Confirm';
@@ -8,20 +8,19 @@ export interface IConfirm {
   anchorStyle: { anchorName: string };
 }
 
-export type ConfirmCreateOptions = Omit<ConfirmCreateInternalOptions, 'getTopEl'>;
+export type ConfirmCreateOptions = Omit<ConfirmCreateInternalOptions, 'topEl'>;
 
 export function useConfirm(options: ConfirmCreateOptions): IConfirm {
   const plugin = ConfirmPlugin.inject();
-  const topEl = useTopElement();
 
   const confirm = plugin.create({
     ...options,
-    getTopEl: () => topEl.value,
+    topEl: useTopElement(),
   });
 
   const ask = (options: IConfirmAskOptions = {}) => confirm.ask(options);
 
-  onUnmounted(() => plugin.remove(confirm));
+  onBeforeUnmount(() => plugin.remove(confirm));
 
   return {
     ask,

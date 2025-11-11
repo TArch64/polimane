@@ -26,9 +26,16 @@ function getOffsetY(rect: NodeRect, padding: IPadding): number {
   return offset > 0 ? 0 : offset;
 }
 
+function resolveShiftPadding(input?: PaddingInput): IPadding {
+  const padding = { ...resolvePadding(input ?? 8) };
+  padding.right += window.innerWidth - document.body.offsetWidth;
+  padding.horizontal = padding.left + padding.right;
+  return padding;
+}
+
 export const vPopoverShift: FunctionDirective<HTMLElement, IPopoverShiftProps, Modifiers> = (el, binding) => {
   function render() {
-    const padding = resolvePadding(binding.value?.padding ?? 8);
+    const padding = resolveShiftPadding(binding.value?.padding);
     const rect = new NodeRect(el.getBoundingClientRect());
 
     const offsetX = getOffsetX(rect, padding);

@@ -7,7 +7,6 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
-	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
 
 type CreateOptions struct {
@@ -46,17 +45,19 @@ func (c *Client) Create(ctx context.Context, options *CreateOptions) (schema *mo
 			Beads:           datatypes.NewJSONType(options.Beads),
 		}
 
-		if err = tx.Create(schema).Error; err != nil {
+		err = gorm.
+			G[model.Schema](tx).
+			Create(ctx, schema)
+
+		if err != nil {
 			return err
 		}
 
-		_, err = c.userSchemas.CreateTx(ctx, tx, &repositoryuserschemas.CreateOptions{
+		return c.userSchemas.CreateTx(ctx, tx, &model.UserSchema{
 			UserID:   options.User.ID,
 			SchemaID: schema.ID,
 			Access:   model.AccessAdmin,
 		})
-
-		return err
 	})
 
 	if err != nil {

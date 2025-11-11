@@ -161,15 +161,20 @@ export const usePaintingTool = (options: IEditorToolOptions) => {
   }
 
   function onMousedown(event: MouseEvent) {
-    if (event.buttons === 1) {
-      isPainting.value = true;
-      paint(event, toolsStore.isEraser ? null : toolsStore.activeColor);
-      addEventListener('mouseup', onMouseup, { once: true });
+    if (event.buttons === 0 || event.buttons > 2) {
+      return;
     }
 
-    if (event.buttons === 2) {
-      paint(event, null);
+    switch (event.buttons) {
+      case 1:
+        isPainting.value = true;
+        paint(event, toolsStore.isEraser ? null : toolsStore.activeColor);
+        break;
+      case 2:
+        paint(event, null);
     }
+
+    addEventListener('mouseup', onMouseup, { once: true });
   }
 
   function onMousemove(event: MouseEvent) {

@@ -7,7 +7,7 @@
     v-popover-shift.defer
   >
     <p class="confirm__message">
-      {{ model.message }}
+      {{ message }}
     </p>
 
     <footer class="confirm__footer">
@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type FunctionalComponent, h, nextTick, onMounted, ref } from 'vue';
+import { computed, type FunctionalComponent, h, nextTick, onMounted, ref, toValue } from 'vue';
 import { onBackdropClick } from '@/composables';
 import { vPopoverShift } from '@/directives';
 import { Button, type ButtonVariant } from '../button';
@@ -55,6 +55,8 @@ const ConfirmButton: FunctionalComponent<IConfirmButtonProps> = (props) => {
 const dialogRef = ref<HTMLDialogElement>(null!);
 const decline = () => props.model.complete(false);
 const accept = () => props.model.complete(true);
+
+const message = computed(() => toValue(props.model.message));
 
 const backgroundColor = computed(() => {
   return props.model.control ? 'var(--color-background-2)' : 'var(--color-background-1)';

@@ -6,35 +6,35 @@ import (
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
-	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
+	"polimane/backend/repository"
 )
 
-type deleteInvitationQuery struct {
-	Email string `query:"email" validate:"required,email,max=255"`
+type deleteInvitationBody struct {
+	bulkOperationBody
+	Email string `json:"email" validate:"required,email,max=255"`
 }
 
 func (c *Controller) apiDeleteInvitation(ctx *fiber.Ctx) error {
-	schemaID, err := base.GetParamID(ctx, schemaIDParam)
-	if err != nil {
+	var err error
+	var body deleteInvitationBody
+	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
-	var query deleteInvitationQuery
-	if err = base.ParseQuery(ctx, &query); err != nil {
-		return err
-	}
-
-	currentUser := auth.GetSessionUser(ctx)
 	requestCtx := ctx.Context()
-	err = c.userSchemas.HasAccess(requestCtx, currentUser.ID, schemaID, model.AccessAdmin)
+	currentUser := auth.GetSessionUser(ctx)
+	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.IDs, model.AccessAdmin)
 	if err != nil {
-		return nil
+		return err
+	}
+	if len(body.IDs) == 0 {
+		return fiber.ErrBadRequest
 	}
 
-	err = c.schemaInvitations.Delete(requestCtx, &repositoryschemainvitations.DeleteOptions{
-		Email:    query.Email,
-		SchemaID: schemaID,
-	})
+	err = c.schemaInvitations.DeleteMany(requestCtx,
+		repository.EmailEq(body.Email),
+		repository.SchemaIDsIn(body.IDs),
+	)
 
 	if err != nil {
 		return err
