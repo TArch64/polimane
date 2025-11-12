@@ -1,5 +1,5 @@
 <template>
-  <template v-if="adminActionIds.size">
+  <template v-if="adminActionIds.length">
     <Button
       icon
       size="md"
@@ -53,7 +53,7 @@ const adminActionIds = computed(() => {
 const deleteConfirm = useConfirm({
   danger: true,
   control: false,
-  message: () => `Ви впевнені, що хочете видалити ${adminActionIds.value.size} схеми?`,
+  message: () => `Ви впевнені, що хочете видалити ${adminActionIds.value.length} схеми?`,
   acceptButton: 'Видалити',
 });
 
@@ -69,7 +69,7 @@ async function deleteIntent(): Promise<void> {
 }
 
 async function openAccessEditModal(): Promise<void> {
-  await schemaUsersStore.load([...adminActionIds.value]);
+  await schemaUsersStore.load(adminActionIds.value);
   accessEditModal.open();
 }
 </script>

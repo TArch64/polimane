@@ -79,7 +79,7 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     return item;
   }
 
-  function filterIdsByAccess(ids: Set<string>, access: AccessLevel): Set<string> {
+  function filterIdsByAccess(ids: Set<string>, access: AccessLevel): string[] {
     const result = new Set<string>();
 
     for (const schema of schemas.value) {
@@ -88,21 +88,20 @@ export const useSchemasStore = defineStore('schemas/list', () => {
       }
     }
 
-    return result;
+    return [...result];
   }
 
-  async function deleteMany(ids: Set<string>): Promise<void> {
+  async function deleteMany(ids: string[]): Promise<void> {
     const optimisticOptions: IOptimisticOptions = { transition: true };
+    const idsSet = new Set(ids);
 
     list.makeOptimisticUpdate(({ list, total }) => ({
-      list: list.filter((schema) => !ids.has(schema.id)),
-      total: total - ids.size,
+      list: list.filter((schema) => !idsSet.has(schema.id)),
+      total: total - ids.length,
     }), optimisticOptions);
 
     await list.executeOptimisticUpdate(async () => {
-      await http.delete<HttpBody, IDeleteManySchemasBody>(['/schemas', 'delete-many'], {
-        ids: Array.from(ids),
-      });
+      await http.delete<HttpBody, IDeleteManySchemasBody>(['/schemas', 'delete-many'], { ids });
     }, optimisticOptions);
 
     if (canLoadNext.value && schemas.value.length < PAGINATION_PAGE) {
@@ -111,7 +110,7 @@ export const useSchemasStore = defineStore('schemas/list', () => {
   }
 
   async function deleteSchema(deleting: SchemaListItem): Promise<void> {
-    return deleteMany(new Set([deleting.id]));
+    return deleteMany([deleting.id]);
   }
 
   async function copySchema(copyingSchema: SchemaListItem): Promise<SchemaListItem> {
