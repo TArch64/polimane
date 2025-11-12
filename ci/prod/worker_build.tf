@@ -6,7 +6,8 @@ locals {
 }
 
 resource "null_resource" "worker_build" {
-  triggers = { sources_hash = local.worker_sources_hash }
+  triggers   = { sources_hash = local.worker_sources_hash }
+  depends_on = [null_resource.lambda_build]
 
   provisioner "local-exec" {
     command = "bash ${path.module}/build/build.sh"
