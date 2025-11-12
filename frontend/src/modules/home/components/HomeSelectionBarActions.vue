@@ -69,7 +69,7 @@ async function deleteIntent(): Promise<void> {
 }
 
 async function openAccessEditModal(): Promise<void> {
-  await schemaUsersStore.load(adminActionIds.value);
+  await schemaUsersStore.load([...adminActionIds.value]);
   accessEditModal.open();
 }
 </script>
