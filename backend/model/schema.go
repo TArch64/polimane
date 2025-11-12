@@ -24,6 +24,7 @@ type Schema struct {
 
 	// Relations
 	Users       []User             `gorm:"many2many:user_schemas" json:"-"`
+	Folders     []Folder           `gorm:"many2many:folder_schemas" json:"-"`
 	Invitations []SchemaInvitation `json:"-"`
 }
 
