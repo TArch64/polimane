@@ -5,7 +5,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
 	"polimane/backend/repository"
@@ -13,8 +12,7 @@ import (
 )
 
 type updateInvitationAccessBody struct {
-	bulkOperationBody
-	Email  string            `validate:"required,email,max=255" json:"email"`
+	invitationBody
 	Access model.AccessLevel `validate:"required,gte=1,lte=3" json:"access"`
 }
 
@@ -25,16 +23,11 @@ func (c *Controller) apiUpdateInvitationAccess(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	currentUser := auth.GetSessionUser(ctx)
-	requestCtx := ctx.Context()
-	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.IDs, model.AccessAdmin)
-	if err != nil {
+	if err = c.FilterSchemaIDsByAccess(ctx, &body.IDs); err != nil {
 		return err
 	}
-	if len(body.IDs) == 0 {
-		return fiber.ErrBadRequest
-	}
 
+	requestCtx := ctx.Context()
 	hasInvitations, err := c.schemaInvitations.Exists(requestCtx, repository.EmailEq(body.Email))
 	if err != nil {
 		return err

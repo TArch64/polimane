@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 
+	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
@@ -12,7 +13,6 @@ import (
 	"polimane/backend/services/workos"
 )
 
-const schemaIDParam = "schemaID"
 const userIDParam = "userID"
 
 type ControllerOptions struct {
@@ -49,6 +49,7 @@ func (c *Controller) Private(group fiber.Router) {
 		base.WithGroup(group, "invitations", func(group fiber.Router) {
 			group.Delete("", c.apiDeleteInvitation)
 			group.Patch("access", c.apiUpdateInvitationAccess)
+			group.Post("resend", c.apiResendInvitation)
 		})
 
 		base.WithGroup(group, ":"+userIDParam, func(group fiber.Router) {
@@ -58,6 +59,22 @@ func (c *Controller) Private(group fiber.Router) {
 	})
 }
 
+func (c *Controller) FilterSchemaIDsByAccess(ctx *fiber.Ctx, IDs *[]model.ID) error {
+	err := c.userSchemas.FilterByAccess(ctx.Context(), auth.GetSessionUser(ctx), IDs, model.AccessAdmin)
+	if err != nil {
+		return err
+	}
+	if len(*IDs) == 0 {
+		return fiber.ErrBadRequest
+	}
+	return nil
+}
+
 type bulkOperationBody struct {
 	IDs []model.ID `json:"ids" validate:"required"`
+}
+
+type invitationBody struct {
+	bulkOperationBody
+	Email string `json:"email" validate:"required,email,max=255"`
 }
