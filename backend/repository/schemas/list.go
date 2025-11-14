@@ -10,8 +10,14 @@ import (
 )
 
 func (c *Client) ListOut(ctx context.Context, out interface{}, scopes ...repository.Scope) error {
-	return gorm.
+	err := gorm.
 		G[model.Schema](c.db).
 		Scopes(scopes...).
 		Scan(ctx, out)
+
+	if err != nil {
+		return err
+	}
+
+	return repository.DoAfterScan(out)
 }

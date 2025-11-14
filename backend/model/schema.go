@@ -28,11 +28,6 @@ type Schema struct {
 	Invitations []SchemaInvitation `json:"-"`
 }
 
-type SchemaWithAccess struct {
-	Schema
-	Access AccessLevel `json:"access"`
-}
-
 func SchemaScreenshotPath(id ID, timestamp *time.Time) *string {
 	if timestamp == nil {
 		return nil

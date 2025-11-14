@@ -1,5 +1,5 @@
 package repository
 
-import "polimane/backend/model"
+import "gorm.io/gorm"
 
-type Scope = model.Scope
+type Scope = func(db *gorm.Statement)

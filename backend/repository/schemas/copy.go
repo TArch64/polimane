@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"polimane/backend/model"
+	"polimane/backend/repository"
 )
 
 type CopyOptions struct {
@@ -27,11 +28,10 @@ func makeCopyName(originalName string) string {
 }
 
 func (c *Client) Copy(ctx context.Context, options *CopyOptions) (*model.Schema, error) {
-	original, err := c.GetByID(ctx, &ByIDOptions{
-		SchemaID: options.SchemaID,
-		User:     options.User,
-	})
-
+	original, err := c.Get(ctx,
+		repository.IDEq(options.SchemaID),
+		IncludeUserSchemaScope(options.User.ID),
+	)
 	if err != nil {
 		return nil, err
 	}

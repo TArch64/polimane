@@ -51,7 +51,6 @@ func (c *Controller) querySchemas(ctx *listContext) (err error) {
 		repositoryschemas.IncludeUserSchemaScope(ctx.user.ID),
 		repository.Paginate(ctx.query.Offset, limit),
 		repository.Order("schemas.created_at DESC"),
-		repository.DoAfterScan,
 	)
 
 	if err != nil {

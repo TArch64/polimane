@@ -9,6 +9,7 @@ import (
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
+	"polimane/backend/repository"
 	repositoryschemas "polimane/backend/repository/schemas"
 	"polimane/backend/services/awssqs"
 	"polimane/backend/services/schemascreenshot"
@@ -72,10 +73,7 @@ func (c *Controller) updateScreenshot(ctx context.Context, schemaID model.ID, ne
 		})
 	}
 
-	schema, err := c.schemas.GetByID(ctx, &repositoryschemas.ByIDOptions{
-		SchemaID: schemaID,
-	})
-
+	schema, err := c.schemas.Get(ctx, repository.IDEq(schemaID))
 	if err != nil {
 		return err
 	}

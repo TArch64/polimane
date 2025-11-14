@@ -31,6 +31,10 @@ type listContext struct {
 	res          *listResponse
 }
 
+func (l *listContext) calcTotal() {
+	l.res.Total = l.schemasTotal + l.foldersTotal
+}
+
 func (c *Controller) apiList(ctx *fiber.Ctx) (err error) {
 	var query listQuery
 	if err = base.ParseQuery(ctx, &query); err != nil {
@@ -66,6 +70,6 @@ func (c *Controller) apiList(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	listCtx.res.Total = listCtx.schemasTotal + listCtx.foldersTotal
+	listCtx.calcTotal()
 	return ctx.JSON(listCtx.res)
 }
