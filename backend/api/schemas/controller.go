@@ -7,6 +7,7 @@ import (
 
 	"polimane/backend/api/base"
 	"polimane/backend/api/schemas/users"
+	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 	"polimane/backend/services/awssqs"
@@ -19,6 +20,7 @@ const schemaIDParam = "schemaID"
 type ControllerOptions struct {
 	fx.In
 	Schemas          *repositoryschemas.Client
+	Folders          *repositoryfolders.Client
 	UserSchemas      *repositoryuserschemas.Client
 	SQS              *awssqs.Client
 	S3               *s3.Client
@@ -29,6 +31,7 @@ type ControllerOptions struct {
 
 type Controller struct {
 	schemas          *repositoryschemas.Client
+	folders          *repositoryfolders.Client
 	userSchemas      *repositoryuserschemas.Client
 	sqs              *awssqs.Client
 	s3               *s3.Client
@@ -40,6 +43,7 @@ type Controller struct {
 func Provider(options ControllerOptions) base.Controller {
 	return &Controller{
 		schemas:          options.Schemas,
+		folders:          options.Folders,
 		userSchemas:      options.UserSchemas,
 		sqs:              options.SQS,
 		s3:               options.S3,

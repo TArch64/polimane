@@ -11,6 +11,7 @@ import (
 	schemasusers "polimane/backend/api/schemas/users"
 	"polimane/backend/api/users"
 	"polimane/backend/env"
+	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryusers "polimane/backend/repository/users"
@@ -60,6 +61,7 @@ func main() {
 			repositoryusers.Provider,
 			repositoryschemas.Provider,
 			repositoryschemainvitations.Provider,
+			repositoryfolders.Provider,
 
 			// api
 			auth.MiddlewareProvider,

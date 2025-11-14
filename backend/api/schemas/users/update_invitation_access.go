@@ -16,8 +16,7 @@ type updateInvitationAccessBody struct {
 	Access model.AccessLevel `validate:"required,gte=1,lte=3" json:"access"`
 }
 
-func (c *Controller) apiUpdateInvitationAccess(ctx *fiber.Ctx) error {
-	var err error
+func (c *Controller) apiUpdateInvitationAccess(ctx *fiber.Ctx) (err error) {
 	var body updateInvitationAccessBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err

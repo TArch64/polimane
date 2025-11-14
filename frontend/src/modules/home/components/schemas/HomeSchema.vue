@@ -39,10 +39,10 @@ import {
   useSchemaUsersStore,
 } from '@/modules/schemas/shared/modals/accessEdit';
 import type { ISchema } from '@/models';
-import { type SchemaListItem, useSchemasStore } from '../../stores';
+import { type ListSchema, useSchemasStore } from '../../stores';
 
 const props = defineProps<{
-  schema: SchemaListItem;
+  schema: ListSchema;
 }>();
 
 const router = useRouter();

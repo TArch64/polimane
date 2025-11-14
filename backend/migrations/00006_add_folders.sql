@@ -5,11 +5,21 @@ CREATE TABLE IF NOT EXISTS folders
   created_at timestamptz            NOT NULL,
   updated_at timestamptz            NOT NULL,
   name       character varying(255) NOT NULL,
-  PRIMARY KEY (id)
+  user_id uuid NOT NULL,
+  PRIMARY KEY (id),
+
+  CONSTRAINT fk_folders_user
+    FOREIGN KEY (user_id)
+      REFERENCES users (id)
+      ON UPDATE NO ACTION
+      ON DELETE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS idx_folders_created_at
   ON folders (created_at);
+
+CREATE INDEX IF NOT EXISTS idx_folders_user_id
+  ON folders (user_id);
 
 CREATE TABLE IF NOT EXISTS folder_schemas
 (

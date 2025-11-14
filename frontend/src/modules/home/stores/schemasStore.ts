@@ -5,17 +5,17 @@ import {
   type IOptimisticOptions,
   useAsyncData,
   useHttpClient,
-  useRouteTransition,
 } from '@/composables';
-import type { ISchema, SchemaUpdate } from '@/models';
+import type { IFolder, ISchema, SchemaUpdate } from '@/models';
 import { AccessLevel } from '@/enums';
 
 const PAGINATION_PAGE = 100;
 
-export type SchemaListItem = Omit<ISchema, 'beads' | 'size'>;
+export type ListSchema = Omit<ISchema, 'beads' | 'size'>;
 
 interface IListResponse {
-  list: SchemaListItem[];
+  folders: IFolder[];
+  schemas: ListSchema[];
   total: number;
 }
 
@@ -33,29 +33,30 @@ interface IDeleteManySchemasBody {
 }
 
 export const useSchemasStore = defineStore('schemas/list', () => {
-  const routeTransition = useRouteTransition();
   const http = useHttpClient();
 
   const list = useAsyncData({
     loader: async (current): Promise<IListResponse> => {
       const response = await http.get<IListResponse, ListRequestParams>('/schemas', {
         limit: PAGINATION_PAGE,
-        offset: current.list.length,
+        offset: current.folders.length + current.schemas.length,
       });
 
       return {
-        list: [...current.list, ...response.list],
+        folders: [...current.folders, ...response.folders],
+        schemas: [...current.schemas, ...response.schemas],
         total: response.total,
       };
     },
 
     default: {
-      list: [],
+      folders: [],
+      schemas: [],
       total: 0,
     },
   });
 
-  const schemas = computed(() => list.data.list);
+  const schemas = computed(() => list.data.schemas);
   const hasSchemas = computed(() => !!schemas.value.length);
   const canLoadNext = computed(() => schemas.value.length < list.data.total);
 
@@ -73,8 +74,8 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     return list.load();
   }
 
-  async function createSchema(input: ICreateSchemaRequest): Promise<SchemaListItem> {
-    const item = await http.post<SchemaListItem, ICreateSchemaRequest>('/schemas', input);
+  async function createSchema(input: ICreateSchemaRequest): Promise<ListSchema> {
+    const item = await http.post<ListSchema, ICreateSchemaRequest>('/schemas', input);
     list.data.total++;
     return item;
   }
@@ -95,8 +96,9 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     const optimisticOptions: IOptimisticOptions = { transition: true };
     const idsSet = new Set(ids);
 
-    list.makeOptimisticUpdate(({ list, total }) => ({
-      list: list.filter((schema) => !idsSet.has(schema.id)),
+    list.makeOptimisticUpdate(({ schemas, total, ...rest }) => ({
+      ...rest,
+      schemas: schemas.filter((schema) => !idsSet.has(schema.id)),
       total: total - ids.length,
     }), optimisticOptions);
 
@@ -109,17 +111,17 @@ export const useSchemasStore = defineStore('schemas/list', () => {
     }
   }
 
-  async function deleteSchema(deleting: SchemaListItem): Promise<void> {
+  async function deleteSchema(deleting: ListSchema): Promise<void> {
     return deleteMany([deleting.id]);
   }
 
-  async function copySchema(copyingSchema: SchemaListItem): Promise<SchemaListItem> {
-    const item = await http.post<SchemaListItem, HttpBody>(['/schemas', copyingSchema.id, 'copy'], {});
+  async function copySchema(copyingSchema: ListSchema): Promise<ListSchema> {
+    const item = await http.post<ListSchema, HttpBody>(['/schemas', copyingSchema.id, 'copy'], {});
     list.data.total++;
     return item;
   }
 
-  async function updateSchema(updatingSchema: SchemaListItem, patch: SchemaUpdate): Promise<void> {
+  async function updateSchema(updatingSchema: ListSchema, patch: SchemaUpdate): Promise<void> {
     await http.patch<HttpBody, SchemaUpdate>(['/schemas', updatingSchema.id], patch);
     Object.assign(updatingSchema, patch);
   }

@@ -20,8 +20,7 @@ type deleteBody struct {
 	IDs []model.ID `json:"ids" validate:"required"`
 }
 
-func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
-	var err error
+func (c *Controller) apiDelete(ctx *fiber.Ctx) (err error) {
 	var body deleteBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err

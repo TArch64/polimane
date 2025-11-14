@@ -17,7 +17,7 @@ func (c *Client) GetByIDOut(ctx context.Context, options *ByIDOptions, out inter
 		Table("schemas")
 
 	if options.User != nil {
-		query = query.Scopes(IncludeUserSchemaScope(options.User.ID))
+		query = query.Scopes(IncludeUserSchemaLegacyScope(options.User.ID))
 	}
 
 	if len(options.Select) > 0 {

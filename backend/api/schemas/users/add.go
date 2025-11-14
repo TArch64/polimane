@@ -28,8 +28,7 @@ type addResponse struct {
 	Invitation *listInvitation `json:"invitation"`
 }
 
-func (c *Controller) apiAdd(ctx *fiber.Ctx) error {
-	var err error
+func (c *Controller) apiAdd(ctx *fiber.Ctx) (err error) {
 	var body addUserBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err

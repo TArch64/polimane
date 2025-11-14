@@ -13,8 +13,7 @@ type listQuery struct {
 	IDs []string `query:"ids"`
 }
 
-func (c *Controller) apiList(ctx *fiber.Ctx) error {
-	var err error
+func (c *Controller) apiList(ctx *fiber.Ctx) (err error) {
 	var query listQuery
 	if err = base.ParseQuery(ctx, &query); err != nil {
 		return err
