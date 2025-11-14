@@ -9,25 +9,26 @@
     </CursorSelection>
   </div>
 
-  <div class="schemas-list-loader" v-visible="schemasStore.isLoading">
+  <div class="schemas-list-loader" v-visible="listStore.list.isLoading">
     <Spinner />
   </div>
 </template>
 
 <script setup lang="ts">
 import { toRef } from 'vue';
-import { useSchemasStore } from '@/modules/home/stores';
+import { useHomeListStore, useSchemasStore } from '@/modules/home/stores';
 import { useInfinityScroll } from '@/composables';
 import { CursorSelection } from '@/components/selection';
 import Spinner from '@/components/Spinner.vue';
 import { vVisible } from '@/directives';
 import HomeSchema from './HomeSchema.vue';
 
+const listStore = useHomeListStore();
 const schemasStore = useSchemasStore();
 
 useInfinityScroll({
-  load: schemasStore.loadNext,
-  canLoadNext: toRef(schemasStore, 'canLoadNext'),
+  load: listStore.loadNext,
+  canLoadNext: toRef(listStore, 'canLoadNext'),
 });
 </script>
 

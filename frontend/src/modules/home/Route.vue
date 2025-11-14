@@ -18,12 +18,12 @@
 import { definePreload } from '@/router/define';
 import { CommonLayout } from '@/components/layout';
 import { HomeSchemasEmpty, HomeSchemasList, HomeTopBarActions } from './components';
-import { useSchemasStore } from './stores';
+import { useHomeListStore, useSchemasStore } from './stores';
 import { useSchemasSelection } from './composables';
 
 defineOptions({
   beforeRouteEnter: definePreload<'home'>(async () => {
-    await useSchemasStore().load();
+    await useHomeListStore().load();
   }),
 });
 
