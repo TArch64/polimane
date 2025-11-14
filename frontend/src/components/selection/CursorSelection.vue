@@ -112,7 +112,13 @@ function selectItems(area: NodeRect) {
 
 useEventListener('mousedown', async (event: MouseEvent) => {
   const target = event.target as Element;
-  const canSelect = currentEl.value.contains(target) || target.matches('#app');
+
+  const canSelect = event.buttons === 1 && (
+    currentEl.value.contains(target)
+    || target.matches('#app')
+    || target.closest('[data-cursor-selection-include]')
+  );
+
   if (!canSelect) return;
 
   await nextTick();

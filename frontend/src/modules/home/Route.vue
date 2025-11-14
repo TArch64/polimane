@@ -1,18 +1,12 @@
 <template>
   <CommonLayout
-    :selected="schemasStore.selected.size"
+    :selected="selection.count"
+    :selected-title="selection.title"
+    :selected-actions="selection.actions"
     @clear-selection="schemasStore.clearSelection"
   >
     <template #top-bar-actions>
       <HomeTopBarActions />
-    </template>
-
-    <template #selection-title="{ count }">
-      Обрано {{ count }} схем
-    </template>
-
-    <template #selection-actions>
-      <HomeSelectionBarActions />
     </template>
 
     <HomeSchemasList v-if="schemasStore.hasSchemas" />
@@ -23,13 +17,9 @@
 <script setup lang="ts">
 import { definePreload } from '@/router/define';
 import { CommonLayout } from '@/components/layout';
-import {
-  HomeSchemasEmpty,
-  HomeSchemasList,
-  HomeSelectionBarActions,
-  HomeTopBarActions,
-} from './components';
+import { HomeSchemasEmpty, HomeSchemasList, HomeTopBarActions } from './components';
 import { useSchemasStore } from './stores';
+import { useSchemasSelection } from './composables';
 
 defineOptions({
   beforeRouteEnter: definePreload<'home'>(async () => {
@@ -38,4 +28,5 @@ defineOptions({
 });
 
 const schemasStore = useSchemasStore();
+const selection = useSchemasSelection();
 </script>

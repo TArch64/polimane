@@ -5,7 +5,7 @@ import type { ContextMenuItem, MaybeContextMenuAction } from './model';
 import { ContextMenuPlugin } from './ContextMenuPlugin';
 
 export interface IContextMenuViewOptions {
-  el: MaybeRefOrGetter<HTMLElement>;
+  el: MaybeRefOrGetter<HTMLElement | null>;
   title: MaybeRefOrGetter<string>;
   actions: MaybeRefOrGetter<MaybeContextMenuAction[]>;
   control?: boolean;
