@@ -1,32 +1,32 @@
 <template>
   <CommonLayout
-    :selected="selection.count"
-    :selected-title="selection.title"
-    :selected-actions="selection.actions"
-    @clear-selection="schemasStore.clearSelection"
+    :selected="homeStore.selection?.count"
+    :selected-title="homeStore.selection?.title"
+    :selected-actions="homeStore.selection?.actions"
+    @clear-selection="homeStore.selection?.onClear()"
   >
     <template #top-bar-actions>
-      <HomeTopBarActions />
+      <div class="home-top-bar__actions" data-home-top-bar-actions />
     </template>
 
-    <HomeSchemasList v-if="schemasStore.hasSchemas" />
-    <HomeSchemasEmpty v-else />
+    <RouterView />
   </CommonLayout>
 </template>
 
 <script setup lang="ts">
-import { definePreload } from '@/router/define';
 import { CommonLayout } from '@/components/layout';
-import { HomeSchemasEmpty, HomeSchemasList, HomeTopBarActions } from './components';
-import { useHomeListStore, useSchemasStore } from './stores';
-import { useSchemasSelection } from './composables';
+import { useHomeStore } from './stores';
 
-defineOptions({
-  beforeRouteEnter: definePreload<'home'>(async () => {
-    await useHomeListStore().load();
-  }),
-});
-
-const schemasStore = useSchemasStore();
-const selection = useSchemasSelection();
+const homeStore = useHomeStore();
 </script>
+
+<style scoped>
+@layer page {
+  .home-top-bar__actions {
+    height: 100%;
+    display: flex;
+    gap: inherit;
+    align-items: inherit;
+  }
+}
+</style>

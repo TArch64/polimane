@@ -16,11 +16,11 @@
 
 <script setup lang="ts">
 import { toRef } from 'vue';
-import { useHomeListStore, useSchemasStore } from '@/modules/home/stores';
 import { useInfinityScroll } from '@/composables';
 import { CursorSelection } from '@/components/selection';
 import Spinner from '@/components/Spinner.vue';
 import { vVisible } from '@/directives';
+import { useHomeListStore, useSchemasStore } from '../../stores';
 import HomeSchema from './HomeSchema.vue';
 
 const listStore = useHomeListStore();

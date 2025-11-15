@@ -38,9 +38,9 @@
 <script setup lang="ts">
 import { computed, reactive } from 'vue';
 import { Modal, useActiveModal } from '@/components/modal';
-import { useFoldersStore } from '@/modules/home/stores';
 import { SelectField, TextField } from '@/components/form';
 import { useAsyncAction } from '@/composables';
+import { useFoldersStore } from '../../stores';
 
 const props = defineProps<{
   schemaIds: string[];

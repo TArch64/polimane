@@ -9,16 +9,12 @@ import { useModal } from '@/components/modal';
 import { useConfirm } from '@/components/confirm';
 import { useAsyncAction } from '@/composables';
 import { FolderIcon, PeopleIcon, TrashIcon } from '@/components/icon';
+import { useHomeStore } from '@/modules/home/stores';
 import { useSchemasStore } from '../stores';
 import { FolderAddSchemaModal } from '../components/modals';
 
-export interface ISchemasSelection {
-  count: number;
-  title: string;
-  actions: MaybeContextMenuAction[];
-}
-
-export function useSchemasSelection(): ISchemasSelection {
+export function useSchemasSelection(): void {
+  const homeStore = useHomeStore();
   const schemasStore = useSchemasStore();
   const schemaUsersStore = useSchemaUsersStore();
 
@@ -90,9 +86,10 @@ export function useSchemasSelection(): ISchemasSelection {
     ];
   });
 
-  return reactive({
+  homeStore.setSelection(reactive({
     count,
     title,
     actions,
-  });
+    onClear: schemasStore.clearSelection,
+  }));
 }

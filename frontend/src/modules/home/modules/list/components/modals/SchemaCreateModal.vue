@@ -20,7 +20,7 @@ import { useRouter } from 'vue-router';
 import { Modal, useActiveModal } from '@/components/modal';
 import { TextField } from '@/components/form';
 import { useAsyncAction } from '@/composables';
-import { type ICreateSchemaRequest, useSchemasStore } from '@/modules/home/stores';
+import { type ICreateSchemaRequest, useSchemasStore } from '../../stores';
 
 const router = useRouter();
 const schemasStore = useSchemasStore();
