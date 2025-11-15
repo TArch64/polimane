@@ -65,6 +65,12 @@ const save = useAsyncAction(async () => {
     return;
   }
 
+  await foldersStore.addSchemas({
+    schemaIds: props.schemaIds,
+    folderId: isNewFolder.value ? null : form.folderId,
+    folderName: isNewFolder.value ? form.folderName : null,
+  });
+
   modal.close(null);
 });
 </script>
