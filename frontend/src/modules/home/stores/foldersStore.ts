@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed } from 'vue';
 import { type HttpBody, useHttpClient } from '@/composables';
+import type { IFolder } from '@/models';
 import { useHomeListStore } from './homeListStore';
 
 export interface IFolderAddSchemasInput {
@@ -26,10 +27,13 @@ export const useFoldersStore = defineStore('home/list/folders', () => {
   const hasFolders = computed(() => !!folders.value.length);
 
   async function addSchemasToNewFolder(name: string, schemaIds: string[]): Promise<void> {
-    await http.post<HttpBody, IFolderCreateRequest>('/folders', {
+    const folder = await http.post<IFolder, IFolderCreateRequest>('/folders', {
       name,
       schemaIds,
     });
+
+    listStore.list.data.total++;
+    listStore.list.data.folders = [folder, ...listStore.list.data.folders];
   }
 
   async function addSchemasToExistingFolder(folderId: string, schemaIds: string[]): Promise<void> {
@@ -44,7 +48,7 @@ export const useFoldersStore = defineStore('home/list/folders', () => {
       : await addSchemasToNewFolder(input.folderName!, input.schemaIds);
 
     const schemaIdsSet = new Set(input.schemaIds);
-    listStore.list.data.total += 1 - input.schemaIds.length;
+    listStore.list.data.total -= input.schemaIds.length;
     listStore.list.data.schemas = listStore.list.data.schemas.filter((schema) => !schemaIdsSet.has(schema.id));
   }
 

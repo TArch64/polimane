@@ -4,12 +4,13 @@ import (
 	"go.uber.org/fx"
 
 	"polimane/backend/api"
-	"polimane/backend/api/auth"
+	apiauth "polimane/backend/api/auth"
 	"polimane/backend/api/base"
-	"polimane/backend/api/ping"
-	"polimane/backend/api/schemas"
-	schemasusers "polimane/backend/api/schemas/users"
-	"polimane/backend/api/users"
+	apifolders "polimane/backend/api/folders"
+	apiping "polimane/backend/api/ping"
+	apischemas "polimane/backend/api/schemas"
+	apischemasusers "polimane/backend/api/schemas/users"
+	apiusers "polimane/backend/api/users"
 	"polimane/backend/env"
 	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
@@ -64,12 +65,13 @@ func main() {
 			repositoryfolders.Provider,
 
 			// api
-			auth.MiddlewareProvider,
-			Controller(ping.Provider),
-			Controller(auth.Provider),
-			Controller(users.Provider),
-			Controller(schemas.Provider),
-			schemasusers.Provider, // schemas child controller
+			apiauth.MiddlewareProvider,
+			Controller(apiping.Provider),
+			Controller(apiauth.Provider),
+			Controller(apiusers.Provider),
+			Controller(apischemas.Provider),
+			Controller(apifolders.Provider),
+			apischemasusers.Provider, // schemas child controller
 			api.OptionsProvider,
 			api.Provider,
 		),

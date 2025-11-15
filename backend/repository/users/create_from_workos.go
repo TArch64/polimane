@@ -58,9 +58,7 @@ func (c *Client) CreateFromWorkos(ctx context.Context, workosUser *usermanagemen
 }
 
 func (c *Client) createTx(ctx context.Context, tx *gorm.DB, user *model.User) error {
-	result := gorm.WithResult()
-
 	return gorm.
-		G[model.User](tx, result).
+		G[model.User](tx, gorm.WithResult()).
 		Create(ctx, user)
 }
