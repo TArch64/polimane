@@ -30,16 +30,17 @@ import { makeBinding } from '@/components/binding';
 import { useContextMenu } from '@/components/contextMenu';
 import { useAccessPermissions, useDomRef } from '@/composables';
 import { useConfirm } from '@/components/confirm';
-import { CopyIcon, EditIcon, PeopleIcon, TrashIcon } from '@/components/icon';
+import { CopyIcon, EditIcon, FolderIcon, PeopleIcon, TrashIcon } from '@/components/icon';
 import { buildCdnUrl } from '@/helpers/buildCdnUrl';
 import { useModal } from '@/components/modal';
-import SchemaRenameModal from '@/modules/schemas/shared/modals/SchemaRenameModal.vue';
+import { SchemaRenameModal } from '@/modules/schemas/shared/modals/rename';
 import {
   SchemaAccessEditModal,
   useSchemaUsersStore,
 } from '@/modules/schemas/shared/modals/accessEdit';
 import type { ISchema } from '@/models';
 import { type ListSchema, useSchemasStore } from '../../stores';
+import { FolderAddSchemaModal } from '../modals';
 
 const props = defineProps<{
   schema: ListSchema;
@@ -56,6 +57,7 @@ const isSelected = computed(() => schemasStore.selected.has(props.schema.id));
 const permissions = useAccessPermissions(() => props.schema.access);
 
 const renameModal = useModal(SchemaRenameModal);
+const folderAddModal = useModal(FolderAddSchemaModal);
 const accessEditModal = useModal(SchemaAccessEditModal);
 
 const cardBinding = makeBinding(RouterLink, () => ({
@@ -90,6 +92,18 @@ useContextMenu({
         renameModal.open({
           schema: props.schema as ISchema,
           updateSchema: (attrs) => schemasStore.updateSchema(props.schema, attrs),
+        });
+      },
+    },
+
+    {
+      title: 'Додати в Директорію',
+      icon: FolderIcon,
+
+      onAction() {
+        folderAddModal.open({
+          schemaIds: [props.schema.id],
+          folder: null,
         });
       },
     },

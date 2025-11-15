@@ -106,7 +106,7 @@ import { Dropdown, DropdownAction } from '@/components/dropdown';
 import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
-import SchemaRenameModal from '@/modules/schemas/shared/modals/SchemaRenameModal.vue';
+import { SchemaRenameModal } from '@/modules/schemas/shared/modals/rename';
 import {
   SchemaAccessEditModal,
   useSchemaUsersStore,

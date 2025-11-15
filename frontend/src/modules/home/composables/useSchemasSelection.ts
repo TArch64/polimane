@@ -8,8 +8,9 @@ import {
 import { useModal } from '@/components/modal';
 import { useConfirm } from '@/components/confirm';
 import { useAsyncAction } from '@/composables';
-import { PeopleIcon, TrashIcon } from '@/components/icon';
+import { FolderIcon, PeopleIcon, TrashIcon } from '@/components/icon';
 import { useSchemasStore } from '../stores';
+import { FolderAddSchemaModal } from '../components/modals';
 
 export interface ISchemasSelection {
   count: number;
@@ -21,10 +22,15 @@ export function useSchemasSelection(): ISchemasSelection {
   const schemasStore = useSchemasStore();
   const schemaUsersStore = useSchemaUsersStore();
 
+  const folderAddModal = useModal(FolderAddSchemaModal);
   const accessEditModal = useModal(SchemaAccessEditModal);
 
   const count = computed(() => schemasStore.selected.size);
   const title = computed(() => `Обрано ${count.value} схем`);
+
+  const allActionIds = computed(() => {
+    return [...schemasStore.selected];
+  });
 
   const adminActionIds = computed(() => {
     return schemasStore.filterIdsByAccess(schemasStore.selected, AccessLevel.ADMIN);
@@ -43,22 +49,34 @@ export function useSchemasSelection(): ISchemasSelection {
   });
 
   const actions = computed((): MaybeContextMenuAction[] => {
-    if (!adminActionIds.value.length) {
+    if (!allActionIds.value.length) {
       return [];
     }
 
     return [
       {
+        title: 'Додати в Директорію',
+        icon: FolderIcon,
+
+        onAction() {
+          folderAddModal.open({
+            schemaIds: allActionIds.value,
+            folderId: null,
+          });
+        },
+      },
+
+      !!adminActionIds.value.length && {
         title: 'Редагувати доступ',
         icon: PeopleIcon,
 
         async onAction() {
           await schemaUsersStore.load(adminActionIds.value);
-          accessEditModal.open();
+          void accessEditModal.open();
         },
       },
 
-      {
+      !!adminActionIds.value.length && {
         title: 'Видалити схеми',
         icon: TrashIcon,
         danger: true,
