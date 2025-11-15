@@ -103,7 +103,7 @@ useContextMenu({
       onAction() {
         folderAddModal.open({
           schemaIds: [props.schema.id],
-          folder: null,
+          folderId: null,
         });
       },
     },
