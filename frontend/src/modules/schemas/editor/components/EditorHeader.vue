@@ -51,7 +51,7 @@
       </template>
 
       <DropdownAction
-        title="Переназвати"
+          title="Змінити назву"
         :icon="EditIcon"
         @click="openRenameModal"
         v-if="editorStore.canEdit"

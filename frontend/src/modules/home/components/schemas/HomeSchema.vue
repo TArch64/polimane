@@ -83,7 +83,7 @@ useContextMenu({
 
   actions: [
     permissions.write && {
-      title: 'Переназвати',
+      title: 'Змінити назву',
       icon: EditIcon,
 
       onAction() {
