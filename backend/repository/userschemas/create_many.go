@@ -15,6 +15,6 @@ func (c *Client) CreateMany(ctx context.Context, userSchemas *[]model.UserSchema
 
 func (c *Client) CreateManyTx(ctx context.Context, tx *gorm.DB, userSchemas *[]model.UserSchema) error {
 	return gorm.
-		G[model.UserSchema](tx, clause.OnConflict{DoNothing: true}).
+		G[model.UserSchema](tx, gorm.WithResult(), clause.OnConflict{DoNothing: true}).
 		CreateInBatches(ctx, userSchemas, model.DefaultBatch)
 }

@@ -13,6 +13,7 @@ import (
 	apiusers "polimane/backend/api/users"
 	"polimane/backend/env"
 	repositoryfolders "polimane/backend/repository/folders"
+	repositoryfolderschemas "polimane/backend/repository/folderschemas"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryusers "polimane/backend/repository/users"
@@ -30,7 +31,7 @@ import (
 	"polimane/backend/views"
 )
 
-func Controller(f any) any {
+func AsController(f any) any {
 	return fx.Annotate(
 		f,
 		fx.As(new(base.Controller)),
@@ -63,14 +64,15 @@ func main() {
 			repositoryschemas.Provider,
 			repositoryschemainvitations.Provider,
 			repositoryfolders.Provider,
+			repositoryfolderschemas.Provider,
 
 			// api
 			apiauth.MiddlewareProvider,
-			Controller(apiping.Provider),
-			Controller(apiauth.Provider),
-			Controller(apiusers.Provider),
-			Controller(apischemas.Provider),
-			Controller(apifolders.Provider),
+			AsController(apiping.Provider),
+			AsController(apiauth.Provider),
+			AsController(apiusers.Provider),
+			AsController(apischemas.Provider),
+			AsController(apifolders.Provider),
 			apischemasusers.Provider, // schemas child controller
 			api.OptionsProvider,
 			api.Provider,

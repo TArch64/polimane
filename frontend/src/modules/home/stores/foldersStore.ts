@@ -8,15 +8,16 @@ export interface IFolderAddSchemasInput {
   schemaIds: string[];
   folderId: string | null;
   folderName: string | null;
-}
-
-interface IFolderCreateRequest {
-  name: string;
-  schemaIds: string[];
+  oldFolderId: string | null;
 }
 
 interface IFolderAddSchemasRequest {
   schemaIds: string[];
+  oldFolderId: string | null;
+}
+
+interface IFolderCreateRequest extends IFolderAddSchemasRequest {
+  name: string;
 }
 
 export const useFoldersStore = defineStore('home/list/folders', () => {
@@ -26,26 +27,29 @@ export const useFoldersStore = defineStore('home/list/folders', () => {
   const folders = computed(() => listStore.list.data.folders);
   const hasFolders = computed(() => !!folders.value.length);
 
-  async function addSchemasToNewFolder(name: string, schemaIds: string[]): Promise<void> {
+  async function addSchemasToNewFolder(name: string, addRequest: IFolderAddSchemasRequest): Promise<void> {
     const folder = await http.post<IFolder, IFolderCreateRequest>('/folders', {
       name,
-      schemaIds,
+      ...addRequest,
     });
 
     listStore.list.data.total++;
     listStore.list.data.folders = [folder, ...listStore.list.data.folders];
   }
 
-  async function addSchemasToExistingFolder(folderId: string, schemaIds: string[]): Promise<void> {
-    await http.post<HttpBody, IFolderAddSchemasRequest>(['/folders', folderId, 'schemas'], {
-      schemaIds,
-    });
+  async function addSchemasToExistingFolder(folderId: string, request: IFolderAddSchemasRequest): Promise<void> {
+    await http.post<HttpBody, IFolderAddSchemasRequest>(['/folders', folderId, 'schemas'], request);
   }
 
   async function addSchemas(input: IFolderAddSchemasInput): Promise<void> {
+    const addRequest: IFolderAddSchemasRequest = {
+      schemaIds: input.schemaIds,
+      oldFolderId: input.oldFolderId,
+    };
+
     input.folderId
-      ? await addSchemasToExistingFolder(input.folderId, input.schemaIds)
-      : await addSchemasToNewFolder(input.folderName!, input.schemaIds);
+      ? await addSchemasToExistingFolder(input.folderId, addRequest)
+      : await addSchemasToNewFolder(input.folderName!, addRequest);
 
     const schemaIdsSet = new Set(input.schemaIds);
     listStore.list.data.total -= input.schemaIds.length;
