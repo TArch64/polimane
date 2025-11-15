@@ -3,7 +3,8 @@ import { computed, ref, type Ref } from 'vue';
 import { type HttpBody, type IOptimisticOptions, useHttpClient } from '@/composables';
 import type { SchemaUpdate } from '@/models';
 import { AccessLevel } from '@/enums';
-import { type ListSchema, useHomeListStore } from './homeListStore';
+import type { ListSchema } from '@/modules/home/stores';
+import { useHomeListStore } from './homeListStore';
 
 const PAGINATION_PAGE = 100;
 

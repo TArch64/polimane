@@ -1,11 +1,10 @@
 import { defineStore } from 'pinia';
 import { computed } from 'vue';
-import type { IFolder, ISchema } from '@/models';
+import type { IFolder } from '@/models';
 import { useAsyncData, useHttpClient } from '@/composables';
+import type { ListSchema } from '@/modules/home/stores';
 
 const PAGINATION_PAGE = 100;
-
-export type ListSchema = Omit<ISchema, 'beads' | 'size'>;
 
 interface IListResponse {
   folders: IFolder[];

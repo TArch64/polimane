@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { definePreload } from '@/router/define';
 import { useHomeStore } from '../../stores';
-import { useHomeListStore, useSchemasStore } from './stores';
+import { useFoldersStore, useHomeListStore, useSchemasStore } from './stores';
 import { useSchemasSelection } from './composables';
 import { HomeList, HomeListEmpty } from './components';
 
@@ -18,7 +18,18 @@ defineOptions({
 
 const homeStore = useHomeStore();
 const schemasStore = useSchemasStore();
+const foldersStore = useFoldersStore();
 
 homeStore.setSelection(useSchemasSelection());
-homeStore.setCreateSchemaStrategy({ do: schemasStore.createSchema });
+
+homeStore.setStrategies({
+  createSchema: {
+    do: schemasStore.createSchema,
+  },
+
+  addSchemaToFolder: {
+    getFolders: () => foldersStore.folders,
+    do: foldersStore.addSchemas,
+  },
+});
 </script>

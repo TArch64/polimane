@@ -2,14 +2,8 @@ import { defineStore } from 'pinia';
 import { computed } from 'vue';
 import { type HttpBody, useHttpClient } from '@/composables';
 import type { IFolder } from '@/models';
+import type { IFolderAddSchemasInput } from '@/modules/home/stores';
 import { useHomeListStore } from './homeListStore';
-
-export interface IFolderAddSchemasInput {
-  schemaIds: string[];
-  folderId: string | null;
-  folderName: string | null;
-  oldFolderId: string | null;
-}
 
 interface IFolderAddSchemasRequest {
   schemaIds: string[];

@@ -15,7 +15,7 @@
       </option>
 
       <option
-        v-for="folder of foldersStore.folders"
+        v-for="folder of folders"
         :key="folder.id"
         :value="folder.id"
       >
@@ -40,7 +40,7 @@ import { computed, reactive } from 'vue';
 import { Modal, useActiveModal } from '@/components/modal';
 import { SelectField, TextField } from '@/components/form';
 import { useAsyncAction } from '@/composables';
-import { useFoldersStore } from '../../stores';
+import { useHomeStore } from '@/modules/home/stores';
 
 const props = defineProps<{
   schemaIds: string[];
@@ -51,7 +51,9 @@ const NEW_FOLDER_ID = 'new' as const;
 
 const modal = useActiveModal();
 
-const foldersStore = useFoldersStore();
+const homeStore = useHomeStore();
+const addSchemas = homeStore.addSchemaToFolder!;
+const folders = addSchemas.getFolders();
 
 const form = reactive({
   folderId: props.folderId || NEW_FOLDER_ID,
@@ -65,7 +67,7 @@ const save = useAsyncAction(async () => {
     return;
   }
 
-  await foldersStore.addSchemas({
+  await addSchemas.do({
     schemaIds: props.schemaIds,
     folderId: isNewFolder.value ? null : form.folderId,
     folderName: isNewFolder.value ? form.folderName : null,

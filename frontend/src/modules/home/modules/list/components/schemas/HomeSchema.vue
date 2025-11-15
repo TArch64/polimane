@@ -39,8 +39,9 @@ import {
   useSchemaUsersStore,
 } from '@/modules/schemas/shared/modals/accessEdit';
 import type { ISchema } from '@/models';
-import { type ListSchema, useSchemasStore } from '../../stores';
-import { FolderAddSchemaModal } from '../modals';
+import type { ListSchema } from '@/modules/home/stores';
+import { FolderAddSchemaModal } from '@/modules/home/components/modals';
+import { useSchemasStore } from '../../stores';
 
 const props = defineProps<{
   schema: ListSchema;
