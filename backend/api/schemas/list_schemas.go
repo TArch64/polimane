@@ -48,6 +48,7 @@ func (c *Controller) querySchemas(ctx *listContext) (err error) {
 			"background_color",
 			"user_schemas.access",
 		),
+		repositoryschemas.FilterByFolder(nil),
 		repositoryschemas.IncludeUserSchemaScope(ctx.user.ID),
 		repository.Paginate(ctx.query.Offset, limit),
 		repository.Order("schemas.created_at DESC"),
