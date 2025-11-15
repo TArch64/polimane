@@ -15,7 +15,7 @@ func (c *Client) FilterByAccess(
 	schemaIDs *[]model.ID,
 	access model.AccessLevel,
 ) error {
-	return gorm.
+	err := gorm.
 		G[model.UserSchema](c.db).
 		Select("schema_id").
 		Scopes(
@@ -24,4 +24,14 @@ func (c *Client) FilterByAccess(
 		).
 		Where("access >= ?", access).
 		Scan(ctx, schemaIDs)
+
+	if err != nil {
+		return err
+	}
+
+	if len(*schemaIDs) == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
 }

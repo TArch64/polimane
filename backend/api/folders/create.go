@@ -11,9 +11,8 @@ import (
 )
 
 type createBody struct {
-	Name        string     `json:"name" validate:"required,min=1,max=255"`
-	SchemaIDs   []model.ID `json:"schemaIds" validate:"dive,required"`
-	OldFolderID *model.ID  `json:"oldFolderId"`
+	addBody
+	Name string `json:"name" validate:"required,min=1,max=255"`
 }
 
 func (c *Controller) apiCreate(ctx *fiber.Ctx) (err error) {
@@ -34,8 +33,9 @@ func (c *Controller) apiCreate(ctx *fiber.Ctx) (err error) {
 		}
 
 		return c.folderSchemas.AddManyTx(requestCtx, tx, &repositoryfolderschemas.AddManyOptions{
-			FolderID:  folder.ID,
-			SchemaIDs: body.SchemaIDs,
+			SchemaIDs:   body.SchemaIDs,
+			FolderID:    folder.ID,
+			OldFolderID: body.OldFolderID,
 		})
 	})
 

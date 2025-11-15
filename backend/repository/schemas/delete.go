@@ -9,7 +9,7 @@ import (
 	"polimane/backend/repository"
 )
 
-func (c *Client) DeleteMany(ctx context.Context, scopes ...repository.Scope) error {
+func (c *Client) Delete(ctx context.Context, scopes ...repository.Scope) error {
 	_, err := gorm.
 		G[model.Schema](c.db).
 		Scopes(scopes...).

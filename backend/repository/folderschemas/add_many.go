@@ -6,11 +6,19 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
+	"polimane/backend/repository"
 )
 
 type AddManyOptions struct {
-	FolderID  model.ID
-	SchemaIDs []model.ID
+	SchemaIDs   []model.ID
+	FolderID    model.ID
+	OldFolderID *model.ID
+}
+
+func (c *Client) AddMany(ctx context.Context, options *AddManyOptions) (err error) {
+	return c.db.Transaction(func(tx *gorm.DB) error {
+		return c.AddManyTx(ctx, tx, options)
+	})
 }
 
 func (c *Client) AddManyTx(ctx context.Context, tx *gorm.DB, options *AddManyOptions) (err error) {
@@ -26,6 +34,12 @@ func (c *Client) AddManyTx(ctx context.Context, tx *gorm.DB, options *AddManyOpt
 		return err
 	}
 
-	// Delete schemas from old folder later
-	return nil
+	if options.OldFolderID == nil {
+		return nil
+	}
+
+	return c.DeleteTx(ctx, tx,
+		FolderIDEq(*options.OldFolderID),
+		repository.SchemaIDsIn(options.SchemaIDs),
+	)
 }

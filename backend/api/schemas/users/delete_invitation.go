@@ -17,7 +17,7 @@ func (c *Controller) apiDeleteInvitation(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	err = c.schemaInvitations.DeleteMany(ctx.Context(),
+	err = c.schemaInvitations.Delete(ctx.Context(),
 		repository.EmailEq(body.Email),
 		repository.SchemaIDsIn(body.IDs),
 	)

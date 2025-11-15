@@ -8,5 +8,5 @@ import (
 )
 
 func (h *Handler) Handle(ctx context.Context, _ *events.Message) error {
-	return h.schemaInvitations.DeleteMany(ctx, repositoryschemainvitations.FilterExpired)
+	return h.schemaInvitations.Delete(ctx, repositoryschemainvitations.FilterExpired)
 }

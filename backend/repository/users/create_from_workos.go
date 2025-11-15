@@ -46,7 +46,7 @@ func (c *Client) CreateFromWorkos(ctx context.Context, workosUser *usermanagemen
 				return err
 			}
 
-			return c.schemaInvitations.DeleteManyTx(ctx, tx, repository.EmailEq(workosUser.Email))
+			return c.schemaInvitations.DeleteTx(ctx, tx, repository.EmailEq(workosUser.Email))
 		})
 	}
 

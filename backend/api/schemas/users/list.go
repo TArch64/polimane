@@ -29,9 +29,6 @@ func (c *Controller) apiList(ctx *fiber.Ctx) (err error) {
 	if err != nil {
 		return err
 	}
-	if len(IDs) == 0 {
-		return fiber.ErrBadRequest
-	}
 
 	var response listResponse
 	eg, egCtx := errgroup.WithContext(ctx.Context())

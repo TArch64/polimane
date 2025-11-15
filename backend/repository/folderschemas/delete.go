@@ -1,4 +1,4 @@
-package userschemas
+package folderschemas
 
 import (
 	"context"
@@ -9,9 +9,9 @@ import (
 	"polimane/backend/repository"
 )
 
-func (c *Client) DeleteMany(ctx context.Context, scopes ...repository.Scope) error {
+func (c *Client) DeleteTx(ctx context.Context, tx *gorm.DB, scopes ...repository.Scope) error {
 	_, err := gorm.
-		G[model.UserSchema](c.db).
+		G[model.FolderSchema](tx).
 		Scopes(scopes...).
 		Delete(ctx)
 
