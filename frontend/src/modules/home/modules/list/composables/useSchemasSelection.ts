@@ -9,12 +9,11 @@ import { useModal } from '@/components/modal';
 import { useConfirm } from '@/components/confirm';
 import { useAsyncAction } from '@/composables';
 import { FolderIcon, PeopleIcon, TrashIcon } from '@/components/icon';
-import { useHomeStore } from '@/modules/home/stores';
+import { type IHomeSelectionState } from '@/modules/home/stores';
 import { useSchemasStore } from '../stores';
 import { FolderAddSchemaModal } from '../components/modals';
 
-export function useSchemasSelection(): void {
-  const homeStore = useHomeStore();
+export function useSchemasSelection(): IHomeSelectionState {
   const schemasStore = useSchemasStore();
   const schemaUsersStore = useSchemaUsersStore();
 
@@ -86,10 +85,10 @@ export function useSchemasSelection(): void {
     ];
   });
 
-  homeStore.setSelection(reactive({
+  return reactive({
     count,
     title,
     actions,
     onClear: schemasStore.clearSelection,
-  }));
+  });
 }

@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
-import { SchemaCreateModal } from '../modals';
+import { SchemaCreateModal } from '@/modules/home/components/modals';
 
 const createModal = useModal(SchemaCreateModal);
 </script>

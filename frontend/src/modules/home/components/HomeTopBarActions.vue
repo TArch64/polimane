@@ -5,7 +5,6 @@
     class="home-top-bar__create-schema"
     :prepend-icon="PlusIcon"
     @click="createModal.open()"
-    v-if="schemasStore.hasSchemas"
   >
     Нова Схема
   </Button>
@@ -42,10 +41,8 @@ import { LogOutIcon, PersonFillIcon, PlusIcon, SettingsIcon } from '@/components
 import { Dropdown, DropdownAction, DropdownText } from '@/components/dropdown';
 import { useSessionStore } from '@/stores';
 import { useAsyncAction, useProgressBar } from '@/composables';
-import { useSchemasStore } from '../stores';
 import { SchemaCreateModal } from './modals';
 
-const schemasStore = useSchemasStore();
 const sessionStore = useSessionStore();
 
 const displayName = computed(() => {
