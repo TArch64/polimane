@@ -7,33 +7,29 @@ import (
 
 	"polimane/backend/api/base"
 	repositoryfolders "polimane/backend/repository/folders"
-	repositoryfolderschemas "polimane/backend/repository/folderschemas"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
 
 const folderIDParam = "folderID"
 
 type Controller struct {
-	db            *gorm.DB
-	folders       *repositoryfolders.Client
-	folderSchemas *repositoryfolderschemas.Client
-	userSchemas   *repositoryuserschemas.Client
+	db          *gorm.DB
+	folders     *repositoryfolders.Client
+	userSchemas *repositoryuserschemas.Client
 }
 
 type ProviderOptions struct {
 	fx.In
-	DB            *gorm.DB
-	Folders       *repositoryfolders.Client
-	FolderSchemas *repositoryfolderschemas.Client
-	UserSchemas   *repositoryuserschemas.Client
+	DB          *gorm.DB
+	Folders     *repositoryfolders.Client
+	UserSchemas *repositoryuserschemas.Client
 }
 
 func Provider(options ProviderOptions) base.Controller {
 	return &Controller{
-		db:            options.DB,
-		folders:       options.Folders,
-		folderSchemas: options.FolderSchemas,
-		userSchemas:   options.UserSchemas,
+		db:          options.DB,
+		folders:     options.Folders,
+		userSchemas: options.UserSchemas,
 	}
 }
 

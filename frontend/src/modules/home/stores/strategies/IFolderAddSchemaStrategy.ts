@@ -4,7 +4,6 @@ export interface IFolderAddSchemasInput {
   schemaIds: string[];
   folderId: string | null;
   folderName: string | null;
-  oldFolderId: string | null;
 }
 
 export interface IFolderAddSchemaStrategy {

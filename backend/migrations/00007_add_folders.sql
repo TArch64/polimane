@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS folders
   created_at timestamptz            NOT NULL,
   updated_at timestamptz            NOT NULL,
   name       character varying(255) NOT NULL,
-  user_id uuid NOT NULL,
+  user_id    uuid                   NOT NULL,
   PRIMARY KEY (id),
 
   CONSTRAINT fk_folders_user
@@ -21,31 +21,20 @@ CREATE INDEX IF NOT EXISTS idx_folders_created_at
 CREATE INDEX IF NOT EXISTS idx_folders_user_id
   ON folders (user_id);
 
-CREATE TABLE IF NOT EXISTS folder_schemas
-(
-  folder_id  uuid        NOT NULL,
-  schema_id  uuid        NOT NULL,
-  created_at timestamptz NOT NULL,
-  updated_at timestamptz NOT NULL,
-  PRIMARY KEY (folder_id, schema_id),
-
-  CONSTRAINT fk_folder_schemas_folder
+ALTER TABLE user_schemas
+  ADD COLUMN IF NOT EXISTS folder_id uuid NULL,
+  ADD CONSTRAINT fk_user_schemas_folder
     FOREIGN KEY (folder_id)
       REFERENCES folders (id)
       ON UPDATE NO ACTION
-      ON DELETE CASCADE,
+      ON DELETE SET NULL;
 
-  CONSTRAINT fk_folder_schemas_schema
-    FOREIGN KEY (schema_id)
-      REFERENCES schemas (id)
-      ON UPDATE NO ACTION
-      ON DELETE CASCADE
-);
-
-CREATE INDEX IF NOT EXISTS idx_schemas_created_at
-  ON schemas (created_at);
+CREATE INDEX IF NOT EXISTS idx_user_schemas_folder_id
+  ON user_schemas (folder_id);
 
 -- +goose Down
-DROP TABLE IF EXISTS folder_schemas;
 DROP TABLE IF EXISTS folders;
-DROP INDEX IF EXISTS idx_schemas_created_at;
+
+ALTER TABLE user_schemas
+  DROP CONSTRAINT IF EXISTS fk_user_schemas_folder,
+  DROP COLUMN IF EXISTS folder_id;

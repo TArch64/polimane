@@ -7,7 +7,7 @@ import (
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
-	repositoryfolderschemas "polimane/backend/repository/folderschemas"
+	"polimane/backend/repository"
 )
 
 type createBody struct {
@@ -32,11 +32,10 @@ func (c *Controller) apiCreate(ctx *fiber.Ctx) (err error) {
 			return err
 		}
 
-		return c.folderSchemas.AddManyTx(requestCtx, tx, &repositoryfolderschemas.AddManyOptions{
-			SchemaIDs:   body.SchemaIDs,
-			FolderID:    folder.ID,
-			OldFolderID: body.OldFolderID,
-		})
+		return c.userSchemas.UpdateTx(requestCtx, tx,
+			model.UserSchema{FolderID: &folder.ID},
+			repository.SchemaIDsIn(body.SchemaIDs),
+		)
 	})
 
 	if err != nil {

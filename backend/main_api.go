@@ -13,7 +13,6 @@ import (
 	apiusers "polimane/backend/api/users"
 	"polimane/backend/env"
 	repositoryfolders "polimane/backend/repository/folders"
-	repositoryfolderschemas "polimane/backend/repository/folderschemas"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryusers "polimane/backend/repository/users"
@@ -64,7 +63,6 @@ func main() {
 			repositoryschemas.Provider,
 			repositoryschemainvitations.Provider,
 			repositoryfolders.Provider,
-			repositoryfolderschemas.Provider,
 
 			// api
 			apiauth.MiddlewareProvider,

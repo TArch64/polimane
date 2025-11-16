@@ -71,7 +71,6 @@ const save = useAsyncAction(async () => {
     schemaIds: props.schemaIds,
     folderId: isNewFolder.value ? null : form.folderId,
     folderName: isNewFolder.value ? form.folderName : null,
-    oldFolderId: props.folderId,
   });
 
   modal.close(null);

@@ -6,12 +6,11 @@ import (
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
-	repositoryfolderschemas "polimane/backend/repository/folderschemas"
+	"polimane/backend/repository"
 )
 
 type addBody struct {
-	SchemaIDs   []model.ID `json:"schemaIds" validate:"dive,required"`
-	OldFolderID *model.ID  `json:"oldFolderId"`
+	SchemaIDs []model.ID `json:"schemaIds" validate:"dive,required"`
 }
 
 func (c *Controller) apiAddSchema(ctx *fiber.Ctx) (err error) {
@@ -37,12 +36,10 @@ func (c *Controller) apiAddSchema(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	err = c.folderSchemas.AddMany(requestCtx, &repositoryfolderschemas.AddManyOptions{
-		SchemaIDs:   body.SchemaIDs,
-		FolderID:    folderId,
-		OldFolderID: body.OldFolderID,
-	})
-
+	err = c.userSchemas.Update(requestCtx,
+		model.UserSchema{FolderID: &folderId},
+		repository.SchemaIDsIn(body.SchemaIDs),
+	)
 	if err != nil {
 		return err
 	}

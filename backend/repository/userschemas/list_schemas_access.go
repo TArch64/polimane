@@ -16,7 +16,7 @@ func (c *Client) ListSchemasAccessOut(ctx context.Context, schemaIDs []model.ID,
 		WithContext(ctx).
 		Select(selectExpr).
 		Table("user_schemas").
-		Scopes(IncludeUsersScope).
+		Scopes(IncludeUsersLegacyScope).
 		Where("schema_id IN (?)", schemaIDs).
 		Group(userColumns).
 		Order("created_at").

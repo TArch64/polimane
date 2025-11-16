@@ -4,10 +4,10 @@ import { type HttpBody, useHttpClient } from '@/composables';
 import type { IFolder } from '@/models';
 import type { IFolderAddSchemasInput } from '@/modules/home/stores';
 import { useHomeListStore } from './homeListStore';
+import { useSchemasStore } from './schemasStore';
 
 interface IFolderAddSchemasRequest {
   schemaIds: string[];
-  oldFolderId: string | null;
 }
 
 interface IFolderCreateRequest extends IFolderAddSchemasRequest {
@@ -17,6 +17,7 @@ interface IFolderCreateRequest extends IFolderAddSchemasRequest {
 export const useFoldersStore = defineStore('home/list/folders', () => {
   const http = useHttpClient();
   const listStore = useHomeListStore();
+  const schemasStore = useSchemasStore();
 
   const folders = computed(() => listStore.list.data.folders);
   const hasFolders = computed(() => !!folders.value.length);
@@ -38,7 +39,6 @@ export const useFoldersStore = defineStore('home/list/folders', () => {
   async function addSchemas(input: IFolderAddSchemasInput): Promise<void> {
     const addRequest: IFolderAddSchemasRequest = {
       schemaIds: input.schemaIds,
-      oldFolderId: input.oldFolderId,
     };
 
     input.folderId
@@ -48,6 +48,7 @@ export const useFoldersStore = defineStore('home/list/folders', () => {
     const schemaIdsSet = new Set(input.schemaIds);
     listStore.list.data.total -= input.schemaIds.length;
     listStore.list.data.schemas = listStore.list.data.schemas.filter((schema) => !schemaIdsSet.has(schema.id));
+    schemasStore.clearSelection();
   }
 
   return {

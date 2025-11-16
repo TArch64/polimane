@@ -5,7 +5,7 @@ import (
 
 	"polimane/backend/model"
 	"polimane/backend/repository"
-	repositoryschemas "polimane/backend/repository/schemas"
+	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
 
 type listSchema struct {
@@ -51,10 +51,10 @@ func (c *Controller) querySchemas(ctx *listContext) (err error) {
 			"user_schemas.access",
 		),
 		repository.Paginate(ctx.query.Offset, limit),
-		repository.Order("schemas.created_at DESC"),
+		repository.Order("user_schemas.created_at DESC"),
 	)
 
-	if err = c.schemas.ListOut(ctx, &ctx.res.Schemas, scopes...); err != nil {
+	if err = c.userSchemas.ListOut(ctx, &ctx.res.Schemas, scopes...); err != nil {
 		return err
 	}
 
@@ -66,13 +66,14 @@ func (c *Controller) querySchemas(ctx *listContext) (err error) {
 }
 
 func (c *Controller) countSchemas(ctx *listContext) (err error) {
-	ctx.schemasTotal, err = c.schemas.Count(ctx, c.schemasFilter(ctx)...)
+	ctx.schemasTotal, err = c.userSchemas.Count(ctx, c.schemasFilter(ctx)...)
 	return err
 }
 
 func (c *Controller) schemasFilter(ctx *listContext) []repository.Scope {
 	return []repository.Scope{
-		repositoryschemas.FilterByFolder(ctx.user.ID, nil),
-		repositoryschemas.IncludeUserSchemaScope(ctx.user.ID),
+		repository.UserIDEq(ctx.user.ID),
+		repositoryuserschemas.IncludeSchemasScope,
+		repositoryuserschemas.FolderIDEq(nil),
 	}
 }
