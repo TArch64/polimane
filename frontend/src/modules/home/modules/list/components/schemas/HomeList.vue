@@ -1,5 +1,19 @@
 <template>
-  <div class="schemas-list">
+  <HomeListHeading v-if="foldersStore.hasFolders">
+    Схеми для Бісеру
+
+    <template #action>
+      <Button
+        size="md"
+        variant="secondary"
+        :prepend-icon="PlusIcon"
+      >
+        Додати
+      </Button>
+    </template>
+  </HomeListHeading>
+
+  <div class="home-list__items">
     <CursorSelection
       :list="schemasStore.schemas"
       v-model="schemasStore.selected"
@@ -9,7 +23,7 @@
     </CursorSelection>
   </div>
 
-  <div class="schemas-list-loader" v-visible="listStore.list.isLoading">
+  <div class="home-list__loader" v-visible="listStore.list.isLoading">
     <Spinner />
   </div>
 </template>
@@ -20,11 +34,15 @@ import { useInfinityScroll } from '@/composables';
 import { CursorSelection } from '@/components/selection';
 import Spinner from '@/components/Spinner.vue';
 import { vVisible } from '@/directives';
-import { useHomeListStore, useSchemasStore } from '../../stores';
+import { Button } from '@/components/button';
+import { PlusIcon } from '@/components/icon';
+import { useFoldersStore, useHomeListStore, useSchemasStore } from '../../stores';
 import HomeSchema from './HomeSchema.vue';
+import HomeListHeading from './HomeListHeading.vue';
 
 const listStore = useHomeListStore();
 const schemasStore = useSchemasStore();
+const foldersStore = useFoldersStore();
 
 useInfinityScroll({
   load: listStore.loadNext,
@@ -34,7 +52,7 @@ useInfinityScroll({
 
 <style scoped>
 @layer page {
-  .schemas-list {
+  .home-list__items {
     flex-grow: 1;
     display: grid;
     grid-template-columns: repeat(var(--list-columns), 1fr);
@@ -45,20 +63,20 @@ useInfinityScroll({
     --list-columns: 4;
   }
 
-  .schemas-list-loader {
+  .home-list__loader {
     display: flex;
     justify-content: center;
     padding: 20px 12px;
   }
 
   @media (max-width: 992px) {
-    .schemas-list {
+    .home-list__items {
       --list-columns: 3;
     }
   }
 
   @media (max-width: 768px) {
-    .schemas-list {
+    .home-list__items {
       --list-columns: 2;
     }
   }

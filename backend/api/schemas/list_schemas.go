@@ -40,7 +40,9 @@ func (c *Controller) querySchemas(ctx *listContext) (err error) {
 		return nil
 	}
 
-	err = c.schemas.ListOut(ctx, &ctx.res.Schemas,
+	scopes := c.schemasFilter(ctx)
+
+	scopes = append(scopes,
 		repository.Select(
 			"id",
 			"name",
@@ -48,13 +50,11 @@ func (c *Controller) querySchemas(ctx *listContext) (err error) {
 			"background_color",
 			"user_schemas.access",
 		),
-		repositoryschemas.FilterByFolder(nil),
-		repositoryschemas.IncludeUserSchemaScope(ctx.user.ID),
 		repository.Paginate(ctx.query.Offset, limit),
 		repository.Order("schemas.created_at DESC"),
 	)
 
-	if err != nil {
+	if err = c.schemas.ListOut(ctx, &ctx.res.Schemas, scopes...); err != nil {
 		return err
 	}
 
@@ -66,8 +66,13 @@ func (c *Controller) querySchemas(ctx *listContext) (err error) {
 }
 
 func (c *Controller) countSchemas(ctx *listContext) (err error) {
-	ctx.schemasTotal, err = c.schemas.Count(ctx,
-		repositoryschemas.IncludeUserSchemaScope(ctx.user.ID),
-	)
+	ctx.schemasTotal, err = c.schemas.Count(ctx, c.schemasFilter(ctx)...)
 	return err
+}
+
+func (c *Controller) schemasFilter(ctx *listContext) []repository.Scope {
+	return []repository.Scope{
+		repositoryschemas.FilterByFolder(nil),
+		repositoryschemas.IncludeUserSchemaScope(ctx.user.ID),
+	}
 }
