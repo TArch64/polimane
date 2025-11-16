@@ -72,7 +72,7 @@ func (c *Controller) countSchemas(ctx *listContext) (err error) {
 
 func (c *Controller) schemasFilter(ctx *listContext) []repository.Scope {
 	return []repository.Scope{
-		repositoryschemas.FilterByFolder(nil),
+		repositoryschemas.FilterByFolder(ctx.user.ID, nil),
 		repositoryschemas.IncludeUserSchemaScope(ctx.user.ID),
 	}
 }

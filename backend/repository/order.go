@@ -7,7 +7,7 @@ import (
 )
 
 func Order(orders ...string) Scope {
-	return func(db *gorm.Statement) {
-		db.Order(strings.Join(orders, ", "))
+	return func(stmt *gorm.Statement) {
+		stmt.Order(strings.Join(orders, ", "))
 	}
 }

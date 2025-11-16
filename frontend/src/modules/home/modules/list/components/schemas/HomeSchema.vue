@@ -1,10 +1,9 @@
 <template>
-  <Card
-    interactable
-    ref="cardRef"
-    class="home-schema"
-    :active="isSelected"
-    :binding="cardBinding"
+  <HomeListCard
+    :to="editorRoute"
+    :selected="isSelected"
+    :menu-title="schema.name"
+    :menuActions
   >
     <img
       :src="screenshotUrl"
@@ -19,16 +18,14 @@
     <div class="home-schema__screenshot" v-else />
 
     {{ schema.name }}
-  </Card>
+  </HomeListCard>
 </template>
 
 <script setup lang="ts">
-import { RouterLink, useRouter } from 'vue-router';
 import { computed } from 'vue';
-import { Card } from '@/components/card';
-import { makeBinding } from '@/components/binding';
-import { useContextMenu } from '@/components/contextMenu';
-import { useAccessPermissions, useDomRef } from '@/composables';
+import { type RouteLocationRaw, useRouter } from 'vue-router';
+import type { MaybeContextMenuAction } from '@/components/contextMenu';
+import { useAccessPermissions } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { CopyIcon, EditIcon, FolderIcon, PeopleIcon, TrashIcon } from '@/components/icon';
 import { buildCdnUrl } from '@/helpers/buildCdnUrl';
@@ -42,6 +39,7 @@ import type { ISchema } from '@/models';
 import type { ListSchema } from '@/modules/home/stores';
 import { FolderAddSchemaModal } from '@/modules/home/components/modals';
 import { useSchemasStore } from '../../stores';
+import HomeListCard from './HomeListCard.vue';
 
 const props = defineProps<{
   schema: ListSchema;
@@ -52,8 +50,6 @@ const router = useRouter();
 const schemasStore = useSchemasStore();
 const schemaUsersStore = useSchemaUsersStore();
 
-const cardRef = useDomRef<HTMLElement>();
-
 const isSelected = computed(() => schemasStore.selected.has(props.schema.id));
 const permissions = useAccessPermissions(() => props.schema.access);
 
@@ -61,13 +57,9 @@ const renameModal = useModal(SchemaRenameModal);
 const folderAddModal = useModal(FolderAddSchemaModal);
 const accessEditModal = useModal(SchemaAccessEditModal);
 
-const cardBinding = makeBinding(RouterLink, () => ({
-  draggable: false,
-
-  to: {
-    name: 'schema-editor',
-    params: { schemaId: props.schema.id },
-  },
+const editorRoute = computed((): RouteLocationRaw => ({
+  name: 'schema-editor',
+  params: { schemaId: props.schema.id },
 }));
 
 const screenshotUrl = computed(() => buildCdnUrl(props.schema.screenshotPath));
@@ -79,84 +71,73 @@ const deleteConfirm = useConfirm({
   acceptButton: 'Видалити',
 });
 
-useContextMenu({
-  el: cardRef,
-  title: props.schema.name,
-  control: false,
+const menuActions = computed((): MaybeContextMenuAction[] => [
+  permissions.write && {
+    title: 'Змінити назву',
+    icon: EditIcon,
 
-  actions: [
-    permissions.write && {
-      title: 'Змінити назву',
-      icon: EditIcon,
-
-      onAction() {
-        renameModal.open({
-          schema: props.schema as ISchema,
-          updateSchema: (attrs) => schemasStore.updateSchema(props.schema, attrs),
-        });
-      },
+    onAction() {
+      renameModal.open({
+        schema: props.schema as ISchema,
+        updateSchema: (attrs) => schemasStore.updateSchema(props.schema, attrs),
+      });
     },
+  },
 
-    {
-      title: 'Додати в Директорію',
-      icon: FolderIcon,
+  {
+    title: 'Додати в Директорію',
+    icon: FolderIcon,
 
-      onAction() {
-        folderAddModal.open({
-          schemaIds: [props.schema.id],
-          folderId: null,
-        });
-      },
+    onAction() {
+      folderAddModal.open({
+        schemaIds: [props.schema.id],
+        folderId: null,
+      });
     },
+  },
 
-    {
-      title: 'Зробити Копію',
-      icon: CopyIcon,
+  {
+    title: 'Зробити Копію',
+    icon: CopyIcon,
 
-      async onAction() {
-        const created = await schemasStore.copySchema(props.schema);
+    async onAction() {
+      const created = await schemasStore.copySchema(props.schema);
 
-        await router.push({
-          name: 'schema-editor',
-          params: {
-            schemaId: created.id,
-          },
-        });
-      },
+      await router.push({
+        name: 'schema-editor',
+        params: {
+          schemaId: created.id,
+        },
+      });
     },
+  },
 
-    permissions.admin && {
-      title: 'Редагувати Доступ',
-      icon: PeopleIcon,
+  permissions.admin && {
+    title: 'Редагувати Доступ',
+    icon: PeopleIcon,
 
-      async onAction() {
-        await schemaUsersStore.load([props.schema.id]);
-        accessEditModal.open();
-      },
+    async onAction() {
+      await schemaUsersStore.load([props.schema.id]);
+      accessEditModal.open();
     },
+  },
 
-    permissions.admin && {
-      danger: true,
-      title: 'Видалити Схему',
-      icon: TrashIcon,
+  permissions.admin && {
+    danger: true,
+    title: 'Видалити Схему',
+    icon: TrashIcon,
 
-      async onAction(event) {
-        if (await deleteConfirm.ask({ virtualTarget: event.menuRect })) {
-          await schemasStore.deleteSchema(props.schema);
-        }
-      },
+    async onAction(event) {
+      if (await deleteConfirm.ask({ virtualTarget: event.menuRect })) {
+        await schemasStore.deleteSchema(props.schema);
+      }
     },
-  ],
-});
+  },
+]);
 </script>
 
 <style scoped>
 @layer page {
-  .home-schema {
-    overflow: clip;
-    box-shadow: var(--box-shadow);
-  }
-
   .home-schema__screenshot {
     display: block;
     aspect-ratio: 16 / 9;

@@ -6,10 +6,10 @@ import (
 	"polimane/backend/repository"
 )
 
-func FilterAvailable(db *gorm.Statement) {
-	repository.AddWhere(db, gorm.Expr("expires_at > now()"))
+func FilterAvailable(stmt *gorm.Statement) {
+	repository.AddWhere(stmt, gorm.Expr("expires_at > now()"))
 }
 
-func FilterExpired(db *gorm.Statement) {
-	repository.AddWhere(db, gorm.Expr("expires_at <= now()"))
+func FilterExpired(stmt *gorm.Statement) {
+	repository.AddWhere(stmt, gorm.Expr("expires_at <= now()"))
 }

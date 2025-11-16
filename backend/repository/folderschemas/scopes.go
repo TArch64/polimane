@@ -8,7 +8,7 @@ import (
 )
 
 func FolderIDEq(id model.ID) repository.Scope {
-	return func(db *gorm.Statement) {
-		repository.AddWhere(db, gorm.Expr("folder_id = ?", id))
+	return func(stmt *gorm.Statement) {
+		repository.AddWhere(stmt, gorm.Expr("folder_id = ?", id))
 	}
 }

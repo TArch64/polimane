@@ -1,7 +1,7 @@
 <template>
   <Modal
-    title="Створення Схеми"
-    save-button="Створити"
+    title="Нова Схема"
+    save-button="Додати"
     :loading="create.isActive"
     @save="create"
   >

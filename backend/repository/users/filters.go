@@ -7,7 +7,7 @@ import (
 )
 
 func WorkosIDEq(id string) repository.Scope {
-	return func(db *gorm.Statement) {
-		repository.AddWhere(db, gorm.Expr("workos_id = ?", id))
+	return func(stmt *gorm.Statement) {
+		repository.AddWhere(stmt, gorm.Expr("workos_id = ?", id))
 	}
 }

@@ -8,18 +8,25 @@ import (
 )
 
 func IncludeUserSchemaScope(userID model.ID) repository.Scope {
-	return func(db *gorm.Statement) {
-		repository.AddJoin(db, "JOIN user_schemas ON user_schemas.schema_id = schemas.id AND user_schemas.user_id = ?", userID)
+	return func(stmt *gorm.Statement) {
+		repository.AddJoin(stmt, "JOIN user_schemas ON user_schemas.schema_id = schemas.id AND user_schemas.user_id = ?", userID)
 	}
 }
 
-func FilterByFolder(id *model.ID) repository.Scope {
-	if id == nil {
-		return func(db *gorm.Statement) {
-			repository.AddJoin(db, "LEFT JOIN folder_schemas ON schemas.id = folder_schemas.schema_id")
-			repository.AddWhere(db, gorm.Expr("folder_schemas.schema_id IS NULL"))
+func FilterByFolder(userID model.ID, folderID *model.ID) repository.Scope {
+	if folderID == nil {
+		return func(stmt *gorm.Statement) {
+			subquery := gorm.
+				G[model.FolderSchema](stmt.DB).
+				Select("1").
+				Scopes(func(stmt *gorm.Statement) {
+					repository.AddJoin(stmt, "JOIN folders ON folder_schemas.folder_id = folders.id AND folders.user_id = ?", userID)
+				}).
+				Where("folder_schemas.schema_id = schemas.id")
+
+			repository.AddWhere(stmt, gorm.Expr("NOT EXISTS (?)", subquery))
 		}
 	} else {
-		return func(db *gorm.Statement) {}
+		return func(stmt *gorm.Statement) {}
 	}
 }

@@ -20,18 +20,13 @@ const slots = defineSlots<{
 <style scoped>
 @layer page {
   .home-list-heading {
-    padding-left: 16px;
-    padding-right: 8px;
-    margin-bottom: 8px;
+    padding: 8px 8px 8px 16px;
+    margin-top: 12px;
     font-weight: 450;
     font-size: var(--font-lg);
     color: var(--color-text-2);
     display: flex;
     align-items: center;
-
-    &:first-child {
-      margin-top: 20px;
-    }
   }
 
   .home-list-heading__action {
