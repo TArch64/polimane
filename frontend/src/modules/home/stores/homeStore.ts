@@ -18,25 +18,30 @@ export interface IHomeSelectionState {
   onClear: () => void;
 }
 
-export interface IHomeStrategies {
+export interface IHomeRouteConfig {
+  title: string;
+  selection: IHomeSelectionState;
   createSchema: ISchemaCreateStrategy;
   addSchemaToFolder: IFolderAddSchemaStrategy;
 }
 
 export const useHomeStore = defineStore('home', () => {
-  const selection = ref<IHomeSelectionState | null>(null);
-  const setSelection = (state: IHomeSelectionState | null) => selection.value = state;
+  const routeConfig = ref<Partial<IHomeRouteConfig> | undefined>(undefined);
 
-  const strategies = ref<IHomeStrategies | null>(null);
-  const setStrategies = (value: IHomeStrategies | null) => strategies.value = value;
-  const createSchema = computed(() => strategies.value?.createSchema || null);
-  const addSchemaToFolder = computed(() => strategies.value?.addSchemaToFolder || null);
+  function setRouteConfig(config: Partial<IHomeRouteConfig> | undefined): void {
+    routeConfig.value = config;
+  }
+
+  const title = computed(() => routeConfig.value?.title || '');
+  const selection = computed(() => routeConfig.value?.selection);
+  const createSchema = computed(() => routeConfig.value?.createSchema);
+  const addSchemaToFolder = computed(() => routeConfig.value?.addSchemaToFolder);
 
   return {
+    setRouteConfig,
+    title,
     selection,
     createSchema,
     addSchemaToFolder,
-    setSelection,
-    setStrategies,
   };
 });

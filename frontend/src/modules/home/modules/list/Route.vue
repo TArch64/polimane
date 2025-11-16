@@ -20,9 +20,9 @@ const homeStore = useHomeStore();
 const schemasStore = useSchemasStore();
 const foldersStore = useFoldersStore();
 
-homeStore.setSelection(useSchemasSelection());
+homeStore.setRouteConfig({
+  selection: useSchemasSelection(),
 
-homeStore.setStrategies({
   createSchema: {
     do: schemasStore.createSchema,
   },

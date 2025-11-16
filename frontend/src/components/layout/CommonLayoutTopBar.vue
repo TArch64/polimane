@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Slot } from 'vue';
+import { computed, type Slot } from 'vue';
 import { type RouteLocationRaw, useRoute } from 'vue-router';
 import { ArrowBackIcon, LogoIcon } from '../icon';
 import { Button } from '../button';
@@ -40,7 +40,7 @@ defineSlots<{
 
 const route = useRoute();
 const homeRoute: RouteLocationRaw = { name: 'home' };
-const isHomeRoute = route.name === homeRoute.name;
+const isHomeRoute = computed(() => route.name === homeRoute.name);
 </script>
 
 <style scoped>

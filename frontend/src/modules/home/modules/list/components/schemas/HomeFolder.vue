@@ -1,6 +1,6 @@
 <template>
   <HomeListCard
-    to="/"
+    :to="folderRoute"
     :menu-title="folder.name"
     :menu-actions="[]"
   >
@@ -15,12 +15,19 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import type { RouteLocationRaw } from 'vue-router';
 import type { IListFolder } from '@/modules/home/stores';
 import { DEFAULT_SCHEMA_BACKGROUND } from '@/config';
 import HomeListCard from './HomeListCard.vue';
 import HomeListScreenshot from './HomeListScreenshot.vue';
 
-defineProps<{
+const props = defineProps<{
   folder: IListFolder;
 }>();
+
+const folderRoute = computed((): RouteLocationRaw => ({
+  name: 'home-folder',
+  params: { folderId: props.folder.id },
+}));
 </script>

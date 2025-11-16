@@ -2,38 +2,40 @@
   <Button
     mobile-icon-only
     variant="primary"
-    class="home-top-bar__create-schema"
+    :class="{ 'home-top-bar__create-schema': isHomeRoute }"
     :prepend-icon="PlusIcon"
     @click="createModal.open()"
   >
     Нова Схема
   </Button>
 
-  <Dropdown>
-    <template #activator="{ activatorStyle, open }">
-      <Button icon title="Профіль" :style="activatorStyle" @click="open">
-        <PersonFillIcon />
-      </Button>
-    </template>
+  <template v-if="isHomeRoute">
+    <Dropdown>
+      <template #activator="{ activatorStyle, open }">
+        <Button icon title="Профіль" :style="activatorStyle" @click="open">
+          <PersonFillIcon />
+        </Button>
+      </template>
 
-    <DropdownText class="home-top-bar__horizontal-divider">
-      {{ displayName }}
-    </DropdownText>
+      <DropdownText class="home-top-bar__horizontal-divider">
+        {{ displayName }}
+      </DropdownText>
 
-    <DropdownAction
-      title="Log out"
-      :icon="LogOutIcon"
-      @click="logout"
-    />
-  </Dropdown>
+      <DropdownAction
+        title="Log out"
+        :icon="LogOutIcon"
+        @click="logout"
+      />
+    </Dropdown>
 
-  <Button icon title="Налаштування" :to="settingsProfileRoute">
-    <SettingsIcon />
-  </Button>
+    <Button icon title="Налаштування" :to="settingsProfileRoute">
+      <SettingsIcon />
+    </Button>
+  </template>
 </template>
 
 <script setup lang="ts">
-import type { RouteLocationRaw } from 'vue-router';
+import { type RouteLocationRaw, useRoute } from 'vue-router';
 import { computed } from 'vue';
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
@@ -45,6 +47,8 @@ import { SchemaCreateModal } from './modals';
 
 const sessionStore = useSessionStore();
 
+const route = useRoute();
+
 const displayName = computed(() => {
   const { firstName, lastName, email } = sessionStore.user;
 
@@ -55,8 +59,11 @@ const displayName = computed(() => {
   return email;
 });
 
+const homeRoute: RouteLocationRaw = { name: 'home' };
 const settingsProfileRoute: RouteLocationRaw = { name: 'settings-profile' };
 const createModal = useModal(SchemaCreateModal);
+
+const isHomeRoute = computed(() => route.name === homeRoute.name);
 
 const logout = useAsyncAction(sessionStore.logout);
 useProgressBar(logout);

@@ -1,5 +1,6 @@
 <template>
   <CommonLayout
+    :title="homeStore.title"
     :selected="homeStore.selection?.count"
     :selected-title="homeStore.selection?.title"
     :selected-actions="homeStore.selection?.actions"
@@ -17,6 +18,10 @@
 import { CommonLayout } from '@/components/layout';
 import { useHomeStore } from './stores';
 import { HomeTopBarActions } from './components';
+
+defineProps<{
+  folderId?: string; // used in child routes
+}>();
 
 const homeStore = useHomeStore();
 </script>
