@@ -2,19 +2,9 @@
   <template v-if="foldersStore.hasFolders">
     <HomeListHeading>
       Директорії
-
-      <template #action>
-        <Button
-          size="md"
-          variant="secondary"
-          :prepend-icon="PlusIcon"
-        >
-          Додати
-        </Button>
-      </template>
     </HomeListHeading>
 
-    <div class="home-list__items">
+    <div class="home-list__items home-list__folders">
       <HomeFolder
         v-for="folder of foldersStore.folders"
         :key="folder.id"
@@ -24,17 +14,6 @@
 
     <HomeListHeading>
       Схеми для Бісеру
-
-      <template #action>
-        <Button
-          size="md"
-          variant="secondary"
-          :prepend-icon="PlusIcon"
-          @click="createSchemaModal.open()"
-        >
-          Додати
-        </Button>
-      </template>
     </HomeListHeading>
   </template>
 
@@ -59,10 +38,6 @@ import { useInfinityScroll } from '@/composables';
 import { CursorSelection } from '@/components/selection';
 import Spinner from '@/components/Spinner.vue';
 import { vVisible } from '@/directives';
-import { Button } from '@/components/button';
-import { PlusIcon } from '@/components/icon';
-import { useModal } from '@/components/modal';
-import { SchemaCreateModal } from '@/modules/home/components/modals';
 import { useFoldersStore, useHomeListStore, useSchemasStore } from '../../stores';
 import HomeSchema from './HomeSchema.vue';
 import HomeFolder from './HomeFolder.vue';
@@ -71,8 +46,6 @@ import HomeListHeading from './HomeListHeading.vue';
 const listStore = useHomeListStore();
 const schemasStore = useSchemasStore();
 const foldersStore = useFoldersStore();
-
-const createSchemaModal = useModal(SchemaCreateModal);
 
 useInfinityScroll({
   load: listStore.loadNext,
@@ -91,6 +64,10 @@ useInfinityScroll({
     gap: 20px;
     padding: 12px;
     --list-columns: 4;
+  }
+
+  .home-list__folders {
+    margin-bottom: 24px;
   }
 
   .home-list__loader {

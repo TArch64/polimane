@@ -1,13 +1,12 @@
 import { defineStore } from 'pinia';
 import { computed } from 'vue';
-import type { IFolder } from '@/models';
 import { useAsyncData, useHttpClient } from '@/composables';
-import type { ListSchema } from '@/modules/home/stores';
+import type { IListFolder, ListSchema } from '@/modules/home/stores';
 
 const PAGINATION_PAGE = 100;
 
 interface IListResponse {
-  folders: IFolder[];
+  folders: IListFolder[];
   schemas: ListSchema[];
   total: number;
 }

@@ -5,17 +5,11 @@
     :menu-title="schema.name"
     :menuActions
   >
-    <img
-      :src="screenshotUrl"
+    <HomeListScreenshot
+      :path="schema.screenshotPath"
       :alt="`Скріншот схеми ${schema.name}`"
-      draggable="false"
-      decoding="async"
-      loading="lazy"
-      class="home-schema__screenshot"
-      v-if="screenshotUrl"
-    >
-
-    <div class="home-schema__screenshot" v-else />
+      :background-color="schema.backgroundColor"
+    />
 
     {{ schema.name }}
   </HomeListCard>
@@ -28,7 +22,6 @@ import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { useAccessPermissions } from '@/composables';
 import { useConfirm } from '@/components/confirm';
 import { CopyIcon, EditIcon, FolderIcon, PeopleIcon, TrashIcon } from '@/components/icon';
-import { buildCdnUrl } from '@/helpers/buildCdnUrl';
 import { useModal } from '@/components/modal';
 import { SchemaRenameModal } from '@/modules/schemas/shared/modals/rename';
 import {
@@ -40,6 +33,7 @@ import type { ListSchema } from '@/modules/home/stores';
 import { FolderAddSchemaModal } from '@/modules/home/components/modals';
 import { useSchemasStore } from '../../stores';
 import HomeListCard from './HomeListCard.vue';
+import HomeListScreenshot from './HomeListScreenshot.vue';
 
 const props = defineProps<{
   schema: ListSchema;
@@ -61,8 +55,6 @@ const editorRoute = computed((): RouteLocationRaw => ({
   name: 'schema-editor',
   params: { schemaId: props.schema.id },
 }));
-
-const screenshotUrl = computed(() => buildCdnUrl(props.schema.screenshotPath));
 
 const deleteConfirm = useConfirm({
   danger: true,
@@ -135,18 +127,3 @@ const menuActions = computed((): MaybeContextMenuAction[] => [
   },
 ]);
 </script>
-
-<style scoped>
-@layer page {
-  .home-schema__screenshot {
-    display: block;
-    aspect-ratio: 16 / 9;
-    object-fit: contain;
-    object-position: center;
-    border-bottom: var(--divider);
-    margin: calc(0px - var(--card-padding-top)) calc(0px - var(--card-padding-right)) 8px calc(0px - var(--card-padding-left));
-    width: calc(100% + var(--card-padding-left) + var(--card-padding-right));
-    background-color: v-bind("schema.backgroundColor");
-  }
-}
-</style>

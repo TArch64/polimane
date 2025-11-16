@@ -1,10 +1,15 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
-import type { ISchema } from '@/models';
+import type { IFolder, ISchema } from '@/models';
 import type { IFolderAddSchemaStrategy, ISchemaCreateStrategy } from './strategies';
 
-export type ListSchema = Omit<ISchema, 'beads' | 'size'>;
+export type ListSchema = Omit<ISchema, 'beads' | 'size' | 'screenshotedAt'>;
+
+export interface IListFolder extends IFolder {
+  backgroundColor: string | null;
+  screenshotPath: string | null;
+}
 
 export interface IHomeSelectionState {
   count: number;

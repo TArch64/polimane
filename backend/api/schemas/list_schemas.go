@@ -13,8 +13,10 @@ type listSchema struct {
 	Name            string            `json:"name"`
 	Access          model.AccessLevel `json:"access"`
 	BackgroundColor string            `json:"backgroundColor"`
-	ScreenshotedAt  *time.Time        `json:"screenshotedAt"`
-	ScreenshotPath  *string           `json:"screenshotPath"`
+	ScreenshotedAt  *time.Time        `json:"-"`
+
+	// Computed
+	ScreenshotPath *string `json:"screenshotPath"`
 }
 
 func newListSchema(schema *model.Schema, access model.AccessLevel) *listSchema {
@@ -73,7 +75,7 @@ func (c *Controller) countSchemas(ctx *listContext) (err error) {
 func (c *Controller) schemasFilter(ctx *listContext) []repository.Scope {
 	return []repository.Scope{
 		repository.UserIDEq(ctx.user.ID),
-		repositoryuserschemas.IncludeSchemasScope,
+		repositoryuserschemas.IncludeSchemasScope(),
 		repositoryuserschemas.FolderIDEq(nil),
 	}
 }

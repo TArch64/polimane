@@ -1,8 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed } from 'vue';
 import { type HttpBody, useHttpClient } from '@/composables';
-import type { IFolder } from '@/models';
-import type { IFolderAddSchemasInput } from '@/modules/home/stores';
+import type { IFolderAddSchemasInput, IListFolder } from '@/modules/home/stores';
 import { useHomeListStore } from './homeListStore';
 import { useSchemasStore } from './schemasStore';
 
@@ -23,7 +22,7 @@ export const useFoldersStore = defineStore('home/list/folders', () => {
   const hasFolders = computed(() => !!folders.value.length);
 
   async function addSchemasToNewFolder(name: string, addRequest: IFolderAddSchemasRequest): Promise<void> {
-    const folder = await http.post<IFolder, IFolderCreateRequest>('/folders', {
+    const folder = await http.post<IListFolder, IFolderCreateRequest>('/folders', {
       name,
       ...addRequest,
     });

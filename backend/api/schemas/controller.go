@@ -1,10 +1,6 @@
 package schemas
 
 import (
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/gofiber/fiber/v2"
-	"go.uber.org/fx"
-
 	"polimane/backend/api/base"
 	"polimane/backend/api/schemas/users"
 	repositoryfolders "polimane/backend/repository/folders"
@@ -13,6 +9,10 @@ import (
 	"polimane/backend/services/awssqs"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/views"
+
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/gofiber/fiber/v2"
+	"go.uber.org/fx"
 )
 
 const schemaIDParam = "schemaID"
