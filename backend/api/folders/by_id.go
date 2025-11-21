@@ -14,8 +14,8 @@ type folderDetails struct {
 	Name string   `json:"name"`
 }
 
-func (c *Controller) apiById(ctx *fiber.Ctx) error {
-	folderId, err := base.GetParamID(ctx, folderIDParam)
+func (c *Controller) apiByID(ctx *fiber.Ctx) error {
+	folderID, err := base.GetParamID(ctx, folderIDParam)
 	if err != nil {
 		return err
 	}
@@ -25,7 +25,7 @@ func (c *Controller) apiById(ctx *fiber.Ctx) error {
 
 	err = c.folders.GetOut(ctx.Context(), &folder,
 		repository.Select("id", "name"),
-		repository.IDEq(folderId),
+		repository.IDEq(folderID),
 		repository.UserIDEq(user.ID),
 	)
 

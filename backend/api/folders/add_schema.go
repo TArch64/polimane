@@ -19,14 +19,14 @@ func (c *Controller) apiAddSchema(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	folderId, err := base.GetParamID(ctx, folderIDParam)
+	folderID, err := base.GetParamID(ctx, folderIDParam)
 	if err != nil {
 		return err
 	}
 
 	user := auth.GetSessionUser(ctx)
 	requestCtx := ctx.Context()
-	err = c.folders.HasAccess(requestCtx, user.ID, folderId)
+	err = c.folders.HasAccess(requestCtx, user.ID, folderID)
 	if err != nil {
 		return err
 	}
@@ -37,7 +37,7 @@ func (c *Controller) apiAddSchema(ctx *fiber.Ctx) (err error) {
 	}
 
 	err = c.userSchemas.Update(requestCtx,
-		model.UserSchema{FolderID: &folderId},
+		model.UserSchema{FolderID: &folderID},
 		repository.SchemaIDsIn(body.SchemaIDs),
 	)
 	if err != nil {

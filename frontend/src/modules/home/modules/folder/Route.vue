@@ -10,7 +10,7 @@ import { definePreload } from '@/router/define';
 import { lazyDestroyStore } from '@/helpers';
 import { useFolderStore } from './stores';
 
-const props = defineProps<{
+defineProps<{
   folderId: string;
 }>();
 
