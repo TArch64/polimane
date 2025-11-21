@@ -1,9 +1,5 @@
 <template>
   <p>
-    {{ folderId }}
-  </p>
-
-  <p>
     {{ schemasStore.schemas }}
   </p>
 </template>

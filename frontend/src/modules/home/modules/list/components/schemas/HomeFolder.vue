@@ -19,8 +19,7 @@ import { computed } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
 import type { IListFolder } from '@/modules/home/stores';
 import { DEFAULT_SCHEMA_BACKGROUND } from '@/config';
-import HomeListCard from './HomeListCard.vue';
-import HomeListScreenshot from './HomeListScreenshot.vue';
+import { HomeListCard, HomeListScreenshot } from '@/modules/home/components';
 
 const props = defineProps<{
   folder: IListFolder;

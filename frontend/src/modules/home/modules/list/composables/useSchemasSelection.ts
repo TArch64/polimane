@@ -50,7 +50,7 @@ export function useSchemasSelection(): IHomeSelectionState {
 
     return [
       {
-        title: 'Додати в Директорію',
+        title: 'Перемістити в Директорію',
         icon: FolderIcon,
 
         onAction() {

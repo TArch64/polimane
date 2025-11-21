@@ -29,9 +29,9 @@ import {
   useSchemaUsersStore,
 } from '@/modules/schemas/shared/modals/accessEdit';
 import type { ISchema } from '@/models';
-import type { ListSchema } from '@/modules/home/stores';
-import { FolderAddSchemaModal } from '@/modules/home/components/modals';
-import { useSchemasStore } from '../../stores';
+import { useSchemasStore } from '@/modules/home/modules/list/stores';
+import type { ListSchema } from '../../stores';
+import { FolderAddSchemaModal } from '../modals';
 import HomeListCard from './HomeListCard.vue';
 import HomeListScreenshot from './HomeListScreenshot.vue';
 
@@ -77,7 +77,7 @@ const menuActions = computed((): MaybeContextMenuAction[] => [
   },
 
   {
-    title: 'Додати в Директорію',
+    title: 'Перемістити в Директорію',
     icon: FolderIcon,
 
     onAction() {

@@ -1,6 +1,6 @@
 <template>
   <Modal
-    title="Додати в директорію"
+    title="Перемістити в директорію"
     :loading="save.isActive"
     @save="save"
   >
