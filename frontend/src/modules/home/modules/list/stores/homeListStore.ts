@@ -20,7 +20,7 @@ export const useHomeListStore = defineStore('home/list', () => {
   const http = useHttpClient();
 
   const list = useAsyncData({
-    loader: async (current): Promise<IListResponse> => {
+    async loader(current): Promise<IListResponse> {
       const response = await http.get<IListResponse, ListRequestParams>('/schemas', {
         limit: PAGINATION_PAGE,
         offset: current.folders.length + current.schemas.length,

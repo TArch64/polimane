@@ -76,6 +76,6 @@ func (c *Controller) schemasFilter(ctx *listContext) []repository.Scope {
 	return []repository.Scope{
 		repository.UserIDEq(ctx.user.ID),
 		repositoryuserschemas.IncludeSchemasScope(),
-		repositoryuserschemas.FolderIDEq(nil),
+		repositoryuserschemas.FolderIDEq(ctx.query.FolderID()),
 	}
 }

@@ -12,12 +12,21 @@ import (
 )
 
 type listQuery struct {
-	Offset uint16 `query:"offset" validate:"gte=0,lte=65535"`
-	Limit  uint8  `query:"limit" validate:"gte=1,lte=100"`
+	FolderIDStr *string `query:"folder" validate:"omitempty,uuid"`
+	Offset      uint16  `query:"offset" validate:"gte=0,lte=65535"`
+	Limit       uint8   `query:"limit" validate:"gte=1,lte=100"`
+}
+
+func (l *listQuery) FolderID() *model.ID {
+	if l.FolderIDStr == nil {
+		return nil
+	}
+	id := model.MustStringToID(*l.FolderIDStr)
+	return &id
 }
 
 type listResponse struct {
-	Folders []*listFolder `json:"folders"`
+	Folders []*listFolder `json:"folders,omitempty"`
 	Schemas []*listSchema `json:"schemas"`
 	Total   int64         `json:"total"`
 }
@@ -51,16 +60,20 @@ func (c *Controller) apiList(ctx *fiber.Ctx) (err error) {
 	}
 
 	eg.Go(func() (err error) {
-		if err = c.queryFolders(listCtx); err != nil {
-			return err
+		if query.FolderIDStr == nil {
+			if err = c.queryFolders(listCtx); err != nil {
+				return err
+			}
 		}
 
 		return c.querySchemas(listCtx)
 	})
 
-	eg.Go(func() error {
-		return c.countFolders(listCtx)
-	})
+	if query.FolderIDStr == nil {
+		eg.Go(func() error {
+			return c.countFolders(listCtx)
+		})
+	}
 
 	eg.Go(func() error {
 		return c.countSchemas(listCtx)

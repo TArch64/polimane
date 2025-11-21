@@ -25,14 +25,13 @@ func IncludeSchemasScope(conditions ...clause.Expr) repository.Scope {
 }
 
 func FolderIDEq(id *model.ID) repository.Scope {
-	var expr clause.Expr
-	if id == nil {
-		expr = gorm.Expr("folder_id IS NULL")
-	} else {
-		expr = gorm.Expr("folder_id = ?", *id)
-	}
-
 	return func(stmt *gorm.Statement) {
+		var expr clause.Expr
+		if id == nil {
+			expr = gorm.Expr("folder_id IS NULL")
+		} else {
+			expr = gorm.Expr("folder_id = ?", *id)
+		}
 		repository.AddWhere(stmt, expr)
 	}
 }
