@@ -1,8 +1,8 @@
 <template>
   <CommonLayout
     :title="homeStore.title"
-    :selected="homeStore.selection?.ids.size"
-    :selected-title="homeStore.selection?.title"
+    :selected="selectionCount"
+    :selected-title="selectionTitle"
     :selected-actions="homeStore.selection?.actions"
     @clear-selection="homeStore.selection?.onClear()"
   >
@@ -15,6 +15,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { CommonLayout } from '@/components/layout';
 import { useHomeStore } from './stores';
 import { HomeTopBarActions } from './components';
@@ -24,4 +25,7 @@ defineProps<{
 }>();
 
 const homeStore = useHomeStore();
+
+const selectionCount = computed(() => homeStore.selection?.ids.size ?? 0);
+const selectionTitle = computed(() => `Обрано ${selectionCount.value} схем`);
 </script>

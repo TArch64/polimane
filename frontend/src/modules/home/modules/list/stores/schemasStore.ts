@@ -3,18 +3,14 @@ import { computed, ref, type Ref } from 'vue';
 import { type HttpBody, type IOptimisticOptions, useHttpClient } from '@/composables';
 import type { SchemaUpdate } from '@/models';
 import { AccessLevel } from '@/enums';
-import type { ListSchema } from '@/modules/home/stores';
+import type {
+  IDeleteManySchemasRequest,
+  ISchemaCreateRequest,
+  ListSchema,
+} from '@/modules/home/stores';
 import { useHomeListStore } from './homeListStore';
 
 const PAGINATION_PAGE = 100;
-
-export interface ICreateSchemaRequest {
-  name: string;
-}
-
-interface IDeleteManySchemasBody {
-  ids: string[];
-}
 
 export const useSchemasStore = defineStore('schemas/list/schemas', () => {
   const http = useHttpClient();
@@ -26,8 +22,8 @@ export const useSchemasStore = defineStore('schemas/list/schemas', () => {
   const selected: Ref<Set<string>> = ref(new Set());
   const clearSelection = () => selected.value = new Set();
 
-  async function createSchema(input: ICreateSchemaRequest): Promise<ListSchema> {
-    const item = await http.post<ListSchema, ICreateSchemaRequest>('/schemas', input);
+  async function createSchema(input: ISchemaCreateRequest): Promise<ListSchema> {
+    const item = await http.post<ListSchema, ISchemaCreateRequest>('/schemas', input);
     listStore.list.data.total++;
     return item;
   }
@@ -55,7 +51,7 @@ export const useSchemasStore = defineStore('schemas/list/schemas', () => {
     }), optimisticOptions);
 
     await listStore.list.executeOptimisticUpdate(async () => {
-      await http.delete<HttpBody, IDeleteManySchemasBody>(['/schemas', 'delete-many'], { ids });
+      await http.delete<HttpBody, IDeleteManySchemasRequest>(['/schemas', 'delete-many'], { ids });
     }, optimisticOptions);
 
     if (listStore.canLoadNext && schemas.value.length < PAGINATION_PAGE) {

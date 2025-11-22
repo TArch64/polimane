@@ -9,6 +9,7 @@ import { definePreload } from '@/router/define';
 import { lazyDestroyStore } from '@/helpers';
 import { useFolderSchemasStore, useFolderStore } from './stores';
 import { FolderEmpty, FolderList } from './components';
+import { useSchemasSelection } from './composables';
 
 defineProps<{
   folderId: string;
@@ -39,5 +40,28 @@ const schemasStore = useFolderSchemasStore();
 
 homeStore.setRouteConfig({
   title: folderStore.folder.name,
+  selection: useSchemasSelection(),
+
+  createSchema: {
+    do: schemasStore.createSchema,
+  },
+
+  updateSchema: {
+    do: schemasStore.updateSchema,
+  },
+
+  copySchema: {
+    do: schemasStore.copySchema,
+  },
+
+  deleteSchema: {
+    do: schemasStore.deleteSchema,
+    doMany: schemasStore.deleteMany,
+  },
+
+  // addSchemaToFolder: {
+  //   getFolders: () => foldersStore.folders,
+  //   do: foldersStore.addSchemas,
+  // },
 });
 </script>

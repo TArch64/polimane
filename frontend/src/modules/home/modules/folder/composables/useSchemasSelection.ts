@@ -7,10 +7,10 @@ import {
   useSchemaSelectionDelete,
   useSchemaSelectionEditAccess,
 } from '@/modules/home/composables';
-import { useSchemasStore } from '../stores';
+import { useFolderSchemasStore } from '../stores';
 
 export function useSchemasSelection(): ISchemaSelectionStrategy {
-  const schemasStore = useSchemasStore();
+  const schemasStore = useFolderSchemasStore();
 
   const allActionIds = computed(() => [...schemasStore.selected]);
 

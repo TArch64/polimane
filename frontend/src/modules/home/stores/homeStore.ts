@@ -1,12 +1,12 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
-import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import type { IFolder, ISchema } from '@/models';
 import type {
   IFolderAddSchemaStrategy,
   ISchemaCopyStrategy,
   ISchemaCreateStrategy,
   ISchemaDeleteStrategy,
+  ISchemaSelectionStrategy,
   ISchemaUpdateStrategy,
 } from './strategies';
 
@@ -17,16 +17,9 @@ export interface IListFolder extends IFolder {
   screenshotPath: string | null;
 }
 
-export interface IHomeSelectionState {
-  title: string;
-  ids: Set<string>;
-  actions: MaybeContextMenuAction[];
-  onClear: () => void;
-}
-
 export interface IHomeRouteConfig {
   title: string;
-  selection: IHomeSelectionState;
+  selection: ISchemaSelectionStrategy;
   createSchema: ISchemaCreateStrategy;
   updateSchema: ISchemaUpdateStrategy;
   copySchema: ISchemaCopyStrategy;

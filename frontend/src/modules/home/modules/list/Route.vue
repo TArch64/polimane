@@ -37,6 +37,7 @@ homeStore.setRouteConfig({
 
   deleteSchema: {
     do: schemasStore.deleteSchema,
+    doMany: schemasStore.deleteMany,
   },
 
   addSchemaToFolder: {

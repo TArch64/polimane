@@ -1,10 +1,20 @@
 <template>
+  <HomeGridList
+    selectable
+    :list="schemasStore.schemas"
+    v-model:selected="schemasStore.selected"
+    v-slot="{ item, itemRef }"
+  >
+    <HomeListSchema :ref="itemRef" :schema="item" />
+  </HomeGridList>
 
+  <HomeListLoader :visible="schemasStore.isLoading" />
 </template>
 
 <script setup lang="ts">
 import { toRef } from 'vue';
 import { useInfinityScroll } from '@/composables';
+import { HomeGridList, HomeListLoader, HomeListSchema } from '@/modules/home/components';
 import { useFolderSchemasStore } from '../stores';
 
 const schemasStore = useFolderSchemasStore();
