@@ -26,17 +26,13 @@
     <HomeListSchema :ref="itemRef" :schema="item" />
   </HomeGridList>
 
-  <div class="home-list__loader" v-visible="listStore.list.isLoading">
-    <Spinner />
-  </div>
+  <HomeListLoader :visible="listStore.list.isLoading" />
 </template>
 
 <script setup lang="ts">
 import { toRef } from 'vue';
 import { useInfinityScroll } from '@/composables';
-import Spinner from '@/components/Spinner.vue';
-import { vVisible } from '@/directives';
-import { HomeGridList, HomeListSchema } from '@/modules/home/components';
+import { HomeGridList, HomeListLoader, HomeListSchema } from '@/modules/home/components';
 import { useFoldersStore, useHomeListStore, useSchemasStore } from '../../stores';
 import HomeFolder from './HomeFolder.vue';
 import HomeListHeading from './HomeListHeading.vue';
@@ -55,12 +51,6 @@ useInfinityScroll({
 @layer page {
   .home-list__folders {
     margin-bottom: 24px;
-  }
-
-  .home-list__loader {
-    display: flex;
-    justify-content: center;
-    padding: 20px 12px;
   }
 }
 </style>
