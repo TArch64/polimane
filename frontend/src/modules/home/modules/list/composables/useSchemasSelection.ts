@@ -10,7 +10,7 @@ import { useConfirm } from '@/components/confirm';
 import { useAsyncAction } from '@/composables';
 import { FolderIcon, PeopleIcon, TrashIcon } from '@/components/icon';
 import { type IHomeSelectionState } from '@/modules/home/stores';
-import { FolderAddSchemaModal } from '@/modules/home/components/modals';
+import { FolderAddSchemaModal } from '@/modules/home/components';
 import { useSchemasStore } from '../stores';
 
 export function useSchemasSelection(): IHomeSelectionState {

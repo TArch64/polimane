@@ -1,7 +1,6 @@
 <template>
-  <p>
-    {{ schemasStore.schemas }}
-  </p>
+  <FolderList v-if="schemasStore.schemas.length" />
+  <FolderEmpty v-else />
 </template>
 
 <script setup lang="ts">
@@ -9,6 +8,7 @@ import { useHomeStore } from '@/modules/home/stores';
 import { definePreload } from '@/router/define';
 import { lazyDestroyStore } from '@/helpers';
 import { useFolderSchemasStore, useFolderStore } from './stores';
+import { FolderEmpty, FolderList } from './components';
 
 defineProps<{
   folderId: string;

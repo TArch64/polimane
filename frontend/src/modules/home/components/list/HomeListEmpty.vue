@@ -4,22 +4,17 @@
       {{ description }}
     </p>
 
-    <Button variant="primary" @click="createModal.open()">
-      Додати Схему
-    </Button>
+    <div class="home-list-empty__actions">
+      <slot />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Button } from '@/components/button';
-import { useModal } from '@/components/modal';
-import { SchemaCreateModal } from '../modals';
-
 defineProps<{
   description: string;
 }>();
 
-const createModal = useModal(SchemaCreateModal);
 </script>
 
 <style scoped>
@@ -34,6 +29,12 @@ const createModal = useModal(SchemaCreateModal);
 
   .home-list-empty__description {
     margin-bottom: 12px;
+  }
+
+  .home-list-empty__actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
   }
 }
 </style>
