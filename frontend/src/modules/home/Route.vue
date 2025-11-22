@@ -1,7 +1,7 @@
 <template>
   <CommonLayout
     :title="homeStore.title"
-    :selected="homeStore.selection?.count"
+    :selected="homeStore.selection?.ids.size"
     :selected-title="homeStore.selection?.title"
     :selected-actions="homeStore.selection?.actions"
     @clear-selection="homeStore.selection?.onClear()"

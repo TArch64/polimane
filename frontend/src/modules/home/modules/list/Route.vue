@@ -27,6 +27,18 @@ homeStore.setRouteConfig({
     do: schemasStore.createSchema,
   },
 
+  updateSchema: {
+    do: schemasStore.updateSchema,
+  },
+
+  copySchema: {
+    do: schemasStore.copySchema,
+  },
+
+  deleteSchema: {
+    do: schemasStore.deleteSchema,
+  },
+
   addSchemaToFolder: {
     getFolders: () => foldersStore.folders,
     do: foldersStore.addSchemas,

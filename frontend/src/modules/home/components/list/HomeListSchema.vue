@@ -29,8 +29,7 @@ import {
   useSchemaUsersStore,
 } from '@/modules/schemas/shared/modals/accessEdit';
 import type { ISchema } from '@/models';
-import { useSchemasStore } from '@/modules/home/modules/list/stores';
-import type { ListSchema } from '../../stores';
+import { type ListSchema, useHomeStore } from '../../stores';
 import { FolderAddSchemaModal } from '../modals';
 import HomeListCard from './HomeListCard.vue';
 import HomeListScreenshot from './HomeListScreenshot.vue';
@@ -41,10 +40,14 @@ const props = defineProps<{
 
 const router = useRouter();
 
-const schemasStore = useSchemasStore();
+const homeStore = useHomeStore();
 const schemaUsersStore = useSchemaUsersStore();
 
-const isSelected = computed(() => schemasStore.selected.has(props.schema.id));
+const isSelected = computed(() => homeStore.selection?.ids.has(props.schema.id) ?? false);
+const updateSchema = homeStore.updateSchema!;
+const copySchema = homeStore.copySchema!;
+const deleteSchema = homeStore.deleteSchema!;
+
 const permissions = useAccessPermissions(() => props.schema.access);
 
 const renameModal = useModal(SchemaRenameModal);
@@ -71,7 +74,7 @@ const menuActions = computed((): MaybeContextMenuAction[] => [
     onAction() {
       renameModal.open({
         schema: props.schema as ISchema,
-        updateSchema: (attrs) => schemasStore.updateSchema(props.schema, attrs),
+        updateSchema: (attrs) => updateSchema.do(props.schema, attrs),
       });
     },
   },
@@ -93,7 +96,7 @@ const menuActions = computed((): MaybeContextMenuAction[] => [
     icon: CopyIcon,
 
     async onAction() {
-      const created = await schemasStore.copySchema(props.schema);
+      const created = await copySchema.do(props.schema);
 
       await router.push({
         name: 'schema-editor',
@@ -121,7 +124,7 @@ const menuActions = computed((): MaybeContextMenuAction[] => [
 
     async onAction(event) {
       if (await deleteConfirm.ask({ virtualTarget: event.menuRect })) {
-        await schemasStore.deleteSchema(props.schema);
+        await deleteSchema.do(props.schema);
       }
     },
   },

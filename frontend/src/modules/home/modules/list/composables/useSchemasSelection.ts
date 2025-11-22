@@ -1,4 +1,4 @@
-import { computed, reactive } from 'vue';
+import { computed, reactive, toRef } from 'vue';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { AccessLevel } from '@/enums';
 import {
@@ -86,7 +86,7 @@ export function useSchemasSelection(): IHomeSelectionState {
   });
 
   return reactive({
-    count,
+    ids: toRef(schemasStore, 'selected'),
     title,
     actions,
     onClear: schemasStore.clearSelection,
