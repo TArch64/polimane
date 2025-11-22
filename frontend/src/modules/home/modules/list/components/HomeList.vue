@@ -32,10 +32,14 @@
 <script setup lang="ts">
 import { toRef } from 'vue';
 import { useInfinityScroll } from '@/composables';
-import { HomeGridList, HomeListLoader, HomeListSchema } from '@/modules/home/components';
-import { useFoldersStore, useHomeListStore, useSchemasStore } from '../../stores';
+import {
+  HomeGridList,
+  HomeListHeading,
+  HomeListLoader,
+  HomeListSchema,
+} from '@/modules/home/components';
+import { useFoldersStore, useHomeListStore, useSchemasStore } from '../stores';
 import HomeFolder from './HomeFolder.vue';
-import HomeListHeading from './HomeListHeading.vue';
 
 const listStore = useHomeListStore();
 const schemasStore = useSchemasStore();

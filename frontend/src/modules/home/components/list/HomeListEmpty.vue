@@ -1,7 +1,7 @@
 <template>
-  <div class="schemas-empty">
-    <p class="schemas-empty__description">
-      Поки що не створено жодної схеми для бісеру
+  <div class="home-list-empty">
+    <p class="home-list-empty__description">
+      {{ description }}
     </p>
 
     <Button variant="primary" @click="createModal.open()">
@@ -13,14 +13,18 @@
 <script setup lang="ts">
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
-import { SchemaCreateModal } from '@/modules/home/components/modals';
+import { SchemaCreateModal } from '../modals';
+
+defineProps<{
+  description: string;
+}>();
 
 const createModal = useModal(SchemaCreateModal);
 </script>
 
 <style scoped>
 @layer page {
-  .schemas-empty {
+  .home-list-empty {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -28,7 +32,7 @@ const createModal = useModal(SchemaCreateModal);
     flex-grow: 1;
   }
 
-  .schemas-empty__description {
+  .home-list-empty__description {
     margin-bottom: 12px;
   }
 }

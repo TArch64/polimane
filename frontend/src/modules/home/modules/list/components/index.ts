@@ -1,1 +1,1 @@
-export * from './schemas';
+export { default as HomeList } from './HomeList.vue';

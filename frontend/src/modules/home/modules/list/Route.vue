@@ -1,14 +1,19 @@
 <template>
   <HomeList v-if="schemasStore.hasSchemas" />
-  <HomeListEmpty v-else />
+
+  <HomeListEmpty
+    description="Поки що не створено жодної схеми для бісеру"
+    v-else
+  />
 </template>
 
 <script setup lang="ts">
 import { definePreload } from '@/router/define';
+import { HomeListEmpty } from '@/modules/home/components';
 import { useHomeStore } from '../../stores';
 import { useFoldersStore, useHomeListStore, useSchemasStore } from './stores';
 import { useSchemasSelection } from './composables';
-import { HomeList, HomeListEmpty } from './components';
+import { HomeList } from './components';
 
 defineOptions({
   beforeRouteEnter: definePreload<'home'>(async () => {
