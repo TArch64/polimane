@@ -1,9 +1,10 @@
 import { computed, type ComputedRef, type MaybeRefOrGetter, toValue } from 'vue';
+import { LOCALE } from '@/config';
 
 let formatter: Intl.DateTimeFormat;
 
 export function useDateFormatter(inputRef: MaybeRefOrGetter<string | Date>): ComputedRef<string> {
-  formatter ??= new Intl.DateTimeFormat(undefined, {
+  formatter ??= new Intl.DateTimeFormat(LOCALE, {
     dateStyle: 'medium',
     timeStyle: 'short',
   });

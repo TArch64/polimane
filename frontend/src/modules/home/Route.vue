@@ -17,6 +17,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { CommonLayout } from '@/components/layout';
+import { SCHEMA_PLURAL, usePluralFormatter } from '@/composables';
 import { useHomeStore } from './stores';
 import { HomeTopBarActions } from './components';
 
@@ -27,5 +28,6 @@ defineProps<{
 const homeStore = useHomeStore();
 
 const selectionCount = computed(() => homeStore.selection?.ids.size ?? 0);
-const selectionTitle = computed(() => `Обрано ${selectionCount.value} схем`);
+const selectionSchemaPlural = usePluralFormatter(selectionCount, SCHEMA_PLURAL);
+const selectionTitle = computed(() => `Обрано ${selectionCount.value} ${selectionSchemaPlural.value}`);
 </script>
