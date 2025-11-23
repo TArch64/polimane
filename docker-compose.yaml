@@ -13,6 +13,7 @@ x-backend-common: &backend-common
     dockerfile: ./ci/dev/backend/Dockerfile
   volumes:
   - ./backend:/app
+  - ./tmp:/tmp/app
   - gomod_cache:/go/pkg/mod
   depends_on:
   - db

@@ -4,9 +4,11 @@ import (
 	"go.uber.org/fx"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/plugin/opentelemetry/tracing"
 
 	"polimane/backend/base"
 	"polimane/backend/env"
+	"polimane/backend/services/db/autoanalyze"
 	"polimane/backend/services/sentry"
 )
 
@@ -27,8 +29,12 @@ func Provider(options Options) (*gorm.DB, error) {
 		return nil, base.TagError("db.open", err)
 	}
 
-	if tracing := newTracingPlugin(); tracing != nil {
-		if err = instance.Use(tracing); err != nil {
+	if env.IsDev {
+		if err = instance.Use(autoanalyze.New()); err != nil {
+			return nil, base.TagError("db.auto_analyze", err)
+		}
+	} else {
+		if err = instance.Use(tracing.NewPlugin()); err != nil {
 			return nil, base.TagError("db.tracing", err)
 		}
 	}

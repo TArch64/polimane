@@ -7,3 +7,6 @@ dist
 logs
 *.log
 *.private.env.json
+
+tmp/*
+!tmp/.keep
