@@ -7,7 +7,7 @@ import (
 	"polimane/backend/repository"
 )
 
-type listFolder struct {
+type ListFolder struct {
 	ID              model.ID   `json:"id"`
 	Name            string     `json:"name"`
 	BackgroundColor string     `json:"backgroundColor"`
@@ -18,7 +18,7 @@ type listFolder struct {
 	ScreenshotPath *string `json:"screenshotPath"`
 }
 
-func (l *listFolder) AfterScan() error {
+func (l *ListFolder) AfterScan() error {
 	if l.ScreenshotID != nil {
 		l.ScreenshotPath = model.SchemaScreenshotPath(*l.ScreenshotID, l.ScreenshotedAt)
 	}
@@ -32,7 +32,7 @@ func (c *Controller) queryFolders(ctx *listContext) (err error) {
 	}
 
 	if ctx.res.Folders == nil {
-		ctx.res.Folders = []*listFolder{}
+		ctx.res.Folders = []*ListFolder{}
 	}
 
 	return nil

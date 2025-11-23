@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import { useHomeStore } from '@/modules/home/stores';
+import { useHomeFoldersStore, useHomeStore } from '@/modules/home/stores';
 import { definePreload } from '@/router/define';
 import { lazyDestroyStore } from '@/helpers';
 import { useFolderSchemasStore, useFolderStore } from './stores';
@@ -35,6 +35,7 @@ defineOptions({
 });
 
 const homeStore = useHomeStore();
+const homeFoldersStore = useHomeFoldersStore();
 const folderStore = useFolderStore();
 const schemasStore = useFolderSchemasStore();
 
@@ -59,9 +60,10 @@ homeStore.setRouteConfig({
     doMany: schemasStore.deleteMany,
   },
 
-  // addSchemaToFolder: {
-  //   getFolders: () => foldersStore.folders,
-  //   do: foldersStore.addSchemas,
-  // },
+  addSchemaToFolder: {
+    do: async (input) => {
+      await homeFoldersStore.addSchemas(input);
+    },
+  },
 });
 </script>

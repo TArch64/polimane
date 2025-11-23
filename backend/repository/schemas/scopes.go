@@ -13,3 +13,7 @@ func IncludeUserSchemaScope(userID model.ID) repository.Scope {
 		repository.AddJoin(stmt, expr)
 	}
 }
+
+var (
+	FilterScreenshoted = repository.Where(gorm.Expr("screenshoted_at IS NOT NULL"))
+)

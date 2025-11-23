@@ -24,14 +24,14 @@ func IncludeSchemasScope(conditions ...clause.Expr) repository.Scope {
 	}
 }
 
+var (
+	FilterWithoutFolder = repository.Where(gorm.Expr("folder_id IS NULL"))
+)
+
 func FolderIDEq(id *model.ID) repository.Scope {
-	return func(stmt *gorm.Statement) {
-		var expr clause.Expr
-		if id == nil {
-			expr = gorm.Expr("folder_id IS NULL")
-		} else {
-			expr = gorm.Expr("folder_id = ?", *id)
-		}
-		repository.AddWhere(stmt, expr)
+	if id == nil {
+		return FilterWithoutFolder
+	} else {
+		return repository.Where(gorm.Expr("folder_id = ?", *id))
 	}
 }

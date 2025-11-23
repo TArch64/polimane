@@ -1,5 +1,3 @@
-import type { IListFolder } from '../homeStore';
-
 export interface IFolderAddSchemasInput {
   schemaIds: string[];
   folderId: string | null;
@@ -7,7 +5,5 @@ export interface IFolderAddSchemasInput {
 }
 
 export interface IFolderAddSchemaStrategy {
-  getFolders: () => IListFolder[];
-
   do(input: IFolderAddSchemasInput): Promise<void>;
 }

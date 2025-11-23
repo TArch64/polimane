@@ -26,7 +26,8 @@ WITH schema_screenshots AS (
 SELECT id, name, screenshoted_at, screenshot_id, background_color
 FROM folders
 	LEFT JOIN schema_screenshots ON folders.id = schema_screenshots.folder_id
-WHERE folders.user_id = ?`
+WHERE folders.user_id = ?
+ORDER BY folders.created_at DESC`
 
 func (c *Client) ListWithScreenshotOut(ctx context.Context, userID model.ID, out interface{}) (err error) {
 	err = gorm.

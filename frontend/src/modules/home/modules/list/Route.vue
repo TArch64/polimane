@@ -41,7 +41,6 @@ homeStore.setRouteConfig({
   },
 
   addSchemaToFolder: {
-    getFolders: () => foldersStore.folders,
     do: foldersStore.addSchemas,
   },
 });

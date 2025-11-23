@@ -11,6 +11,7 @@ export const useFolderStore = defineStore('home/folder', () => {
     async loader() {
       return http.get<IFolder>(['/folders', folderId.value]);
     },
+
     default: null,
   });
 

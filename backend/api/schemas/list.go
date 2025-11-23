@@ -26,7 +26,7 @@ func (l *listQuery) FolderID() *model.ID {
 }
 
 type listResponse struct {
-	Folders []*listFolder `json:"folders,omitempty"`
+	Folders []*ListFolder `json:"folders,omitempty"`
 	Schemas []*listSchema `json:"schemas"`
 	Total   int64         `json:"total"`
 }

@@ -29,7 +29,7 @@ import {
   useSchemaUsersStore,
 } from '@/modules/schemas/shared/modals/accessEdit';
 import type { ISchema } from '@/models';
-import { type ListSchema, useHomeStore } from '../../stores';
+import { type ListSchema, useHomeFoldersStore, useHomeStore } from '../../stores';
 import { FolderAddSchemaModal } from '../modals';
 import HomeListCard from './HomeListCard.vue';
 import HomeListScreenshot from './HomeListScreenshot.vue';
@@ -41,6 +41,7 @@ const props = defineProps<{
 const router = useRouter();
 
 const homeStore = useHomeStore();
+const homeFoldersStore = useHomeFoldersStore();
 const schemaUsersStore = useSchemaUsersStore();
 
 const isSelected = computed(() => homeStore.selection?.ids.has(props.schema.id) ?? false);
@@ -83,8 +84,10 @@ const menuActions = computed((): MaybeContextMenuAction[] => [
     title: 'Перемістити в Директорію',
     icon: FolderIcon,
 
-    onAction() {
-      folderAddModal.open({
+    async onAction() {
+      await homeFoldersStore.load();
+
+      void folderAddModal.open({
         schemaIds: [props.schema.id],
         folderId: null,
       });
@@ -113,7 +116,7 @@ const menuActions = computed((): MaybeContextMenuAction[] => [
 
     async onAction() {
       await schemaUsersStore.load([props.schema.id]);
-      accessEditModal.open();
+      void accessEditModal.open();
     },
   },
 
