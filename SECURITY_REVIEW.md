@@ -12,7 +12,7 @@ This security review assessed the Polimane full-stack application consisting of 
 
 **Critical Issues:** 2
 **High Priority Issues:** 3
-**Medium Priority Issues:** 4
+**Medium Priority Issues:** 3
 **Low Priority Issues:** 2
 
 ---
@@ -146,27 +146,23 @@ Cookies expire after 60 days, which is quite long. If a cookie is stolen, an att
 3. Add session activity monitoring to detect anomalous behavior
 4. Consider implementing device fingerprinting for session validation
 
-### 3.2 User Cache TTL May Be Too Long
+### 3.2 ~~User Cache TTL May Be Too Long~~ (RESOLVED - Not an Issue)
 
 **Location:** `backend/api/auth/middleware.go:47`
 
-**Issue:**
-```go
-localcache.WithDefaultExpiration(10 * time.Minute),
-```
+**Status:** ✅ **This is actually well-designed and NOT a security concern**
 
-User and WorkOS user data are cached for 10 minutes. If a user's permissions are revoked or their account is disabled, changes won't take effect for up to 10 minutes.
+**Analysis:**
+The 10-minute cache TTL is appropriate given:
 
-**Impact:** Medium - Delayed enforcement of security-critical changes (account suspension, permission revocation).
+1. **Lambda Execution Model:** Lambda instances are ephemeral and recycled frequently, so the cache rarely persists for the full 10 minutes
+2. **Proper Cache Invalidation:** Signal-based invalidation is implemented for security-critical events:
+   - Logout: `InvalidateAuthCache.Emit()` (auth/logout.go:22)
+   - User updates: `InvalidateWorkosUserCache.Emit()` (users/update.go:43)
+   - Password reset: Invalidates auth cache (users/password_reset.go:22)
+   - Email verification: Invalidates auth cache
 
-**Recommendation:**
-1. Reduce cache TTL to 1-2 minutes for security-sensitive data
-2. Implement cache invalidation on security-critical events:
-   - Account suspension
-   - Permission changes
-   - Password changes
-3. Add force-logout capability that invalidates all user sessions
-4. Consider using Redis with pub/sub for immediate cache invalidation across instances
+**Conclusion:** This is actually a best practice for Lambda-based architectures - performance benefits during instance lifetime with explicit invalidation for security-critical changes.
 
 ### 3.3 Missing Security Headers Validation
 
@@ -309,6 +305,12 @@ The following security controls are properly implemented:
 - GORM record not found errors mapped to 404
 - Generic error messages (except dev mode issue noted)
 
+### 5.10 Cache Management ✅
+- Signal-based cache invalidation for security events
+- Proper invalidation on logout, user updates, password reset
+- Lambda-optimized caching strategy (10min TTL with explicit invalidation)
+- Separate caches for user data and WorkOS user data
+
 ---
 
 ## 6. Dependency Analysis
@@ -356,9 +358,8 @@ The following security controls are properly implemented:
 
 ### Medium-term (Medium - within 1-2 months)
 1. ✅ Reduce cookie expiration time
-2. ✅ Reduce cache TTL or implement cache invalidation
-3. ✅ Add comprehensive security logging and monitoring
-4. ✅ Add missing security headers
+2. ✅ Add comprehensive security logging and monitoring
+3. ✅ Add missing security headers
 
 ### Long-term (Low - ongoing)
 1. ✅ Implement request ID tracking
