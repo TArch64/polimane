@@ -1,7 +1,7 @@
 import { computed, reactive, toRef } from 'vue';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { AccessLevel } from '@/enums';
-import type { ISchemaSelectionStrategy } from '@/modules/home/stores';
+import type { ISchemaSelectionAdapter } from '@/modules/home/stores';
 import {
   useSchemaSelectionAddToFolder,
   useSchemaSelectionDelete,
@@ -9,7 +9,7 @@ import {
 } from '@/modules/home/composables';
 import { useFolderSchemasStore } from '../stores';
 
-export function useSchemasSelection(): ISchemaSelectionStrategy {
+export function useSchemasSelection(): ISchemaSelectionAdapter {
   const schemasStore = useFolderSchemasStore();
 
   const allActionIds = computed(() => [...schemasStore.selected]);

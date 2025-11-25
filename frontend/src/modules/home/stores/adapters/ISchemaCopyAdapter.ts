@@ -1,5 +1,5 @@
 import type { ListSchema } from '../homeStore';
 
-export interface ISchemaCopyStrategy {
+export interface ISchemaCopyAdapter {
   do(schema: ListSchema): Promise<ListSchema>;
 }

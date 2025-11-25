@@ -65,5 +65,9 @@ homeStore.setRouteConfig({
       await homeFoldersStore.addSchemas(input);
     },
   },
+
+  updateFolder: {
+    do: (_, update) => folderStore.update(update),
+  },
 });
 </script>

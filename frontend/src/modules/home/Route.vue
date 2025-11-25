@@ -3,8 +3,8 @@
     :title="homeStore.title"
     :selected="selectionCount"
     :selected-title="selectionTitle"
-    :selected-actions="homeStore.selection?.actions"
-    @clear-selection="homeStore.selection?.onClear()"
+    :selected-actions="homeStore.selection.actions"
+    @clear-selection="homeStore.selection.onClear()"
   >
     <template #top-bar-actions>
       <HomeTopBarActions />
@@ -27,7 +27,7 @@ defineProps<{
 
 const homeStore = useHomeStore();
 
-const selectionCount = computed(() => homeStore.selection?.ids.size ?? 0);
+const selectionCount = computed(() => homeStore.selection.ids.size);
 const selectionSchemaPlural = usePluralFormatter(selectionCount, SCHEMA_PLURAL);
 const selectionTitle = computed(() => `Обрано ${selectionCount.value} ${selectionSchemaPlural.value}`);
 </script>

@@ -1,6 +1,6 @@
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 
-export interface ISchemaSelectionStrategy {
+export interface ISchemaSelectionAdapter {
   ids: Set<string>;
   actions: MaybeContextMenuAction[];
   onClear: () => void;

@@ -46,6 +46,7 @@ func (c *Controller) Private(group fiber.Router) {
 
 		base.WithGroup(group, ":"+folderIDParam, func(group fiber.Router) {
 			group.Get("", c.apiByID)
+			group.Patch("", c.apiUpdate)
 			group.Post("schemas", c.apiAddSchema)
 		})
 	})

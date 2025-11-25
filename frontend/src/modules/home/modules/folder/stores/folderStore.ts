@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { useAsyncData, useHttpClient } from '@/composables';
-import type { IFolder } from '@/models';
+import type { FolderUpdate, IFolder } from '@/models';
 
 export const useFolderStore = defineStore('home/folder', () => {
   const http = useHttpClient();
@@ -20,8 +20,17 @@ export const useFolderStore = defineStore('home/folder', () => {
     await details.load();
   }
 
+  async function update(update: FolderUpdate) {
+    await details.optimisticUpdate()
+      .begin((state) => Object.assign(state!, update))
+      .commit(async () => {
+        await http.patch<FolderUpdate>(['/folders', folderId.value], update);
+      });
+  }
+
   return {
-    load,
     folder: computed(() => details.data!),
+    load,
+    update,
   };
 });

@@ -22,11 +22,10 @@ import { TextField } from '@/components/form';
 import { useAsyncAction } from '@/composables';
 import { type ISchemaCreateRequest, useHomeStore } from '../../stores';
 
+const homeStore = useHomeStore();
+
 const router = useRouter();
 const modal = useActiveModal();
-
-const homeStore = useHomeStore();
-const createSchema = homeStore.createSchema!;
 
 const schema: ISchemaCreateRequest = reactive({
   name: '',
@@ -34,7 +33,7 @@ const schema: ISchemaCreateRequest = reactive({
 
 const create = useAsyncAction(async () => {
   schema.name = schema.name.trim();
-  const created = await createSchema.do(schema);
+  const created = await homeStore.createSchema.do(schema);
 
   modal.close(null, async () => {
     await router.push({

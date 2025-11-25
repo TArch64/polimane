@@ -1,10 +1,13 @@
 import { defineStore } from 'pinia';
 import { computed } from 'vue';
 import { type IFolderAddSchemasInput, useHomeFoldersStore } from '@/modules/home/stores';
+import type { FolderUpdate, IFolder } from '@/models';
+import { useHttpClient } from '@/composables';
 import { useHomeListStore } from './homeListStore';
 import { useSchemasStore } from './schemasStore';
 
 export const useFoldersStore = defineStore('home/list/folders', () => {
+  const http = useHttpClient();
   const homeFoldersStore = useHomeFoldersStore();
   const listStore = useHomeListStore();
   const schemasStore = useSchemasStore();
@@ -26,9 +29,21 @@ export const useFoldersStore = defineStore('home/list/folders', () => {
     schemasStore.clearSelection();
   }
 
+  async function updateFolder(folder: IFolder, update: FolderUpdate) {
+    await listStore.list.optimisticUpdate()
+      .begin(({ folders }) => {
+        const index = folders.findIndex((f) => f.id === folder.id);
+        folders[index] = { ...folders[index]!, ...update };
+      })
+      .commit(async () => {
+        await http.patch<FolderUpdate>(['/folders', folder.id], update);
+      });
+  }
+
   return {
     folders,
     hasFolders,
     addSchemas,
+    updateFolder,
   };
 });

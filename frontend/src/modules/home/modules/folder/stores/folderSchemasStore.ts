@@ -1,6 +1,6 @@
 import { computed, type Ref, ref, toRef } from 'vue';
 import { defineStore } from 'pinia';
-import { type HttpBody, type IOptimisticOptions, useAsyncData, useHttpClient } from '@/composables';
+import { type HttpBody, useAsyncData, useHttpClient } from '@/composables';
 import type {
   IDeleteManySchemasRequest,
   ISchemaCreateRequest,
@@ -77,18 +77,17 @@ export const useFolderSchemasStore = defineStore('home/folder/schemas', () => {
   }
 
   async function deleteMany(ids: string[]): Promise<void> {
-    const optimisticOptions: IOptimisticOptions = { transition: true };
     const idsSet = new Set(ids);
 
-    list.makeOptimisticUpdate(({ schemas, total, ...rest }) => ({
-      ...rest,
-      schemas: schemas.filter((schema) => !idsSet.has(schema.id)),
-      total: total - ids.length,
-    }), optimisticOptions);
-
-    await list.executeOptimisticUpdate(async () => {
-      await http.delete<HttpBody, IDeleteManySchemasRequest>(['/schemas', 'delete-many'], { ids });
-    }, optimisticOptions);
+    await list.optimisticUpdate()
+      .inTransition()
+      .begin((state) => {
+        state.schemas = state.schemas.filter((schema) => !idsSet.has(schema.id));
+        state.total -= ids.length;
+      })
+      .commit(async () => {
+        await http.delete<HttpBody, IDeleteManySchemasRequest>(['/schemas', 'delete-many'], { ids });
+      });
 
     if (canLoadNext.value && schemas.value.length < PAGINATION_PAGE) {
       await loadNext();
@@ -100,7 +99,7 @@ export const useFolderSchemasStore = defineStore('home/folder/schemas', () => {
   }
 
   async function copySchema(copyingSchema: ListSchema): Promise<ListSchema> {
-    const item = await http.post<ListSchema, HttpBody>(['/schemas', copyingSchema.id, 'copy'], {});
+    const item = await http.post<ListSchema>(['/schemas', copyingSchema.id, 'copy'], {});
     list.data.total++;
     return item;
   }

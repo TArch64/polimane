@@ -68,7 +68,7 @@ export class HttpClient {
     });
   }
 
-  post<R extends HttpBody, B extends HttpBody>(
+  post<R extends HttpBody, B extends HttpBody = HttpBody>(
     path: UrlPath,
     body: B,
     config: IHttpRequestConfig = {},
@@ -81,7 +81,7 @@ export class HttpClient {
     });
   }
 
-  patch<R extends HttpBody, B extends HttpBody>(
+  patch<R extends HttpBody, B extends HttpBody = HttpBody>(
     path: UrlPath,
     body: B,
     config: IHttpRequestConfig = {},

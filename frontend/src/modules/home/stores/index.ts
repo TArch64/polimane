@@ -1,3 +1,3 @@
 export * from './homeStore';
-export type * from './strategies';
+export type * from './adapters';
 export * from './homeFoldersStore';

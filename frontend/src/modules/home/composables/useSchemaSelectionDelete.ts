@@ -7,7 +7,6 @@ import { useHomeStore } from '@/modules/home/stores';
 
 export function useSchemaSelectionDelete(actionIds: Ref<string[]>, clear: () => void): Ref<MaybeContextMenuAction> {
   const homeStore = useHomeStore();
-  const deleteSchema = homeStore.deleteSchema!;
 
   const deleteConfirm = useConfirm({
     danger: true,
@@ -17,7 +16,7 @@ export function useSchemaSelectionDelete(actionIds: Ref<string[]>, clear: () => 
   });
 
   const deleteSchemas = useAsyncAction(async () => {
-    await deleteSchema.doMany(actionIds.value);
+    await homeStore.deleteSchema.doMany(actionIds.value);
     clear();
   });
 

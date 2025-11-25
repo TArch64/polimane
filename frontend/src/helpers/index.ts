@@ -15,3 +15,4 @@ export * from './padding';
 export * from './createAnimatedFrame';
 export * from './startViewTransition';
 export * from './requestIdleCallback';
+export * from './cloneReactive';

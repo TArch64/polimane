@@ -53,7 +53,6 @@ const modal = useActiveModal();
 
 const homeStore = useHomeStore();
 const foldersStore = useHomeFoldersStore();
-const addSchemas = homeStore.addSchemaToFolder!;
 
 const form = reactive({
   folderId: props.folderId || NEW_FOLDER_ID,
@@ -67,7 +66,7 @@ const save = useAsyncAction(async () => {
     return;
   }
 
-  await addSchemas.do({
+  await homeStore.addSchemaToFolder.do({
     schemaIds: props.schemaIds,
     folderId: isNewFolder.value ? null : form.folderId,
     folderName: isNewFolder.value ? form.folderName : null,

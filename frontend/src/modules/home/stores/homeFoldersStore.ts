@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { toRef } from 'vue';
 import { type HttpBody, useAsyncData, useHttpClient } from '@/composables';
 import type { IFolder } from '@/models';
-import type { IFolderAddSchemasInput } from './strategies';
+import type { IFolderAddSchemasInput } from './adapters';
 import type { IListFolder } from './homeStore';
 
 interface IFolderAddSchemasRequest {

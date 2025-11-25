@@ -90,16 +90,15 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
   }
 
   async function deleteUser(deleting: ISchemaUser): Promise<void> {
-    list.makeOptimisticUpdate((current) => ({
-      ...current,
-      users: current.users.filter((user) => user.id !== deleting.id),
-    }));
-
-    await list.executeOptimisticUpdate(async () => {
-      await http.delete<HttpBody, SchemaIdParams>([...baseUrl.value, deleting.id], {
-        ids: schemaIds.value,
+    await list.optimisticUpdate()
+      .begin((state) => {
+        state.users = state.users.filter((user) => user.id !== deleting.id);
+      })
+      .commit(async () => {
+        await http.delete<HttpBody, SchemaIdParams>([...baseUrl.value, deleting.id], {
+          ids: schemaIds.value,
+        });
       });
-    });
   }
 
   async function updateUserAccess(updating: ISchemaUser, access: AccessLevel): Promise<void> {
@@ -112,17 +111,16 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
   }
 
   async function deleteInvitation(deleting: ISchemaUserInvitation): Promise<void> {
-    list.makeOptimisticUpdate((current) => ({
-      ...current,
-      invitations: current.invitations.filter((invitation) => invitation.email !== deleting.email),
-    }));
-
-    await list.executeOptimisticUpdate(async () => {
-      await http.delete<HttpBody, IDeleteInvitationBody>([...baseUrl.value, 'invitations'], {
-        ids: schemaIds.value,
-        email: deleting.email,
+    await list.optimisticUpdate()
+      .begin((state) => {
+        state.invitations = state.invitations.filter((invitation) => invitation.email !== deleting.email);
+      })
+      .commit(async () => {
+        await http.delete<HttpBody, IDeleteInvitationBody>([...baseUrl.value, 'invitations'], {
+          ids: schemaIds.value,
+          email: deleting.email,
+        });
       });
-    });
   }
 
   async function updateInvitationAccess(updating: ISchemaUserInvitation, access: AccessLevel): Promise<void> {

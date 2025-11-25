@@ -43,5 +43,9 @@ homeStore.setRouteConfig({
   addSchemaToFolder: {
     do: foldersStore.addSchemas,
   },
+
+  updateFolder: {
+    do: foldersStore.updateFolder,
+  },
 });
 </script>

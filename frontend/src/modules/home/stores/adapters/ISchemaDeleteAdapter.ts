@@ -4,7 +4,7 @@ export interface IDeleteManySchemasRequest {
   ids: string[];
 }
 
-export interface ISchemaDeleteStrategy {
+export interface ISchemaDeleteAdapter {
   do(schema: ListSchema): Promise<void>;
 
   doMany(ids: string[]): Promise<void>;

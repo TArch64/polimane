@@ -44,10 +44,8 @@ const homeStore = useHomeStore();
 const homeFoldersStore = useHomeFoldersStore();
 const schemaUsersStore = useSchemaUsersStore();
 
-const isSelected = computed(() => homeStore.selection?.ids.has(props.schema.id) ?? false);
-const updateSchema = homeStore.updateSchema!;
-const copySchema = homeStore.copySchema!;
-const deleteSchema = homeStore.deleteSchema!;
+const isSelected = computed(() => homeStore.selection.ids.has(props.schema.id));
+const { updateSchema, copySchema, deleteSchema } = homeStore;
 
 const permissions = useAccessPermissions(() => props.schema.access);
 

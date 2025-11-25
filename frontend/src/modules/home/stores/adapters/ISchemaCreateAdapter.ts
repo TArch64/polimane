@@ -4,6 +4,6 @@ export interface ISchemaCreateRequest {
   name: string;
 }
 
-export interface ISchemaCreateStrategy {
+export interface ISchemaCreateAdapter {
   do(request: ISchemaCreateRequest): Promise<ListSchema>;
 }

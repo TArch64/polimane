@@ -4,6 +4,6 @@ export interface IFolderAddSchemasInput {
   folderName: string | null;
 }
 
-export interface IFolderAddSchemaStrategy {
+export interface IFolderAddSchemaAdapter {
   do(input: IFolderAddSchemasInput): Promise<void>;
 }
