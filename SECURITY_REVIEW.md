@@ -38,31 +38,6 @@ The CSP allows `'unsafe-inline'` and `'unsafe-eval'` for scripts, which signific
 3. Replace any eval() usage with safer alternatives
 4. For Vue 3, configure Vite to generate CSP-compatible builds
 
-### ~~1.2 Information Disclosure in Development Mode~~ (RESOLVED - Not an Issue)
-
-**Location:** `backend/api/auth/middleware.go:174-176`
-
-**Status:** ✅ **Properly handled via build-time configuration**
-
-**Analysis:**
-The `IsDev` flag is a **compile-time constant** configured via Go build tags:
-
-```go
-// env/env_dev.go (build tag: //go:build dev)
-const IsDev = true
-
-// env/env_prod.go (build tag: //go:build !dev)
-const IsDev = false
-```
-
-This means:
-- Production builds will have `IsDev = false` compiled in
-- Development code paths are eliminated by the Go compiler in production builds
-- There's no risk of misconfiguration or accidental exposure
-- The compiler optimizes away unreachable code branches
-
-**Conclusion:** This is a best practice for build-time environment configuration. Error details cannot be accidentally exposed in production.
-
 ---
 
 ## 2. High Priority Issues
@@ -137,21 +112,7 @@ While AWS API Gateway has basic throttling configured (burst: 10, rate: 2 req/se
 
 ## 3. Medium Priority Issues
 
-### 3.1 60-Day Cookie Expiration (Accepted Risk)
-
-**Location:** `backend/api/auth/cookie.go:17`
-
-**Status:** ✓ **Acknowledged - This is an intentional design decision**
-
-**Design Rationale:**
-- Application does not handle sensitive user data (schemas/templates only)
-- Authentication is fully delegated to WorkOS (no password management in app)
-- User convenience is prioritized over maximum security for this use case
-- WorkOS handles session security, revocation, and monitoring
-
-**Note:** This is an acceptable trade-off given the application's security model and data sensitivity level. If the application scope changes to handle more sensitive data in the future, this should be revisited.
-
-### 3.2 Missing Security Headers Validation
+### 3.1 Missing Security Headers Validation
 
 **Location:** `backend/api/server.go:41-57`
 
@@ -169,7 +130,7 @@ While Helmet middleware is configured with good defaults, some important headers
 3. Consider adding `X-Permitted-Cross-Domain-Policies: none`
 4. Review and tighten CSP policy as mentioned in Critical Issues
 
-### 3.3 No Logging of Security Events
+### 3.2 No Logging of Security Events
 
 **Location:** Throughout the application
 
