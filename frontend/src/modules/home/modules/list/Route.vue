@@ -1,6 +1,7 @@
 <template>
   <HomeList v-if="schemasStore.hasSchemas" />
   <HomeEmpty v-else />
+  <RouteTopBarActions />
 </template>
 
 <script setup lang="ts">
@@ -9,6 +10,7 @@ import { useHomeStore } from '../../stores';
 import { useFoldersStore, useHomeListStore, useSchemasStore } from './stores';
 import { useSchemasSelection } from './composables';
 import { HomeEmpty, HomeList } from './components';
+import RouteTopBarActions from './RouteTopBarActions.vue';
 
 defineOptions({
   beforeRouteEnter: definePreload<'home'>(async () => {
