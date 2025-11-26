@@ -10,7 +10,7 @@ This security review assessed the Polimane full-stack application consisting of 
 
 **Overall Security Posture:** Good with some areas requiring attention
 
-**Critical Issues:** 2
+**Critical Issues:** 1
 **High Priority Issues:** 3
 **Medium Priority Issues:** 2
 **Low Priority Issues:** 2
@@ -38,27 +38,30 @@ The CSP allows `'unsafe-inline'` and `'unsafe-eval'` for scripts, which signific
 3. Replace any eval() usage with safer alternatives
 4. For Vue 3, configure Vite to generate CSP-compatible builds
 
-### 1.2 Information Disclosure in Development Mode
+### ~~1.2 Information Disclosure in Development Mode~~ (RESOLVED - Not an Issue)
 
 **Location:** `backend/api/auth/middleware.go:174-176`
 
-**Issue:**
+**Status:** ✅ **Properly handled via build-time configuration**
+
+**Analysis:**
+The `IsDev` flag is a **compile-time constant** configured via Go build tags:
+
 ```go
-if env.IsDev {
-    extra = append(extra, base.CustomErrorData{"internalError": err.Error()})
-    return unauthorizedErr.AddCustomData(extra...)
-}
+// env/env_dev.go (build tag: //go:build dev)
+const IsDev = true
+
+// env/env_prod.go (build tag: //go:build !dev)
+const IsDev = false
 ```
 
-Internal error details are exposed in development mode. If this code is accidentally deployed to production or if the `env.IsDev` flag is misconfigured, sensitive error information could be leaked to attackers.
+This means:
+- Production builds will have `IsDev = false` compiled in
+- Development code paths are eliminated by the Go compiler in production builds
+- There's no risk of misconfiguration or accidental exposure
+- The compiler optimizes away unreachable code branches
 
-**Impact:** High - Stack traces, database errors, or internal paths could be exposed to attackers.
-
-**Recommendation:**
-1. Add runtime checks to ensure development error details are NEVER exposed in production
-2. Implement environment validation on startup
-3. Use structured logging for internal errors instead of returning them to clients
-4. Consider adding a separate staging environment with production-like error handling
+**Conclusion:** This is a best practice for build-time environment configuration. Error details cannot be accidentally exposed in production.
 
 ---
 
@@ -295,6 +298,12 @@ The following security controls are properly implemented:
 - Lambda-optimized caching strategy (10min TTL with explicit invalidation)
 - Separate caches for user data and WorkOS user data
 
+### 5.11 Build-Time Configuration ✅
+- Environment-specific code separated via Go build tags (`//go:build dev` / `//go:build !dev`)
+- IsDev flag is a compile-time constant (not runtime variable)
+- Production builds cannot accidentally include development code
+- Compiler optimizes away unreachable development code paths
+
 ---
 
 ## 6. Dependency Analysis
@@ -332,8 +341,7 @@ The following security controls are properly implemented:
 
 ### Immediate Actions (Critical)
 1. ✅ Fix CSP to remove unsafe-inline and unsafe-eval
-2. ✅ Add production safeguards for error message exposure
-3. ✅ Implement CSRF protection
+2. ✅ Implement CSRF protection
 
 ### Short-term (High - within 1 sprint)
 1. ✅ Sanitize SVG rendering or add DOMPurify
