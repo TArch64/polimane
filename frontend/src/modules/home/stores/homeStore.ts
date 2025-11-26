@@ -1,4 +1,4 @@
-import { computed, type Ref, ref } from 'vue';
+import { computed, type MaybeRef, ref, unref } from 'vue';
 import { defineStore } from 'pinia';
 import type { IFolder, ISchema } from '@/models';
 import type {
@@ -19,7 +19,7 @@ export interface IListFolder extends IFolder {
 }
 
 export interface IHomeRouteConfig {
-  title?: string;
+  title?: MaybeRef<string>;
   selection: ISchemaSelectionAdapter;
   createSchema: ISchemaCreateAdapter;
   updateSchema: ISchemaUpdateAdapter;
@@ -49,8 +49,8 @@ export const useHomeStore = defineStore('home', () => {
     routeConfig.value = config;
   }
 
-  function toConfigRef<N extends keyof IHomeRouteConfig>(name: N): Ref<IHomeRouteConfig[N]> {
-    return computed(() => routeConfig.value[name]);
+  function toConfigRef<N extends keyof IHomeRouteConfig>(name: N) {
+    return computed(() => unref(routeConfig.value[name]));
   }
 
   return {

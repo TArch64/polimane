@@ -1,6 +1,7 @@
 <template>
   <HomeList v-if="schemasStore.hasSchemas" />
   <HomeEmpty v-else />
+
   <RouteTopBarActions />
 </template>
 

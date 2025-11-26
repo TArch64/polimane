@@ -1,15 +1,19 @@
 <template>
   <FolderList v-if="schemasStore.schemas.length" />
   <FolderEmpty v-else />
+
+  <RouteTopBarActions />
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useHomeFoldersStore, useHomeStore } from '@/modules/home/stores';
 import { definePreload } from '@/router/define';
 import { lazyDestroyStore } from '@/helpers';
 import { useFolderSchemasStore, useFolderStore } from './stores';
 import { FolderEmpty, FolderList } from './components';
 import { useSchemasSelection } from './composables';
+import RouteTopBarActions from './RouteTopBarActions.vue';
 
 defineProps<{
   folderId: string;
@@ -40,7 +44,7 @@ const folderStore = useFolderStore();
 const schemasStore = useFolderSchemasStore();
 
 homeStore.setRouteConfig({
-  title: folderStore.folder.name,
+  title: computed(() => folderStore.folder.name),
   selection: useSchemasSelection(),
 
   createSchema: {
