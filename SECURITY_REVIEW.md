@@ -10,20 +10,21 @@ This security review assessed the Polimane full-stack application consisting of 
 
 **Overall Security Posture:** Good with some areas requiring attention
 
-**Critical Issues:** 1
-**High Priority Issues:** 3
-**Medium Priority Issues:** 2
-**Low Priority Issues:** 2
+**Critical-Issues:** 1
+**High-Priority Issues:** 3
+**Medium-Priority Issues:** 2
+**Low-Priority Issues:** 2
 
 ---
 
-## 1. Critical Issues
+## 1. Critical-Issues
 
 ### 1.1 Overly Permissive Content Security Policy (CSP)
 
 **Location:** `backend/api/server.go:44`
 
 **Issue:**
+
 ```go
 ContentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https://api.workos.com; frame-src 'none';"
 ```
@@ -40,7 +41,7 @@ The CSP allows `'unsafe-inline'` and `'unsafe-eval'` for scripts, which signific
 
 ---
 
-## 2. High Priority Issues
+## 2. High-Priority Issues
 
 ### 2.1 No CSRF Protection Implementation
 
@@ -66,6 +67,7 @@ While the CORS configuration includes `"X-CSRF-Token"` header in the allowed hea
 **Location:** `frontend/src/modules/schemas/editor/components/modals/schemaExport/SchemaExportPreview.vue:5`
 
 **Issue:**
+
 ```vue
 <div v-html="source" />
 ```
@@ -110,7 +112,7 @@ While AWS API Gateway has basic throttling configured (burst: 10, rate: 2 req/se
 
 ---
 
-## 3. Medium Priority Issues
+## 3. Medium-Priority Issues
 
 ### 3.1 Missing Security Headers Validation
 
@@ -123,12 +125,14 @@ While Helmet middleware is configured with good defaults, some important headers
 
 **Recommendation:**
 1. Add Permissions-Policy header:
+
    ```go
    PermissionsPolicy: "geolocation=(), microphone=(), camera=()"
    ```
+
 2. Ensure X-Content-Type-Options: "nosniff" is properly set (currently configured)
 3. Consider adding `X-Permitted-Cross-Domain-Policies: none`
-4. Review and tighten CSP policy as mentioned in Critical Issues
+4. Review and tighten CSP policy as mentioned in Critical-Issues
 
 ### 3.2 No Logging of Security Events
 
@@ -158,7 +162,7 @@ There's no evidence of security event logging for:
 
 ---
 
-## 4. Low Priority Issues
+## 4. Low-Priority Issues
 
 ### 4.1 Missing Request ID Tracking
 
@@ -198,12 +202,15 @@ The cookie domain is prefixed with a dot, making it accessible to all subdomains
 
 The following security controls are properly implemented:
 
+
 ### 5.1 Authentication & Authorization ✅
+
 - WorkOS integration for secure authentication
 - JWT token validation with JWKS
 - Proper token refresh mechanism
 - Access level enforcement (Read, Write, Admin)
 - User-schema relationship validation before operations
+
 
 ### 5.2 Secrets Management ✅
 - Bitwarden integration for all sensitive secrets
@@ -211,11 +218,13 @@ The following security controls are properly implemented:
 - Secrets referenced by ID in Terraform (SID pattern)
 - Environment-based secret loading
 
+
 ### 5.3 Database Security ✅
 - GORM used throughout (no raw SQL found)
 - Parameterized queries prevent SQL injection
 - CockroachDB with TLS encryption
 - Database migrations managed via Goose
+
 
 ### 5.4 Input Validation ✅
 - go-playground/validator used for request validation
@@ -223,17 +232,20 @@ The following security controls are properly implemented:
 - Custom validators (e.g., iscolor for hex colors)
 - Query parameter validation
 
+
 ### 5.5 Transport Security ✅
 - TLS 1.2 enforced (lambda_gateway.tf:59)
 - HTTPS-only cookies (Secure flag)
 - HTTP-only cookies prevent XSS cookie theft
 - HSTS headers configured with preload
 
+
 ### 5.6 CORS Configuration ✅
 - Specific origin allowlist (no wildcards)
 - Credentials enabled with specific origin
 - Appropriate methods and headers whitelisted
 - Max-age set appropriately
+
 
 ### 5.7 Infrastructure Security ✅
 - AWS IAM roles for Lambda (no hardcoded AWS credentials in production)
@@ -242,22 +254,26 @@ The following security controls are properly implemented:
 - CloudFront CDN for DDoS protection
 - Cloudflare security rules
 
+
 ### 5.8 Cookie Security ✅
 - HTTPOnly flag prevents JavaScript access
 - Secure flag ensures HTTPS-only transmission
 - SameSite attribute (though "None" for cross-origin)
 - Cookie encryption via encryptcookie middleware
 
+
 ### 5.9 Error Handling ✅
 - Custom error handler with appropriate status codes
 - GORM record not found errors mapped to 404
 - Generic error messages (except dev mode issue noted)
+
 
 ### 5.10 Cache Management ✅
 - Signal-based cache invalidation for security events
 - Proper invalidation on logout, user updates, password reset
 - Lambda-optimized caching strategy (10min TTL with explicit invalidation)
 - Separate caches for user data and WorkOS user data
+
 
 ### 5.11 Build-Time Configuration ✅
 - Environment-specific code separated via Go build tags (`//go:build dev` / `//go:build !dev`)
