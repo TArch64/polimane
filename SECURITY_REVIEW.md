@@ -1,6 +1,6 @@
 # Security Review Report - Polimane
 
-**Date:** 2025-11-24
+**Date:** 2025-11-25
 **Reviewer:** Claude (Automated Security Review)
 **Application:** Polimane - Schema/Template Management SaaS Platform
 
@@ -12,7 +12,7 @@ This security review assessed the Polimane full-stack application consisting of 
 
 **Critical Issues:** 2
 **High Priority Issues:** 3
-**Medium Priority Issues:** 3
+**Medium Priority Issues:** 2
 **Low Priority Issues:** 2
 
 ---
@@ -25,7 +25,7 @@ This security review assessed the Polimane full-stack application consisting of 
 
 **Issue:**
 ```go
-ContentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; ..."
+ContentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https://api.workos.com; frame-src 'none';"
 ```
 
 The CSP allows `'unsafe-inline'` and `'unsafe-eval'` for scripts, which significantly weakens XSS protection. These directives allow inline JavaScript and eval(), making the application vulnerable to XSS attacks if any user input is improperly sanitized.
@@ -77,7 +77,10 @@ While the CORS configuration includes `"X-CSRF-Token"` header in the allowed hea
 1. Implement double-submit cookie pattern or synchronizer token pattern
 2. Add CSRF middleware to validate tokens on state-changing requests (POST, PUT, PATCH, DELETE)
 3. Generate and send CSRF tokens from the backend
-4. Validate tokens on the frontend before making API calls
+4. **Frontend (Vue 3):** Configure the HTTP client (axios/fetch) to automatically attach CSRF tokens to request headers:
+   - Read CSRF token from cookie or meta tag on app initialization
+   - Add token to `X-CSRF-Token` header for all mutating requests
+   - Handle token refresh on 403 responses
 5. Consider using the `gorilla/csrf` package or implementing custom CSRF middleware
 
 ### 2.2 Unsafe v-html Usage
@@ -89,16 +92,20 @@ While the CORS configuration includes `"X-CSRF-Token"` header in the allowed hea
 <div v-html="source" />
 ```
 
-The component uses `v-html` to render SVG content from the API. While the SVG comes from a trusted backend endpoint, it processes user-controlled schema data (colors, beads, etc.). If schema data isn't properly sanitized on the backend, this could lead to XSS vulnerabilities.
+The component uses `v-html` to render SVG content from the API. **All data flowing into the SVG generation should be treated as untrusted**, even though it comes from the backend. User-controlled schema data (colors, beads, size, backgroundColor) is embedded into the SVG template and could contain malicious content if not properly validated and sanitized.
 
 **Impact:** High - Potential XSS if malicious SVG content is rendered.
 
 **Recommendation:**
-1. Validate and sanitize all schema data (especially palette colors and beads data) on the backend before rendering SVG
-2. Consider using DOMPurify library to sanitize SVG content before rendering
-3. Implement strict SVG schema validation
-4. Use Vue's template syntax instead of v-html where possible
-5. Review `backend/views/templates/schema_preview.go` to ensure proper output encoding
+1. **Server-side validation (critical):** Strictly validate and sanitize all schema data in `backend/views/templates/schema_preview.go`:
+   - Validate hex color format with strict regex (no script injection in color values)
+   - Validate numeric bounds for size, position, and bead coordinates
+   - Escape or reject any non-conforming data
+   - Use SVG-aware output encoding
+2. **Client-side defense-in-depth:** Use DOMPurify library to sanitize SVG content before rendering with `v-html`
+3. Implement strict SVG schema validation with whitelist of allowed elements and attributes
+4. Consider using Vue's template syntax instead of `v-html` where possible
+5. Add Content-Type validation to ensure response is `image/svg+xml`
 
 ### 2.3 No Rate Limiting on Critical Endpoints
 
@@ -127,44 +134,21 @@ While AWS API Gateway has basic throttling configured (burst: 10, rate: 2 req/se
 
 ## 3. Medium Priority Issues
 
-### 3.1 Long Cookie Expiration Time
+### 3.1 60-Day Cookie Expiration (Accepted Risk)
 
 **Location:** `backend/api/auth/cookie.go:17`
 
-**Issue:**
-```go
-cookieMaxAge = int((time.Hour * 24 * 60).Seconds()) // 60 days
-```
+**Status:** ✓ **Acknowledged - This is an intentional design decision**
 
-Cookies expire after 60 days, which is quite long. If a cookie is stolen, an attacker would have extended access.
+**Design Rationale:**
+- Application does not handle sensitive user data (schemas/templates only)
+- Authentication is fully delegated to WorkOS (no password management in app)
+- User convenience is prioritized over maximum security for this use case
+- WorkOS handles session security, revocation, and monitoring
 
-**Impact:** Medium - Increases the window of opportunity for session hijacking attacks.
+**Note:** This is an acceptable trade-off given the application's security model and data sensitivity level. If the application scope changes to handle more sensitive data in the future, this should be revisited.
 
-**Recommendation:**
-1. Reduce cookie max age to 7-14 days for better security
-2. Implement a "remember me" feature with explicit user consent for longer sessions
-3. Add session activity monitoring to detect anomalous behavior
-4. Consider implementing device fingerprinting for session validation
-
-### 3.2 ~~User Cache TTL May Be Too Long~~ (RESOLVED - Not an Issue)
-
-**Location:** `backend/api/auth/middleware.go:47`
-
-**Status:** ✅ **This is actually well-designed and NOT a security concern**
-
-**Analysis:**
-The 10-minute cache TTL is appropriate given:
-
-1. **Lambda Execution Model:** Lambda instances are ephemeral and recycled frequently, so the cache rarely persists for the full 10 minutes
-2. **Proper Cache Invalidation:** Signal-based invalidation is implemented for security-critical events:
-   - Logout: `InvalidateAuthCache.Emit()` (auth/logout.go:22)
-   - User updates: `InvalidateWorkosUserCache.Emit()` (users/update.go:43)
-   - Password reset: Invalidates auth cache (users/password_reset.go:22)
-   - Email verification: Invalidates auth cache
-
-**Conclusion:** This is actually a best practice for Lambda-based architectures - performance benefits during instance lifetime with explicit invalidation for security-critical changes.
-
-### 3.3 Missing Security Headers Validation
+### 3.2 Missing Security Headers Validation
 
 **Location:** `backend/api/server.go:41-57`
 
@@ -182,7 +166,7 @@ While Helmet middleware is configured with good defaults, some important headers
 3. Consider adding `X-Permitted-Cross-Domain-Policies: none`
 4. Review and tighten CSP policy as mentioned in Critical Issues
 
-### 3.4 No Logging of Security Events
+### 3.3 No Logging of Security Events
 
 **Location:** Throughout the application
 
@@ -357,9 +341,8 @@ The following security controls are properly implemented:
 3. ✅ Add security event logging
 
 ### Medium-term (Medium - within 1-2 months)
-1. ✅ Reduce cookie expiration time
-2. ✅ Add comprehensive security logging and monitoring
-3. ✅ Add missing security headers
+1. ✅ Add comprehensive security logging and monitoring
+2. ✅ Add missing security headers
 
 ### Long-term (Low - ongoing)
 1. ✅ Implement request ID tracking
