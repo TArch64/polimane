@@ -81,7 +81,7 @@ const verify = useAsyncAction(async () => {
     await profileStore.verifyEmail(form.data.code);
     form.reset();
   } catch (error) {
-    if (HttpError.isError(error) && error.reason === HttpErrorReason.CODE_EXPIRED) {
+    if (HttpError.isReason(error, HttpErrorReason.CODE_EXPIRED)) {
       codeFieldRef.value.setError('Час життя коду верифікації закінчився');
     }
   }

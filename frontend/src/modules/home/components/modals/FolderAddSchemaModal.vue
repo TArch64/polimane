@@ -26,6 +26,7 @@
     <TextField
       label
       required
+      ref="nameRef"
       placeholder="Назва Директорії"
       variant="control"
       class="folder-add-schema-modal__folder-name"
@@ -36,10 +37,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive } from 'vue';
+import { computed, reactive, ref } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
 import { Modal, useActiveModal } from '@/components/modal';
 import { SelectField, TextField } from '@/components/form';
-import { useAsyncAction } from '@/composables';
+import { HttpError, HttpErrorReason, useAsyncAction } from '@/composables';
 import { useHomeFoldersStore, useHomeStore } from '../../stores';
 
 const props = defineProps<{
@@ -49,6 +51,7 @@ const props = defineProps<{
 
 const NEW_FOLDER_ID = 'new' as const;
 
+const nameRef = ref<ComponentExposed<typeof TextField> | null>(null);
 const modal = useActiveModal();
 
 const homeStore = useHomeStore();
@@ -66,13 +69,19 @@ const save = useAsyncAction(async () => {
     return;
   }
 
-  await homeStore.addSchemaToFolder.do({
-    schemaIds: props.schemaIds,
-    folderId: isNewFolder.value ? null : form.folderId,
-    folderName: isNewFolder.value ? form.folderName : null,
-  });
+  try {
+    await homeStore.addSchemaToFolder.do({
+      schemaIds: props.schemaIds,
+      folderId: isNewFolder.value ? null : form.folderId,
+      folderName: isNewFolder.value ? form.folderName : null,
+    });
 
-  modal.close(null);
+    modal.close(null);
+  } catch (error) {
+    if (HttpError.isReason(error, HttpErrorReason.NAME_ALREADY_IN_USE)) {
+      nameRef.value?.setError('Ця назва вже використовується');
+    }
+  }
 });
 </script>
 

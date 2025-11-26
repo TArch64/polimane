@@ -9,6 +9,7 @@ import (
 	"polimane/backend/base"
 	"polimane/backend/env"
 	"polimane/backend/services/db/autoanalyze"
+	dberror "polimane/backend/services/db/error"
 	"polimane/backend/services/sentry"
 )
 
@@ -27,6 +28,10 @@ func Provider(options Options) (*gorm.DB, error) {
 
 	if err != nil {
 		return nil, base.TagError("db.open", err)
+	}
+
+	if err = instance.Use(dberror.New()); err != nil {
+		return nil, base.TagError("db.error_handler", err)
 	}
 
 	if env.IsDev {

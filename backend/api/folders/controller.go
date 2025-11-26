@@ -13,6 +13,10 @@ import (
 
 const folderIDParam = "folderID"
 
+var (
+	NameAlreadyInUseErr = base.NewReasonedError(fiber.StatusBadRequest, "NameAlreadyInUse")
+)
+
 type Controller struct {
 	db          *gorm.DB
 	folders     *repositoryfolders.Client

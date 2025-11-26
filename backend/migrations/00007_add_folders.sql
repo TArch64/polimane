@@ -21,6 +21,9 @@ CREATE INDEX IF NOT EXISTS idx_folders_created_at
 CREATE INDEX IF NOT EXISTS idx_folders_user_id
   ON folders (user_id);
 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_folders_user_id_name
+  ON folders (user_id, name);
+
 ALTER TABLE user_schemas
   ADD COLUMN IF NOT EXISTS folder_id uuid NULL,
   ADD CONSTRAINT fk_user_schemas_folder
@@ -33,8 +36,8 @@ CREATE INDEX IF NOT EXISTS idx_user_schemas_folder_id
   ON user_schemas (folder_id);
 
 -- +goose Down
-DROP TABLE IF EXISTS folders;
-
 ALTER TABLE user_schemas
   DROP CONSTRAINT IF EXISTS fk_user_schemas_folder,
   DROP COLUMN IF EXISTS folder_id;
+
+DROP TABLE IF EXISTS folders;

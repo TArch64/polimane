@@ -1,5 +1,9 @@
 <template>
-  <Modal title="Змінити Назву Схеми" @save="save">
+  <Modal
+    title="Змінити Назву Схеми"
+    :loading="save.isActive"
+    @save="save"
+  >
     <TextField
       required
       variant="control"
@@ -15,6 +19,7 @@ import { Modal, useActiveModal } from '@/components/modal';
 import { TextField } from '@/components/form';
 import type { ISchema, SchemaUpdate } from '@/models';
 import type { MaybePromise } from '@/types';
+import { useAsyncAction } from '@/composables';
 
 const props = defineProps<{
   schema: ISchema;
@@ -27,11 +32,17 @@ const form = reactive({
   name: props.schema.name,
 });
 
-function save(): void {
-  props.updateSchema({
+const save = useAsyncAction(async () => {
+  form.name = form.name.trim();
+
+  if (form.name === props.schema.name) {
+    return modal.close(null);
+  }
+
+  await props.updateSchema({
     name: form.name.trim(),
   });
 
   modal.close(null);
-}
+});
 </script>

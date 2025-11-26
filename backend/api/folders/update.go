@@ -1,12 +1,15 @@
 package folders
 
 import (
+	"errors"
+
 	"github.com/gofiber/fiber/v2"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
 	"polimane/backend/repository"
+	dberror "polimane/backend/services/db/error"
 )
 
 type updateBody struct {
@@ -30,6 +33,10 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
 		repository.IDEq(folderID),
 		repository.UserIDEq(user.ID),
 	)
+
+	if errors.Is(err, dberror.UniqueConstraintErr) {
+		return NameAlreadyInUseErr
+	}
 	if err != nil {
 		return err
 	}

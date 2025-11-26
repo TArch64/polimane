@@ -13,6 +13,7 @@ import (
 	"polimane/backend/model"
 	"polimane/backend/repository"
 	repositoryschemas "polimane/backend/repository/schemas"
+	dberror "polimane/backend/services/db/error"
 )
 
 type createBody struct {
@@ -50,6 +51,9 @@ func (c *Controller) apiCreate(ctx *fiber.Ctx) (err error) {
 		)
 	})
 
+	if errors.Is(err, dberror.UniqueConstraintErr) {
+		return NameAlreadyInUseErr
+	}
 	if err != nil {
 		return err
 	}

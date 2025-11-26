@@ -16,6 +16,10 @@ export class HttpError extends Error {
     return error instanceof HttpError;
   }
 
+  static isReason(error: unknown, reason: HttpErrorReason): error is HttpError {
+    return HttpError.isError(error) && error.reason === reason;
+  }
+
   meta: Record<string, unknown> = {};
 
   constructor(
