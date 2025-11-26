@@ -28,9 +28,14 @@ export const useFolderStore = defineStore('home/folder', () => {
       });
   }
 
+  async function deleteFolder() {
+    await http.delete(['/folders', folderId.value]);
+  }
+
   return {
     folder: computed(() => details.data!),
     load,
     update,
+    delete: deleteFolder,
   };
 });

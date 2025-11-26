@@ -40,10 +40,23 @@ export const useFoldersStore = defineStore('home/list/folders', () => {
       });
   }
 
+  async function deleteFolder(deleting: IFolder): Promise<void> {
+    await listStore.list.optimisticUpdate()
+      .inTransition()
+      .begin((state) => {
+        state.folders = state.folders.filter((folder) => folder.id !== deleting.id);
+        state.total--;
+      })
+      .commit(async () => {
+        await http.delete(['/folders', deleting.id]);
+      });
+  }
+
   return {
     folders,
     hasFolders,
     addSchemas,
     updateFolder,
+    deleteFolder,
   };
 });

@@ -120,7 +120,7 @@ const menuActions = computed((): MaybeContextMenuAction[] => [
 
   permissions.admin && {
     danger: true,
-    title: 'Видалити Схему',
+    title: 'Видалити',
     icon: TrashIcon,
 
     async onAction(event) {

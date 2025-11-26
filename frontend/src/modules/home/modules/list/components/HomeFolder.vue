@@ -21,12 +21,16 @@ import type { IListFolder } from '@/modules/home/stores';
 import { DEFAULT_SCHEMA_BACKGROUND } from '@/config';
 import { FolderRenameModal, HomeListCard, HomeListScreenshot } from '@/modules/home/components';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
-import { EditIcon } from '@/components/icon';
+import { EditIcon, TrashIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';
+import { useConfirm } from '@/components/confirm';
+import { useFoldersStore } from '../stores';
 
 const props = defineProps<{
   folder: IListFolder;
 }>();
+
+const foldersStore = useFoldersStore();
 
 const renameModal = useModal(FolderRenameModal);
 
@@ -34,6 +38,13 @@ const folderRoute = computed((): RouteLocationRaw => ({
   name: 'home-folder',
   params: { folderId: props.folder.id },
 }));
+
+const deleteConfirm = useConfirm({
+  danger: true,
+  control: false,
+  message: 'Ви впевнені, що хочете видалити цю директорію?',
+  acceptButton: 'Видалити',
+});
 
 const menuActions: MaybeContextMenuAction[] = [
   {
@@ -44,6 +55,17 @@ const menuActions: MaybeContextMenuAction[] = [
       renameModal.open({
         folder: props.folder,
       });
+    },
+  },
+  {
+    title: 'Видалити',
+    icon: TrashIcon,
+    danger: true,
+
+    async onAction(event) {
+      if (await deleteConfirm.ask({ virtualTarget: event.menuRect })) {
+        await foldersStore.deleteFolder(props.folder);
+      }
     },
   },
 ];
