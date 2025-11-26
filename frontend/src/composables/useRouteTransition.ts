@@ -6,10 +6,9 @@ export interface IRouteTransition {
 }
 
 let pending: ViewTransitionUpdateCallback[] = [];
+let resolvers: PromiseWithResolvers<void>;
 
 export function useRouteTransition(): IRouteTransition {
-  let resolvers: PromiseWithResolvers<void>;
-
   function doTransition(): void {
     startViewTransition(async () => {
       for (const callback of pending) {

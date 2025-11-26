@@ -8,10 +8,8 @@ import (
 )
 
 func IncludeUserSchemaScope(userID model.ID) repository.Scope {
-	return func(stmt *gorm.Statement) {
-		expr := gorm.Expr("JOIN user_schemas ON user_schemas.schema_id = schemas.id AND user_schemas.user_id = ?", userID)
-		repository.AddJoin(stmt, expr)
-	}
+	expr := gorm.Expr("JOIN user_schemas ON user_schemas.schema_id = schemas.id AND user_schemas.user_id = ?", userID)
+	return repository.Join(expr)
 }
 
 var (

@@ -13,15 +13,12 @@ func IncludeUsersLegacyScope(db *gorm.DB) *gorm.DB {
 }
 
 func IncludeSchemasScope(conditions ...clause.Expr) repository.Scope {
-	return func(stmt *gorm.Statement) {
-		expr := gorm.Expr("JOIN schemas ON schemas.id = user_schemas.schema_id")
-		for _, condition := range conditions {
-			expr.SQL += " AND " + condition.SQL
-			expr.Vars = append(expr.Vars, condition.Vars...)
-		}
-
-		repository.AddJoin(stmt, expr)
+	expr := gorm.Expr("JOIN schemas ON schemas.id = user_schemas.schema_id")
+	for _, condition := range conditions {
+		expr.SQL += " AND " + condition.SQL
+		expr.Vars = append(expr.Vars, condition.Vars...)
 	}
+	return repository.Join(expr)
 }
 
 var (
