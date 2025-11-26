@@ -69,6 +69,8 @@ const save = useAsyncAction(async () => {
     return;
   }
 
+  form.folderName = form.folderName.trim();
+
   try {
     await homeStore.addSchemaToFolder.do({
       schemaIds: props.schemaIds,
