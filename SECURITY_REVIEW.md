@@ -11,7 +11,7 @@ This security review assessed the Polimane full-stack application consisting of 
 **Overall Security Posture:** Good with some areas requiring attention
 
 **Critical-Issues:** 1
-**High-Priority Issues:** 3
+**High-Priority Issues:** 2
 **Medium-Priority Issues:** 1
 **Low-Priority Issues:** 0
 
@@ -62,32 +62,7 @@ While the CORS configuration includes `"X-CSRF-Token"` header in the allowed hea
    - Handle token refresh on 403 responses
 5. Consider using the `gorilla/csrf` package or implementing custom CSRF middleware
 
-### 2.2 Unsafe v-html Usage
-
-**Location:** `frontend/src/modules/schemas/editor/components/modals/schemaExport/SchemaExportPreview.vue:5`
-
-**Issue:**
-
-```vue
-<div v-html="source" />
-```
-
-The component uses `v-html` to render SVG content from the API. **All data flowing into the SVG generation should be treated as untrusted**, even though it comes from the backend. User-controlled schema data (colors, beads, size, backgroundColor) is embedded into the SVG template and could contain malicious content if not properly validated and sanitized.
-
-**Impact:** High - Potential XSS if malicious SVG content is rendered.
-
-**Recommendation:**
-1. **Server-side validation (critical):** Strictly validate and sanitize all schema data in `backend/views/templates/schema_preview.go`:
-   - Validate hex color format with strict regex (no script injection in color values)
-   - Validate numeric bounds for size, position, and bead coordinates
-   - Escape or reject any non-conforming data
-   - Use SVG-aware output encoding
-2. **Client-side defense-in-depth:** Use DOMPurify library to sanitize SVG content before rendering with `v-html`
-3. Implement strict SVG schema validation with whitelist of allowed elements and attributes
-4. Consider using Vue's template syntax instead of `v-html` where possible
-5. Add Content-Type validation to ensure response is `image/svg+xml`
-
-### 2.3 No Rate Limiting on Critical Endpoints
+### 2.2 No Rate Limiting on Critical Endpoints
 
 **Location:** Backend API endpoints (notably auth endpoints)
 
@@ -167,7 +142,9 @@ The following security controls are properly implemented:
 ### 4.4 Input Validation ✅
 - go-playground/validator used for request validation
 - Validation tags on all input structures
-- Custom validators (e.g., iscolor for hex colors)
+- `iscolor` validator protects against XSS in SVG rendering
+- Colors validated on schema updates (PATCH /schemas/:id)
+- Numeric bounds validation for size and bead coordinates
 - Query parameter validation
 
 
@@ -259,8 +236,7 @@ The following security controls are properly implemented:
 2. ✅ Implement CSRF protection
 
 ### Short-term (High - within 1 sprint)
-1. ✅ Sanitize SVG rendering or add DOMPurify
-2. ✅ Implement application-level rate limiting
+1. ✅ Implement application-level rate limiting
 
 ### Medium-term (Medium - within 1-2 months)
 1. ✅ Add missing security headers
