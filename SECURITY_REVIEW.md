@@ -12,8 +12,8 @@ This security review assessed the Polimane full-stack application consisting of 
 
 **Critical-Issues:** 1
 **High-Priority Issues:** 3
-**Medium-Priority Issues:** 2
-**Low-Priority Issues:** 2
+**Medium-Priority Issues:** 1
+**Low-Priority Issues:** 1
 
 ---
 
@@ -134,32 +134,6 @@ While Helmet middleware is configured with good defaults, some important headers
 3. Consider adding `X-Permitted-Cross-Domain-Policies: none`
 4. Review and tighten CSP policy as mentioned in Critical-Issues
 
-### 3.2 No Logging of Security Events
-
-**Location:** Throughout the application
-
-**Issue:**
-There's no evidence of security event logging for:
-- Failed authentication attempts
-- Authorization failures
-- Suspicious activity patterns
-- Account changes (email, password, MFA)
-
-**Impact:** Medium - Difficulty detecting and responding to security incidents.
-
-**Recommendation:**
-1. Implement structured security event logging
-2. Log the following events:
-   - All authentication attempts (success and failure)
-   - Authorization failures
-   - Account modifications
-   - Password changes/resets
-   - MFA setup/removal
-   - Unusual access patterns
-3. Send security logs to centralized logging (CloudWatch, Sentry already integrated)
-4. Set up alerts for suspicious patterns
-5. Implement audit trail for schema access and modifications
-
 ---
 
 ## 4. Low-Priority Issues
@@ -176,25 +150,6 @@ No request ID middleware is implemented for request tracing and debugging.
 2. Include request IDs in all logs
 3. Return request IDs in error responses for customer support
 4. Use OpenTelemetry (already imported) for distributed tracing
-
-### 4.2 Cookie Domain Configuration
-
-**Location:** `backend/api/auth/cookie.go:34`
-
-**Issue:**
-```go
-domain := "." + environment.AppDomain
-```
-
-The cookie domain is prefixed with a dot, making it accessible to all subdomains. This is intentional for the app/api subdomain setup but should be documented.
-
-**Impact:** Low - Minimal risk if all subdomains are controlled by the application.
-
-**Recommendation:**
-1. Document the subdomain cookie sharing design decision
-2. Ensure no untrusted subdomains are added in the future
-3. Consider using path restrictions if possible
-4. Review subdomain isolation strategy
 
 ---
 
@@ -323,11 +278,9 @@ The following security controls are properly implemented:
 ### Short-term (High - within 1 sprint)
 1. ✅ Sanitize SVG rendering or add DOMPurify
 2. ✅ Implement application-level rate limiting
-3. ✅ Add security event logging
 
 ### Medium-term (Medium - within 1-2 months)
-1. ✅ Add comprehensive security logging and monitoring
-2. ✅ Add missing security headers
+1. ✅ Add missing security headers
 
 ### Long-term (Low - ongoing)
 1. ✅ Implement request ID tracking
