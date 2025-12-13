@@ -44,7 +44,6 @@ defineSlots<{
 <style scoped>
 @layer page {
   .home-grid-list {
-    flex-grow: 1;
     display: grid;
     grid-template-columns: repeat(var(--list-columns), 1fr);
     align-content: start;
