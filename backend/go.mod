@@ -4,27 +4,27 @@ go 1.25.0
 
 require (
 	github.com/Netflix/go-env v0.1.2
-	github.com/aws/aws-lambda-go v1.50.0
-	github.com/aws/aws-sdk-go-v2 v1.39.6
-	github.com/aws/aws-sdk-go-v2/config v1.31.19
-	github.com/aws/aws-sdk-go-v2/credentials v1.18.23
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.90.1
-	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.14
+	github.com/aws/aws-lambda-go v1.51.0
+	github.com/aws/aws-sdk-go-v2 v1.41.0
+	github.com/aws/aws-sdk-go-v2/config v1.32.5
+	github.com/aws/aws-sdk-go-v2/credentials v1.19.5
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.93.2
+	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.20
 	github.com/bitwarden/sdk-go v1.0.2
-	github.com/getsentry/sentry-go v0.36.2
-	github.com/getsentry/sentry-go/fiber v0.36.2
-	github.com/getsentry/sentry-go/otel v0.36.2
-	github.com/go-playground/validator/v10 v10.28.0
-	github.com/gofiber/fiber/v2 v2.52.9
+	github.com/getsentry/sentry-go v0.40.0
+	github.com/getsentry/sentry-go/fiber v0.40.0
+	github.com/getsentry/sentry-go/otel v0.40.0
+	github.com/go-playground/validator/v10 v10.29.0
+	github.com/gofiber/fiber/v2 v2.52.10
 	github.com/jackc/pgx/v5 v5.7.6
 	github.com/kittipat1413/go-common v0.20.0
 	github.com/lestrrat-go/jwx/v3 v3.0.12
 	github.com/maniartech/signals v1.3.1
 	github.com/workos/workos-go/v4 v4.46.1
-	go.opentelemetry.io/otel v1.38.0
-	go.opentelemetry.io/otel/sdk v1.38.0
+	go.opentelemetry.io/otel v1.39.0
+	go.opentelemetry.io/otel/sdk v1.39.0
 	go.uber.org/fx v1.24.0
-	golang.org/x/sync v0.18.0
+	golang.org/x/sync v0.19.0
 	gorm.io/datatypes v1.2.7
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.1
@@ -36,25 +36,27 @@ require (
 	github.com/ClickHouse/ch-go v0.61.5 // indirect
 	github.com/ClickHouse/clickhouse-go/v2 v2.30.0 // indirect
 	github.com/andybalholm/brotli v1.2.0 // indirect
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.3 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.13 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.13 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.13 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.4 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.16 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.16 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.16 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.4 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.13 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.9.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.13 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.13 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.30.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.40.1 // indirect
-	github.com/aws/smithy-go v1.23.2 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.16 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.9.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.16 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.16 // indirect
+	github.com/aws/aws-sdk-go-v2/service/signin v1.0.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.30.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.12 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.41.5 // indirect
+	github.com/aws/smithy-go v1.24.0 // indirect
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/clipperhouse/stringish v0.1.1 // indirect
 	github.com/clipperhouse/uax29/v2 v2.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.11 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.12 // indirect
 	github.com/go-faster/city v1.0.1 // indirect
 	github.com/go-faster/errors v0.7.1 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
@@ -71,7 +73,7 @@ require (
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/klauspost/compress v1.18.1 // indirect
+	github.com/klauspost/compress v1.18.2 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.4 // indirect
 	github.com/lestrrat-go/dsig v1.0.0 // indirect
@@ -95,14 +97,14 @@ require (
 	github.com/valyala/fasthttp v1.68.0 // indirect
 	github.com/valyala/fastjson v1.6.4 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-	go.opentelemetry.io/otel/metric v1.38.0 // indirect
-	go.opentelemetry.io/otel/trace v1.38.0 // indirect
+	go.opentelemetry.io/otel/metric v1.39.0 // indirect
+	go.opentelemetry.io/otel/trace v1.39.0 // indirect
 	go.uber.org/dig v1.19.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	go.uber.org/zap v1.27.0 // indirect
-	golang.org/x/crypto v0.44.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
-	golang.org/x/text v0.31.0 // indirect
+	go.uber.org/zap v1.27.1 // indirect
+	golang.org/x/crypto v0.46.0 // indirect
+	golang.org/x/sys v0.39.0 // indirect
+	golang.org/x/text v0.32.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/clickhouse v0.7.0 // indirect
 	gorm.io/driver/mysql v1.6.0 // indirect
