@@ -28,6 +28,10 @@ resource "aws_lambda_event_source_mapping" "sqs_worker_debounced" {
   function_name    = aws_lambda_function.worker.function_name
   event_source_arn = aws_sqs_queue.debounced.arn
   tags             = local.aws_common_tags
+
+  scaling_config {
+    maximum_concurrency = 2
+  }
 }
 
 resource "aws_lambda_event_source_mapping" "sqs_worker_scheduled" {
@@ -35,6 +39,10 @@ resource "aws_lambda_event_source_mapping" "sqs_worker_scheduled" {
   event_source_arn                   = aws_sqs_queue.scheduled.arn
   maximum_batching_window_in_seconds = 300
   tags                               = local.aws_common_tags
+
+  scaling_config {
+    maximum_concurrency = 2
+  }
 }
 
 resource "aws_cloudwatch_log_group" "worker_logs" {
