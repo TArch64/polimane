@@ -44,6 +44,7 @@ const deleteConfirm = useConfirm({
   control: false,
   message: 'Ви впевнені, що хочете видалити цю директорію?',
   acceptButton: 'Видалити',
+  additionalCondition: 'Видалити всі схеми в директорії',
 });
 
 const menuActions: MaybeContextMenuAction[] = [

@@ -9,6 +9,7 @@ export interface IConfirmOptions {
   control?: boolean;
   declineButton?: string;
   acceptButton?: string;
+  additionalCondition?: string;
 }
 
 export interface IConfirmAskOptions {
@@ -34,6 +35,7 @@ export class ConfirmModel {
   readonly control;
   readonly declineButton;
   readonly acceptButton;
+  readonly additionalCondition;
 
   private readonly state: IConfirmState;
 
@@ -48,6 +50,7 @@ export class ConfirmModel {
     this.control = options.control ?? true;
     this.declineButton = options.declineButton ?? 'Відмінити';
     this.acceptButton = options.acceptButton ?? 'Підтвердити';
+    this.additionalCondition = options.additionalCondition ?? '';
 
     this.state = reactive({
       isOpened: false,

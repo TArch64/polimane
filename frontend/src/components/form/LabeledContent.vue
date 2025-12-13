@@ -4,18 +4,22 @@
       <slot />
 
       <span>
-      {{ label }}
-    </span>
+        {{ label }}
+      </span>
     </label>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Slot } from 'vue';
+import type { NumericString } from '@/types';
 
-defineProps<{
+withDefaults(defineProps<{
   label: string;
-}>();
+  gap?: number | NumericString;
+}>(), {
+  gap: 16,
+});
 
 defineSlots<{
   default: Slot;
@@ -31,7 +35,7 @@ defineSlots<{
   .labeled-content__label {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: v-bind("gap + 'px'");
   }
 }
 </style>

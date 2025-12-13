@@ -10,6 +10,13 @@
       {{ message }}
     </p>
 
+    <CheckboxField
+      :label="model.additionalCondition"
+      class="confirm__additional-condition"
+      v-model="isAdditionalAccepted"
+      v-if="model.additionalCondition"
+    />
+
     <footer class="confirm__footer">
       <ConfirmButton
         variant="secondary"
@@ -31,6 +38,7 @@
 import { computed, type FunctionalComponent, h, nextTick, onMounted, ref, toValue } from 'vue';
 import { onBackdropClick } from '@/composables';
 import { vPopoverShift } from '@/directives';
+import { CheckboxField } from '@/components/form';
 import { Button, type ButtonVariant } from '../button';
 import type { ConfirmModel } from './ConfirmModel';
 
@@ -44,6 +52,8 @@ interface IConfirmButtonProps {
   danger?: boolean;
 }
 
+const isAdditionalAccepted = ref(false);
+
 const ConfirmButton: FunctionalComponent<IConfirmButtonProps> = (props) => {
   return h(Button, {
     size: 'md',
@@ -53,8 +63,19 @@ const ConfirmButton: FunctionalComponent<IConfirmButtonProps> = (props) => {
 };
 
 const dialogRef = ref<HTMLDialogElement>(null!);
-const decline = () => props.model.complete({ isAccepted: false });
-const accept = () => props.model.complete({ isAccepted: true });
+
+function decline() {
+  props.model.complete({
+    isAccepted: false,
+  });
+}
+
+function accept() {
+  props.model.complete({
+    isAccepted: true,
+    isSecondaryAccepted: isAdditionalAccepted.value,
+  });
+}
 
 const message = computed(() => toValue(props.model.message));
 
@@ -86,8 +107,13 @@ onBackdropClick(decline);
     view-transition-name: confirm;
   }
 
-  .confirm__message {
+  .confirm__message:not(:has(+ .confirm__additional-condition)) {
     margin-bottom: 4px;
+  }
+
+  .confirm__additional-condition {
+    margin-top: 12px;
+    margin-bottom: 8px;
   }
 
   .confirm__footer {
