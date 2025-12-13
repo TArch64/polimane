@@ -1,10 +1,10 @@
 import { onBeforeUnmount } from 'vue';
 import { useTopElement } from '@/composables';
 import { type ConfirmCreateInternalOptions, ConfirmPlugin } from './ConfirmPlugin';
-import type { IConfirmAskOptions } from './Confirm';
+import type { IConfirmAskOptions, IConfirmResult } from './ConfirmModel';
 
 export interface IConfirm {
-  ask: (options?: IConfirmAskOptions) => Promise<boolean>;
+  ask: (options?: IConfirmAskOptions) => Promise<IConfirmResult>;
   anchorStyle: { anchorName: string };
 }
 

@@ -32,10 +32,10 @@ import { computed, type FunctionalComponent, h, nextTick, onMounted, ref, toValu
 import { onBackdropClick } from '@/composables';
 import { vPopoverShift } from '@/directives';
 import { Button, type ButtonVariant } from '../button';
-import type { Confirm } from './Confirm';
+import type { ConfirmModel } from './ConfirmModel';
 
 const props = defineProps<{
-  model: Confirm;
+  model: ConfirmModel;
 }>();
 
 interface IConfirmButtonProps {
@@ -53,8 +53,8 @@ const ConfirmButton: FunctionalComponent<IConfirmButtonProps> = (props) => {
 };
 
 const dialogRef = ref<HTMLDialogElement>(null!);
-const decline = () => props.model.complete(false);
-const accept = () => props.model.complete(true);
+const decline = () => props.model.complete({ isAccepted: false });
+const accept = () => props.model.complete({ isAccepted: true });
 
 const message = computed(() => toValue(props.model.message));
 

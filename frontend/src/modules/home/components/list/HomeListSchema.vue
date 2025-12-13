@@ -124,7 +124,11 @@ const menuActions = computed((): MaybeContextMenuAction[] => [
     icon: TrashIcon,
 
     async onAction(event) {
-      if (await deleteConfirm.ask({ virtualTarget: event.menuRect })) {
+      const confirmed = await deleteConfirm.ask({
+        virtualTarget: event.menuRect,
+      });
+
+      if (confirmed.isAccepted) {
         await deleteSchema.do(props.schema);
       }
     },

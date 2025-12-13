@@ -21,7 +21,12 @@ interface IConfirmState {
   virtualTarget?: NodeRect;
 }
 
-export class Confirm {
+export interface IConfirmResult {
+  isAccepted: boolean;
+  isSecondaryAccepted?: boolean;
+}
+
+export class ConfirmModel {
   readonly id;
   readonly message;
   readonly topEl;
@@ -32,8 +37,8 @@ export class Confirm {
 
   private readonly state: IConfirmState;
 
-  private promise!: Promise<boolean>;
-  private resolvePromise!: (accepted: boolean) => void;
+  private promise!: Promise<IConfirmResult>;
+  private resolvePromise!: (result: IConfirmResult) => void;
 
   constructor(options: IConfirmOptions) {
     this.id = options.id;
@@ -70,19 +75,19 @@ export class Confirm {
     return this.state.virtualTarget;
   }
 
-  ask(options: IConfirmAskOptions = {}): Promise<boolean> {
-    this.promise = new Promise<boolean>((resolve) => {
-      this.resolvePromise = resolve;
-    });
+  ask(options: IConfirmAskOptions = {}): Promise<IConfirmResult> {
+    const { promise, resolve } = Promise.withResolvers<IConfirmResult>();
+    this.promise = promise;
+    this.resolvePromise = resolve;
 
     this.state.virtualTarget = options.virtualTarget;
     this.state.isOpened = true;
     return this.promise;
   }
 
-  complete(accepted: boolean): void {
+  complete(result: IConfirmResult): void {
     this.state.isOpened = false;
-    this.resolvePromise(accepted);
+    this.resolvePromise(result);
   }
 
   markAsRemoved(): void {

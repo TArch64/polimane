@@ -57,7 +57,8 @@ const deleteConfirm = useConfirm({
 });
 
 async function deleteUserIntent(): Promise<void> {
-  if (await deleteConfirm.ask()) emit('delete');
+  const confirmed = await deleteConfirm.ask();
+  if (confirmed.isAccepted) emit('delete');
 }
 
 </script>

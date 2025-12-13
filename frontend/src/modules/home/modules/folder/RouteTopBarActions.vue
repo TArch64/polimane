@@ -49,8 +49,7 @@ const deleteFolder = useAsyncAction(async () => {
 });
 
 async function deleteIntent(): Promise<void> {
-  if (await deleteConfirm.ask()) {
-    await deleteFolder();
-  }
+  const confirmed = await deleteConfirm.ask();
+  if (confirmed.isAccepted) await deleteFolder();
 }
 </script>

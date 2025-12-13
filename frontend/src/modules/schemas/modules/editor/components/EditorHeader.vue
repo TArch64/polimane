@@ -163,9 +163,8 @@ const deleteSchema = useAsyncAction(async () => {
 });
 
 async function deleteSchemaIntent() {
-  if (await deleteConfirm.ask()) {
-    await deleteSchema();
-  }
+  const confirmed = await deleteConfirm.ask();
+  if (confirmed.isAccepted) await deleteSchema();
 }
 
 function undo() {

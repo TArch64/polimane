@@ -26,7 +26,11 @@ export function useSchemaSelectionDelete(actionIds: Ref<string[]>, clear: () => 
     danger: true,
 
     async onAction(event) {
-      if (await deleteConfirm.ask({ virtualTarget: event.menuRect })) {
+      const confirmed = await deleteConfirm.ask({
+        virtualTarget: event.menuRect,
+      });
+
+      if (confirmed.isAccepted) {
         await deleteSchemas();
       }
     },
