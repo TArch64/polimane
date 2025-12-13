@@ -19,8 +19,8 @@ type ScreenshotOptions struct {
 	Schema *model.Schema
 }
 
-func (i *Service) Screenshot(ctx context.Context, options *ScreenshotOptions) error {
-	content, err := i.renderer.Render(&views.RenderOptions{
+func (s *Service) Screenshot(ctx context.Context, options *ScreenshotOptions) error {
+	content, err := s.renderer.Render(&views.RenderOptions{
 		View:   views.TemplateSchemaPreview,
 		Data:   templates.NewSchemaPreviewData(options.Schema),
 		Minify: true,
@@ -32,7 +32,7 @@ func (i *Service) Screenshot(ctx context.Context, options *ScreenshotOptions) er
 
 	key := model.SchemaScreenshotKey(options.Schema.ID)
 
-	_, err = i.s3.PutObject(ctx, &s3.PutObjectInput{
+	_, err = s.s3.PutObject(ctx, &s3.PutObjectInput{
 		Key:         &key,
 		Bucket:      &awss3.Bucket,
 		ACL:         awss3.ObjectACL,
@@ -46,7 +46,7 @@ func (i *Service) Screenshot(ctx context.Context, options *ScreenshotOptions) er
 
 	screenshotedAt := time.Now()
 
-	return i.schemas.Update(ctx, &repositoryschemas.UpdateOptions{
+	return s.schemas.Update(ctx, &repositoryschemas.UpdateOptions{
 		SchemaID: options.Schema.ID,
 		Updates:  &model.Schema{ScreenshotedAt: &screenshotedAt},
 	})

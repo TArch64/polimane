@@ -75,7 +75,7 @@ export class OptimisticUpdate<D> {
 
 export interface IAsyncData<D> {
   data: D;
-  load: () => Promise<void>;
+  load: (withReset?: boolean) => Promise<void>;
   reset: () => void;
   optimisticUpdate: () => OptimisticUpdate<D>;
   isInitial: boolean;
@@ -86,9 +86,10 @@ export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
   const routeTransition = useRouteTransition();
   const isInitial = ref(true);
 
-  const { state, isLoading, execute } = useAsyncState(async (): Promise<D> => {
+  const { state, isLoading, execute } = useAsyncState(async (withReset: boolean): Promise<D> => {
     try {
-      return await options.loader(state.value as D);
+      const current = withReset ? options.default : (state.value as D);
+      return await options.loader(current);
     } finally {
       isInitial.value = false;
     }
@@ -104,12 +105,16 @@ export function useAsyncData<D>(options: IAsyncDataOptions<D>): IAsyncData<D> {
     isInitial.value = true;
   }
 
-  async function load() {
+  async function load(withReset = false) {
+    if (withReset) {
+      isInitial.value = true;
+    }
+
     if (options.once && !isInitial.value) {
       return;
     }
 
-    await execute();
+    await execute(undefined, withReset);
   }
 
   function optimisticUpdate(): OptimisticUpdate<D> {

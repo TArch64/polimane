@@ -3,6 +3,10 @@ import { computed, ref } from 'vue';
 import { useAsyncData, useHttpClient } from '@/composables';
 import type { FolderUpdate, IFolder } from '@/models';
 
+export interface IFolderDeleteOptions {
+  deleteSchemas: boolean;
+}
+
 export const useFolderStore = defineStore('home/folder', () => {
   const http = useHttpClient();
   const folderId = ref<string>('');
@@ -28,8 +32,8 @@ export const useFolderStore = defineStore('home/folder', () => {
       });
   }
 
-  async function deleteFolder() {
-    await http.delete(['/folders', folderId.value]);
+  async function deleteFolder(options: IFolderDeleteOptions) {
+    await http.delete(['/folders', folderId.value], options);
   }
 
   return {

@@ -11,11 +11,11 @@
     >
       <HomeFolder :folder="item" />
     </HomeGridList>
-
-    <HomeListHeading>
-      Схеми для Бісеру
-    </HomeListHeading>
   </template>
+
+  <HomeListHeading>
+    Схеми для Бісеру
+  </HomeListHeading>
 
   <HomeGridList
     selectable

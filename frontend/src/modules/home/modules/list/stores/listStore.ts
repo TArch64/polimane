@@ -43,9 +43,12 @@ export const useHomeListStore = defineStore('home/list', () => {
   const loadedTotal = computed(() => list.data.folders.length + list.data.schemas.length);
   const canLoadNext = computed(() => loadedTotal.value < list.data.total);
 
+  const hasData = computed(() => {
+    return !!loadedTotal.value || list.isLoading;
+  });
+
   function load(): Promise<void> {
-    list.reset();
-    return list.load();
+    return list.load(true);
   }
 
   async function loadNext(): Promise<void> {
@@ -56,6 +59,7 @@ export const useHomeListStore = defineStore('home/list', () => {
 
   return {
     list,
+    hasData,
     canLoadNext,
     load,
     loadNext,

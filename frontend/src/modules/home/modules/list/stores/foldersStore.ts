@@ -3,8 +3,12 @@ import { computed } from 'vue';
 import { type IFolderAddSchemasInput, useHomeFoldersStore } from '@/modules/home/stores';
 import type { FolderUpdate, IFolder } from '@/models';
 import { useHttpClient } from '@/composables';
-import { useHomeListStore } from './homeListStore';
+import { useHomeListStore } from './listStore';
 import { useSchemasStore } from './schemasStore';
+
+export interface IFolderDeleteOptions {
+  deleteSchemas: boolean;
+}
 
 export const useFoldersStore = defineStore('home/list/folders', () => {
   const http = useHttpClient();
@@ -40,7 +44,7 @@ export const useFoldersStore = defineStore('home/list/folders', () => {
       });
   }
 
-  async function deleteFolder(deleting: IFolder): Promise<void> {
+  async function deleteFolder(deleting: IFolder, options: IFolderDeleteOptions): Promise<void> {
     await listStore.list.optimisticUpdate()
       .inTransition()
       .begin((state) => {
@@ -48,8 +52,12 @@ export const useFoldersStore = defineStore('home/list/folders', () => {
         state.total--;
       })
       .commit(async () => {
-        await http.delete(['/folders', deleting.id]);
+        await http.delete(['/folders', deleting.id], options);
       });
+
+    if (!options.deleteSchemas) {
+      await listStore.load();
+    }
   }
 
   return {

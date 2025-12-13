@@ -24,7 +24,7 @@ import { Button } from '@/components/button';
 import { EditIcon, TrashIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';
 import { useConfirm } from '@/components/confirm';
-import { useAsyncAction } from '@/composables';
+import { useAsyncAction, useProgressBar } from '@/composables';
 import { useFolderStore } from './stores';
 
 const folderStore = useFolderStore();
@@ -44,13 +44,18 @@ const openRenameModal = () => renameModal.open({
   folder: folderStore.folder,
 });
 
-const deleteFolder = useAsyncAction(async () => {
-  await folderStore.delete();
+const deleteFolder = useAsyncAction(async (deleteSchemas: boolean) => {
+  await folderStore.delete({ deleteSchemas });
   await router.push({ name: 'home' });
 });
 
+useProgressBar(deleteFolder);
+
 async function deleteIntent(): Promise<void> {
   const confirmed = await deleteConfirm.ask();
-  if (confirmed.isAccepted) await deleteFolder();
+
+  if (confirmed.isAccepted) {
+    await deleteFolder(confirmed.isSecondaryAccepted ?? false);
+  }
 }
 </script>

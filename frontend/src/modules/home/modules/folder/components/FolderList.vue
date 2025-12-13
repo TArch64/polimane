@@ -1,4 +1,8 @@
 <template>
+  <HomeListHeading>
+    Схеми для Бісеру
+  </HomeListHeading>
+
   <HomeGridList
     selectable
     :list="schemasStore.schemas"
@@ -14,7 +18,12 @@
 <script setup lang="ts">
 import { toRef } from 'vue';
 import { useInfinityScroll } from '@/composables';
-import { HomeGridList, HomeListLoader, HomeListSchema } from '@/modules/home/components';
+import {
+  HomeGridList,
+  HomeListHeading,
+  HomeListLoader,
+  HomeListSchema,
+} from '@/modules/home/components';
 import { useFolderSchemasStore } from '../stores';
 
 const schemasStore = useFolderSchemasStore();

@@ -8,7 +8,7 @@ import type {
   ISchemaCreateRequest,
   ListSchema,
 } from '@/modules/home/stores';
-import { useHomeListStore } from './homeListStore';
+import { useHomeListStore } from './listStore';
 
 const PAGINATION_PAGE = 100;
 

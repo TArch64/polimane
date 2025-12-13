@@ -1,5 +1,5 @@
 <template>
-  <HomeList v-if="schemasStore.hasSchemas" />
+  <HomeList v-if="listStore.hasData" />
   <HomeEmpty v-else />
 
   <RouteTopBarActions />
@@ -20,6 +20,7 @@ defineOptions({
 });
 
 const homeStore = useHomeStore();
+const listStore = useHomeListStore();
 const schemasStore = useSchemasStore();
 const foldersStore = useFoldersStore();
 

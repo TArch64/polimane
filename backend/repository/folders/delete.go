@@ -10,8 +10,12 @@ import (
 )
 
 func (c *Client) Delete(ctx context.Context, scopes ...repository.Scope) error {
+	return c.DeleteTx(ctx, c.db, scopes...)
+}
+
+func (c *Client) DeleteTx(ctx context.Context, tx *gorm.DB, scopes ...repository.Scope) error {
 	affected, err := gorm.
-		G[model.Folder](c.db).
+		G[model.Folder](tx).
 		Scopes(scopes...).
 		Delete(ctx)
 

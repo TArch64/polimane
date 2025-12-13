@@ -24,6 +24,7 @@ import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { EditIcon, TrashIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';
 import { useConfirm } from '@/components/confirm';
+import { useAsyncAction, useProgressBar } from '@/composables';
 import { useFoldersStore } from '../stores';
 
 const props = defineProps<{
@@ -47,6 +48,14 @@ const deleteConfirm = useConfirm({
   additionalCondition: 'Видалити всі схеми в директорії',
 });
 
+const deleteFolder = useAsyncAction(async (deleteSchemas: boolean) => {
+  await foldersStore.deleteFolder(props.folder, {
+    deleteSchemas,
+  });
+});
+
+useProgressBar(deleteFolder);
+
 const menuActions: MaybeContextMenuAction[] = [
   {
     title: 'Змінити Назву',
@@ -69,7 +78,7 @@ const menuActions: MaybeContextMenuAction[] = [
       });
 
       if (confirmed.isAccepted) {
-        await foldersStore.deleteFolder(props.folder);
+        await deleteFolder(confirmed.isSecondaryAccepted ?? false);
       }
     },
   },
