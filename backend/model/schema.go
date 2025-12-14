@@ -24,12 +24,8 @@ type Schema struct {
 
 	// Relations
 	Users       []User             `gorm:"many2many:user_schemas" json:"-"`
+	Folders     []Folder           `gorm:"many2many:folder_schemas" json:"-"`
 	Invitations []SchemaInvitation `json:"-"`
-}
-
-type SchemaWithAccess struct {
-	Schema
-	Access AccessLevel `json:"access"`
 }
 
 func SchemaScreenshotPath(id ID, timestamp *time.Time) *string {

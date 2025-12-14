@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
+	"polimane/backend/repository"
 )
 
 func (c *Client) HasAccess(
@@ -13,15 +14,9 @@ func (c *Client) HasAccess(
 	userID, schemaID model.ID,
 	access model.AccessLevel,
 ) error {
-	var exists bool
-
-	err := c.db.
-		WithContext(ctx).
-		Model(&model.UserSchema{}).
-		Select("1 AS exists").
-		Where("user_id = ? AND schema_id = ? AND access >= ?", userID, schemaID, access).
-		Pluck("exists", &exists).
-		Error
+	exists, err := c.Exists(ctx,
+		repository.Where("user_id = ? AND schema_id = ? AND access >= ?", userID, schemaID, access),
+	)
 
 	if err != nil {
 		return err

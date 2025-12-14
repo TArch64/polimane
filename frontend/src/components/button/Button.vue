@@ -81,6 +81,7 @@ const classes = computed(() => [
   }
 
   .button__prepend-icon {
+    margin-left: -4px;
     margin-right: 4px;
   }
 
@@ -190,6 +191,7 @@ const classes = computed(() => [
       }
 
       .button__prepend-icon {
+        margin-left: 0;
         margin-right: 0;
       }
     }

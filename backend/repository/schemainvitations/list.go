@@ -11,7 +11,7 @@ import (
 
 func (c *Client) List(ctx context.Context, scopes ...repository.Scope) ([]*model.SchemaInvitation, error) {
 	return gorm.
-		G[*model.SchemaInvitation](c.db).
+		G[*model.SchemaInvitation](c.DB).
 		Scopes(FilterAvailable).
 		Scopes(scopes...).
 		Find(ctx)

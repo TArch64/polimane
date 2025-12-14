@@ -26,7 +26,7 @@ import {
 } from 'vue';
 import { useRouteTransition } from '@/composables';
 import { ConfirmPlugin } from './ConfirmPlugin';
-import type { Confirm as ConfirmModel } from './Confirm';
+import type { ConfirmModel } from './ConfirmModel';
 import Confirm from './Confirm.vue';
 
 const plugin = ConfirmPlugin.inject();

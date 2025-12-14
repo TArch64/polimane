@@ -5,13 +5,16 @@ import (
 
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"polimane/backend/model"
 	"polimane/backend/repository"
 )
 
 func (c *Client) CreateFromWorkos(ctx context.Context, workosUser *usermanagement.User) (*model.User, error) {
-	schemaInvitations, err := c.schemaInvitations.List(ctx, repository.EmailEq(workosUser.Email))
+	schemaInvitations, err := c.schemaInvitations.List(ctx,
+		repository.EmailEq(workosUser.Email),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -24,15 +27,14 @@ func (c *Client) CreateFromWorkos(ctx context.Context, workosUser *usermanagemen
 	}
 
 	if len(schemaInvitations) == 0 {
-		err = c.createTx(ctx, c.db, user)
+		err = c.Insert(ctx, user)
 	} else {
-		err = c.db.Transaction(func(tx *gorm.DB) error {
-			if err = c.createTx(ctx, tx, user); err != nil {
+		err = c.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+			if err = c.InsertTx(ctx, tx, user); err != nil {
 				return err
 			}
 
 			userSchemas := make([]model.UserSchema, len(schemaInvitations))
-
 			for i, invitation := range schemaInvitations {
 				userSchemas[i] = model.UserSchema{
 					UserID:   user.ID,
@@ -41,12 +43,14 @@ func (c *Client) CreateFromWorkos(ctx context.Context, workosUser *usermanagemen
 				}
 			}
 
-			err = c.userSchemas.CreateManyTx(ctx, tx, &userSchemas)
+			err = c.userSchemas.InsertManyTx(ctx, tx, &userSchemas,
+				clause.OnConflict{DoNothing: true},
+			)
 			if err != nil {
 				return err
 			}
 
-			return c.schemaInvitations.DeleteManyTx(ctx, tx, repository.EmailEq(workosUser.Email))
+			return c.schemaInvitations.DeleteTx(ctx, tx, repository.EmailEq(workosUser.Email))
 		})
 	}
 
@@ -55,12 +59,4 @@ func (c *Client) CreateFromWorkos(ctx context.Context, workosUser *usermanagemen
 	}
 
 	return user, nil
-}
-
-func (c *Client) createTx(ctx context.Context, tx *gorm.DB, user *model.User) error {
-	result := gorm.WithResult()
-
-	return gorm.
-		G[model.User](tx, result).
-		Create(ctx, user)
 }

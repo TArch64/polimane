@@ -2,18 +2,11 @@
   <FadeTransition switch>
     <CommonLayoutSelectionBar
       :selected
+      :selectedTitle
       data-cursor-selection-ignore
       @clear-selection="$emit('clear-selection')"
       v-if="selected"
-    >
-      <template #title="ctx">
-        <slot name="selection-title" v-bind="ctx" />
-      </template>
-
-      <template #actions>
-        <slot name="selection-actions" />
-      </template>
-    </CommonLayoutSelectionBar>
+    />
 
     <CommonLayoutTopBar :title data-cursor-selection-ignore v-else>
       <slot name="top-bar-actions" />
@@ -33,22 +26,34 @@
   <main class="common-layout__main common-layout__content" v-else>
     <slot />
   </main>
+
+  <div
+    ref="selectionOverlayRef"
+    class="common-layout__selection-overlay"
+    data-cursor-selection-include
+    v-if="selected"
+  />
 </template>
 
 <script setup lang="ts">
-import type { Slot } from 'vue';
+import { ref, type Slot, toRef } from 'vue';
 import { usePageClass } from '@/composables';
+import { type MaybeContextMenuAction, useContextMenu } from '@/components/contextMenu';
 import { FadeTransition } from '../transition';
 import CommonLayoutTopBar from './CommonLayoutTopBar.vue';
 import CommonLayoutSelectionBar from './CommonLayoutSelectionBar.vue';
 import CommonLayoutSubmenu from './CommonLayoutSubmenu.vue';
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   title?: string;
   selected?: number;
+  selectedTitle?: string;
+  selectedActions?: MaybeContextMenuAction[];
 }>(), {
   title: '',
   selected: 0,
+  selectedTitle: '',
+  selectedActions: () => [],
 });
 
 defineEmits<{
@@ -59,11 +64,18 @@ const slots = defineSlots<{
   'default': Slot;
   'submenu'?: Slot;
   'top-bar-actions'?: Slot;
-  'selection-title'?: Slot<{ count: number }>;
-  'selection-actions'?: Slot;
 }>();
 
+const selectionOverlayRef = ref<HTMLElement | null>(null);
+
 usePageClass('app--common-layout');
+
+useContextMenu({
+  el: selectionOverlayRef,
+  control: false,
+  title: toRef(props, 'selectedTitle'),
+  actions: toRef(props, 'selectedActions'),
+});
 </script>
 
 <style scoped>
@@ -100,6 +112,14 @@ usePageClass('app--common-layout');
   .common-layout__main--aside-menu {
     padding: 20px;
     min-width: 0;
+  }
+
+  .common-layout__selection-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
   }
 
   @media (max-width: 768px) {

@@ -9,7 +9,7 @@ import (
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
-	repositoryschemas "polimane/backend/repository/schemas"
+	"polimane/backend/repository"
 	"polimane/backend/services/awssqs"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/worker/events"
@@ -72,10 +72,7 @@ func (c *Controller) updateScreenshot(ctx context.Context, schemaID model.ID, ne
 		})
 	}
 
-	schema, err := c.schemas.GetByID(ctx, &repositoryschemas.ByIDOptions{
-		SchemaID: schemaID,
-	})
-
+	schema, err := c.schemas.Get(ctx, repository.IDEq(schemaID))
 	if err != nil {
 		return err
 	}
@@ -108,10 +105,9 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
 		return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
 	}
 
-	err = c.schemas.Update(requestCtx, &repositoryschemas.UpdateOptions{
-		SchemaID: schemaID,
-		Updates:  updates,
-	})
+	err = c.schemas.Update(requestCtx, *updates,
+		repository.IDEq(schemaID),
+	)
 
 	if err != nil {
 		return err

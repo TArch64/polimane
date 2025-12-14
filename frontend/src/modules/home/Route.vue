@@ -1,41 +1,33 @@
 <template>
   <CommonLayout
-    :selected="schemasStore.selected.size"
-    @clear-selection="schemasStore.clearSelection"
+    :title="homeStore.title"
+    :selected="selectionCount"
+    :selected-title="selectionTitle"
+    :selected-actions="homeStore.selection.actions"
+    @clear-selection="homeStore.selection.onClear()"
   >
     <template #top-bar-actions>
       <HomeTopBarActions />
     </template>
 
-    <template #selection-title="{ count }">
-      Обрано {{ count }} схем
-    </template>
-
-    <template #selection-actions>
-      <HomeSelectionBarActions />
-    </template>
-
-    <HomeSchemasList v-if="schemasStore.hasSchemas" />
-    <HomeSchemasEmpty v-else />
+    <RouterView />
   </CommonLayout>
 </template>
 
 <script setup lang="ts">
-import { definePreload } from '@/router/define';
+import { computed } from 'vue';
 import { CommonLayout } from '@/components/layout';
-import {
-  HomeSchemasEmpty,
-  HomeSchemasList,
-  HomeSelectionBarActions,
-  HomeTopBarActions,
-} from './components';
-import { useSchemasStore } from './stores';
+import { SCHEMA_PLURAL, usePluralFormatter } from '@/composables';
+import { useHomeStore } from './stores';
+import { HomeTopBarActions } from './components';
 
-defineOptions({
-  beforeRouteEnter: definePreload<'home'>(async () => {
-    await useSchemasStore().load();
-  }),
-});
+defineProps<{
+  folderId?: string; // used in child routes
+}>();
 
-const schemasStore = useSchemasStore();
+const homeStore = useHomeStore();
+
+const selectionCount = computed(() => homeStore.selection.ids.size);
+const selectionSchemaPlural = usePluralFormatter(selectionCount, SCHEMA_PLURAL);
+const selectionTitle = computed(() => `Обрано ${selectionCount.value} ${selectionSchemaPlural.value}`);
 </script>

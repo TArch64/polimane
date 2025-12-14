@@ -11,7 +11,7 @@ import (
 
 func (c *Client) Get(ctx context.Context, scopes ...repository.Scope) (*model.User, error) {
 	return gorm.
-		G[*model.User](c.db).
+		G[*model.User](c.DB).
 		Scopes(scopes...).
 		Take(ctx)
 }

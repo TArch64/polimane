@@ -83,12 +83,21 @@ function closeGroup(): void {
   });
 }
 
+let closeEventController: AbortController | null = null;
+
+function completeCloseEvent(): void {
+  emit('close');
+  closeEventController?.abort();
+}
+
 function closeEvent(event: Event): void {
   if (menuRef.value?.contains(event.target as Node)) {
     return;
   }
 
-  emit('close');
+  closeEventController = new AbortController();
+  addEventListener('mousemove', completeCloseEvent, { signal: closeEventController.signal });
+  addEventListener('mouseup', completeCloseEvent, { signal: closeEventController.signal });
 }
 
 useEventListener('mousedown', closeEvent, { capture: true });

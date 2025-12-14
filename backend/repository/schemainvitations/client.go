@@ -3,6 +3,9 @@ package schemainvitations
 import (
 	"go.uber.org/fx"
 	"gorm.io/gorm"
+
+	"polimane/backend/model"
+	repositorybase "polimane/backend/repository/base"
 )
 
 type ClientOptions struct {
@@ -11,9 +14,11 @@ type ClientOptions struct {
 }
 
 type Client struct {
-	db *gorm.DB
+	*repositorybase.Client[model.SchemaInvitation]
 }
 
 func Provider(options ClientOptions) *Client {
-	return &Client{db: options.DB}
+	return &Client{
+		Client: repositorybase.New[model.SchemaInvitation](options.DB),
+	}
 }

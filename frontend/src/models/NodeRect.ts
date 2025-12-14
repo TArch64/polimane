@@ -79,6 +79,10 @@ export class NodeRect implements INodeRect {
     });
   }
 
+  get square(): number {
+    return this.width * this.height;
+  }
+
   toJSON(): INodeRect {
     return {
       x: this.x,

@@ -7,7 +7,6 @@ import (
 	"os"
 	"time"
 
-	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
@@ -17,8 +16,4 @@ func newLogger() logger.Interface {
 		LogLevel:      logger.Info,
 		Colorful:      true,
 	})
-}
-
-func newTracingPlugin() gorm.Plugin {
-	return nil
 }

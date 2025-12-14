@@ -9,6 +9,7 @@ import (
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
 	"github.com/workos/workos-go/v4/pkg/workos_errors"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
@@ -28,8 +29,7 @@ type addResponse struct {
 	Invitation *listInvitation `json:"invitation"`
 }
 
-func (c *Controller) apiAdd(ctx *fiber.Ctx) error {
-	var err error
+func (c *Controller) apiAdd(ctx *fiber.Ctx) (err error) {
 	var body addUserBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
@@ -40,9 +40,6 @@ func (c *Controller) apiAdd(ctx *fiber.Ctx) error {
 	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.IDs, model.AccessAdmin)
 	if err != nil {
 		return err
-	}
-	if len(body.IDs) == 0 {
-		return fiber.ErrBadRequest
 	}
 
 	user, err := c.users.Get(
@@ -142,7 +139,7 @@ func (c *Controller) addExistingUser(
 		}
 	}
 
-	if err := c.userSchemas.CreateMany(ctx, &userSchemas); err != nil {
+	if err := c.userSchemas.InsertMany(ctx, &userSchemas, clause.OnConflict{DoNothing: true}); err != nil {
 		return nil, err
 	}
 

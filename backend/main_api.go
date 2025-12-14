@@ -4,13 +4,15 @@ import (
 	"go.uber.org/fx"
 
 	"polimane/backend/api"
-	"polimane/backend/api/auth"
+	apiauth "polimane/backend/api/auth"
 	"polimane/backend/api/base"
-	"polimane/backend/api/ping"
-	"polimane/backend/api/schemas"
-	schemasusers "polimane/backend/api/schemas/users"
-	"polimane/backend/api/users"
+	apifolders "polimane/backend/api/folders"
+	apiping "polimane/backend/api/ping"
+	apischemas "polimane/backend/api/schemas"
+	apischemasusers "polimane/backend/api/schemas/users"
+	apiusers "polimane/backend/api/users"
 	"polimane/backend/env"
+	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryusers "polimane/backend/repository/users"
@@ -28,7 +30,7 @@ import (
 	"polimane/backend/views"
 )
 
-func Controller(f any) any {
+func AsController(f any) any {
 	return fx.Annotate(
 		f,
 		fx.As(new(base.Controller)),
@@ -60,14 +62,16 @@ func main() {
 			repositoryusers.Provider,
 			repositoryschemas.Provider,
 			repositoryschemainvitations.Provider,
+			repositoryfolders.Provider,
 
 			// api
-			auth.MiddlewareProvider,
-			Controller(ping.Provider),
-			Controller(auth.Provider),
-			Controller(users.Provider),
-			Controller(schemas.Provider),
-			schemasusers.Provider, // schemas child controller
+			apiauth.MiddlewareProvider,
+			AsController(apiping.Provider),
+			AsController(apiauth.Provider),
+			AsController(apiusers.Provider),
+			AsController(apischemas.Provider),
+			AsController(apifolders.Provider),
+			apischemasusers.Provider, // schemas child controller
 			api.OptionsProvider,
 			api.Provider,
 		),

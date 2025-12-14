@@ -13,8 +13,7 @@ type listQuery struct {
 	IDs []string `query:"ids"`
 }
 
-func (c *Controller) apiList(ctx *fiber.Ctx) error {
-	var err error
+func (c *Controller) apiList(ctx *fiber.Ctx) (err error) {
 	var query listQuery
 	if err = base.ParseQuery(ctx, &query); err != nil {
 		return err
@@ -29,9 +28,6 @@ func (c *Controller) apiList(ctx *fiber.Ctx) error {
 	err = c.userSchemas.FilterByAccess(ctx.Context(), user, &IDs, model.AccessAdmin)
 	if err != nil {
 		return err
-	}
-	if len(IDs) == 0 {
-		return fiber.ErrBadRequest
 	}
 
 	var response listResponse

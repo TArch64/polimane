@@ -5,6 +5,7 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/repository"
 	repositoryschemas "polimane/backend/repository/schemas"
 	"polimane/backend/views"
 	"polimane/backend/views/templates"
@@ -16,10 +17,11 @@ func (c *Controller) apiPreview(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	schema, err := c.schemas.GetByID(ctx.Context(), &repositoryschemas.ByIDOptions{
-		User:     auth.GetSessionUser(ctx),
-		SchemaID: schemaID,
-	})
+	user := auth.GetSessionUser(ctx)
+	schema, err := c.schemas.Get(ctx.Context(),
+		repository.IDEq(schemaID),
+		repositoryschemas.IncludeUserSchemaScope(user.ID),
+	)
 
 	if err != nil {
 		return err

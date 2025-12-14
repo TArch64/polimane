@@ -1,12 +1,10 @@
 <template>
   <header class="common-layout-selection-bar">
     <h2 class="common-layout-selection-bar__title">
-      <slot name="title" :count="selected" />
+      {{ selectedTitle }}
     </h2>
 
     <div class="common-layout-selection-bar__actions">
-      <slot name="actions" />
-
       <Button
         icon
         size="md"
@@ -20,21 +18,16 @@
 </template>
 
 <script setup lang="ts">
-import type { Slot } from 'vue';
 import { Button } from '../button';
 import { CloseIcon } from '../icon';
 
 defineProps<{
   selected: number;
+  selectedTitle: string;
 }>();
 
 defineEmits<{
   'clear-selection': [];
-}>();
-
-defineSlots<{
-  title: Slot<{ count: number }>;
-  actions: Slot;
 }>();
 </script>
 

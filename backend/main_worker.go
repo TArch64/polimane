@@ -25,7 +25,7 @@ import (
 	"polimane/backend/worker/queuescheduled/handlercleanupinvitations"
 )
 
-func Queue(f any) any {
+func AsQueue(f any) any {
 	return fx.Annotate(
 		f,
 		fx.As(new(queue.Interface)),
@@ -58,10 +58,10 @@ func main() {
 
 			// queues
 			handlerschemascreenshot.Provider,
-			Queue(queuedebounced.Provider),
+			AsQueue(queuedebounced.Provider),
 
 			handlercleanupinvitations.Provider,
-			Queue(queuescheduled.Provider),
+			AsQueue(queuescheduled.Provider),
 
 			worker.Provider,
 		),

@@ -4,6 +4,8 @@ import (
 	"go.uber.org/fx"
 	"gorm.io/gorm"
 
+	"polimane/backend/model"
+	repositorybase "polimane/backend/repository/base"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
@@ -16,14 +18,14 @@ type ClientOptions struct {
 }
 
 type Client struct {
-	db                *gorm.DB
+	*repositorybase.Client[model.User]
 	schemaInvitations *repositoryschemainvitations.Client
 	userSchemas       *repositoryuserschemas.Client
 }
 
 func Provider(options ClientOptions) *Client {
 	return &Client{
-		db:                options.DB,
+		Client:            repositorybase.New[model.User](options.DB),
 		schemaInvitations: options.SchemaInvitations,
 		userSchemas:       options.UserSchemas,
 	}

@@ -30,13 +30,14 @@ const model = defineModel<V>({ required: true });
 
 <style scoped>
 @layer components {
-  .search-field :deep(.form-field__container) {
+  .search-field:deep(.form-field__container) {
     padding: 0 8px 0 0;
     overflow: clip;
     cursor: pointer;
   }
 
   .select-field__input {
+    width: 100%;
     padding: 4px 0 4px 8px;
     border: 0;
     outline: none;

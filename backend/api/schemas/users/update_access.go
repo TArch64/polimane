@@ -37,9 +37,6 @@ func (c *Controller) apiUpdateAccess(ctx *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	if len(body.IDs) == 0 {
-		return fiber.ErrBadRequest
-	}
 
 	err = c.updateUserAccess(requestCtx, userID, body.IDs, body.Access)
 	if err != nil {

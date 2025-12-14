@@ -1,7 +1,7 @@
 <template>
   <Modal
-    title="Створення Схеми"
-    save-button="Створити"
+    title="Нова Схема"
+    save-button="Додати"
     :loading="create.isActive"
     @save="create"
   >
@@ -20,19 +20,20 @@ import { useRouter } from 'vue-router';
 import { Modal, useActiveModal } from '@/components/modal';
 import { TextField } from '@/components/form';
 import { useAsyncAction } from '@/composables';
-import { type ICreateSchemaRequest, useSchemasStore } from '@/modules/home/stores';
+import { type ISchemaCreateRequest, useHomeStore } from '../../stores';
+
+const homeStore = useHomeStore();
 
 const router = useRouter();
-const schemasStore = useSchemasStore();
 const modal = useActiveModal();
 
-const schema: ICreateSchemaRequest = reactive({
+const schema: ISchemaCreateRequest = reactive({
   name: '',
 });
 
 const create = useAsyncAction(async () => {
   schema.name = schema.name.trim();
-  const created = await schemasStore.createSchema(schema);
+  const created = await homeStore.createSchema.do(schema);
 
   modal.close(null, async () => {
     await router.push({

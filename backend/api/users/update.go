@@ -9,7 +9,7 @@ import (
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/model"
-	repositoryusers "polimane/backend/repository/users"
+	"polimane/backend/repository"
 )
 
 type updateBody struct {
@@ -56,13 +56,12 @@ func (c *Controller) updateUser(ctx context.Context, user *model.User, body *upd
 		return err
 	}
 
-	return c.users.Update(ctx, &repositoryusers.UpdateOptions{
-		UserID: user.ID,
-
-		Updates: &model.User{
+	return c.users.Update(ctx,
+		model.User{
 			Email:     updated.Email,
 			FirstName: updated.FirstName,
 			LastName:  updated.LastName,
 		},
-	})
+		repository.IDEq(user.ID),
+	)
 }

@@ -28,10 +28,10 @@ CREATE UNIQUE INDEX idx_users_workos_id
 
 CREATE TABLE user_schemas
 (
+  user_id   uuid NOT NULL,
+  schema_id uuid NOT NULL,
   created_at timestamptz NOT NULL,
   updated_at timestamptz NOT NULL,
-  user_id    uuid        NOT NULL,
-  schema_id  uuid        NOT NULL,
   PRIMARY KEY (user_id, schema_id),
 
   CONSTRAINT fk_user_schemas_schema

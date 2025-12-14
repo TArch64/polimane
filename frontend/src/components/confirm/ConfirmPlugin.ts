@@ -1,11 +1,11 @@
 import { type FunctionPlugin, inject, type InjectionKey, reactive } from 'vue';
 import { newId } from '@/helpers';
-import { Confirm, type IConfirmOptions } from './Confirm';
+import { ConfirmModel, type IConfirmOptions } from './ConfirmModel';
 
 const PROVIDER = Symbol('ConfirmPlugin') as InjectionKey<ConfirmPlugin>;
 
 interface IConfirmPluginState {
-  confirms: Confirm[];
+  confirms: ConfirmModel[];
 }
 
 export type ConfirmCreateInternalOptions = Omit<IConfirmOptions, 'id'>;
@@ -23,12 +23,12 @@ export class ConfirmPlugin {
     confirms: [],
   });
 
-  get openedConfirm(): Confirm | undefined {
+  get openedConfirm(): ConfirmModel | undefined {
     return this.state.confirms.slice().reverse().find((confirm) => confirm.isOpened);
   }
 
   create(options: ConfirmCreateInternalOptions) {
-    const confirm = new Confirm({
+    const confirm = new ConfirmModel({
       ...options,
       id: newId(),
     });
@@ -37,7 +37,7 @@ export class ConfirmPlugin {
     return confirm;
   }
 
-  remove(confirm: Confirm): void {
+  remove(confirm: ConfirmModel): void {
     const index = this.state.confirms.findIndex((c) => c.id === confirm.id);
     this.state.confirms.splice(index, 1);
     confirm.markAsRemoved();

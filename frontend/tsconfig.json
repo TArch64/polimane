@@ -16,7 +16,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@editor/*": ["./src/modules/schemas/editor/*"]
+      "@editor/*": ["./src/modules/schemas/modules/editor/*"]
     }
   }
 }
