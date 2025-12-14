@@ -9,7 +9,7 @@ terraform {
 
     aws = {
       source  = "hashicorp/aws"
-      version = "6.20.0"
+      version = "6.26.0"
     }
 
     cloudflare = {
@@ -19,7 +19,7 @@ terraform {
 
     cockroach = {
       source  = "cockroachdb/cockroach"
-      version = "1.16.0"
+      version = "1.17.0"
     }
 
     tls = {
