@@ -27,10 +27,10 @@ func (c *Controller) Delete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	requestCtx := ctx.Context()
+	reqCtx := ctx.Context()
 	currentUser := auth.GetSessionUser(ctx)
 
-	folder, err := c.folders.Get(requestCtx,
+	folder, err := c.folders.Get(reqCtx,
 		repository.IDEq(folderID),
 		repository.UserIDEq(currentUser.ID),
 	)
@@ -39,15 +39,15 @@ func (c *Controller) Delete(ctx *fiber.Ctx) error {
 	}
 
 	if body.DeleteSchemas {
-		err = c.db.WithContext(requestCtx).Transaction(func(tx *gorm.DB) error {
-			if err = c.deleteScreenshots(requestCtx, folder); err != nil {
+		err = c.db.WithContext(reqCtx).Transaction(func(tx *gorm.DB) error {
+			if err = c.deleteScreenshots(reqCtx, folder); err != nil {
 				return err
 			}
 
-			return c.deleteFolder(requestCtx, c.db, folder, currentUser)
+			return c.deleteFolder(reqCtx, c.db, folder, currentUser)
 		})
 	} else {
-		err = c.deleteFolder(requestCtx, c.db, folder, currentUser)
+		err = c.deleteFolder(reqCtx, c.db, folder, currentUser)
 	}
 
 	if err != nil {

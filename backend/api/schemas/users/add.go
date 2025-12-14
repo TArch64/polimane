@@ -35,15 +35,15 @@ func (c *Controller) Add(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	requestCtx := ctx.Context()
+	reqCtx := ctx.Context()
 	currentUser := auth.GetSessionUser(ctx)
-	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.IDs, model.AccessAdmin)
+	err = c.userSchemas.FilterByAccess(reqCtx, currentUser, &body.IDs, model.AccessAdmin)
 	if err != nil {
 		return err
 	}
 
 	user, err := c.users.Get(
-		requestCtx,
+		reqCtx,
 		repository.Select("id", "email", "first_name", "last_name"),
 		repository.EmailEq(body.Email),
 	)
@@ -58,9 +58,9 @@ func (c *Controller) Add(ctx *fiber.Ctx) (err error) {
 	var response *AddUserResponse
 
 	if user == nil {
-		response, err = c.inviteUser(requestCtx, currentUser, body.IDs, body.Email)
+		response, err = c.inviteUser(reqCtx, currentUser, body.IDs, body.Email)
 	} else {
-		response, err = c.addExistingUser(requestCtx, currentUser, body.IDs, user)
+		response, err = c.addExistingUser(reqCtx, currentUser, body.IDs, user)
 	}
 
 	if err != nil {

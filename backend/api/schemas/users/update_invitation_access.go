@@ -26,20 +26,20 @@ func (c *Controller) UpdateInvitationAccess(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	requestCtx := ctx.Context()
-	hasInvitations, err := c.schemaInvitations.Exists(requestCtx, repository.EmailEq(body.Email))
+	reqCtx := ctx.Context()
+	hasInvitations, err := c.schemaInvitations.Exists(reqCtx, repository.EmailEq(body.Email))
 	if err != nil {
 		return err
 	}
 
 	if hasInvitations {
-		err = c.schemaInvitations.UpsertMany(requestCtx, &repositoryschemainvitations.UpsertManyOptions{
+		err = c.schemaInvitations.UpsertMany(reqCtx, &repositoryschemainvitations.UpsertManyOptions{
 			Email:     body.Email,
 			SchemaIDs: body.IDs,
 			Updates:   &model.SchemaInvitation{Access: body.Access},
 		})
 	} else {
-		err = c.updateAlreadyAcceptedUser(requestCtx, &body)
+		err = c.updateAlreadyAcceptedUser(reqCtx, &body)
 	}
 
 	if err != nil {

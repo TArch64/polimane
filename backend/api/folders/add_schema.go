@@ -25,18 +25,18 @@ func (c *Controller) AddSchema(ctx *fiber.Ctx) (err error) {
 	}
 
 	user := auth.GetSessionUser(ctx)
-	requestCtx := ctx.Context()
-	err = c.folders.HasAccess(requestCtx, user.ID, folderID)
+	reqCtx := ctx.Context()
+	err = c.folders.HasAccess(reqCtx, user.ID, folderID)
 	if err != nil {
 		return err
 	}
 
-	err = c.userSchemas.FilterByAccess(requestCtx, user, &body.SchemaIDs, model.AccessRead)
+	err = c.userSchemas.FilterByAccess(reqCtx, user, &body.SchemaIDs, model.AccessRead)
 	if err != nil {
 		return err
 	}
 
-	err = c.userSchemas.Update(requestCtx,
+	err = c.userSchemas.Update(reqCtx,
 		model.UserSchema{FolderID: &folderID},
 		repository.SchemaIDsIn(body.SchemaIDs),
 	)

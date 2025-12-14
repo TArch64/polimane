@@ -21,21 +21,21 @@ func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
 	}
 
 	user := auth.GetSessionUser(ctx)
-	requestCtx := ctx.Context()
-	err = c.userSchemas.FilterByAccess(requestCtx, user, &body.IDs, model.AccessAdmin)
+	reqCtx := ctx.Context()
+	err = c.userSchemas.FilterByAccess(reqCtx, user, &body.IDs, model.AccessAdmin)
 	if err != nil {
 		return err
 	}
 
-	err = c.db.WithContext(requestCtx).Transaction(func(tx *gorm.DB) error {
-		err = c.schemas.Delete(requestCtx,
+	err = c.db.WithContext(reqCtx).Transaction(func(tx *gorm.DB) error {
+		err = c.schemas.Delete(reqCtx,
 			repository.IDsIn(body.IDs),
 		)
 		if err != nil {
 			return err
 		}
 
-		return c.schemaScreenshot.Delete(requestCtx, body.IDs)
+		return c.schemaScreenshot.Delete(reqCtx, body.IDs)
 	})
 
 	return base.NewSuccessResponse(ctx)

@@ -32,13 +32,13 @@ func (c *Controller) UpdateAccess(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	requestCtx := ctx.Context()
-	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.IDs, model.AccessAdmin)
+	reqCtx := ctx.Context()
+	err = c.userSchemas.FilterByAccess(reqCtx, currentUser, &body.IDs, model.AccessAdmin)
 	if err != nil {
 		return err
 	}
 
-	err = c.updateUserAccess(requestCtx, userID, body.IDs, body.Access)
+	err = c.updateUserAccess(reqCtx, userID, body.IDs, body.Access)
 	if err != nil {
 		return err
 	}

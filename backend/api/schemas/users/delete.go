@@ -25,14 +25,14 @@ func (c *Controller) Delete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	requestCtx := ctx.Context()
-	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.IDs, model.AccessAdmin)
+	reqCtx := ctx.Context()
+	err = c.userSchemas.FilterByAccess(reqCtx, currentUser, &body.IDs, model.AccessAdmin)
 	if err != nil {
 		return err
 	}
 
 	err = c.userSchemas.Delete(
-		requestCtx,
+		reqCtx,
 		repository.UserIDEq(userID),
 		repository.SchemaIDsIn(body.IDs),
 	)

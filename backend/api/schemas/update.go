@@ -94,8 +94,8 @@ func (c *Controller) Update(ctx *fiber.Ctx) error {
 	}
 
 	user := auth.GetSessionUser(ctx)
-	requestCtx := ctx.Context()
-	err = c.userSchemas.HasAccess(requestCtx, user.ID, schemaID, model.AccessWrite)
+	reqCtx := ctx.Context()
+	err = c.userSchemas.HasAccess(reqCtx, user.ID, schemaID, model.AccessWrite)
 	if err != nil {
 		return err
 	}
@@ -105,7 +105,7 @@ func (c *Controller) Update(ctx *fiber.Ctx) error {
 		return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
 	}
 
-	err = c.schemas.Update(requestCtx, *updates,
+	err = c.schemas.Update(reqCtx, *updates,
 		repository.IDEq(schemaID),
 	)
 
@@ -114,7 +114,7 @@ func (c *Controller) Update(ctx *fiber.Ctx) error {
 	}
 
 	needImmediateScreenshotUpdate := body.BackgroundColor != ""
-	if err = c.updateScreenshot(requestCtx, schemaID, needImmediateScreenshotUpdate); err != nil {
+	if err = c.updateScreenshot(reqCtx, schemaID, needImmediateScreenshotUpdate); err != nil {
 		return err
 	}
 
