@@ -2,7 +2,7 @@
   <div ref="containerRef" class="toolbar-dropdown">
     <slot :open name="activator" />
 
-    <Teleport to="body" :disabled="!isOpened && !transitionState.isActive">
+    <Teleport to="body" v-if="isOpened || transitionState.isActive">
       <FadeTransition appear :state="transitionState">
         <Card
           as="dialog"
@@ -58,6 +58,7 @@ async function open(): Promise<void> {
 }
 
 function close(): void {
+  transitionState.on();
   isOpened.value = false;
 }
 

@@ -1,12 +1,13 @@
 import { reactive, ref, type TransitionProps } from 'vue';
-import type { PascalToKebab } from '@/types';
+import type { PascalToKebab, SafeAny } from '@/types';
 
 export type TransitionStateListeners = Partial<{
-  [K in keyof TransitionProps as K extends `on${infer U}` ? PascalToKebab<U> : never]: TransitionProps[K];
+  [K in keyof TransitionProps as K extends `on${infer U}` ? PascalToKebab<U> : never]: Exclude<TransitionProps[K], SafeAny[]>;
 }>;
 
 export interface ITransitionState {
   isActive: boolean;
+  on: () => void;
   listeners: TransitionStateListeners;
 }
 
@@ -15,21 +16,23 @@ export function useTransitionState(): ITransitionState {
   const on = () => isActive.value = true;
   const off = () => isActive.value = false;
 
+  const listeners: TransitionStateListeners = {
+    'enter': on,
+    'after-enter': off,
+    'enter-cancelled': off,
+
+    'leave': on,
+    'after-leave': off,
+    'leave-cancelled': off,
+
+    'appear': on,
+    'after-appear': off,
+    'appear-cancelled': off,
+  };
+
   return reactive({
     isActive,
-
-    listeners: {
-      'before-enter': on,
-      'after-enter': off,
-      'enter-cancelled': off,
-
-      'before-leave': on,
-      'after-leave': off,
-      'leave-cancelled': off,
-
-      'before-appear': on,
-      'after-appear': off,
-      'appear-cancelled': off,
-    },
+    on,
+    listeners,
   });
 }

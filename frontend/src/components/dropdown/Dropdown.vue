@@ -6,7 +6,7 @@
     :activatorStyle="{ anchorName }"
   />
 
-  <Teleport to="body" :disabled="!isOpened && !transitionState.isActive">
+  <Teleport to="body" v-if="isOpened || transitionState.isActive">
     <FadeTransition :state="transitionState">
       <DropdownMenu
         ref="menuRef"
@@ -54,6 +54,7 @@ let closeController: AbortController | null = null;
 
 function close(): void {
   closeController?.abort();
+  transitionState.on();
   isOpened.value = false;
 }
 
