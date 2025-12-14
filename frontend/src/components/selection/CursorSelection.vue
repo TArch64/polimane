@@ -11,7 +11,7 @@
     <slot :item :itemRef />
   </CursorSelectionItem>
 
-  <template v-if="!area.isBlank">
+  <template v-if="!isSafeArea">
     <Teleport to="body">
       <div class="cursor-selection-overlay" />
     </Teleport>
@@ -72,8 +72,10 @@ function scrollingSelect(step: number) {
 }
 
 function isSafeZone(area: NodeRect) {
-  return Math.abs(area.width) < 10 && Math.abs(area.height) < 10;
+  return area.square < 50;
 }
+
+const isSafeArea = computed(() => isSafeZone(visibleArea.value));
 
 function onMouseMove(downEvent: MouseEvent): (event: MouseEvent) => void {
   return (event) => {
@@ -81,10 +83,14 @@ function onMouseMove(downEvent: MouseEvent): (event: MouseEvent) => void {
     area.value.width += event.movementX;
     area.value.height += event.movementY;
 
-    if (!downEvent.defaultPrevented && !isSafeZone(area.value)) {
-      downEvent.preventDefault();
-      area.value.x = downEvent.clientX;
-      area.value.y = downEvent.clientY + window.scrollY;
+    if (!downEvent.defaultPrevented) {
+      if (isSafeZone(area.value.normalized)) {
+        return;
+      } else {
+        downEvent.preventDefault();
+        area.value.x = downEvent.clientX;
+        area.value.y = downEvent.clientY + window.scrollY;
+      }
     }
 
     if (event.clientY < SCROLL_OFFSET) {
