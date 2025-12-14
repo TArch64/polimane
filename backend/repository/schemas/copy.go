@@ -8,8 +8,6 @@ import (
 
 	"polimane/backend/model"
 	"polimane/backend/repository"
-
-	"gorm.io/gorm"
 )
 
 type CopyOptions struct {
@@ -50,7 +48,7 @@ func (c *Client) findLastCopiedByName(ctx context.Context, userID model.ID, name
 	err := c.GetOut(ctx, &names,
 		repository.Select("name"),
 		IncludeUserSchemaScope(userID),
-		repository.Where(gorm.Expr("name LIKE ?", namePattern)),
+		repository.Where("name LIKE ?", namePattern),
 		repository.Group("name"),
 		repository.Order("MAX(schemas.created_at) DESC"),
 		repository.Limit(5),

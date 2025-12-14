@@ -15,7 +15,7 @@ func (c *Client) HasAccess(
 	access model.AccessLevel,
 ) error {
 	exists, err := c.Exists(ctx,
-		repository.Where(gorm.Expr("user_id = ? AND schema_id = ? AND access >= ?", userID, schemaID, access)),
+		repository.Where("user_id = ? AND schema_id = ? AND access >= ?", userID, schemaID, access),
 	)
 
 	if err != nil {

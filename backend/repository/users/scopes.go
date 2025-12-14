@@ -1,11 +1,9 @@
 package users
 
 import (
-	"gorm.io/gorm"
-
 	"polimane/backend/repository"
 )
 
 func WorkosIDEq(id string) repository.Scope {
-	return repository.Where(gorm.Expr("workos_id = ?", id))
+	return repository.Where("workos_id = ?", id)
 }

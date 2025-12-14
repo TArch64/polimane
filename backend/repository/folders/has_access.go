@@ -11,7 +11,7 @@ import (
 
 func (c *Client) HasAccess(ctx context.Context, userID, folderID model.ID) error {
 	exists, err := c.Exists(ctx,
-		repository.Where(gorm.Expr("id = ? AND user_id = ?", folderID, userID)),
+		repository.Where("id = ? AND user_id = ?", folderID, userID),
 	)
 
 	if err != nil {

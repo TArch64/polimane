@@ -19,7 +19,7 @@ func (c *Client) FilterByAccess(
 		repository.Select("schema_id"),
 		repository.UserIDEq(user.ID),
 		repository.SchemaIDsIn(*schemaIDs),
-		repository.Where(gorm.Expr("access >= ?", access)),
+		repository.Where("access >= ?", access),
 	)
 
 	if err != nil {

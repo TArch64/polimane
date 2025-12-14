@@ -68,7 +68,7 @@ func (c *Controller) deleteScreenshots(ctx context.Context, folder *model.Folder
 	var schemaIDs []model.ID
 	err := c.userSchemas.ListOut(ctx, &schemaIDs,
 		repository.Select("schema_id"),
-		repository.Where(gorm.Expr("folder_id = ?", folder.ID)),
+		repository.Where("folder_id = ?", folder.ID),
 	)
 	if err != nil {
 		return err

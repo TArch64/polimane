@@ -7,28 +7,30 @@ import (
 	"polimane/backend/model"
 )
 
-func Where(expr ...clause.Expression) Scope {
+func Where(expr string, args ...interface{}) Scope {
 	return func(stmt *gorm.Statement) {
-		stmt.AddClause(clause.Where{Exprs: expr})
+		stmt.AddClause(clause.Where{
+			Exprs: []clause.Expression{gorm.Expr(expr, args...)},
+		})
 	}
 }
 
 func IDEq(id model.ID) Scope {
-	return Where(gorm.Expr("id = ?", id))
+	return Where("id = ?", id)
 }
 
 func UserIDEq(id model.ID) Scope {
-	return Where(gorm.Expr("user_id = ?", id))
+	return Where("user_id = ?", id)
 }
 
 func EmailEq(email string) Scope {
-	return Where(gorm.Expr("email = ?", email))
+	return Where("email = ?", email)
 }
 
 func IDsIn(IDs []model.ID) Scope {
-	return Where(gorm.Expr("id IN (?)", IDs))
+	return Where("id IN (?)", IDs)
 }
 
 func SchemaIDsIn(IDs []model.ID) Scope {
-	return Where(gorm.Expr("schema_id IN (?)", IDs))
+	return Where("schema_id IN (?)", IDs)
 }
