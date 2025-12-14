@@ -38,7 +38,9 @@ func (c *Controller) LoginComplete(ctx *fiber.Ctx) error {
 	}
 
 	if isUserScheduledForDeletion(&data.User) {
-		return deletedUserErr
+		return c.redirectToComplete(ctx, map[string]string{
+			"deleted": "1",
+		})
 	}
 
 	user, err := c.users.CreateIfNeeded(reqCtx, &data.User)
@@ -60,6 +62,19 @@ func (c *Controller) LoginComplete(ctx *fiber.Ctx) error {
 		RefreshToken: data.RefreshToken,
 	})
 
+	return c.redirectToComplete(ctx, nil)
+}
+
+func (c *Controller) redirectToComplete(ctx *fiber.Ctx, query map[string]string) error {
 	redirectUrl := c.env.AppURL.JoinPath("auth/complete")
+
+	if len(query) > 0 {
+		redirectQuery := redirectUrl.Query()
+		for key, value := range query {
+			redirectQuery.Set(key, value)
+		}
+		redirectUrl.RawQuery = redirectQuery.Encode()
+	}
+
 	return ctx.Redirect(redirectUrl.String())
 }

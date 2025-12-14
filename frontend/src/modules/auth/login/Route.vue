@@ -33,6 +33,7 @@ const returnTo = (router.currentRoute.value.query['return-to'] as string) ?? '/'
 
 const popup = useAuthPopup({
   onSuccess: () => router.push(returnTo),
+  onDeletedUser: () => router.push({ name: 'auth-deleted-user' }),
 });
 </script>
 
