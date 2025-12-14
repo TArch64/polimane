@@ -27,9 +27,12 @@ import { NodeRect } from '@/models';
 import CursorSelectionItem from './CursorSelectionItem.vue';
 import type { SelectionItem, SelectionListRegistry } from './ListRegistry';
 
-defineProps<{
+const props = withDefaults(defineProps<{
   list: I[];
-}>();
+  root?: string;
+}>(), {
+  root: '#app',
+});
 
 defineSlots<{
   default: Slot<{
@@ -39,7 +42,11 @@ defineSlots<{
 }>();
 
 const anchorRef = ref<HTMLElement>(null!);
-const currentEl = computed(() => anchorRef.value.parentElement!);
+
+const currentEl = computed(() => {
+  const rootEl = props.root ? anchorRef.value.closest(props.root) : null;
+  return rootEl ?? anchorRef.value.parentElement!;
+});
 
 const SCROLL_OFFSET = 200;
 const SCROLL_STEP = 10;
