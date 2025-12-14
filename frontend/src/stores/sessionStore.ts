@@ -19,11 +19,15 @@ export const useSessionStore = defineStore('session', () => {
     }
   }
 
-  async function logout(): Promise<void> {
-    await http.post('/auth/logout', {});
+  async function onLogout(): Promise<void> {
     authorized.value = false;
     await nextTick();
     window.location.reload();
+  }
+
+  async function logout(): Promise<void> {
+    await http.post('/auth/logout', {});
+    await onLogout();
   }
 
   function updateUser(newUser: Partial<IUser>): void {
@@ -36,5 +40,6 @@ export const useSessionStore = defineStore('session', () => {
     isLoggedIn: authorized,
     refresh,
     logout,
+    onLogout,
   };
 });
