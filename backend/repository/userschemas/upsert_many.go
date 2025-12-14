@@ -3,7 +3,6 @@ package userschemas
 import (
 	"context"
 
-	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
 	"polimane/backend/model"
@@ -34,7 +33,5 @@ func (c *Client) UpsertMany(ctx context.Context, options *UpsertManyOptions) err
 		}),
 	}
 
-	return gorm.
-		G[model.UserSchema](c.db, onConflict).
-		CreateInBatches(ctx, &userSchemas, model.DefaultBatch)
+	return c.InsertMany(ctx, &userSchemas, onConflict)
 }

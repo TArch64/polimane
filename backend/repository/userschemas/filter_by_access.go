@@ -15,15 +15,12 @@ func (c *Client) FilterByAccess(
 	schemaIDs *[]model.ID,
 	access model.AccessLevel,
 ) error {
-	err := gorm.
-		G[model.UserSchema](c.db).
-		Select("schema_id").
-		Scopes(
-			repository.UserIDEq(user.ID),
-			repository.SchemaIDsIn(*schemaIDs),
-		).
-		Where("access >= ?", access).
-		Scan(ctx, schemaIDs)
+	err := c.ListOut(ctx, schemaIDs,
+		repository.Select("schema_id"),
+		repository.UserIDEq(user.ID),
+		repository.SchemaIDsIn(*schemaIDs),
+		repository.Where(gorm.Expr("access >= ?", access)),
+	)
 
 	if err != nil {
 		return err

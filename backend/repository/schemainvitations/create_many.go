@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
 	"polimane/backend/model"
@@ -28,7 +27,7 @@ func (c *Client) CreateMany(ctx context.Context, options *CreateManyOptions) err
 		}
 	}
 
-	return gorm.
-		G[model.SchemaInvitation](c.db, clause.OnConflict{DoNothing: true}).
-		CreateInBatches(ctx, &invitations, model.DefaultBatch)
+	return c.InsertMany(ctx, &invitations,
+		clause.OnConflict{DoNothing: true},
+	)
 }

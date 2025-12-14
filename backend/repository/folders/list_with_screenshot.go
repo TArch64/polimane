@@ -31,7 +31,7 @@ ORDER BY folders.created_at DESC`
 
 func (c *Client) ListWithScreenshotOut(ctx context.Context, userID model.ID, out interface{}) (err error) {
 	err = gorm.
-		G[model.Folder](c.db).
+		G[model.Folder](c.DB).
 		Raw(listWithScreenshotsSQL, userID).
 		Scan(ctx, out)
 

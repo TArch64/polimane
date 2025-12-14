@@ -27,7 +27,7 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	err = c.db.Transaction(func(tx *gorm.DB) error {
+	err = c.db.WithContext(requestCtx).Transaction(func(tx *gorm.DB) error {
 		err = c.schemas.Delete(requestCtx,
 			repository.IDsIn(body.IDs),
 		)

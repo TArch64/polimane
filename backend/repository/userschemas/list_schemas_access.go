@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"polimane/backend/model"
+	"polimane/backend/repository"
 )
 
 func (c *Client) ListSchemasAccessOut(ctx context.Context, schemaIDs []model.ID, out interface{}) error {
@@ -12,7 +13,7 @@ func (c *Client) ListSchemasAccessOut(ctx context.Context, schemaIDs []model.ID,
 	const createdAtColumn = "MIN(user_schemas.created_at) AS created_at"
 	const selectExpr = userColumns + "," + accessColumns + "," + createdAtColumn
 
-	return c.db.
+	return c.DB.
 		WithContext(ctx).
 		Select(selectExpr).
 		Table("user_schemas").
@@ -20,7 +21,7 @@ func (c *Client) ListSchemasAccessOut(ctx context.Context, schemaIDs []model.ID,
 		Where("schema_id IN (?)", schemaIDs).
 		Group(userColumns).
 		Order("created_at").
-		Limit(model.DefaultBatch).
+		Limit(repository.DefaultBatch).
 		Scan(out).
 		Error
 }

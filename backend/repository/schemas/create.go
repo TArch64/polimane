@@ -36,7 +36,7 @@ func (c *Client) Create(ctx context.Context, options *CreateOptions) (schema *mo
 		options.Beads = make(model.SchemaBeads)
 	}
 
-	err = c.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err = c.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		schema = &model.Schema{
 			Name:            options.Name,
 			BackgroundColor: options.BackgroundColor,
@@ -45,15 +45,11 @@ func (c *Client) Create(ctx context.Context, options *CreateOptions) (schema *mo
 			Beads:           datatypes.NewJSONType(options.Beads),
 		}
 
-		err = gorm.
-			G[model.Schema](tx).
-			Create(ctx, schema)
-
-		if err != nil {
+		if err = c.InsertTx(ctx, tx, schema); err != nil {
 			return err
 		}
 
-		return c.userSchemas.CreateTx(ctx, tx, &model.UserSchema{
+		return c.userSchemas.InsertTx(ctx, tx, &model.UserSchema{
 			UserID:   options.User.ID,
 			SchemaID: schema.ID,
 			Access:   model.AccessAdmin,

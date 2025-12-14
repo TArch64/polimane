@@ -47,15 +47,14 @@ func (c *Client) findLastCopiedByName(ctx context.Context, userID model.ID, name
 	namePattern := c.buildCopyNamePattern(name)
 	var names []string
 
-	err := gorm.
-		G[model.Schema](c.db).
-		Select("name").
-		Scopes(IncludeUserSchemaScope(userID)).
-		Where("name LIKE ?", namePattern).
-		Group("name").
-		Order("MAX(schemas.created_at) DESC").
-		Limit(5).
-		Scan(ctx, &names)
+	err := c.GetOut(ctx, &names,
+		repository.Select("name"),
+		IncludeUserSchemaScope(userID),
+		repository.Where(gorm.Expr("name LIKE ?", namePattern)),
+		repository.Group("name"),
+		repository.Order("MAX(schemas.created_at) DESC"),
+		repository.Limit(5),
+	)
 
 	if err != nil {
 		return "", err

@@ -39,7 +39,7 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 	}
 
 	if body.DeleteSchemas {
-		err = c.db.Transaction(func(tx *gorm.DB) error {
+		err = c.db.WithContext(requestCtx).Transaction(func(tx *gorm.DB) error {
 			if err = c.deleteScreenshots(requestCtx, folder); err != nil {
 				return err
 			}

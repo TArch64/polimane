@@ -11,7 +11,7 @@ import (
 
 func (c *Client) ListSchemasAccessOut(ctx context.Context, schemaIDs []model.ID, out interface{}) error {
 	return gorm.
-		G[*model.SchemaInvitation](c.db).
+		G[*model.SchemaInvitation](c.DB).
 		Select("email, MIN(access) AS access, MIN(access) != MAX(access) as is_uneven_access").
 		Scopes(repository.SchemaIDsIn(schemaIDs)).
 		Group("email").

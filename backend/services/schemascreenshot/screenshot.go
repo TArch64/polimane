@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 
 	"polimane/backend/model"
-	repositoryschemas "polimane/backend/repository/schemas"
+	"polimane/backend/repository"
 	"polimane/backend/services/awss3"
 	"polimane/backend/views"
 	"polimane/backend/views/templates"
@@ -46,8 +46,8 @@ func (s *Service) Screenshot(ctx context.Context, options *ScreenshotOptions) er
 
 	screenshotedAt := time.Now()
 
-	return s.schemas.Update(ctx, &repositoryschemas.UpdateOptions{
-		SchemaID: options.Schema.ID,
-		Updates:  &model.Schema{ScreenshotedAt: &screenshotedAt},
-	})
+	return s.schemas.Update(ctx,
+		model.Schema{ScreenshotedAt: &screenshotedAt},
+		repository.IDEq(options.Schema.ID),
+	)
 }

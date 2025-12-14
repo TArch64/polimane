@@ -9,6 +9,7 @@ import (
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
 	"github.com/workos/workos-go/v4/pkg/workos_errors"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
@@ -138,7 +139,7 @@ func (c *Controller) addExistingUser(
 		}
 	}
 
-	if err := c.userSchemas.CreateMany(ctx, &userSchemas); err != nil {
+	if err := c.userSchemas.InsertMany(ctx, &userSchemas, clause.OnConflict{DoNothing: true}); err != nil {
 		return nil, err
 	}
 

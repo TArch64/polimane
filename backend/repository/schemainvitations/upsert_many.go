@@ -3,7 +3,6 @@ package schemainvitations
 import (
 	"context"
 
-	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
 	"polimane/backend/model"
@@ -34,7 +33,5 @@ func (c *Client) UpsertMany(ctx context.Context, options *UpsertManyOptions) err
 		}),
 	}
 
-	return gorm.
-		G[model.SchemaInvitation](c.db, onConflict).
-		CreateInBatches(ctx, &schemaInvitations, model.DefaultBatch)
+	return c.InsertMany(ctx, &schemaInvitations, onConflict)
 }

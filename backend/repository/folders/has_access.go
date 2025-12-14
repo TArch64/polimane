@@ -6,16 +6,13 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
+	"polimane/backend/repository"
 )
 
 func (c *Client) HasAccess(ctx context.Context, userID, folderID model.ID) error {
-	var exists bool
-
-	err := gorm.
-		G[model.Folder](c.db).
-		Select("1 AS exists").
-		Where("id = ? AND user_id = ?", folderID, userID).
-		Scan(ctx, &exists)
+	exists, err := c.Exists(ctx,
+		repository.Where(gorm.Expr("id = ? AND user_id = ?", folderID, userID)),
+	)
 
 	if err != nil {
 		return err

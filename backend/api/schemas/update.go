@@ -10,7 +10,6 @@ import (
 	"polimane/backend/api/base"
 	"polimane/backend/model"
 	"polimane/backend/repository"
-	repositoryschemas "polimane/backend/repository/schemas"
 	"polimane/backend/services/awssqs"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/worker/events"
@@ -106,10 +105,9 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
 		return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
 	}
 
-	err = c.schemas.Update(requestCtx, &repositoryschemas.UpdateOptions{
-		SchemaID: schemaID,
-		Updates:  updates,
-	})
+	err = c.schemas.Update(requestCtx, *updates,
+		repository.IDEq(schemaID),
+	)
 
 	if err != nil {
 		return err

@@ -40,8 +40,8 @@ func (c *Controller) apiCreate(ctx *fiber.Ctx) (err error) {
 		UserID: currentUser.ID,
 	}
 
-	err = c.db.Transaction(func(tx *gorm.DB) error {
-		if err = c.folders.CreateTx(requestCtx, tx, folder); err != nil {
+	err = c.db.WithContext(requestCtx).Transaction(func(tx *gorm.DB) error {
+		if err = c.folders.InsertTx(requestCtx, tx, folder); err != nil {
 			return err
 		}
 
