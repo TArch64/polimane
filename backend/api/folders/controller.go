@@ -12,7 +12,8 @@ import (
 	"polimane/backend/services/schemascreenshot"
 )
 
-const folderIDParam = "folderID"
+const ParamFolderID = "folderID"
+const ParamDefFolderID = ":" + ParamFolderID
 
 var (
 	NameAlreadyInUseErr = base.NewReasonedError(fiber.StatusBadRequest, "NameAlreadyInUse")
@@ -49,14 +50,14 @@ func (c *Controller) Public(_ fiber.Router) {}
 
 func (c *Controller) Private(group fiber.Router) {
 	base.WithGroup(group, "folders", func(group fiber.Router) {
-		group.Get("", c.apiList)
-		group.Post("", c.apiCreate)
+		group.Get("", c.List)
+		group.Post("", c.Create)
 
-		base.WithGroup(group, ":"+folderIDParam, func(group fiber.Router) {
-			group.Get("", c.apiByID)
-			group.Patch("", c.apiUpdate)
-			group.Delete("", c.apiDelete)
-			group.Post("schemas", c.apiAddSchema)
+		base.WithGroup(group, ParamDefFolderID, func(group fiber.Router) {
+			group.Get("", c.ByID)
+			group.Patch("", c.Update)
+			group.Delete("", c.Delete)
+			group.Post("schemas", c.AddSchema)
 		})
 	})
 }

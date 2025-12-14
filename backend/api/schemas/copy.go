@@ -9,8 +9,8 @@ import (
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
-func (c *Controller) apiCopy(ctx *fiber.Ctx) error {
-	schemaID, err := base.GetParamID(ctx, schemaIDParam)
+func (c *Controller) Copy(ctx *fiber.Ctx) error {
+	schemaID, err := base.GetParamID(ctx, ParamSchemaID)
 	if err != nil {
 		return err
 	}
@@ -28,5 +28,5 @@ func (c *Controller) apiCopy(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.JSON(newListSchema(schema, model.AccessAdmin))
+	return ctx.JSON(NewListSchema(schema, model.AccessAdmin))
 }

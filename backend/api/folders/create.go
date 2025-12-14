@@ -16,14 +16,14 @@ import (
 	dberror "polimane/backend/services/db/error"
 )
 
-type createBody struct {
-	addBody
+type CreateBody struct {
+	AddBody
 	Name   string `json:"name" validate:"required,min=1,max=255"`
 	AsList *bool  `json:"asList"`
 }
 
-func (c *Controller) apiCreate(ctx *fiber.Ctx) (err error) {
-	var body createBody
+func (c *Controller) Create(ctx *fiber.Ctx) (err error) {
+	var body CreateBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}

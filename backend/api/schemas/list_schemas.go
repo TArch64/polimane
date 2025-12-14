@@ -8,7 +8,7 @@ import (
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
 
-type listSchema struct {
+type ListSchema struct {
 	ID              model.ID          `json:"id"`
 	Name            string            `json:"name"`
 	Access          model.AccessLevel `json:"access"`
@@ -19,8 +19,8 @@ type listSchema struct {
 	ScreenshotPath *string `json:"screenshotPath"`
 }
 
-func newListSchema(schema *model.Schema, access model.AccessLevel) *listSchema {
-	return &listSchema{
+func NewListSchema(schema *model.Schema, access model.AccessLevel) *ListSchema {
+	return &ListSchema{
 		ID:              schema.ID,
 		Name:            schema.Name,
 		Access:          access,
@@ -30,7 +30,7 @@ func newListSchema(schema *model.Schema, access model.AccessLevel) *listSchema {
 	}
 }
 
-func (l *listSchema) AfterScan() error {
+func (l *ListSchema) AfterScan() error {
 	l.ScreenshotPath = model.SchemaScreenshotPath(l.ID, l.ScreenshotedAt)
 	return nil
 }
@@ -38,7 +38,7 @@ func (l *listSchema) AfterScan() error {
 func (c *Controller) querySchemas(ctx *listContext) (err error) {
 	limit := ctx.query.Limit - uint8(len(ctx.res.Folders))
 	if limit == 0 {
-		ctx.res.Schemas = []*listSchema{}
+		ctx.res.Schemas = []*ListSchema{}
 		return nil
 	}
 
@@ -61,7 +61,7 @@ func (c *Controller) querySchemas(ctx *listContext) (err error) {
 	}
 
 	if ctx.res.Schemas == nil {
-		ctx.res.Schemas = []*listSchema{}
+		ctx.res.Schemas = []*ListSchema{}
 	}
 
 	return nil

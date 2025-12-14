@@ -9,8 +9,8 @@ import (
 	"polimane/backend/repository"
 )
 
-func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
-	userID, err := base.GetParamID(ctx, userIDParam)
+func (c *Controller) Delete(ctx *fiber.Ctx) error {
+	userID, err := base.GetParamID(ctx, ParamUserID)
 	if err != nil {
 		return err
 	}
@@ -20,7 +20,7 @@ func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
 		return base.InvalidRequestErr
 	}
 
-	var body bulkOperationBody
+	var body BulkOperationBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}

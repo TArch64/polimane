@@ -7,12 +7,12 @@ import (
 	"polimane/backend/api/base"
 )
 
-type loginCompleteQuery struct {
+type LoginCompleteQuery struct {
 	Code string `query:"code" validate:"required"`
 }
 
-func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error {
-	var query loginCompleteQuery
+func (c *Controller) LoginComplete(ctx *fiber.Ctx) error {
+	var query LoginCompleteQuery
 	if err := base.ParseQuery(ctx, &query); err != nil {
 		return err
 	}

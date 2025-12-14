@@ -12,17 +12,17 @@ import (
 	dberror "polimane/backend/services/db/error"
 )
 
-type updateBody struct {
+type UpdateBody struct {
 	Name string `json:"name" validate:"required,min=1,max=255"`
 }
 
-func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
-	folderID, err := base.GetParamID(ctx, folderIDParam)
+func (c *Controller) Update(ctx *fiber.Ctx) error {
+	folderID, err := base.GetParamID(ctx, ParamFolderID)
 	if err != nil {
 		return err
 	}
 
-	var body updateBody
+	var body UpdateBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}

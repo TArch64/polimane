@@ -16,8 +16,8 @@ type DeleteBody struct {
 	DeleteSchemas bool `json:"deleteSchemas"`
 }
 
-func (c *Controller) apiDelete(ctx *fiber.Ctx) error {
-	folderID, err := base.GetParamID(ctx, folderIDParam)
+func (c *Controller) Delete(ctx *fiber.Ctx) error {
+	folderID, err := base.GetParamID(ctx, ParamFolderID)
 	if err != nil {
 		return err
 	}

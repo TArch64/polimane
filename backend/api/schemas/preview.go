@@ -11,8 +11,8 @@ import (
 	"polimane/backend/views/templates"
 )
 
-func (c *Controller) apiPreview(ctx *fiber.Ctx) error {
-	schemaID, err := base.GetParamID(ctx, schemaIDParam)
+func (c *Controller) Preview(ctx *fiber.Ctx) error {
+	schemaID, err := base.GetParamID(ctx, ParamSchemaID)
 	if err != nil {
 		return err
 	}

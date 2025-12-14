@@ -16,12 +16,12 @@ var (
 	ErrEmailVerificationCodeExpired = base.NewReasonedError(fiber.StatusBadRequest, "CodeExpired")
 )
 
-type bodyEmailVerify struct {
+type BodyEmailVerify struct {
 	Code string `json:"code" validate:"required,numeric,len=6"`
 }
 
-func (c *Controller) apiEmailVerify(ctx *fiber.Ctx) (err error) {
-	var body bodyEmailVerify
+func (c *Controller) EmailVerify(ctx *fiber.Ctx) (err error) {
+	var body BodyEmailVerify
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}

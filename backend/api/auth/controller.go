@@ -11,7 +11,7 @@ import (
 	"polimane/backend/signal"
 )
 
-const groupPrefix = "auth"
+const GroupPrefix = "auth"
 
 type ControllerOptions struct {
 	fx.In
@@ -38,13 +38,13 @@ func Provider(options ControllerOptions) base.Controller {
 }
 
 func (c *Controller) Public(group fiber.Router) {
-	base.WithGroup(group, groupPrefix+"/login", func(group fiber.Router) {
-		group.Get("", c.apiLogin)
-		group.Get("complete", c.apiLoginComplete)
+	base.WithGroup(group, GroupPrefix+"/login", func(group fiber.Router) {
+		group.Get("", c.Login)
+		group.Get("complete", c.LoginComplete)
 	})
 }
 
 func (c *Controller) Private(group fiber.Router) {
-	group = group.Group(groupPrefix)
-	group.Post("logout", c.apiLogout)
+	group = group.Group(GroupPrefix)
+	group.Post("logout", c.Logout)
 }

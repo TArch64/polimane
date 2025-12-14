@@ -16,5 +16,5 @@ func (c *Controller) Public(_ fiber.Router) {}
 
 func (c *Controller) Private(group fiber.Router) {
 	group = group.Group("ping")
-	group.Get("", c.apiPing)
+	group.Get("", c.Ping)
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func apiNotFound(c *fiber.Ctx) error {
+func NotFound(c *fiber.Ctx) error {
 	log.Println("Unhandled route:", c.Path())
 
 	return c.

@@ -4,12 +4,12 @@ import (
 	"polimane/backend/model"
 )
 
-type listResponse struct {
-	Users       []*listUser       `json:"users"`
-	Invitations []*listInvitation `json:"invitations"`
+type ListResponse struct {
+	Users       []*ListUser       `json:"users"`
+	Invitations []*ListInvitation `json:"invitations"`
 }
 
-type listUser struct {
+type ListUser struct {
 	ID             model.ID          `json:"id"`
 	Email          string            `json:"email"`
 	FirstName      string            `json:"firstName"`
@@ -18,8 +18,8 @@ type listUser struct {
 	IsUnevenAccess bool              `json:"isUnevenAccess"`
 }
 
-func newUserListItem(user *model.User, access model.AccessLevel) *listUser {
-	return &listUser{
+func NewUserListItem(user *model.User, access model.AccessLevel) *ListUser {
+	return &ListUser{
 		ID:        user.ID,
 		Email:     user.Email,
 		FirstName: user.FirstName,
@@ -28,7 +28,7 @@ func newUserListItem(user *model.User, access model.AccessLevel) *listUser {
 	}
 }
 
-type listInvitation struct {
+type ListInvitation struct {
 	Email          string            `json:"email"`
 	Access         model.AccessLevel `json:"access"`
 	IsUnevenAccess bool              `json:"isUnevenAccess"`

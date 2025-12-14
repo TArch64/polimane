@@ -9,12 +9,12 @@ import (
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
-type createBody struct {
+type CreateBody struct {
 	Name string `json:"name" validate:"required"`
 }
 
-func (c *Controller) apiCreate(ctx *fiber.Ctx) error {
-	var body createBody
+func (c *Controller) Create(ctx *fiber.Ctx) error {
+	var body CreateBody
 	err := base.ParseBody(ctx, &body)
 	if err != nil {
 		return err
@@ -33,5 +33,5 @@ func (c *Controller) apiCreate(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.JSON(newListSchema(schema, model.AccessAdmin))
+	return ctx.JSON(NewListSchema(schema, model.AccessAdmin))
 }

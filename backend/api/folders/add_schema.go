@@ -9,17 +9,17 @@ import (
 	"polimane/backend/repository"
 )
 
-type addBody struct {
+type AddBody struct {
 	SchemaIDs []model.ID `json:"schemaIds" validate:"dive,required"`
 }
 
-func (c *Controller) apiAddSchema(ctx *fiber.Ctx) (err error) {
-	var body addBody
+func (c *Controller) AddSchema(ctx *fiber.Ctx) (err error) {
+	var body AddBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
-	folderID, err := base.GetParamID(ctx, folderIDParam)
+	folderID, err := base.GetParamID(ctx, ParamFolderID)
 	if err != nil {
 		return err
 	}

@@ -12,14 +12,14 @@ import (
 	"polimane/backend/repository"
 )
 
-type updateBody struct {
+type UpdateBody struct {
 	FirstName string `json:"firstName" validate:"omitempty,min=1"`
 	LastName  string `json:"lastName" validate:"omitempty,min=1"`
 	Email     string `json:"email" validate:"omitempty,email"`
 }
 
-func (c *Controller) apiUpdate(ctx *fiber.Ctx) (err error) {
-	var body updateBody
+func (c *Controller) Update(ctx *fiber.Ctx) (err error) {
+	var body UpdateBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) (err error) {
 	return base.NewSuccessResponse(ctx)
 }
 
-func (c *Controller) updateUser(ctx context.Context, user *model.User, body *updateBody) error {
+func (c *Controller) updateUser(ctx context.Context, user *model.User, body *UpdateBody) error {
 	updated, err := c.workosClient.UserManagement.UpdateUser(ctx, usermanagement.UpdateUserOpts{
 		User:      user.WorkosID,
 		FirstName: body.FirstName,

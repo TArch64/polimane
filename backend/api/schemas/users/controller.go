@@ -13,7 +13,8 @@ import (
 	"polimane/backend/services/workos"
 )
 
-const userIDParam = "userID"
+const ParamUserID = "userID"
+const ParamDefUserID = ":" + ParamUserID
 
 type ControllerOptions struct {
 	fx.In
@@ -43,17 +44,17 @@ func (c *Controller) Public(_ fiber.Router) {}
 
 func (c *Controller) Private(group fiber.Router) {
 	base.WithGroup(group, "users", func(group fiber.Router) {
-		group.Get("", c.apiList)
-		group.Post("", c.apiAdd)
+		group.Get("", c.List)
+		group.Post("", c.Add)
 
 		base.WithGroup(group, "invitations", func(group fiber.Router) {
-			group.Delete("", c.apiDeleteInvitation)
-			group.Patch("access", c.apiUpdateInvitationAccess)
+			group.Delete("", c.DeleteInvitation)
+			group.Patch("access", c.UpdateInvitationAccess)
 		})
 
-		base.WithGroup(group, ":"+userIDParam, func(group fiber.Router) {
-			group.Delete("", c.apiDelete)
-			group.Patch("access", c.apiUpdateAccess)
+		base.WithGroup(group, ParamDefUserID, func(group fiber.Router) {
+			group.Delete("", c.Delete)
+			group.Patch("access", c.UpdateAccess)
 		})
 	})
 }
@@ -62,11 +63,11 @@ func (c *Controller) FilterSchemaIDsByAccess(ctx *fiber.Ctx, IDs *[]model.ID) er
 	return c.userSchemas.FilterByAccess(ctx.Context(), auth.GetSessionUser(ctx), IDs, model.AccessAdmin)
 }
 
-type bulkOperationBody struct {
+type BulkOperationBody struct {
 	IDs []model.ID `json:"ids" validate:"required"`
 }
 
-type invitationBody struct {
-	bulkOperationBody
+type InvitationBody struct {
+	BulkOperationBody
 	Email string `json:"email" validate:"required,email,max=255"`
 }

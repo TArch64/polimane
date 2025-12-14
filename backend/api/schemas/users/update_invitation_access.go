@@ -11,13 +11,13 @@ import (
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 )
 
-type updateInvitationAccessBody struct {
-	invitationBody
+type UpdateInvitationAccessBody struct {
+	InvitationBody
 	Access model.AccessLevel `validate:"required,gte=1,lte=3" json:"access"`
 }
 
-func (c *Controller) apiUpdateInvitationAccess(ctx *fiber.Ctx) (err error) {
-	var body updateInvitationAccessBody
+func (c *Controller) UpdateInvitationAccess(ctx *fiber.Ctx) (err error) {
+	var body UpdateInvitationAccessBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func (c *Controller) apiUpdateInvitationAccess(ctx *fiber.Ctx) (err error) {
 	return base.NewSuccessResponse(ctx)
 }
 
-func (c *Controller) updateAlreadyAcceptedUser(ctx context.Context, body *updateInvitationAccessBody) error {
+func (c *Controller) updateAlreadyAcceptedUser(ctx context.Context, body *UpdateInvitationAccessBody) error {
 	user, err := c.users.Get(
 		ctx,
 		repository.Select("id"),

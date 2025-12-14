@@ -9,12 +9,12 @@ import (
 	"polimane/backend/model"
 )
 
-type listQuery struct {
+type ListQuery struct {
 	IDs []string `query:"ids"`
 }
 
-func (c *Controller) apiList(ctx *fiber.Ctx) (err error) {
-	var query listQuery
+func (c *Controller) List(ctx *fiber.Ctx) (err error) {
+	var query ListQuery
 	if err = base.ParseQuery(ctx, &query); err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func (c *Controller) apiList(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	var response listResponse
+	var response ListResponse
 	eg, egCtx := errgroup.WithContext(ctx.Context())
 	_, _ = eg, egCtx
 

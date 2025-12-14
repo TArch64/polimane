@@ -8,7 +8,7 @@ import (
 	"polimane/backend/api/base"
 )
 
-func (c *Controller) apiPasswordReset(ctx *fiber.Ctx) error {
+func (c *Controller) PasswordReset(ctx *fiber.Ctx) error {
 	session := auth.GetSession(ctx)
 
 	_, err := c.workosClient.UserManagement.CreatePasswordReset(ctx.Context(), usermanagement.CreatePasswordResetOpts{

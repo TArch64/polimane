@@ -17,7 +17,8 @@ import (
 	"polimane/backend/views"
 )
 
-const schemaIDParam = "schemaID"
+const ParamSchemaID = "schemaID"
+const ParamDefSchemaID = ":" + ParamSchemaID
 
 type ControllerOptions struct {
 	fx.In
@@ -62,17 +63,17 @@ func (c *Controller) Public(_ fiber.Router) {}
 
 func (c *Controller) Private(group fiber.Router) {
 	base.WithGroup(group, "schemas", func(group fiber.Router) {
-		group.Get("", c.apiList)
-		group.Post("", c.apiCreate)
-		group.Delete("delete-many", c.apiDelete)
+		group.Get("", c.List)
+		group.Post("", c.Create)
+		group.Delete("delete-many", c.Delete)
 
 		c.usersController.Private(group)
 
-		base.WithGroup(group, ":"+schemaIDParam, func(group fiber.Router) {
-			group.Get("", c.apiByID)
-			group.Patch("", c.apiUpdate)
-			group.Post("copy", c.apiCopy)
-			group.Get("preview", c.apiPreview)
+		base.WithGroup(group, ParamDefSchemaID, func(group fiber.Router) {
+			group.Get("", c.ByID)
+			group.Patch("", c.Update)
+			group.Post("copy", c.Copy)
+			group.Get("preview", c.Preview)
 		})
 	})
 }

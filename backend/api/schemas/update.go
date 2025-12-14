@@ -15,7 +15,7 @@ import (
 	"polimane/backend/worker/events"
 )
 
-type updateBody struct {
+type UpdateBody struct {
 	Name            string              `json:"name" validate:"omitempty,min=1"`
 	BackgroundColor string              `json:"backgroundColor" validate:"omitempty,iscolor"`
 	Palette         model.SchemaPalette `json:"palette" validate:"omitempty,dive,omitempty,iscolor"`
@@ -23,7 +23,7 @@ type updateBody struct {
 	Beads           model.SchemaBeads   `json:"beads" validate:"omitempty"`
 }
 
-func collectUpdates(body *updateBody) *model.Schema {
+func collectUpdates(body *UpdateBody) *model.Schema {
 	changed := false
 	updates := &model.Schema{}
 
@@ -82,13 +82,13 @@ func (c *Controller) updateScreenshot(ctx context.Context, schemaID model.ID, ne
 	})
 }
 
-func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
-	schemaID, err := base.GetParamID(ctx, schemaIDParam)
+func (c *Controller) Update(ctx *fiber.Ctx) error {
+	schemaID, err := base.GetParamID(ctx, ParamSchemaID)
 	if err != nil {
 		return err
 	}
 
-	var body updateBody
+	var body UpdateBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}

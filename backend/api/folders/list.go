@@ -7,7 +7,7 @@ import (
 	"polimane/backend/repository"
 )
 
-func (c *Controller) apiList(ctx *fiber.Ctx) error {
+func (c *Controller) List(ctx *fiber.Ctx) error {
 	currentUser := auth.GetSessionUser(ctx)
 
 	folders, err := c.folders.List(ctx.Context(),

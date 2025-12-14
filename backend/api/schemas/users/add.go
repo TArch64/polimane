@@ -19,18 +19,18 @@ import (
 	"polimane/backend/services/workos"
 )
 
-type addUserBody struct {
-	bulkOperationBody
+type AddUserBody struct {
+	BulkOperationBody
 	Email string `validate:"required,email,max=255" json:"email"`
 }
 
-type addResponse struct {
-	User       *listUser       `json:"user"`
-	Invitation *listInvitation `json:"invitation"`
+type AddUserResponse struct {
+	User       *ListUser       `json:"user"`
+	Invitation *ListInvitation `json:"invitation"`
 }
 
-func (c *Controller) apiAdd(ctx *fiber.Ctx) (err error) {
-	var body addUserBody
+func (c *Controller) Add(ctx *fiber.Ctx) (err error) {
+	var body AddUserBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
@@ -55,7 +55,7 @@ func (c *Controller) apiAdd(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	var response *addResponse
+	var response *AddUserResponse
 
 	if user == nil {
 		response, err = c.inviteUser(requestCtx, currentUser, body.IDs, body.Email)
@@ -75,7 +75,7 @@ func (c *Controller) inviteUser(
 	currentUser *model.User,
 	schemaIDs []model.ID,
 	email string,
-) (*addResponse, error) {
+) (*AddUserResponse, error) {
 	invitation, err := c.workosClient.UserManagement.SendInvitation(ctx, usermanagement.SendInvitationOpts{
 		Email:         email,
 		InviterUserID: currentUser.WorkosID,
@@ -112,8 +112,8 @@ func (c *Controller) inviteUser(
 		return nil, err
 	}
 
-	return &addResponse{
-		Invitation: &listInvitation{
+	return &AddUserResponse{
+		Invitation: &ListInvitation{
 			Email:  email,
 			Access: model.AccessRead,
 		},
@@ -125,7 +125,7 @@ func (c *Controller) addExistingUser(
 	currentUser *model.User,
 	schemaIDs []model.ID,
 	user *model.User,
-) (*addResponse, error) {
+) (*AddUserResponse, error) {
 	if currentUser.ID == user.ID {
 		return nil, base.InvalidRequestErr
 	}
@@ -143,7 +143,7 @@ func (c *Controller) addExistingUser(
 		return nil, err
 	}
 
-	return &addResponse{
-		User: newUserListItem(user, model.AccessRead),
+	return &AddUserResponse{
+		User: NewUserListItem(user, model.AccessRead),
 	}, nil
 }

@@ -82,6 +82,6 @@ func Provider(options ServerOptions) (*fiber.App, error) {
 		}
 	})
 
-	app.Use(apiNotFound)
+	app.Use(NotFound)
 	return app, nil
 }

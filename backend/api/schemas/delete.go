@@ -10,12 +10,12 @@ import (
 	"polimane/backend/repository"
 )
 
-type deleteBody struct {
+type DeleteBody struct {
 	IDs []model.ID `json:"ids" validate:"required"`
 }
 
-func (c *Controller) apiDelete(ctx *fiber.Ctx) (err error) {
-	var body deleteBody
+func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
+	var body DeleteBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
