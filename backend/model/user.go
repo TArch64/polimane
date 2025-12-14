@@ -2,6 +2,7 @@ package model
 
 type User struct {
 	*Identifiable
+	*SoftDeletable
 	WorkosID  string `json:"-"`
 	Email     string `json:"email"`
 	FirstName string `json:"firstName"`
