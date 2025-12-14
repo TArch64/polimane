@@ -6,6 +6,7 @@ import (
 	"polimane/backend/env"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryschemas "polimane/backend/repository/schemas"
+	repositoryusers "polimane/backend/repository/users"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 	"polimane/backend/services/appcontext"
 	"polimane/backend/services/awsconfig"
@@ -23,6 +24,7 @@ import (
 	"polimane/backend/worker/queuedebounced/handlerschemascreenshot"
 	"polimane/backend/worker/queuescheduled"
 	"polimane/backend/worker/queuescheduled/handlercleanupinvitations"
+	"polimane/backend/worker/queuescheduled/handlerdeleteusers"
 )
 
 func AsQueue(f any) any {
@@ -52,6 +54,7 @@ func main() {
 			views.Provider,
 
 			// repositories
+			repositoryusers.Provider,
 			repositoryschemas.Provider,
 			repositoryuserschemas.Provider,
 			repositoryschemainvitations.Provider,
@@ -61,6 +64,7 @@ func main() {
 			AsQueue(queuedebounced.Provider),
 
 			handlercleanupinvitations.Provider,
+			handlerdeleteusers.Provider,
 			AsQueue(queuescheduled.Provider),
 
 			worker.Provider,

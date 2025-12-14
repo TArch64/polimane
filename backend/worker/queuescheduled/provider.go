@@ -6,6 +6,7 @@ import (
 	"polimane/backend/worker/events"
 	"polimane/backend/worker/queue"
 	"polimane/backend/worker/queuescheduled/handlercleanupinvitations"
+	"polimane/backend/worker/queuescheduled/handlerdeleteusers"
 )
 
 type Queue struct {
@@ -15,11 +16,13 @@ type Queue struct {
 type ProviderOptions struct {
 	fx.In
 	HandlerCleanupInvitations *handlercleanupinvitations.Handler
+	HandlerDeleteUsers        *handlerdeleteusers.Handler
 }
 
 func Provider(options ProviderOptions) queue.Interface {
 	q := &Queue{Base: queue.NewBase()}
 	q.HandleEvent(events.EventCleanupInvitations, options.HandlerCleanupInvitations.Handle)
+	q.HandleEvent(events.EventDeleteUsers, options.HandlerDeleteUsers.Handle)
 	return q
 }
 
