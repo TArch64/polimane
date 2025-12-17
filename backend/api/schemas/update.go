@@ -15,7 +15,7 @@ import (
 	"polimane/backend/worker/events"
 )
 
-type updateBody struct {
+type UpdateBody struct {
 	Name            string              `json:"name" validate:"omitempty,min=1"`
 	BackgroundColor string              `json:"backgroundColor" validate:"omitempty,iscolor"`
 	Palette         model.SchemaPalette `json:"palette" validate:"omitempty,dive,omitempty,iscolor"`
@@ -23,7 +23,7 @@ type updateBody struct {
 	Beads           model.SchemaBeads   `json:"beads" validate:"omitempty"`
 }
 
-func collectUpdates(body *updateBody) *model.Schema {
+func collectUpdates(body *UpdateBody) *model.Schema {
 	changed := false
 	updates := &model.Schema{}
 
@@ -82,20 +82,20 @@ func (c *Controller) updateScreenshot(ctx context.Context, schemaID model.ID, ne
 	})
 }
 
-func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
-	schemaID, err := base.GetParamID(ctx, schemaIDParam)
+func (c *Controller) Update(ctx *fiber.Ctx) error {
+	schemaID, err := base.GetParamID(ctx, ParamSchemaID)
 	if err != nil {
 		return err
 	}
 
-	var body updateBody
+	var body UpdateBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
 	user := auth.GetSessionUser(ctx)
-	requestCtx := ctx.Context()
-	err = c.userSchemas.HasAccess(requestCtx, user.ID, schemaID, model.AccessWrite)
+	reqCtx := ctx.Context()
+	err = c.userSchemas.HasAccess(reqCtx, user.ID, schemaID, model.AccessWrite)
 	if err != nil {
 		return err
 	}
@@ -105,7 +105,7 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
 		return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
 	}
 
-	err = c.schemas.Update(requestCtx, *updates,
+	err = c.schemas.Update(reqCtx, *updates,
 		repository.IDEq(schemaID),
 	)
 
@@ -114,7 +114,7 @@ func (c *Controller) apiUpdate(ctx *fiber.Ctx) error {
 	}
 
 	needImmediateScreenshotUpdate := body.BackgroundColor != ""
-	if err = c.updateScreenshot(requestCtx, schemaID, needImmediateScreenshotUpdate); err != nil {
+	if err = c.updateScreenshot(reqCtx, schemaID, needImmediateScreenshotUpdate); err != nil {
 		return err
 	}
 

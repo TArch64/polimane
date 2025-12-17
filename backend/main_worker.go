@@ -4,8 +4,10 @@ import (
 	"go.uber.org/fx"
 
 	"polimane/backend/env"
+	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryschemas "polimane/backend/repository/schemas"
+	repositoryusers "polimane/backend/repository/users"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 	"polimane/backend/services/appcontext"
 	"polimane/backend/services/awsconfig"
@@ -15,6 +17,7 @@ import (
 	"polimane/backend/services/db"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/services/sentry"
+	"polimane/backend/services/workos"
 	"polimane/backend/signal"
 	"polimane/backend/views"
 	"polimane/backend/worker"
@@ -23,6 +26,7 @@ import (
 	"polimane/backend/worker/queuedebounced/handlerschemascreenshot"
 	"polimane/backend/worker/queuescheduled"
 	"polimane/backend/worker/queuescheduled/handlercleanupinvitations"
+	"polimane/backend/worker/queuescheduled/handlerdeleteusers"
 )
 
 func AsQueue(f any) any {
@@ -50,17 +54,21 @@ func main() {
 			schemascreenshot.Provider,
 			signal.Provider,
 			views.Provider,
+			workos.Provider,
 
 			// repositories
+			repositoryusers.Provider,
 			repositoryschemas.Provider,
 			repositoryuserschemas.Provider,
 			repositoryschemainvitations.Provider,
+			repositoryfolders.Provider,
 
 			// queues
 			handlerschemascreenshot.Provider,
 			AsQueue(queuedebounced.Provider),
 
 			handlercleanupinvitations.Provider,
+			handlerdeleteusers.Provider,
 			AsQueue(queuescheduled.Provider),
 
 			worker.Provider,

@@ -16,21 +16,21 @@ import (
 	dberror "polimane/backend/services/db/error"
 )
 
-type createBody struct {
-	addBody
+type CreateBody struct {
+	AddBody
 	Name   string `json:"name" validate:"required,min=1,max=255"`
 	AsList *bool  `json:"asList"`
 }
 
-func (c *Controller) apiCreate(ctx *fiber.Ctx) (err error) {
-	var body createBody
+func (c *Controller) Create(ctx *fiber.Ctx) (err error) {
+	var body CreateBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
-	requestCtx := ctx.Context()
+	reqCtx := ctx.Context()
 	currentUser := auth.GetSessionUser(ctx)
-	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.SchemaIDs, model.AccessRead)
+	err = c.userSchemas.FilterByAccess(reqCtx, currentUser, &body.SchemaIDs, model.AccessRead)
 	if err != nil {
 		return err
 	}
@@ -40,12 +40,12 @@ func (c *Controller) apiCreate(ctx *fiber.Ctx) (err error) {
 		UserID: currentUser.ID,
 	}
 
-	err = c.db.WithContext(requestCtx).Transaction(func(tx *gorm.DB) error {
-		if err = c.folders.InsertTx(requestCtx, tx, folder); err != nil {
+	err = c.db.WithContext(reqCtx).Transaction(func(tx *gorm.DB) error {
+		if err = c.folders.InsertTx(reqCtx, tx, folder); err != nil {
 			return err
 		}
 
-		return c.userSchemas.UpdateTx(requestCtx, tx,
+		return c.userSchemas.UpdateTx(reqCtx, tx,
 			model.UserSchema{FolderID: &folder.ID},
 			repository.SchemaIDsIn(body.SchemaIDs),
 		)
@@ -62,7 +62,7 @@ func (c *Controller) apiCreate(ctx *fiber.Ctx) (err error) {
 		return ctx.JSON(folder)
 	}
 
-	listFolder, err := c.asListFolder(requestCtx, folder, body.SchemaIDs)
+	listFolder, err := c.asListFolder(reqCtx, folder, body.SchemaIDs)
 	if err != nil {
 		return err
 	}

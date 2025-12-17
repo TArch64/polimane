@@ -1,2 +1,6 @@
 export const authChannel = new BroadcastChannel('auth-channel');
-export const AuthChannelComplete = 'auth-complete';
+
+export enum AuthChannelEvent {
+  COMPLETE = 'auth-complete',
+  DELETED_USER = 'auth-deleted-user',
+}

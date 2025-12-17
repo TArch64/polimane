@@ -11,13 +11,13 @@ import (
 	"polimane/backend/model"
 )
 
-type listQuery struct {
+type ListQuery struct {
 	FolderIDStr *string `query:"folder" validate:"omitempty,uuid"`
 	Offset      uint16  `query:"offset" validate:"gte=0,lte=65535"`
 	Limit       uint8   `query:"limit" validate:"gte=1,lte=100"`
 }
 
-func (l *listQuery) FolderID() *model.ID {
+func (l *ListQuery) FolderID() *model.ID {
 	if l.FolderIDStr == nil {
 		return nil
 	}
@@ -27,14 +27,14 @@ func (l *listQuery) FolderID() *model.ID {
 
 type listResponse struct {
 	Folders []*ListFolder `json:"folders"`
-	Schemas []*listSchema `json:"schemas"`
+	Schemas []*ListSchema `json:"schemas"`
 	Total   int64         `json:"total"`
 }
 
 type listContext struct {
 	context.Context
 	user         *model.User
-	query        *listQuery
+	query        *ListQuery
 	schemasTotal int64
 	foldersTotal int64
 	res          *listResponse
@@ -44,8 +44,8 @@ func (l *listContext) calcTotal() {
 	l.res.Total = l.schemasTotal + l.foldersTotal
 }
 
-func (c *Controller) apiList(ctx *fiber.Ctx) (err error) {
-	var query listQuery
+func (c *Controller) List(ctx *fiber.Ctx) (err error) {
+	var query ListQuery
 	if err = base.ParseQuery(ctx, &query); err != nil {
 		return err
 	}

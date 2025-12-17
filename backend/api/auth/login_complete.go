@@ -7,18 +7,18 @@ import (
 	"polimane/backend/api/base"
 )
 
-type loginCompleteQuery struct {
+type LoginCompleteQuery struct {
 	Code string `query:"code" validate:"required"`
 }
 
-func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error {
-	var query loginCompleteQuery
+func (c *Controller) LoginComplete(ctx *fiber.Ctx) error {
+	var query LoginCompleteQuery
 	if err := base.ParseQuery(ctx, &query); err != nil {
 		return err
 	}
 
 	reqCtx := ctx.Context()
-	data, err := c.workosClient.UserManagement.AuthenticateWithCode(reqCtx, usermanagement.AuthenticateWithCodeOpts{
+	data, err := c.workos.UserManagement.AuthenticateWithCode(reqCtx, usermanagement.AuthenticateWithCodeOpts{
 		ClientID:  c.env.WorkOS.ClientID,
 		Code:      query.Code,
 		UserAgent: ctx.Get("User-Agent"),
@@ -32,8 +32,13 @@ func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	if user.SoftDeletable != nil && user.DeletedAt.Valid {
+		return c.completeRedirect(ctx, map[string]string{
+			"deleted": "1",
+		})
+	}
 
-	_, err = c.workosClient.UserManagement.UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
+	_, err = c.workos.UserManagement.UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
 		User:       data.User.ID,
 		ExternalID: user.ID.String(),
 	})
@@ -47,6 +52,19 @@ func (c *Controller) apiLoginComplete(ctx *fiber.Ctx) error {
 		RefreshToken: data.RefreshToken,
 	})
 
+	return c.completeRedirect(ctx, nil)
+}
+
+func (c *Controller) completeRedirect(ctx *fiber.Ctx, query map[string]string) error {
 	redirectUrl := c.env.AppURL.JoinPath("auth/complete")
+
+	if len(query) > 0 {
+		redirectQuery := redirectUrl.Query()
+		for key, value := range query {
+			redirectQuery.Set(key, value)
+		}
+		redirectUrl.RawQuery = redirectQuery.Encode()
+	}
+
 	return ctx.Redirect(redirectUrl.String())
 }

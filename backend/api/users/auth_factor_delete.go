@@ -7,13 +7,13 @@ import (
 	"polimane/backend/api/base"
 )
 
-func (c *Controller) apiAuthFactorDelete(ctx *fiber.Ctx) error {
-	factorID, err := base.GetRequiredParam(ctx, factorIDParam)
+func (c *Controller) AuthFactorDelete(ctx *fiber.Ctx) error {
+	factorID, err := base.GetRequiredParam(ctx, ParamFactorID)
 	if err != nil {
 		return err
 	}
 
-	err = c.workosClient.MFA.DeleteFactor(ctx.Context(), mfa.DeleteFactorOpts{
+	err = c.workos.MFA.DeleteFactor(ctx.Context(), mfa.DeleteFactorOpts{
 		FactorID: factorID,
 	})
 

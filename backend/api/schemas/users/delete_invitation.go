@@ -7,8 +7,8 @@ import (
 	"polimane/backend/repository"
 )
 
-func (c *Controller) apiDeleteInvitation(ctx *fiber.Ctx) (err error) {
-	var body invitationBody
+func (c *Controller) DeleteInvitation(ctx *fiber.Ctx) (err error) {
+	var body InvitationBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}

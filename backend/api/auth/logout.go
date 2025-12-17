@@ -5,12 +5,34 @@ import (
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
 
 	"polimane/backend/api/base"
+	"polimane/backend/env"
+	"polimane/backend/services/workos"
+	"polimane/backend/signal"
 )
 
-func (c *Controller) apiLogout(ctx *fiber.Ctx) error {
+func (c *Controller) Logout(ctx *fiber.Ctx) error {
+	err := Logout(ctx, &LogoutOptions{
+		Env:     c.env,
+		Signals: c.signals,
+		Workos:  c.workos,
+	})
+	if err != nil {
+		return err
+	}
+
+	return base.NewSuccessResponse(ctx)
+}
+
+type LogoutOptions struct {
+	Env     *env.Environment
+	Signals *signal.Container
+	Workos  *workos.Client
+}
+
+func Logout(ctx *fiber.Ctx, options *LogoutOptions) error {
 	session := GetSession(ctx)
 
-	err := c.workosClient.UserManagement.RevokeSession(ctx.Context(), usermanagement.RevokeSessionOpts{
+	err := options.Workos.UserManagement.RevokeSession(ctx.Context(), usermanagement.RevokeSessionOpts{
 		SessionID: session.ID,
 	})
 
@@ -18,7 +40,7 @@ func (c *Controller) apiLogout(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	removeCookies(ctx, c.env)
-	c.signals.InvalidateAuthCache.Emit(ctx.Context(), session.ID)
-	return base.NewSuccessResponse(ctx)
+	removeCookies(ctx, options.Env)
+	options.Signals.InvalidateAuthCache.Emit(ctx.Context(), session.ID)
+	return nil
 }

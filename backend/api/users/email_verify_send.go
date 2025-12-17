@@ -10,7 +10,7 @@ import (
 	"polimane/backend/api/base"
 )
 
-func (c *Controller) apiEmailVerifyRetry(ctx *fiber.Ctx) (err error) {
+func (c *Controller) EmailVerifyRetry(ctx *fiber.Ctx) (err error) {
 	user := auth.GetSessionUser(ctx)
 
 	if err = c.sendEmailVerification(ctx.Context(), user.WorkosID); err != nil {
@@ -21,7 +21,7 @@ func (c *Controller) apiEmailVerifyRetry(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *Controller) sendEmailVerification(ctx context.Context, userID string) error {
-	_, err := c.workosClient.UserManagement.SendVerificationEmail(ctx, usermanagement.SendVerificationEmailOpts{
+	_, err := c.workos.UserManagement.SendVerificationEmail(ctx, usermanagement.SendVerificationEmailOpts{
 		User: userID,
 	})
 

@@ -3,8 +3,13 @@
 </template>
 
 <script lang="ts" setup>
-import { authChannel, AuthChannelComplete } from '../channel';
+import { useRoute } from 'vue-router';
+import { authChannel, AuthChannelEvent } from '../channel';
 
-authChannel.postMessage({ type: AuthChannelComplete });
+const route = useRoute();
+const isDeleted = 'deleted' in route.query;
+const event = isDeleted ? AuthChannelEvent.DELETED_USER : AuthChannelEvent.COMPLETE;
+
+authChannel.postMessage({ type: event });
 window.close();
 </script>

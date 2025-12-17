@@ -7,15 +7,15 @@ import (
 	"polimane/backend/api/auth"
 )
 
-type authFactorListItem struct {
+type AuthFactorListItem struct {
 	ID        string `json:"id"`
 	CreatedAt string `json:"createdAt"`
 }
 
-func (c *Controller) apiListAuthFactors(ctx *fiber.Ctx) error {
+func (c *Controller) ListAuthFactors(ctx *fiber.Ctx) error {
 	user := auth.GetSessionUser(ctx)
 
-	factors, err := c.workosClient.UserManagement.ListAuthFactors(ctx.Context(), usermanagement.ListAuthFactorsOpts{
+	factors, err := c.workos.UserManagement.ListAuthFactors(ctx.Context(), usermanagement.ListAuthFactorsOpts{
 		User: user.WorkosID,
 	})
 
@@ -23,9 +23,9 @@ func (c *Controller) apiListAuthFactors(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	response := make([]authFactorListItem, len(factors.Data))
+	response := make([]AuthFactorListItem, len(factors.Data))
 	for i, factor := range factors.Data {
-		response[i] = authFactorListItem{
+		response[i] = AuthFactorListItem{
 			ID:        factor.ID,
 			CreatedAt: factor.CreatedAt,
 		}

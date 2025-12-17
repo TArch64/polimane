@@ -28,16 +28,16 @@ var (
 
 type MiddlewareOptions struct {
 	fx.In
-	Signals      *signal.Container
-	Env          *env.Environment
-	WorkosClient *workos.Client
-	Users        *repositoryusers.Client
+	Signals *signal.Container
+	Env     *env.Environment
+	Workos  *workos.Client
+	Users   *repositoryusers.Client
 }
 
 type Middleware struct {
 	userCache       cache.Cache[*model.User]
 	workosUserCache cache.Cache[*usermanagement.User]
-	workosClient    *workos.Client
+	workos          *workos.Client
 	env             *env.Environment
 	users           *repositoryusers.Client
 }
@@ -52,7 +52,7 @@ func MiddlewareProvider(options MiddlewareOptions) *Middleware {
 		userCache:       localcache.New[*model.User](cacheOptions...),
 		workosUserCache: localcache.New[*usermanagement.User](cacheOptions...),
 		env:             options.Env,
-		workosClient:    options.WorkosClient,
+		workos:          options.Workos,
 		users:           options.Users,
 	}
 
@@ -88,7 +88,7 @@ func (m *Middleware) Handler(ctx *fiber.Ctx) error {
 		return m.newUnauthorizedErr(missingTokenErr)
 	}
 
-	accessTokenClaims, err := m.workosClient.AuthenticateWithAccessToken(ctx.Context(), cookies.AccessToken)
+	accessTokenClaims, err := m.workos.AuthenticateWithAccessToken(ctx.Context(), cookies.AccessToken)
 	if errors.Is(err, workos.AccessTokenExpiredErr) {
 		accessTokenClaims, err = m.refreshToken(ctx, cookies.RefreshToken)
 	}
@@ -122,7 +122,7 @@ func (m *Middleware) Handler(ctx *fiber.Ctx) error {
 }
 
 func (m *Middleware) refreshToken(ctx *fiber.Ctx, token string) (*workos.AccessTokenClaims, error) {
-	res, err := m.workosClient.AuthenticateWithRefreshToken(ctx.Context(), &workos.RefreshAuthOptions{
+	res, err := m.workos.AuthenticateWithRefreshToken(ctx.Context(), &workos.RefreshAuthOptions{
 		Token:     token,
 		UserAgent: ctx.Get("User-Agent"),
 	})
@@ -136,12 +136,12 @@ func (m *Middleware) refreshToken(ctx *fiber.Ctx, token string) (*workos.AccessT
 		RefreshToken: res.RefreshToken,
 	})
 
-	return m.workosClient.AuthenticateWithAccessToken(ctx.Context(), res.AccessToken)
+	return m.workos.AuthenticateWithAccessToken(ctx.Context(), res.AccessToken)
 }
 
 func (m *Middleware) getWorkosUser(ctx context.Context, accessTokenClaims *workos.AccessTokenClaims) (*usermanagement.User, error) {
 	return m.workosUserCache.Get(ctx, accessTokenClaims.UserID, func() (*usermanagement.User, *time.Duration, error) {
-		user, err := m.workosClient.UserManagement.GetUser(ctx, usermanagement.GetUserOpts{
+		user, err := m.workos.UserManagement.GetUser(ctx, usermanagement.GetUserOpts{
 			User: accessTokenClaims.UserID,
 		})
 

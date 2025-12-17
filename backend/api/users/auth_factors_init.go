@@ -8,17 +8,17 @@ import (
 	"polimane/backend/api/auth"
 )
 
-type newAuthFactorResponse struct {
+type NewAuthFactorResponse struct {
 	ChallengeID string `json:"challengeId"`
 	QRCode      string `json:"qrCode"`
 	Secret      string `json:"secret"`
 	URI         string `json:"uri"`
 }
 
-func (c *Controller) apiAuthFactorsInit(ctx *fiber.Ctx) error {
+func (c *Controller) AuthFactorsInit(ctx *fiber.Ctx) error {
 	session := auth.GetSession(ctx)
 
-	response, err := c.workosClient.UserManagement.EnrollAuthFactor(ctx.Context(), usermanagement.EnrollAuthFactorOpts{
+	response, err := c.workos.UserManagement.EnrollAuthFactor(ctx.Context(), usermanagement.EnrollAuthFactorOpts{
 		User:       session.WorkosUser.ID,
 		Type:       mfa.TOTP,
 		TOTPIssuer: "Polimane",
@@ -29,7 +29,7 @@ func (c *Controller) apiAuthFactorsInit(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.JSON(newAuthFactorResponse{
+	return ctx.JSON(NewAuthFactorResponse{
 		ChallengeID: response.Challenge.ID,
 		QRCode:      response.Factor.TOTP.QRCode,
 		Secret:      response.Factor.TOTP.Secret,

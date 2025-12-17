@@ -7,7 +7,7 @@ import (
 	"polimane/backend/model"
 )
 
-type currentUser struct {
+type UserResponse struct {
 	ID            model.ID `json:"id"`
 	FirstName     string   `json:"firstName"`
 	LastName      string   `json:"lastName"`
@@ -15,10 +15,10 @@ type currentUser struct {
 	EmailVerified bool     `json:"isEmailVerified"`
 }
 
-func (c *Controller) apiCurrent(ctx *fiber.Ctx) error {
+func (c *Controller) Current(ctx *fiber.Ctx) error {
 	session := auth.GetSession(ctx)
 
-	return ctx.JSON(currentUser{
+	return ctx.JSON(UserResponse{
 		ID:            session.User.ID,
 		FirstName:     session.User.FirstName,
 		LastName:      session.User.LastName,

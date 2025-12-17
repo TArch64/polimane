@@ -8,10 +8,14 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
+	"polimane/backend/repository"
 )
 
 func (c *Client) CreateIfNeeded(ctx context.Context, workosUser *usermanagement.User) (*model.User, error) {
-	user, err := c.Get(ctx, WorkosIDEq(workosUser.ID))
+	user, err := c.Get(ctx,
+		WorkosIDEq(workosUser.ID),
+		repository.IncludeSoftDeleted,
+	)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return c.CreateFromWorkos(ctx, workosUser)
 	}

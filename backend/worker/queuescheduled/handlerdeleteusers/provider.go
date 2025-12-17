@@ -1,63 +1,46 @@
-package folders
+package handlerdeleteusers
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 	"gorm.io/gorm"
 
-	"polimane/backend/api/base"
 	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemas "polimane/backend/repository/schemas"
+	repositoryusers "polimane/backend/repository/users"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 	"polimane/backend/services/schemascreenshot"
+	"polimane/backend/services/workos"
 )
 
-const ParamFolderID = "folderID"
-const ParamDefFolderID = ":" + ParamFolderID
-
-var (
-	NameAlreadyInUseErr = base.NewReasonedError(fiber.StatusBadRequest, "NameAlreadyInUse")
-)
-
-type Controller struct {
+type Handler struct {
 	db               *gorm.DB
+	users            *repositoryusers.Client
 	folders          *repositoryfolders.Client
 	userSchemas      *repositoryuserschemas.Client
 	schemas          *repositoryschemas.Client
 	schemaScreenshot *schemascreenshot.Service
+	workos           *workos.Client
 }
 
 type ProviderOptions struct {
 	fx.In
 	DB               *gorm.DB
+	Users            *repositoryusers.Client
 	Folders          *repositoryfolders.Client
 	UserSchemas      *repositoryuserschemas.Client
 	Schemas          *repositoryschemas.Client
 	SchemaScreenshot *schemascreenshot.Service
+	Workos           *workos.Client
 }
 
-func Provider(options ProviderOptions) base.Controller {
-	return &Controller{
+func Provider(options ProviderOptions) *Handler {
+	return &Handler{
 		db:               options.DB,
+		users:            options.Users,
 		folders:          options.Folders,
 		userSchemas:      options.UserSchemas,
 		schemas:          options.Schemas,
 		schemaScreenshot: options.SchemaScreenshot,
+		workos:           options.Workos,
 	}
-}
-
-func (c *Controller) Public(_ fiber.Router) {}
-
-func (c *Controller) Private(group fiber.Router) {
-	base.WithGroup(group, "folders", func(group fiber.Router) {
-		group.Get("", c.List)
-		group.Post("", c.Create)
-
-		base.WithGroup(group, ParamDefFolderID, func(group fiber.Router) {
-			group.Get("", c.ByID)
-			group.Patch("", c.Update)
-			group.Delete("", c.Delete)
-			group.Post("schemas", c.AddSchema)
-		})
-	})
 }

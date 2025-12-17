@@ -9,34 +9,34 @@ import (
 	"polimane/backend/repository"
 )
 
-type addBody struct {
+type AddBody struct {
 	SchemaIDs []model.ID `json:"schemaIds" validate:"dive,required"`
 }
 
-func (c *Controller) apiAddSchema(ctx *fiber.Ctx) (err error) {
-	var body addBody
+func (c *Controller) AddSchema(ctx *fiber.Ctx) (err error) {
+	var body AddBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
-	folderID, err := base.GetParamID(ctx, folderIDParam)
+	folderID, err := base.GetParamID(ctx, ParamFolderID)
 	if err != nil {
 		return err
 	}
 
 	user := auth.GetSessionUser(ctx)
-	requestCtx := ctx.Context()
-	err = c.folders.HasAccess(requestCtx, user.ID, folderID)
+	reqCtx := ctx.Context()
+	err = c.folders.HasAccess(reqCtx, user.ID, folderID)
 	if err != nil {
 		return err
 	}
 
-	err = c.userSchemas.FilterByAccess(requestCtx, user, &body.SchemaIDs, model.AccessRead)
+	err = c.userSchemas.FilterByAccess(reqCtx, user, &body.SchemaIDs, model.AccessRead)
 	if err != nil {
 		return err
 	}
 
-	err = c.userSchemas.Update(requestCtx,
+	err = c.userSchemas.Update(reqCtx,
 		model.UserSchema{FolderID: &folderID},
 		repository.SchemaIDsIn(body.SchemaIDs),
 	)

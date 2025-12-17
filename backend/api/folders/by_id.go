@@ -9,19 +9,19 @@ import (
 	"polimane/backend/repository"
 )
 
-type folderDetails struct {
+type FolderDetails struct {
 	ID   model.ID `json:"id"`
 	Name string   `json:"name"`
 }
 
-func (c *Controller) apiByID(ctx *fiber.Ctx) error {
-	folderID, err := base.GetParamID(ctx, folderIDParam)
+func (c *Controller) ByID(ctx *fiber.Ctx) error {
+	folderID, err := base.GetParamID(ctx, ParamFolderID)
 	if err != nil {
 		return err
 	}
 
 	user := auth.GetSessionUser(ctx)
-	var folder folderDetails
+	var folder FolderDetails
 
 	err = c.folders.GetOut(ctx.Context(), &folder,
 		repository.Select("id", "name"),

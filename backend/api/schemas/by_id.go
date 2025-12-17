@@ -10,18 +10,18 @@ import (
 	repositoryschemas "polimane/backend/repository/schemas"
 )
 
-type schemaDetails struct {
+type SchemaDetails struct {
 	model.Schema
 	Access model.AccessLevel `json:"access"`
 }
 
-func (c *Controller) apiByID(ctx *fiber.Ctx) error {
-	schemaID, err := base.GetParamID(ctx, schemaIDParam)
+func (c *Controller) ByID(ctx *fiber.Ctx) error {
+	schemaID, err := base.GetParamID(ctx, ParamSchemaID)
 	if err != nil {
 		return err
 	}
 
-	var schema schemaDetails
+	var schema SchemaDetails
 	user := auth.GetSessionUser(ctx)
 	err = c.schemas.GetOut(ctx.Context(), &schema,
 		repository.IDEq(schemaID),

@@ -19,31 +19,31 @@ import (
 	"polimane/backend/services/workos"
 )
 
-type addUserBody struct {
-	bulkOperationBody
+type AddUserBody struct {
+	BulkOperationBody
 	Email string `validate:"required,email,max=255" json:"email"`
 }
 
-type addResponse struct {
-	User       *listUser       `json:"user"`
-	Invitation *listInvitation `json:"invitation"`
+type AddUserResponse struct {
+	User       *ListUser       `json:"user"`
+	Invitation *ListInvitation `json:"invitation"`
 }
 
-func (c *Controller) apiAdd(ctx *fiber.Ctx) (err error) {
-	var body addUserBody
+func (c *Controller) Add(ctx *fiber.Ctx) (err error) {
+	var body AddUserBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
-	requestCtx := ctx.Context()
+	reqCtx := ctx.Context()
 	currentUser := auth.GetSessionUser(ctx)
-	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.IDs, model.AccessAdmin)
+	err = c.userSchemas.FilterByAccess(reqCtx, currentUser, &body.IDs, model.AccessAdmin)
 	if err != nil {
 		return err
 	}
 
 	user, err := c.users.Get(
-		requestCtx,
+		reqCtx,
 		repository.Select("id", "email", "first_name", "last_name"),
 		repository.EmailEq(body.Email),
 	)
@@ -55,12 +55,12 @@ func (c *Controller) apiAdd(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	var response *addResponse
+	var response *AddUserResponse
 
 	if user == nil {
-		response, err = c.inviteUser(requestCtx, currentUser, body.IDs, body.Email)
+		response, err = c.inviteUser(reqCtx, currentUser, body.IDs, body.Email)
 	} else {
-		response, err = c.addExistingUser(requestCtx, currentUser, body.IDs, user)
+		response, err = c.addExistingUser(reqCtx, currentUser, body.IDs, user)
 	}
 
 	if err != nil {
@@ -75,8 +75,8 @@ func (c *Controller) inviteUser(
 	currentUser *model.User,
 	schemaIDs []model.ID,
 	email string,
-) (*addResponse, error) {
-	invitation, err := c.workosClient.UserManagement.SendInvitation(ctx, usermanagement.SendInvitationOpts{
+) (*AddUserResponse, error) {
+	invitation, err := c.workos.UserManagement.SendInvitation(ctx, usermanagement.SendInvitationOpts{
 		Email:         email,
 		InviterUserID: currentUser.WorkosID,
 		ExpiresInDays: 30,
@@ -85,7 +85,7 @@ func (c *Controller) inviteUser(
 	var httpError workos_errors.HTTPError
 	if errors.As(err, &httpError) && workos.GetErrorCode(&httpError) == workos.CodeEmailAlreadyInvited {
 		var response usermanagement.ListInvitationsResponse
-		response, err = c.workosClient.UserManagement.ListInvitations(ctx, usermanagement.ListInvitationsOpts{
+		response, err = c.workos.UserManagement.ListInvitations(ctx, usermanagement.ListInvitationsOpts{
 			Email: email,
 			Limit: 1,
 		})
@@ -112,8 +112,8 @@ func (c *Controller) inviteUser(
 		return nil, err
 	}
 
-	return &addResponse{
-		Invitation: &listInvitation{
+	return &AddUserResponse{
+		Invitation: &ListInvitation{
 			Email:  email,
 			Access: model.AccessRead,
 		},
@@ -125,7 +125,7 @@ func (c *Controller) addExistingUser(
 	currentUser *model.User,
 	schemaIDs []model.ID,
 	user *model.User,
-) (*addResponse, error) {
+) (*AddUserResponse, error) {
 	if currentUser.ID == user.ID {
 		return nil, base.InvalidRequestErr
 	}
@@ -143,7 +143,7 @@ func (c *Controller) addExistingUser(
 		return nil, err
 	}
 
-	return &addResponse{
-		User: newUserListItem(user, model.AccessRead),
+	return &AddUserResponse{
+		User: NewUserListItem(user, model.AccessRead),
 	}, nil
 }

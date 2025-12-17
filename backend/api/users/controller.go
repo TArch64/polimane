@@ -5,31 +5,36 @@ import (
 	"go.uber.org/fx"
 
 	"polimane/backend/api/base"
+	"polimane/backend/env"
 	repositoryusers "polimane/backend/repository/users"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
 )
 
-const factorIDParam = "factorID"
+const ParamFactorID = "factorID"
+const ParamDefFactorID = ":" + ParamFactorID
 
 type ControllerOptions struct {
 	fx.In
-	WorkosClient *workos.Client
-	Users        *repositoryusers.Client
-	Signals      *signal.Container
+	Env     *env.Environment
+	Workos  *workos.Client
+	Users   *repositoryusers.Client
+	Signals *signal.Container
 }
 
 type Controller struct {
-	workosClient *workos.Client
-	users        *repositoryusers.Client
-	signals      *signal.Container
+	env     *env.Environment
+	workos  *workos.Client
+	users   *repositoryusers.Client
+	signals *signal.Container
 }
 
 func Provider(options ControllerOptions) base.Controller {
 	return &Controller{
-		workosClient: options.WorkosClient,
-		users:        options.Users,
-		signals:      options.Signals,
+		env:     options.Env,
+		workos:  options.Workos,
+		users:   options.Users,
+		signals: options.Signals,
 	}
 }
 
@@ -37,21 +42,22 @@ func (c *Controller) Public(_ fiber.Router) {}
 
 func (c *Controller) Private(group fiber.Router) {
 	base.WithGroup(group, "users/current", func(group fiber.Router) {
-		group.Get("", c.apiCurrent)
-		group.Patch("", c.apiUpdate)
+		group.Get("", c.Current)
+		group.Patch("", c.Update)
+		group.Delete("", c.Delete)
 
 		base.WithGroup(group, "email/verify", func(group fiber.Router) {
-			group.Post("", c.apiEmailVerify)
-			group.Post("retry", c.apiEmailVerifyRetry)
+			group.Post("", c.EmailVerify)
+			group.Post("retry", c.EmailVerifyRetry)
 		})
 
-		group.Post("password/reset", c.apiPasswordReset)
+		group.Post("password/reset", c.PasswordReset)
 
 		base.WithGroup(group, "auth-factors", func(group fiber.Router) {
-			group.Get("", c.apiListAuthFactors)
-			group.Post("", c.apiAuthFactorCreate)
-			group.Post("init", c.apiAuthFactorsInit)
-			group.Delete(":"+factorIDParam, c.apiAuthFactorDelete)
+			group.Get("", c.ListAuthFactors)
+			group.Post("", c.AuthFactorCreate)
+			group.Post("init", c.AuthFactorsInit)
+			group.Delete(ParamDefFactorID, c.AuthFactorDelete)
 		})
 	})
 }

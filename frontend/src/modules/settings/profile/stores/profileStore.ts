@@ -41,6 +41,11 @@ export const useProfileStore = defineStore('settings/profile', () => {
     isChangeVerifyingEmail.value = false;
   }
 
+  async function deleteAccount(): Promise<void> {
+    await http.delete('/users/current');
+    await sessionStore.onLogout();
+  }
+
   return {
     user: toRef(sessionStore, 'user'),
     isChangeVerifyingEmail,
@@ -48,5 +53,6 @@ export const useProfileStore = defineStore('settings/profile', () => {
     update,
     retryEmailVerification,
     verifyEmail,
+    deleteAccount,
   };
 });

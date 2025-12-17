@@ -11,13 +11,13 @@ import (
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 )
 
-type updateAccessBody struct {
-	bulkOperationBody
+type UpdateAccessBody struct {
+	BulkOperationBody
 	Access model.AccessLevel `validate:"required,gte=1,lte=3" json:"access"`
 }
 
-func (c *Controller) apiUpdateAccess(ctx *fiber.Ctx) error {
-	userID, err := base.GetParamID(ctx, userIDParam)
+func (c *Controller) UpdateAccess(ctx *fiber.Ctx) error {
+	userID, err := base.GetParamID(ctx, ParamUserID)
 	if err != nil {
 		return err
 	}
@@ -27,18 +27,18 @@ func (c *Controller) apiUpdateAccess(ctx *fiber.Ctx) error {
 		return base.InvalidRequestErr
 	}
 
-	var body updateAccessBody
+	var body UpdateAccessBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
-	requestCtx := ctx.Context()
-	err = c.userSchemas.FilterByAccess(requestCtx, currentUser, &body.IDs, model.AccessAdmin)
+	reqCtx := ctx.Context()
+	err = c.userSchemas.FilterByAccess(reqCtx, currentUser, &body.IDs, model.AccessAdmin)
 	if err != nil {
 		return err
 	}
 
-	err = c.updateUserAccess(requestCtx, userID, body.IDs, body.Access)
+	err = c.updateUserAccess(reqCtx, userID, body.IDs, body.Access)
 	if err != nil {
 		return err
 	}

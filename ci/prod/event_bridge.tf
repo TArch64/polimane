@@ -19,6 +19,27 @@ resource "aws_scheduler_schedule" "cleanup_invitations" {
   }
 }
 
+resource "aws_scheduler_schedule" "delete_users" {
+  name                         = "${local.app_name}-delete-users"
+  schedule_expression          = "cron(0 2 ? * TUE *)"
+  schedule_expression_timezone = "Europe/Kyiv"
+
+  flexible_time_window {
+    mode                      = "FLEXIBLE"
+    maximum_window_in_minutes = 15
+  }
+
+  target {
+    arn      = aws_sqs_queue.scheduled.arn
+    role_arn = aws_iam_role.scheduler_sqs.arn
+
+    input = jsonencode({
+      eventType = "delete-users"
+      payload   = {}
+    })
+  }
+}
+
 resource "aws_iam_role" "scheduler_sqs" {
   name = "${local.app_name}-scheduler-sqs"
   tags = local.aws_common_tags
