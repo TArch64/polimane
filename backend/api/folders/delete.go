@@ -44,7 +44,7 @@ func (c *Controller) Delete(ctx *fiber.Ctx) error {
 				return err
 			}
 
-			return c.deleteFolder(reqCtx, c.db, folder, currentUser)
+			return c.deleteFolder(reqCtx, tx, folder, currentUser)
 		})
 	} else {
 		err = c.deleteFolder(reqCtx, c.db, folder, currentUser)
