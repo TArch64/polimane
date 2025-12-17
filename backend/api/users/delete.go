@@ -12,15 +12,18 @@ import (
 func (c *Controller) Delete(ctx *fiber.Ctx) error {
 	currentUser := auth.GetSessionUser(ctx)
 
-	c.workosClient.UserManagement.UpdateUser(ctx.Context(), usermanagement.UpdateUserOpts{
+	_, err := c.workos.UserManagement.UpdateUser(ctx.Context(), usermanagement.UpdateUserOpts{
 		User: currentUser.WorkosID,
 
 		Metadata: map[string]string{
 			"ScheduledForDeletion": "true",
 		},
 	})
+	if err != nil {
+		return err
+	}
 
-	err := c.users.Delete(ctx.Context(),
+	err = c.users.Delete(ctx.Context(),
 		repository.IDEq(currentUser.ID),
 	)
 	if err != nil {
@@ -28,9 +31,9 @@ func (c *Controller) Delete(ctx *fiber.Ctx) error {
 	}
 
 	err = auth.Logout(ctx, &auth.LogoutOptions{
-		Env:          c.env,
-		Signals:      c.signals,
-		WorkosClient: c.workosClient,
+		Env:     c.env,
+		Signals: c.signals,
+		Workos:  c.workos,
 	})
 	if err != nil {
 		return err

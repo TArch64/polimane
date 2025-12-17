@@ -15,25 +15,25 @@ const GroupPrefix = "auth"
 
 type ControllerOptions struct {
 	fx.In
-	WorkosClient *workos.Client
-	Env          *env.Environment
-	Users        *repositoryusers.Client
-	Signals      *signal.Container
+	Workos  *workos.Client
+	Env     *env.Environment
+	Users   *repositoryusers.Client
+	Signals *signal.Container
 }
 
 type Controller struct {
-	workosClient *workos.Client
-	env          *env.Environment
-	users        *repositoryusers.Client
-	signals      *signal.Container
+	workos  *workos.Client
+	env     *env.Environment
+	users   *repositoryusers.Client
+	signals *signal.Container
 }
 
 func Provider(options ControllerOptions) base.Controller {
 	return &Controller{
-		workosClient: options.WorkosClient,
-		env:          options.Env,
-		users:        options.Users,
-		signals:      options.Signals,
+		workos:  options.Workos,
+		env:     options.Env,
+		users:   options.Users,
+		signals: options.Signals,
 	}
 }
 

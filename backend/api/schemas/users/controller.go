@@ -21,14 +21,14 @@ type ControllerOptions struct {
 	Users             *repositoryusers.Client
 	UserSchemas       *repositoryuserschemas.Client
 	SchemaInvitations *repositoryschemainvitations.Client
-	WorkosClient      *workos.Client
+	Workos            *workos.Client
 }
 
 type Controller struct {
 	users             *repositoryusers.Client
 	userSchemas       *repositoryuserschemas.Client
 	schemaInvitations *repositoryschemainvitations.Client
-	workosClient      *workos.Client
+	workos            *workos.Client
 }
 
 func Provider(options ControllerOptions) *Controller {
@@ -36,7 +36,7 @@ func Provider(options ControllerOptions) *Controller {
 		users:             options.Users,
 		userSchemas:       options.UserSchemas,
 		schemaInvitations: options.SchemaInvitations,
-		workosClient:      options.WorkosClient,
+		workos:            options.Workos,
 	}
 }
 

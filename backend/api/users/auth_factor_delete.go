@@ -13,7 +13,7 @@ func (c *Controller) AuthFactorDelete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	err = c.workosClient.MFA.DeleteFactor(ctx.Context(), mfa.DeleteFactorOpts{
+	err = c.workos.MFA.DeleteFactor(ctx.Context(), mfa.DeleteFactorOpts{
 		FactorID: factorID,
 	})
 

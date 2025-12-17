@@ -18,7 +18,7 @@ func (c *Controller) LoginComplete(ctx *fiber.Ctx) error {
 	}
 
 	reqCtx := ctx.Context()
-	data, err := c.workosClient.UserManagement.AuthenticateWithCode(reqCtx, usermanagement.AuthenticateWithCodeOpts{
+	data, err := c.workos.UserManagement.AuthenticateWithCode(reqCtx, usermanagement.AuthenticateWithCodeOpts{
 		ClientID:  c.env.WorkOS.ClientID,
 		Code:      query.Code,
 		UserAgent: ctx.Get("User-Agent"),
@@ -29,7 +29,7 @@ func (c *Controller) LoginComplete(ctx *fiber.Ctx) error {
 	}
 
 	// AuthenticateWithCode doesnt return user's metadata
-	data.User, err = c.workosClient.UserManagement.GetUser(reqCtx, usermanagement.GetUserOpts{
+	data.User, err = c.workos.UserManagement.GetUser(reqCtx, usermanagement.GetUserOpts{
 		User: data.User.ID,
 	})
 
@@ -48,7 +48,7 @@ func (c *Controller) LoginComplete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	_, err = c.workosClient.UserManagement.UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
+	_, err = c.workos.UserManagement.UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
 		User:       data.User.ID,
 		ExternalID: user.ID.String(),
 	})

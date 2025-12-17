@@ -16,25 +16,25 @@ const ParamDefFactorID = ":" + ParamFactorID
 
 type ControllerOptions struct {
 	fx.In
-	Env          *env.Environment
-	WorkosClient *workos.Client
-	Users        *repositoryusers.Client
-	Signals      *signal.Container
+	Env     *env.Environment
+	Workos  *workos.Client
+	Users   *repositoryusers.Client
+	Signals *signal.Container
 }
 
 type Controller struct {
-	env          *env.Environment
-	workosClient *workos.Client
-	users        *repositoryusers.Client
-	signals      *signal.Container
+	env     *env.Environment
+	workos  *workos.Client
+	users   *repositoryusers.Client
+	signals *signal.Container
 }
 
 func Provider(options ControllerOptions) base.Controller {
 	return &Controller{
-		env:          options.Env,
-		workosClient: options.WorkosClient,
-		users:        options.Users,
-		signals:      options.Signals,
+		env:     options.Env,
+		workos:  options.Workos,
+		users:   options.Users,
+		signals: options.Signals,
 	}
 }
 

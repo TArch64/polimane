@@ -28,7 +28,7 @@ func (c *Controller) EmailVerify(ctx *fiber.Ctx) (err error) {
 
 	user := auth.GetSessionUser(ctx)
 
-	_, err = c.workosClient.UserManagement.VerifyEmail(ctx.Context(), usermanagement.VerifyEmailOpts{
+	_, err = c.workos.UserManagement.VerifyEmail(ctx.Context(), usermanagement.VerifyEmailOpts{
 		User: user.WorkosID,
 		Code: body.Code,
 	})

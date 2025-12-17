@@ -12,9 +12,9 @@ import (
 
 func (c *Controller) Logout(ctx *fiber.Ctx) error {
 	err := Logout(ctx, &LogoutOptions{
-		Env:          c.env,
-		Signals:      c.signals,
-		WorkosClient: c.workosClient,
+		Env:     c.env,
+		Signals: c.signals,
+		Workos:  c.workos,
 	})
 	if err != nil {
 		return err
@@ -24,15 +24,15 @@ func (c *Controller) Logout(ctx *fiber.Ctx) error {
 }
 
 type LogoutOptions struct {
-	Env          *env.Environment
-	Signals      *signal.Container
-	WorkosClient *workos.Client
+	Env     *env.Environment
+	Signals *signal.Container
+	Workos  *workos.Client
 }
 
 func Logout(ctx *fiber.Ctx, options *LogoutOptions) error {
 	session := GetSession(ctx)
 
-	err := options.WorkosClient.UserManagement.RevokeSession(ctx.Context(), usermanagement.RevokeSessionOpts{
+	err := options.Workos.UserManagement.RevokeSession(ctx.Context(), usermanagement.RevokeSessionOpts{
 		SessionID: session.ID,
 	})
 

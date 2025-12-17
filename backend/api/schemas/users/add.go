@@ -76,7 +76,7 @@ func (c *Controller) inviteUser(
 	schemaIDs []model.ID,
 	email string,
 ) (*AddUserResponse, error) {
-	invitation, err := c.workosClient.UserManagement.SendInvitation(ctx, usermanagement.SendInvitationOpts{
+	invitation, err := c.workos.UserManagement.SendInvitation(ctx, usermanagement.SendInvitationOpts{
 		Email:         email,
 		InviterUserID: currentUser.WorkosID,
 		ExpiresInDays: 30,
@@ -85,7 +85,7 @@ func (c *Controller) inviteUser(
 	var httpError workos_errors.HTTPError
 	if errors.As(err, &httpError) && workos.GetErrorCode(&httpError) == workos.CodeEmailAlreadyInvited {
 		var response usermanagement.ListInvitationsResponse
-		response, err = c.workosClient.UserManagement.ListInvitations(ctx, usermanagement.ListInvitationsOpts{
+		response, err = c.workos.UserManagement.ListInvitations(ctx, usermanagement.ListInvitationsOpts{
 			Email: email,
 			Limit: 1,
 		})

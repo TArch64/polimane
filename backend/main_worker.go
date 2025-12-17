@@ -4,6 +4,7 @@ import (
 	"go.uber.org/fx"
 
 	"polimane/backend/env"
+	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryusers "polimane/backend/repository/users"
@@ -16,6 +17,7 @@ import (
 	"polimane/backend/services/db"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/services/sentry"
+	"polimane/backend/services/workos"
 	"polimane/backend/signal"
 	"polimane/backend/views"
 	"polimane/backend/worker"
@@ -52,12 +54,14 @@ func main() {
 			schemascreenshot.Provider,
 			signal.Provider,
 			views.Provider,
+			workos.Provider,
 
 			// repositories
 			repositoryusers.Provider,
 			repositoryschemas.Provider,
 			repositoryuserschemas.Provider,
 			repositoryschemainvitations.Provider,
+			repositoryfolders.Provider,
 
 			// queues
 			handlerschemascreenshot.Provider,

@@ -21,7 +21,7 @@ func (c *Controller) EmailVerifyRetry(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *Controller) sendEmailVerification(ctx context.Context, userID string) error {
-	_, err := c.workosClient.UserManagement.SendVerificationEmail(ctx, usermanagement.SendVerificationEmailOpts{
+	_, err := c.workos.UserManagement.SendVerificationEmail(ctx, usermanagement.SendVerificationEmailOpts{
 		User: userID,
 	})
 

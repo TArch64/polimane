@@ -15,7 +15,7 @@ type AuthFactorListItem struct {
 func (c *Controller) ListAuthFactors(ctx *fiber.Ctx) error {
 	user := auth.GetSessionUser(ctx)
 
-	factors, err := c.workosClient.UserManagement.ListAuthFactors(ctx.Context(), usermanagement.ListAuthFactorsOpts{
+	factors, err := c.workos.UserManagement.ListAuthFactors(ctx.Context(), usermanagement.ListAuthFactorsOpts{
 		User: user.WorkosID,
 	})
 

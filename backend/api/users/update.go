@@ -45,7 +45,7 @@ func (c *Controller) Update(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *Controller) updateUser(ctx context.Context, user *model.User, body *UpdateBody) error {
-	updated, err := c.workosClient.UserManagement.UpdateUser(ctx, usermanagement.UpdateUserOpts{
+	updated, err := c.workos.UserManagement.UpdateUser(ctx, usermanagement.UpdateUserOpts{
 		User:      user.WorkosID,
 		FirstName: body.FirstName,
 		LastName:  body.LastName,

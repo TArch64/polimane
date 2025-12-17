@@ -18,8 +18,12 @@ func (c *Client[M]) List(ctx context.Context, scopes ...repository.Scope) ([]*M,
 }
 
 func (c *Client[M]) ListOut(ctx context.Context, out interface{}, scopes ...repository.Scope) error {
+	return c.ListOutTx(ctx, c.DB, out, scopes...)
+}
+
+func (c *Client[M]) ListOutTx(ctx context.Context, tx *gorm.DB, out interface{}, scopes ...repository.Scope) error {
 	err := gorm.
-		G[*M](c.DB).
+		G[*M](tx).
 		Scopes(scopes...).
 		Scan(ctx, out)
 
