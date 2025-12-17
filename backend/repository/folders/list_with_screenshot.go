@@ -18,7 +18,7 @@ WITH schema_screenshots AS (
 		schemas.background_color
 	FROM user_schemas
 		JOIN schemas ON user_schemas.schema_id = schemas.id
-			AND user_schemas.user_id = '72f666c6-e170-4a32-91c5-54052b3a1756'
+			AND user_schemas.user_id = ?
 			AND screenshoted_at IS NOT NULL
 			AND folder_id IS NOT NULL
 	ORDER BY user_schemas.folder_id, schemas.created_at
@@ -32,7 +32,7 @@ ORDER BY folders.created_at DESC`
 func (c *Client) ListWithScreenshotOut(ctx context.Context, userID model.ID, out interface{}) (err error) {
 	err = gorm.
 		G[model.Folder](c.DB).
-		Raw(listWithScreenshotsSQL, userID).
+		Raw(listWithScreenshotsSQL, userID, userID).
 		Scan(ctx, out)
 
 	if err != nil {
