@@ -32,8 +32,8 @@ func (c *Controller) LoginComplete(ctx *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	if user.DeletedAt.Valid {
-		return c.redirectToComplete(ctx, map[string]string{
+	if user.SoftDeletable != nil && user.DeletedAt.Valid {
+		return c.completeRedirect(ctx, map[string]string{
 			"deleted": "1",
 		})
 	}
@@ -52,10 +52,10 @@ func (c *Controller) LoginComplete(ctx *fiber.Ctx) error {
 		RefreshToken: data.RefreshToken,
 	})
 
-	return c.redirectToComplete(ctx, nil)
+	return c.completeRedirect(ctx, nil)
 }
 
-func (c *Controller) redirectToComplete(ctx *fiber.Ctx, query map[string]string) error {
+func (c *Controller) completeRedirect(ctx *fiber.Ctx, query map[string]string) error {
 	redirectUrl := c.env.AppURL.JoinPath("auth/complete")
 
 	if len(query) > 0 {
