@@ -4,7 +4,7 @@ import { useSessionStore } from '@/stores';
 export const sessionMiddleware: NavigationGuard = async (to, _, next) => {
   const sessionStore = useSessionStore();
 
-  if (to.name.includes('auth')) {
+  if (to.name?.includes('auth')) {
     return next();
   }
 
