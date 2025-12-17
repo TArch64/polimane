@@ -28,24 +28,14 @@ func (c *Controller) LoginComplete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	// AuthenticateWithCode doesnt return user's metadata
-	data.User, err = c.workos.UserManagement.GetUser(reqCtx, usermanagement.GetUserOpts{
-		User: data.User.ID,
-	})
-
-	if err != nil {
-		return err
-	}
-
-	if isUserScheduledForDeletion(&data.User) {
-		return c.redirectToComplete(ctx, map[string]string{
-			"deleted": "1",
-		})
-	}
-
 	user, err := c.users.CreateIfNeeded(reqCtx, &data.User)
 	if err != nil {
 		return err
+	}
+	if user.DeletedAt.Valid {
+		return c.redirectToComplete(ctx, map[string]string{
+			"deleted": "1",
+		})
 	}
 
 	_, err = c.workos.UserManagement.UpdateUser(reqCtx, usermanagement.UpdateUserOpts{

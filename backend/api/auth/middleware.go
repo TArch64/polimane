@@ -23,7 +23,6 @@ import (
 
 var (
 	unauthorizedErr = base.NewReasonedError(fiber.StatusUnauthorized, "Unauthorized")
-	deletedUserErr  = base.NewReasonedError(fiber.StatusForbidden, "UserScheduledForDeletion")
 	missingTokenErr = errors.New("missing access or refresh token")
 )
 
@@ -150,10 +149,6 @@ func (m *Middleware) getWorkosUser(ctx context.Context, accessTokenClaims *worko
 			return nil, nil, err
 		}
 
-		if isUserScheduledForDeletion(&user) {
-			return nil, nil, deletedUserErr
-		}
-
 		return &user, nil, nil
 	})
 }
@@ -182,13 +177,4 @@ func (m *Middleware) newUnauthorizedErr(err error, extra ...base.CustomErrorData
 	}
 
 	return unauthorizedErr
-}
-
-func isUserScheduledForDeletion(user *usermanagement.User) bool {
-	if user.Metadata == nil {
-		return false
-	}
-
-	val, ok := user.Metadata["ScheduledForDeletion"]
-	return ok && val == "true"
 }
