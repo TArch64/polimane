@@ -14,18 +14,24 @@
 import { BEAD_SIZE } from '@editor/const';
 import { computed } from 'vue';
 import { useEditorStore } from '@editor/stores';
+import { useBackgroundContrast } from '@editor/composables';
 
 const editorStore = useEditorStore();
 
-const emptyColor = '#CFCFCF';
+const whiteContrast = useBackgroundContrast('#FFF');
+
+const EMPTY_COLOR_LIGHT = '#CFCFCF';
+const EMPTY_COLOR_DARK = '#878787';
+const emptyColor = computed(() => whiteContrast.isAA ? EMPTY_COLOR_LIGHT : EMPTY_COLOR_DARK);
+
 const backgroundColor = computed(() => editorStore.schema.backgroundColor);
 
 const fillColor = computed(() => {
-  return `color-mix(in srgb, ${backgroundColor.value}, ${emptyColor})`;
+  return `color-mix(in srgb, ${backgroundColor.value}, ${emptyColor.value})`;
 });
 
 const strokeColor = computed(() => {
-  return `color-mix(in srgb, ${backgroundColor.value}, ${emptyColor} 50%)`;
+  return `color-mix(in srgb, ${backgroundColor.value}, ${emptyColor.value} 50%)`;
 });
 </script>
 
