@@ -7,9 +7,9 @@ import {
   provide,
   reactive,
   toValue,
+  useId,
   watch,
 } from 'vue';
-import { newId } from '@/helpers';
 import { isMac } from '@/config';
 
 export type HotKeyExec = (event: KeyboardEvent) => void;
@@ -94,7 +94,7 @@ export interface IHotKeysMeta {
 }
 
 export function useHotKeys(def: AnyHotKeysDef, options: IHotKeysOptions = {}): IHotKeysMeta {
-  const clientId = newId();
+  const clientId = useId();
   const handler = inject(HOT_KEYS_HANDLER)!;
 
   const entries = normalizeDefs(def);

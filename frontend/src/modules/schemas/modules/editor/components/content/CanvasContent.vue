@@ -1,18 +1,14 @@
 <template>
-  <CanvasDefs v-if="editorStore.canEdit">
-    <CanvasBackgroundPattern :id="backgroundPatternId" />
-  </CanvasDefs>
-
   <g :transform ref="groupRef" class="canvas-content">
-    <rect
-      ref="backgroundRef"
-      :fill="backgroundPatternFill"
-      :x="beadsGrid.size.minX"
-      :y="beadsGrid.size.minY"
-      :width="beadsGrid.size.width"
-      :height="beadsGrid.size.height"
-      v-if="editorStore.canEdit"
-    />
+    <template v-if="editorStore.canEdit">
+      <rect
+        ref="backgroundRef"
+        fill="transparent"
+        v-bind="backgroundRect"
+      />
+
+      <BackgroundLinear :rect="backgroundRect" />
+    </template>
 
     <CanvasBead
       v-for="item of beadsGrid.beads"
@@ -30,16 +26,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRef, useId } from 'vue';
+import { computed, ref, toRef } from 'vue';
 import { useEditorStore, useSelectionStore } from '@editor/stores';
 import { BEAD_BUGLE_CORNER_RADIUS } from '@editor/const';
 import { FadeTransition } from '@/components/transition';
 import { useMobileScreen } from '@/composables';
+import type { INodeRect } from '@/models';
 import { type IBeadsGrid, useEditorTools } from '../../composables';
 import { CanvasBead } from './CanvasBead';
-import CanvasBackgroundPattern from './CanvasBackgroundPattern.vue';
+import { BackgroundLinear } from './background';
 import { CanvasSelection } from './selection';
-import CanvasDefs from './CanvasDefs.vue';
 
 const props = defineProps<{
   canvasRef: SVGSVGElement;
@@ -55,10 +51,15 @@ const selected = computed(() => selectionStore.selected);
 
 const isMobile = useMobileScreen();
 
-const backgroundPatternId = `editorEmptyBeads-${useId()}`;
-const backgroundPatternFill = `url(#${backgroundPatternId})`;
 const backgroundRef = ref<SVGRectElement>(null!);
 const groupRef = ref<SVGGElement>(null!);
+
+const backgroundRect = computed((): INodeRect => ({
+  x: props.beadsGrid.size.minX,
+  y: props.beadsGrid.size.minY,
+  width: props.beadsGrid.size.width,
+  height: props.beadsGrid.size.height,
+}));
 
 if (editorStore.canEdit && !isMobile.value) {
   useEditorTools({
