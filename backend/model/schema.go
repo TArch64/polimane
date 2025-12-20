@@ -8,8 +8,13 @@ import (
 	t "gorm.io/datatypes"
 )
 
+type SchemaLayout string
+
 const (
 	SchemaPaletteSize = 10
+
+	SchemaLinear SchemaLayout = "linear"
+	SchemaRadial SchemaLayout = "radial"
 )
 
 type Schema struct {
@@ -20,6 +25,7 @@ type Schema struct {
 	Size            t.JSONType[*SchemaSize]   `json:"size,omitempty"`
 	Beads           t.JSONType[SchemaBeads]   `json:"beads,omitempty"`
 	BackgroundColor string                    `gorm:"default:#f8f8f8" json:"backgroundColor"`
+	Layout          SchemaLayout              `json:"layout"`
 	ScreenshotedAt  *time.Time                `json:"screenshotedAt"`
 
 	// Relations
