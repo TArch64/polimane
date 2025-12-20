@@ -1,2 +1,1 @@
-export { default as BackgroundLinear } from './BackgroundLinear.vue';
-export { default as BackgroundRadial } from './BackgroundRadial.vue';
+export { default as CanvasBackground } from './CanvasBackground.vue';

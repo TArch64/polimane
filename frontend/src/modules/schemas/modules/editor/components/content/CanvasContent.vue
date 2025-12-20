@@ -7,7 +7,7 @@
         v-bind="backgroundRect"
       />
 
-      <BackgroundLinear :rect="backgroundRect" />
+      <CanvasBackground :rect="backgroundRect" />
     </template>
 
     <CanvasBead
@@ -34,7 +34,7 @@ import { useMobileScreen } from '@/composables';
 import type { INodeRect } from '@/models';
 import { type IBeadsGrid, useEditorTools } from '../../composables';
 import { CanvasBead } from './CanvasBead';
-import { BackgroundLinear } from './background';
+import { CanvasBackground } from './background';
 import { CanvasSelection } from './selection';
 
 const props = defineProps<{
