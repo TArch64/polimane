@@ -2,9 +2,13 @@ locals {
   webapp_sources_dir = abspath("${path.root}/../../frontend")
   webapp_build_dir   = abspath("${path.root}/tmp/webapp")
 
-  webapp_sources_hash = sha1(join("", [
-    for f in fileset(local.webapp_sources_dir, "**") : filesha1("${local.webapp_sources_dir}/${f}")
-  ]))
+  webapp_sources_hash = sha1(join("", concat(
+    ["${path.module}/build/frontend.Dockerfile"],
+    [
+      for f in fileset(local.webapp_sources_dir, "**")
+      : filesha1("${local.webapp_sources_dir}/${f}")
+    ]
+  )))
 }
 
 resource "null_resource" "webapp_build" {
