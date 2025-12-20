@@ -1,6 +1,6 @@
 export type * from './IUser';
 export type * from './IFolder';
-export type * from './ISchema';
+export * from './ISchema';
 export * from './ISchemaBead';
 export type * from './ISchemaUser';
 export * from './SchemaBeadCoord';

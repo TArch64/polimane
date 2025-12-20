@@ -1,6 +1,6 @@
 import { computed, reactive, type Ref, ref, watch, type WatchStopHandle } from 'vue';
 import { combineStopHandles, getObjectKeys } from '@/helpers';
-import type { ISchema } from '@/models';
+import { type ISchema, isSchemaUpdatableAttr, type SchemaUpdatableAttr } from '@/models';
 import type { SafeAny } from '@/types';
 
 const SAVE_TIMEOUT = 30_000;
@@ -15,22 +15,6 @@ export interface IEditorSaveDispatcher {
 }
 
 type EditorSaveCallback = (patch: Partial<ISchema>) => Promise<void>;
-
-const NON_WATCHABLE_ATTRIBUTES = [
-  'id',
-  'updatedAt',
-  'createdAt',
-  'screenshotedAt',
-  'screenshotPath',
-  'access',
-] as const;
-
-function isNonWatchableAttribute(attr: string): attr is NonWatchableAttribute {
-  return NON_WATCHABLE_ATTRIBUTES.includes(attr as NonWatchableAttribute);
-}
-
-type NonWatchableAttribute = (typeof NON_WATCHABLE_ATTRIBUTES)[number];
-type WatchableAttribute = keyof Omit<ISchema, NonWatchableAttribute>;
 
 export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSaveCallback): IEditorSaveDispatcher {
   let saveTimeout: TimeoutId | null = null;
@@ -53,14 +37,14 @@ export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSave
     }
   }
 
-  function watchSavableAttribute(attr: WatchableAttribute): WatchStopHandle {
+  function watchSavableAttribute(attr: SchemaUpdatableAttr): WatchStopHandle {
     return watch(() => schema.value[attr], (value) => {
       if (saveTimeout) {
         clearTimeout(saveTimeout);
       }
 
       unsavedChanges.value ??= {};
-      (unsavedChanges.value as Record<WatchableAttribute, SafeAny>)[attr] = value;
+      (unsavedChanges.value as Record<SchemaUpdatableAttr, SafeAny>)[attr] = value;
       saveTimeout = setTimeout(dispatchSave, SAVE_TIMEOUT);
     }, { deep: true });
   }
@@ -69,7 +53,7 @@ export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSave
     const attrStopWatchers: WatchStopHandle[] = [];
 
     for (const attr of getObjectKeys(schema.value)) {
-      if (isNonWatchableAttribute(attr)) {
+      if (!isSchemaUpdatableAttr(attr)) {
         continue;
       }
 
