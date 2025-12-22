@@ -15,7 +15,7 @@ import {
   type SchemaBead,
 } from '@/models';
 import { getObjectEntries } from '@/helpers';
-import { BeadKind } from '@/enums';
+import { BeadKind, SchemaLayout } from '@/enums';
 
 export interface IBeadsGridCircle {
   center: IPoint;
@@ -75,11 +75,19 @@ export function useBeadsGrid(): IBeadsGrid {
   const width = computed(() => (size.left + size.right) * BEAD_SIZE);
   const height = computed(() => (size.top + size.bottom) * BEAD_SIZE);
 
+  function getBeadRadialShiftX(y: number): number {
+    if (editorStore.schema.layout !== SchemaLayout.RADIAL) {
+      return 0;
+    }
+    return y === 0 || y % 2 === 0 ? BEAD_SIZE / 2 : 0;
+  }
+
   function resolveBeadOffset(coord_: BeadCoord | IPoint): IPoint {
     const coord = typeof coord_ === 'string' ? parseBeadCoord(coord_) : coord_;
     const offsetX = initialOffsetX + (coord.x * BEAD_SIZE);
     const offsetY = initialOffsetY + (coord.y * BEAD_SIZE);
-    return { x: offsetX, y: offsetY };
+    const radialShiftX = getBeadRadialShiftX(coord.y);
+    return { x: offsetX + radialShiftX, y: offsetY };
   }
 
   const computeBeadCircle: ComputeBeadData<BeadKind.CIRCLE> = (options) => {
