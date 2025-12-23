@@ -6,7 +6,7 @@ import {
   useToolsStore,
 } from '@editor/stores';
 import { BEAD_SIZE } from '@editor/const';
-import { type IPoint, parseBeadCoord, Point, serializeBeadCoord } from '@/models';
+import { parseBeadCoord, Point, serializeBeadCoord } from '@/models';
 import { getObjectKeys } from '@/helpers';
 import type { IEditorTool, IEditorToolOptions } from './tool';
 import { type IBeadResolveOptions, useBeadCoord } from './useBeadCoord';
@@ -18,7 +18,7 @@ export const useSelectionTool = (options: IEditorToolOptions) => {
 
   const beadCoord = useBeadCoord(options);
 
-  function createSelection(from: IPoint, to: IPoint): IBeadSelection | null {
+  function createSelection(from: Point, to: Point): IBeadSelection | null {
     const selected = beadsStore.getInArea(from, to);
 
     if (!Object.keys(selected).length) {
@@ -68,7 +68,7 @@ export const useSelectionTool = (options: IEditorToolOptions) => {
       beadCoord.clearCache();
 
       const { x, y, width, height } = selectionStore.area;
-      let point = new Point({ x, y });
+      let point = new Point(x, y);
       const resolveOptions: IBeadResolveOptions = { checkShape: false };
 
       const from = beadCoord.getFromPoint(point, resolveOptions);

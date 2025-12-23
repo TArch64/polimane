@@ -1,4 +1,4 @@
-import type { IPoint } from './Point';
+import { type IPoint, Point } from './Point';
 
 export type BeadCoord = `${number}:${number}`;
 
@@ -10,7 +10,7 @@ export function serializeBeadPoint(point: IPoint): BeadCoord {
   return serializeBeadCoord(point.x, point.y);
 }
 
-export function parseBeadCoord(coord: string): IPoint {
+export function parseBeadCoord(coord: string): Point {
   const [x, y] = coord.split(':').map(Number);
-  return { x: x!, y: y! };
+  return new Point(x!, y!);
 }

@@ -6,7 +6,9 @@ export interface INodeRect {
 }
 
 export class NodeRect implements INodeRect {
-  static BLANK = new NodeRect({ x: 0, y: 0, width: 0, height: 0 });
+  static get BLANK(): NodeRect {
+    return new NodeRect({ x: 0, y: 0, width: 0, height: 0 });
+  }
 
   x;
   y;

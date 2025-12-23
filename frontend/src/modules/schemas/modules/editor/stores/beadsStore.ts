@@ -2,10 +2,10 @@ import { defineStore } from 'pinia';
 import {
   type BeadCoord,
   getBeadSettings,
-  type IPoint,
   isRefBead,
   isSpannableBead,
   parseBeadCoord,
+  Point,
   type SchemaBead,
   type SchemaBeads,
   type SchemaSpannableBead,
@@ -60,7 +60,7 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     }
   }
 
-  function* iterateArea(from: IPoint, to: IPoint): Generator<[BeadCoord, SchemaBead]> {
+  function* iterateArea(from: Point, to: Point): Generator<[BeadCoord, SchemaBead]> {
     for (let x = from.x; x <= to.x; x++) {
       for (let y = from.y; y <= to.y; y++) {
         const coord = serializeBeadCoord(x, y);
@@ -81,8 +81,8 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     const spanX = x + settings.span.x;
     const spanY = y + settings.span.y;
 
-    const from: IPoint = { x: Math.min(x, spanX), y: Math.min(y, spanY) };
-    const to: IPoint = { x: Math.max(x, spanX), y: Math.max(y, spanY) };
+    const from = new Point(Math.min(x, spanX), Math.min(y, spanY));
+    const to = new Point(Math.max(x, spanX), Math.max(y, spanY));
 
     for (const [spanCoord, spanBead] of iterateArea(from, to)) {
       if (coord !== spanCoord) {
@@ -93,7 +93,7 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     return out;
   }
 
-  function getInArea(from: IPoint, to: IPoint): SchemaBeads {
+  function getInArea(from: Point, to: Point): SchemaBeads {
     const beads: SchemaBeads = {};
 
     for (let [coord, bead] of iterateArea(from, to)) {

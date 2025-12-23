@@ -7,18 +7,12 @@ import {
   BEAD_REF_HITBOX_PADDING,
   BEAD_SIZE,
 } from '@editor/const';
-import {
-  type BeadCoord,
-  type INodeRect,
-  type IPoint,
-  parseBeadCoord,
-  type SchemaBead,
-} from '@/models';
+import { type BeadCoord, type INodeRect, parseBeadCoord, Point, type SchemaBead } from '@/models';
 import { getObjectEntries } from '@/helpers';
 import { BeadKind, SchemaLayout } from '@/enums';
 
 export interface IBeadsGridCircle {
-  center: IPoint;
+  center: Point;
 }
 
 export interface IBeadsGridBugle {
@@ -26,7 +20,7 @@ export interface IBeadsGridBugle {
 }
 
 export interface IBeadsGridRef {
-  hitbox: IPoint;
+  hitbox: Point;
 }
 
 type BeadPrecomputedDataMap = {
@@ -36,7 +30,7 @@ type BeadPrecomputedDataMap = {
 };
 
 interface IComputeBeadDataOptions {
-  coord: IPoint;
+  coord: Point;
   bead: SchemaBead;
 }
 
@@ -59,7 +53,7 @@ export interface IBeadsGridSize {
 export interface IBeadsGrid {
   beads: IBeadsGridItem[];
   size: IBeadsGridSize;
-  resolveBeadOffset: (coord: BeadCoord | IPoint) => IPoint;
+  resolveBeadOffset: (coord: BeadCoord | Point) => Point;
   getBeadRadialShiftX: (y: number) => number;
 }
 
@@ -83,39 +77,29 @@ export function useBeadsGrid(): IBeadsGrid {
     return y === 0 || y % 2 === 0 ? BEAD_SIZE / 2 : 0;
   }
 
-  function resolveBeadOffset(coord_: BeadCoord | IPoint): IPoint {
+  function resolveBeadOffset(coord_: BeadCoord | Point): Point {
     const coord = typeof coord_ === 'string' ? parseBeadCoord(coord_) : coord_;
     const offsetX = initialOffsetX + (coord.x * BEAD_SIZE);
     const offsetY = initialOffsetY + (coord.y * BEAD_SIZE);
     const radialShiftX = getBeadRadialShiftX(coord.y);
-    return { x: offsetX + radialShiftX, y: offsetY };
+    return new Point(offsetX + radialShiftX, offsetY);
   }
 
   const computeBeadCircle: ComputeBeadData<BeadKind.CIRCLE> = (options) => {
     const offset = resolveBeadOffset(options.coord);
-
-    return {
-      center: {
-        x: offset.x + BEAD_CIRCLE_CENTER,
-        y: offset.y + BEAD_CIRCLE_CENTER,
-      },
-    };
+    return { center: offset.plus(BEAD_CIRCLE_CENTER) };
   };
 
   const computeBeadBugle: ComputeBeadData<BeadKind.BUGLE> = (options) => {
     const span = options.bead.bugle!.span;
 
-    const spanCoord: IPoint = {
-      x: options.coord.x + span.x,
-      y: options.coord.y + span.y,
-    };
-
+    const spanCoord = options.coord.plus(span);
     const startCoordX = Math.min(options.coord.x, spanCoord.x);
     const startCoordY = Math.min(options.coord.y, spanCoord.y);
     const coordWidth = Math.abs(span.x) + 1;
     const coordHeight = Math.abs(span.y) + 1;
 
-    const offset = resolveBeadOffset({ x: startCoordX, y: startCoordY });
+    const offset = resolveBeadOffset(new Point(startCoordX, startCoordY));
     const width = coordWidth * BEAD_SIZE - BEAD_BUGLE_PADDING * 2;
     const height = coordHeight * BEAD_SIZE - BEAD_BUGLE_PADDING * 2;
 
@@ -131,13 +115,7 @@ export function useBeadsGrid(): IBeadsGrid {
 
   const computeBeadRef: ComputeBeadData<BeadKind.REF> = (options) => {
     const offset = resolveBeadOffset(options.coord);
-
-    return {
-      hitbox: {
-        x: offset.x + BEAD_REF_HITBOX_PADDING,
-        y: offset.y + BEAD_REF_HITBOX_PADDING,
-      },
-    };
+    return { hitbox: offset.plus(BEAD_REF_HITBOX_PADDING) };
   };
 
   const computers: BeadDataComputers = {
