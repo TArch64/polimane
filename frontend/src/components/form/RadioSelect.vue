@@ -71,12 +71,18 @@ const getOptionLabelClasses = (option: ISelectOption<V>) => ({
     cursor: pointer;
   }
 
-  .radio-select__option-label--with-slot {
-    margin-bottom: 8px;
+  .radio-select__option,
+  .radio-select__option-label {
+    transition: margin 150ms ease-out;
+    will-change: margin;
   }
 
   .radio-select__option:has(.radio-select__option-label--with-slot) + .radio-select__option {
     margin-top: 8px;
+  }
+
+  .radio-select__option-label--with-slot {
+    margin-bottom: 8px;
   }
 }
 </style>

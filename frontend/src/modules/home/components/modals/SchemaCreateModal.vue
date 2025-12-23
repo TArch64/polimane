@@ -18,14 +18,14 @@
       v-model="schema.layout"
     >
       <template #option-linear>
-        <p class="schema-create__layout-description">
+        <p>
           Підходить для прикрас у вигляді стрічок, прямокутників та інших прикрас без вигинів
         </p>
       </template>
 
       <template #option-radial>
-        <p class="schema-create__layout-description">
-          Підходить для прикрас з розширенням від центру, такий як силянки, гердани, та інші круглі
+        <p>
+          Підходить для прикрас з розширенням від центру, такий як силянки, кризи, та інші округлі
           прикраси
         </p>
       </template>
@@ -82,9 +82,6 @@ const create = useAsyncAction(async () => {
 @layer page {
   .schema-create__name {
     margin-bottom: 24px;
-  }
-
-  .schema-create__layout-description {
   }
 }
 </style>
