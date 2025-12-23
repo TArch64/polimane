@@ -6,4 +6,5 @@ export * from './useContrast';
 export * from './tools';
 export * from './useSelectionColor';
 export * from './useBackgroundContrast';
+export * from './useBackgroundAccessibleColor';
 export * from './useCanvasPosition';
