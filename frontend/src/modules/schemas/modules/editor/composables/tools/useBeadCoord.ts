@@ -33,10 +33,11 @@ export function useBeadCoord(options: IEditorToolOptions): IBeadCoord {
       x: (point.x - backgroundRect.x) / canvasStore.scale,
     };
 
-    const coord: IPoint = {
-      y: Math.floor(relativePoint.y / BEAD_SIZE),
-      x: Math.floor(relativePoint.x / BEAD_SIZE),
-    };
+    const { left, top } = editorStore.schema.size;
+    const y = Math.floor(relativePoint.y / BEAD_SIZE);
+    const radialShiftX = options.beadsGrid.getBeadRadialShiftX(y - top);
+    const x = Math.floor((relativePoint.x - radialShiftX) / BEAD_SIZE);
+    const coord: IPoint = { y, x };
 
     if (coord.y < 0 || coord.x < 0) {
       return null;
@@ -44,14 +45,13 @@ export function useBeadCoord(options: IEditorToolOptions): IBeadCoord {
 
     const beadCenter: IPoint = {
       y: (coord.y * BEAD_SIZE) + BEAD_CIRCLE_CENTER,
-      x: (coord.x * BEAD_SIZE) + BEAD_CIRCLE_CENTER,
+      x: (coord.x * BEAD_SIZE) + radialShiftX + BEAD_CIRCLE_CENTER,
     };
 
     if (getOptions.checkShape !== false && !inCircle(relativePoint, beadCenter, BEAD_CIRCLE_RADIUS)) {
       return null;
     }
 
-    const { left, top } = editorStore.schema.size;
     return { x: coord.x - left, y: coord.y - top };
   }
 

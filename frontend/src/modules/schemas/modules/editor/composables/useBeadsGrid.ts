@@ -60,6 +60,7 @@ export interface IBeadsGrid {
   beads: IBeadsGridItem[];
   size: IBeadsGridSize;
   resolveBeadOffset: (coord: BeadCoord | IPoint) => IPoint;
+  getBeadRadialShiftX: (y: number) => number;
 }
 
 export function useBeadsGrid(): IBeadsGrid {
@@ -169,6 +170,7 @@ export function useBeadsGrid(): IBeadsGrid {
   return reactive({
     beads,
     resolveBeadOffset,
+    getBeadRadialShiftX,
 
     size: {
       minX: minX,
