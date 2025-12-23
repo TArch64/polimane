@@ -29,30 +29,27 @@ export function useBeadCoord(options: IEditorToolOptions): IBeadCoord {
     backgroundRect ??= options.backgroundRef.value.getBoundingClientRect();
 
     const relativePoint: IPoint = {
-      y: (point.y - backgroundRect.y) / canvasStore.scale,
       x: (point.x - backgroundRect.x) / canvasStore.scale,
+      y: (point.y - backgroundRect.y) / canvasStore.scale,
     };
 
     const { left, top } = editorStore.schema.size;
     const y = Math.floor(relativePoint.y / BEAD_SIZE);
     const radialShiftX = options.beadsGrid.getBeadRadialShiftX(y - top);
     const x = Math.floor((relativePoint.x - radialShiftX) / BEAD_SIZE);
-    const coord: IPoint = { y, x };
 
-    if (coord.y < 0 || coord.x < 0) {
-      return null;
-    }
+    if (y < 0 || x < 0) return null;
 
     const beadCenter: IPoint = {
-      y: (coord.y * BEAD_SIZE) + BEAD_CIRCLE_CENTER,
-      x: (coord.x * BEAD_SIZE) + radialShiftX + BEAD_CIRCLE_CENTER,
+      x: x * BEAD_SIZE + radialShiftX + BEAD_CIRCLE_CENTER,
+      y: y * BEAD_SIZE + BEAD_CIRCLE_CENTER,
     };
 
     if (getOptions.checkShape !== false && !inCircle(relativePoint, beadCenter, BEAD_CIRCLE_RADIUS)) {
       return null;
     }
 
-    return { x: coord.x - left, y: coord.y - top };
+    return { x: x - left, y: y - top };
   }
 
   function getFromEvent(event: MouseEvent): IPoint | null {
