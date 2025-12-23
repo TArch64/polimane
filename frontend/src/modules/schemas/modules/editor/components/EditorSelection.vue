@@ -3,11 +3,11 @@
 </template>
 
 <script setup lang="ts">
-import { useSelectionColor } from '@editor/composables';
+import { AA_HIGH_CONTRAST, useBackgroundAccessibleColor } from '@editor/composables';
 import { useSelectionStore } from '@editor/stores';
 
 const selectionStore = useSelectionStore();
-const selectionColor = useSelectionColor();
+const selectionColor = useBackgroundAccessibleColor(AA_HIGH_CONTRAST);
 </script>
 
 <style scoped>

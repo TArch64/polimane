@@ -1,7 +1,7 @@
 import { computed } from 'vue';
 import { type ColorObject, contrastWCAG21, parse, serialize, to } from 'colorjs.io/fn';
 import { useEditorStore } from '@editor/stores';
-import { MIN_CONTRAST_AA } from './useContrast';
+import { AA_MIN_CONTRAST } from './useContrast';
 
 const srgb = (value: number): ColorObject => ({
   space: 'srgb',
@@ -12,7 +12,7 @@ function sum(nums: number[]): number {
   return nums.reduce((a, b) => a + b, 0);
 }
 
-export function useBackgroundAccessibleColor() {
+export function useBackgroundAccessibleColor(targetContrast: number = AA_MIN_CONTRAST) {
   const editorStore = useEditorStore();
 
   const bg = computed(() => parse(editorStore.schema.backgroundColor));
@@ -28,7 +28,7 @@ export function useBackgroundAccessibleColor() {
       const mid = (low + high) / 2;
       const contrastValue = contrastWCAG21(bg.value, srgb(mid));
 
-      if (contrastValue >= MIN_CONTRAST_AA) {
+      if (contrastValue >= targetContrast) {
         result = mid;
         if (isDarkBg.value) {
           high = mid;
