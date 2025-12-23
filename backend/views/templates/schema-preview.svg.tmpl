@@ -5,7 +5,7 @@
   height="{{ .Height }}"
 >
   <rect x="0" y="0" width="{{ .Width }}" height="{{ .Height }}" fill="{{ .BackgroundColor }}" />
-  {{- range beadsGrid . -}}
+  {{- range .BeadsGrid -}}
     {{- $bead := . -}}
     {{- with .Circle -}}
       <circle

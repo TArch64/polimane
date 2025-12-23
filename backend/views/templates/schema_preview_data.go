@@ -3,6 +3,8 @@ package templates
 import "polimane/backend/model"
 
 type SchemaPreviewData struct {
+	MinX   uint
+	MinY   uint
 	Width  uint
 	Height uint
 
@@ -18,6 +20,8 @@ type SchemaPreviewData struct {
 	Beads           model.SchemaBeads
 	BackgroundColor string
 	IsRadial        bool
+
+	BeadsGrid []*SchemaBead
 }
 
 func NewSchemaPreviewData(schema *model.Schema) *SchemaPreviewData {
@@ -27,10 +31,7 @@ func NewSchemaPreviewData(schema *model.Schema) *SchemaPreviewData {
 	size := schema.Size.Data()
 	beads := schema.Beads.Data()
 
-	return &SchemaPreviewData{
-		Width:  (uint(size.Left) + uint(size.Right)) * beadSize,
-		Height: (uint(size.Top) + uint(size.Bottom)) * beadSize,
-
+	data := &SchemaPreviewData{
 		OffsetX: int(size.Left) * beadSize,
 		OffsetY: int(size.Top) * beadSize,
 
@@ -44,4 +45,7 @@ func NewSchemaPreviewData(schema *model.Schema) *SchemaPreviewData {
 		BackgroundColor: schema.BackgroundColor,
 		IsRadial:        schema.Layout == model.SchemaRadial,
 	}
+
+	data.GenerateBeadsGrid()
+	return data
 }
