@@ -62,7 +62,7 @@ func beadsGrid(data *templates.SchemaPreviewData) chan *SchemaBead {
 				coordHeight := int(math.Abs(float64(bead.Bugle.Span.Y)) + 1)
 
 				item.Bugle = &SchemaBeadBugle{
-					X:      data.OffsetX + (startCoordX * int(data.BeadSize)) + int(data.BuglePadding),
+					X:      data.OffsetX + (startCoordX * int(data.BeadSize)) + int(data.BuglePadding) + int(radialShiftX),
 					Y:      data.OffsetY + (startCoordY * int(data.BeadSize)) + int(data.BuglePadding),
 					Width:  coordWidth*int(data.BeadSize) - int(data.BuglePadding)*2,
 					Height: coordHeight*int(data.BeadSize) - int(data.BuglePadding)*2,

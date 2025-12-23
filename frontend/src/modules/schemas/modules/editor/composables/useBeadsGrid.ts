@@ -50,10 +50,14 @@ export interface IBeadsGridSize {
   height: number;
 }
 
+interface ResolveBeadOffsetInternalOptions {
+  radialShift?: boolean;
+}
+
 export interface IBeadsGrid {
   beads: IBeadsGridItem[];
   size: IBeadsGridSize;
-  resolveBeadOffset: (coord: BeadCoord | Point) => Point;
+  resolveBeadOffset: (coord: BeadCoord | Point, options?: ResolveBeadOffsetInternalOptions) => Point;
   getBeadRadialShiftX: (y: number) => number;
 }
 
@@ -71,17 +75,15 @@ export function useBeadsGrid(): IBeadsGrid {
   const height = computed(() => (size.top + size.bottom) * BEAD_SIZE);
 
   function getBeadRadialShiftX(y: number): number {
-    if (editorStore.schema.layout !== SchemaLayout.RADIAL) {
-      return 0;
-    }
+    if (editorStore.schema.layout !== SchemaLayout.RADIAL) return 0;
     return y % 2 === 0 ? BEAD_SIZE / 2 : 0;
   }
 
-  function resolveBeadOffset(coord_: BeadCoord | Point): Point {
+  function resolveBeadOffset(coord_: BeadCoord | Point, options: ResolveBeadOffsetInternalOptions = {}): Point {
     const coord = typeof coord_ === 'string' ? parseBeadCoord(coord_) : coord_;
     const offsetX = initialOffsetX + (coord.x * BEAD_SIZE);
     const offsetY = initialOffsetY + (coord.y * BEAD_SIZE);
-    const radialShiftX = getBeadRadialShiftX(coord.y);
+    const radialShiftX = options.radialShift === false ? 0 : getBeadRadialShiftX(coord.y);
     return new Point(offsetX + radialShiftX, offsetY);
   }
 
@@ -114,7 +116,7 @@ export function useBeadsGrid(): IBeadsGrid {
   };
 
   const computeBeadRef: ComputeBeadData<BeadKind.REF> = (options) => {
-    const offset = resolveBeadOffset(options.coord);
+    const offset = resolveBeadOffset(options.coord, { radialShift: false });
     return { hitbox: offset.plus(BEAD_REF_HITBOX_PADDING) };
   };
 
