@@ -19,10 +19,9 @@ import { useBackgroundAccessibleColor } from '@editor/composables';
 const editorStore = useEditorStore();
 const color = useBackgroundAccessibleColor();
 
-const backgroundColor = computed(() => editorStore.schema.backgroundColor);
-
 const strokeColor = computed(() => {
-  return `color-mix(in srgb, ${backgroundColor.value}, ${color.value} 50%)`;
+  const backgroundColor = editorStore.schema.backgroundColor;
+  return `color-mix(in srgb, ${backgroundColor}, ${color.value} 50%)`;
 });
 </script>
 
