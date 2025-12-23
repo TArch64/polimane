@@ -46,9 +46,14 @@ func beadsGrid(data *templates.SchemaPreviewData) chan *SchemaBead {
 				Color: bead.GetColor(),
 			}
 
+			var radialShiftX uint8
+			if data.IsRadial && y%2 == 0 {
+				radialShiftX = data.BeadSize / 2
+			}
+
 			if bead.Circle != nil {
 				item.Circle = &SchemaBeadCircle{
-					CenterX: data.OffsetX + (x * int(data.BeadSize)) + int(data.CircleCenter),
+					CenterX: data.OffsetX + (x * int(data.BeadSize)) + int(data.CircleCenter) + int(radialShiftX),
 					CenterY: data.OffsetY + (y * int(data.BeadSize)) + int(data.CircleCenter),
 				}
 			} else if bead.Bugle != nil {

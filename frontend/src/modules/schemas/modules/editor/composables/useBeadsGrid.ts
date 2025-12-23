@@ -74,7 +74,7 @@ export function useBeadsGrid(): IBeadsGrid {
     if (editorStore.schema.layout !== SchemaLayout.RADIAL) {
       return 0;
     }
-    return y === 0 || y % 2 === 0 ? BEAD_SIZE / 2 : 0;
+    return y % 2 === 0 ? BEAD_SIZE / 2 : 0;
   }
 
   function resolveBeadOffset(coord_: BeadCoord | Point): Point {

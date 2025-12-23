@@ -17,6 +17,7 @@ type SchemaPreviewData struct {
 
 	Beads           model.SchemaBeads
 	BackgroundColor string
+	IsRadial        bool
 }
 
 func NewSchemaPreviewData(schema *model.Schema) *SchemaPreviewData {
@@ -41,5 +42,6 @@ func NewSchemaPreviewData(schema *model.Schema) *SchemaPreviewData {
 
 		Beads:           beads,
 		BackgroundColor: schema.BackgroundColor,
+		IsRadial:        schema.Layout == model.SchemaRadial,
 	}
 }
