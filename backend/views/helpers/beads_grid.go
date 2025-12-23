@@ -2,8 +2,6 @@ package helpers
 
 import (
 	"math"
-	"strconv"
-	"strings"
 
 	"polimane/backend/views/templates"
 )
@@ -38,9 +36,7 @@ func beadsGrid(data *templates.SchemaPreviewData) chan *SchemaBead {
 				continue
 			}
 
-			parts := strings.SplitN(coord, ":", 2)
-			x, _ := strconv.Atoi(parts[0])
-			y, _ := strconv.Atoi(parts[1])
+			x, y := coord.MustParseInt()
 
 			item := SchemaBead{
 				Color: bead.GetColor(),

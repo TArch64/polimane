@@ -54,7 +54,7 @@ func SchemaScreenshotKey(id ID) string {
 
 type SchemaPalette []string
 
-type SchemaBeads map[string]*SchemaBead
+type SchemaBeads map[SchemaCoord]*SchemaBead
 
 type SchemaSize struct {
 	Left   uint16 `validate:"required,gte=0,lte=65535" json:"left"`
