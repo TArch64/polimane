@@ -8,6 +8,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { useEditorStore } from '@editor/stores';
 import type { ISchema } from '@/models';
 import { useHttpClient } from '@/composables';
 import type { UrlPath } from '@/helpers';
@@ -18,6 +19,7 @@ const props = defineProps<{
   colors: ISchemaColorModel[];
 }>();
 
+const editorStore = useEditorStore();
 const http = useHttpClient();
 
 const width = computed(() => props.schema.size.left + props.schema.size.right + 2);
@@ -37,6 +39,8 @@ const styles = computed(() => {
 });
 
 onMounted(async () => {
+  await editorStore.save();
+
   const url: UrlPath = ['/schemas', props.schema.id, 'preview'];
 
   const svg = await http.get<string>(url, {}, {
