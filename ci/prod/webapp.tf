@@ -24,7 +24,7 @@ resource "cloudflare_worker_version" "webapp" {
 
     config = {
       not_found_handling = "single-page-application",
-      run_worker_first   = ["/"]
+      run_worker_first   = ["/unknown-route11111"]
     }
   }
 
