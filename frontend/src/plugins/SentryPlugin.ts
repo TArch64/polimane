@@ -18,18 +18,20 @@ export class SentryPlugin {
     private readonly app: App,
     private readonly options: ISentryPluginOptions,
   ) {
-    this.init();
-
-    this.app.runWithContext(() => {
-      this.linkUser();
+    this.init().then(() => {
+      this.app.runWithContext(() => {
+        this.linkUser();
+      });
     });
   }
 
-  private init() {
+  private async init() {
     init({
       app: this.app,
       dsn: this.options.dsn,
       environment: import.meta.env.MODE,
+      release: await this.getRelease(),
+      sendDefaultPii: false,
     });
   }
 
@@ -66,5 +68,10 @@ export class SentryPlugin {
     }
 
     return username;
+  }
+
+  private async getRelease(): Promise<string | undefined> {
+    const cookie = await cookieStore.get('webapp-release');
+    return cookie?.value;
   }
 }
