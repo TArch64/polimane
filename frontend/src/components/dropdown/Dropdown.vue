@@ -23,8 +23,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, type Slot } from 'vue';
-import { newId, waitClickComplete } from '@/helpers';
+import { computed, nextTick, ref, type Slot, useId } from 'vue';
+import { waitClickComplete } from '@/helpers';
 import { useDomRef, useTransitionState } from '@/composables';
 import { vPopoverShift } from '@/directives';
 import { FadeTransition } from '@/components/transition';
@@ -43,7 +43,7 @@ defineSlots<{
 const transitionState = useTransitionState();
 const menuRef = useDomRef<HTMLElement | null>();
 
-const anchorName = `--dropdown-${newId()}`;
+const anchorName = `--dropdown-${useId()}`;
 const isOpened = ref(false);
 
 const menuStyles = computed(() => ({

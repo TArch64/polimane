@@ -13,6 +13,7 @@ type CreateOptions struct {
 	User            *model.User
 	Name            string
 	BackgroundColor string
+	Layout          model.SchemaLayout
 	Palette         model.SchemaPalette
 	Size            *model.SchemaSize
 	Beads           model.SchemaBeads
@@ -40,6 +41,7 @@ func (c *Client) Create(ctx context.Context, options *CreateOptions) (schema *mo
 		schema = &model.Schema{
 			Name:            options.Name,
 			BackgroundColor: options.BackgroundColor,
+			Layout:          options.Layout,
 			Palette:         datatypes.NewJSONType(options.Palette),
 			Size:            datatypes.NewJSONType(options.Size),
 			Beads:           datatypes.NewJSONType(options.Beads),

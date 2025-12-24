@@ -4,8 +4,6 @@ import (
 	"embed"
 	"fmt"
 	"html/template"
-
-	"polimane/backend/views/helpers"
 )
 
 //go:embed templates/*.tmpl
@@ -33,11 +31,7 @@ func (r *Renderer) load(view string) (*template.Template, error) {
 		return nil, err
 	}
 
-	tmpl, err := template.
-		New(name).
-		Funcs(helpers.Get()).
-		Parse(string(source))
-
+	tmpl, err := template.New(name).Parse(string(source))
 	if err != nil {
 		return nil, err
 	}

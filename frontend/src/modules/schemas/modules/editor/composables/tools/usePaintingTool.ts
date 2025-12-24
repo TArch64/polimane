@@ -3,7 +3,6 @@ import { createAnimatedFrame } from '@/helpers';
 import {
   type BeadCoord,
   getBeadSettings,
-  type IPoint,
   isRefBead,
   isSpannableBead,
   Point,
@@ -40,13 +39,13 @@ export const usePaintingTool = (options: IEditorToolOptions) => {
   let spanning: ISpanningBead | null = null;
   let lastPaintedPoint: Point | null = null;
 
-  function restrictSpanningPoint(refPoint: IPoint): void {
+  function restrictSpanningPoint(refPoint: Point): void {
     const { direction, point } = spanning!;
     refPoint.x = isHorizontalDirection(direction!) ? refPoint.x : point.x;
     refPoint.y = isVerticalDirection(direction!) ? refPoint.y : point.y;
   }
 
-  function detectDirection(from: IPoint, to: IPoint): Direction {
+  function detectDirection(from: Point, to: Point): Direction {
     const deltaX = to.x - from.x;
     const deltaY = to.y - from.y;
 
@@ -65,14 +64,14 @@ export const usePaintingTool = (options: IEditorToolOptions) => {
       && getBeadSettings(existingBead).to === spanning!.coord;
   }
 
-  function updateSpanningSize(point: IPoint) {
+  function updateSpanningSize(point: Point) {
     getBeadSettings(spanning!.original).span = {
       x: point.x - spanning!.point.x,
       y: point.y - spanning!.point.y,
     };
   }
 
-  function paintCell(point: IPoint, color: string | null): PaintEffect | null {
+  function paintCell(point: Point, color: string | null): PaintEffect | null {
     let coord = serializeBeadPoint(point);
     let bead: SchemaBead | null;
 
@@ -105,18 +104,18 @@ export const usePaintingTool = (options: IEditorToolOptions) => {
       if (!!bead && isSpannableBead(bead)) {
         spanning = {
           coord,
-          point: new Point(point),
+          point,
           original: bead,
         };
       }
     }
 
     const effect = beadsStore.paint(coord, bead);
-    lastPaintedPoint = new Point(point);
+    lastPaintedPoint = point;
     return effect;
   }
 
-  function buildSequence(current: IPoint): IPoint[] {
+  function buildSequence(current: Point): Point[] {
     if (!lastPaintedPoint) {
       return [current];
     }
@@ -131,10 +130,12 @@ export const usePaintingTool = (options: IEditorToolOptions) => {
     const baseX = Math.min(lastPaintedPoint.x, current.x);
     const baseY = Math.min(lastPaintedPoint.y, current.y);
 
-    return Array.from({ length: difference[axis] + 1 }, (_, index): IPoint => ({
-      x: axis === 'x' ? baseX + index : current.x,
-      y: axis === 'y' ? baseY + index : current.y,
-    }));
+    return Array.from({ length: difference[axis] + 1 }, (_, index): Point => (
+      new Point(
+        axis === 'x' ? baseX + index : current.x,
+        axis === 'y' ? baseY + index : current.y,
+      )
+    ));
   }
 
   const paint = createAnimatedFrame((event: MouseEvent, color: string | null) => {

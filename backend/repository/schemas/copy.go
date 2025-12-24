@@ -34,6 +34,7 @@ func (c *Client) Copy(ctx context.Context, options *CopyOptions) (*model.Schema,
 	return c.Create(ctx, &CreateOptions{
 		User:            options.User,
 		Name:            copyName,
+		Layout:          original.Layout,
 		BackgroundColor: original.BackgroundColor,
 		Palette:         original.Palette.Data(),
 		Size:            original.Size.Data(),

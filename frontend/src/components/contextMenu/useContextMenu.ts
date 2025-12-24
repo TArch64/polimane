@@ -19,11 +19,7 @@ export function useContextMenu(options: IContextMenuViewOptions) {
     event.stopPropagation();
 
     plugin.show({
-      position: new Point({
-        x: event.clientX,
-        y: event.clientY,
-      }),
-
+      position: new Point(event.clientX, event.clientY),
       title: toValue(options.title),
       control: options.control,
       actions: toValue(options.actions).filter((action): action is ContextMenuItem => !!action),

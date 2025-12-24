@@ -4,67 +4,48 @@ export interface IPoint {
 }
 
 export class Point implements IPoint {
-  static isEqual(a: IPoint, b: IPoint): boolean {
-    return a.x === b.x && a.y === b.y;
+  static get BLANK(): Point {
+    return new Point(0, 0);
   }
 
-  readonly x;
-  readonly y;
-
-  constructor(point: IPoint) {
-    this.x = point.x;
-    this.y = point.y;
+  constructor(public x: number, public y: number) {
   }
 
-  get values(): number[] {
-    return [this.x, this.y];
-  }
-
-  with(patch: Partial<IPoint>): Point {
-    return new Point({
-      ...this.toJSON(),
-      ...patch,
-    });
-  }
-
-  plus(other: number): Point;
-  plus(other: IPoint): Point;
   plus(other: IPoint | number): Point {
     const x = typeof other === 'number' ? other : other.x;
     const y = typeof other === 'number' ? other : other.y;
-
-    return new Point({
-      x: this.x + x,
-      y: this.y + y,
-    });
+    return new Point(this.x + x, this.y + y);
   }
 
-  div(factor: number): Point {
-    return new Point({
-      x: this.x / factor,
-      y: this.y / factor,
-    });
+  minus(other: IPoint | number): Point {
+    const x = typeof other === 'number' ? other : other.x;
+    const y = typeof other === 'number' ? other : other.y;
+    return new Point(this.x - x, this.y - y);
   }
 
-  distanceTo(other: IPoint): number {
-    return Math.hypot(this.x - other.x, this.y - other.y);
+  divide(factor: number): Point {
+    return new Point(this.x / factor, this.y / factor);
+  }
+
+  multiply(factor: number): Point {
+    return new Point(this.x * factor, this.y * factor);
+  }
+
+  isEqual(other: IPoint): boolean {
+    return this.x === other.x && this.y === other.y;
+  }
+
+  getAxisDifference(other: IPoint): Point {
+    return new Point(
+      Math.abs(other.x - this.x),
+      Math.abs(other.y - this.y),
+    );
   }
 
   toJSON(): IPoint {
     return {
       x: this.x,
       y: this.y,
-    };
-  }
-
-  isEqual(other: IPoint): boolean {
-    return Point.isEqual(this, other);
-  }
-
-  getAxisDifference(other: IPoint): IPoint {
-    return {
-      x: Math.abs(other.x - this.x),
-      y: Math.abs(other.y - this.y),
     };
   }
 }

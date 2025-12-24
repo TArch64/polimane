@@ -10,7 +10,8 @@ import (
 )
 
 type CreateBody struct {
-	Name string `json:"name" validate:"required"`
+	Name   string             `json:"name" validate:"required,min=1,max=255"`
+	Layout model.SchemaLayout `json:"layout" validate:"required,oneof=linear radial"`
 }
 
 func (c *Controller) Create(ctx *fiber.Ctx) error {
@@ -21,8 +22,9 @@ func (c *Controller) Create(ctx *fiber.Ctx) error {
 	}
 
 	schema, err := c.schemas.Create(ctx.Context(), &repositoryschemas.CreateOptions{
-		User: auth.GetSessionUser(ctx),
-		Name: body.Name,
+		User:   auth.GetSessionUser(ctx),
+		Name:   body.Name,
+		Layout: body.Layout,
 	})
 
 	if err != nil {

@@ -65,6 +65,9 @@ func (p *Plugin) logFullScan(query, explained string) error {
 		if err = logs.WriteLine("--- Full Scan Detected ---"); err != nil {
 			return err
 		}
+		if err = logs.WriteLine(time.Now().Format(time.RFC3339)); err != nil {
+			return err
+		}
 		if err = logs.WritePadding(1); err != nil {
 			return err
 		}

@@ -1,4 +1,4 @@
-import { AccessLevel, BeadKind, Direction } from '@/enums';
+import { AccessLevel, BeadKind, Direction, SchemaLayout } from '@/enums';
 import type { SchemaBead } from './ISchemaBead';
 import type { BeadCoord } from './SchemaBeadCoord';
 
@@ -13,10 +13,24 @@ export interface ISchema {
   updatedAt: string;
   access: AccessLevel;
   backgroundColor: string;
+  layout: SchemaLayout;
   screenshotedAt: string | null;
   screenshotPath: string | null;
   size: SchemaSize;
   beads: SchemaBeads;
 }
 
-export type SchemaUpdate = Partial<Omit<ISchema, 'id' | 'updatedAt' | 'createdAt' | 'screenshotedAt' | 'screenshotPath' | 'access'>>;
+export const SchemaUpdatableAttrs = [
+  'name',
+  'palette',
+  'backgroundColor',
+  'size',
+  'beads',
+] as const satisfies readonly (keyof ISchema)[];
+
+export type SchemaUpdatableAttr = typeof SchemaUpdatableAttrs[number];
+export type SchemaUpdate = Partial<Pick<ISchema, SchemaUpdatableAttr>>;
+
+export function isSchemaUpdatableAttr(attr: string): attr is SchemaUpdatableAttr {
+  return SchemaUpdatableAttrs.includes(attr as SchemaUpdatableAttr);
+}

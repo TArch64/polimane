@@ -15,9 +15,12 @@ x-backend-common: &backend-common
   - ./backend:/app
   - ./tmp:/tmp/app
   - gomod_cache:/go/pkg/mod
+  - go_cache:/root/.cache/go-build
   depends_on:
-  - db
-  - sqs
+    db:
+      condition: service_healthy
+    sqs:
+      condition: service_started
 
 services:
   nginx:
@@ -66,6 +69,12 @@ services:
     image: cockroachdb/cockroach:latest-v25.3
     environment:
       COCKROACH_ARGS: start-single-node --insecure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health?ready=1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     ports:
     - "26257:26257"
     volumes:
@@ -96,6 +105,8 @@ volumes:
   bun_cache:
     driver: local
   gomod_cache:
+    driver: local
+  go_cache:
     driver: local
   cockroach_data:
     driver: local

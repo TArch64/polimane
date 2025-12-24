@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useCanvasStore, useSelectionStore } from '@editor/stores';
-import { useSelectionColor } from '@editor/composables';
+import { AA_HIGH_CONTRAST, useBackgroundAccessibleColor } from '@editor/composables';
 import { onClickOutside } from '@vueuse/core';
 import { DirectionList } from '@/enums';
 import { useDomRef } from '@/composables';
@@ -57,7 +57,7 @@ import SelectionOverlay from './SelectionOverlay.vue';
 
 const canvasStore = useCanvasStore();
 const selectionStore = useSelectionStore();
-const selectionColor = useSelectionColor();
+const selectionColor = useBackgroundAccessibleColor(AA_HIGH_CONTRAST);
 
 const selectionRef = ref<SVGElement>(null!);
 const areaRef = useDomRef<HTMLElement | null>();

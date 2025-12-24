@@ -28,6 +28,7 @@ ENV SENTRY_COMMIT_SHA=$SENTRY_COMMIT_SHA
 FROM base AS api
 
 RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=secret,id=SENTRY_AUTH_TOKEN,env=SENTRY_AUTH_TOKEN \
     make prod_api out_dir=/app/dist
 
@@ -35,4 +36,5 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 FROM base AS worker
 
 RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
     make prod_worker out_dir=/app/dist

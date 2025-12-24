@@ -20,6 +20,7 @@ import {
 import { getObjectEntries, getObjectKeys, type ObjectEntries } from '@/helpers';
 import { useBeadsStore } from '../beadsStore';
 import type { IBeadSelection } from '../selectionStore';
+import { useCanvasStore } from '../canvasStore';
 import type { ISelectionArea } from './useSelectionArea';
 import { useBeadFactory } from './useBeadFactory';
 
@@ -39,6 +40,7 @@ export interface ISelectionResize extends INodeRect {
 
 export function useSelectionResize(options: ISelectionResizeOptions): ISelectionResize {
   const beadsStore = useBeadsStore();
+  const canvasStore = useCanvasStore();
   const beadFactory = useBeadFactory();
 
   const translation = ref(0);
@@ -149,7 +151,7 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
   }
 
   function extendTranslation(dir: Direction, delta: number) {
-    translation.value += delta;
+    translation.value += delta / canvasStore.scale;
 
     if (translation.value <= 0) {
       translation.value = 0;

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { reactive, ref } from 'vue';
 import { clamp } from '@vueuse/core';
 import { EditorCursor, EditorCursorTarget } from '@editor/enums';
-import type { IPoint } from '@/models';
+import { Point } from '@/models';
 
 export const MIN_SCALE = 0.5;
 export const MAX_SCALE = 10;
@@ -11,7 +11,7 @@ export const ZOOM_OUT_STEP = 25;
 
 export const useCanvasStore = defineStore('schemas/editor/canvas', () => {
   const scale = ref(1);
-  const translation = reactive<IPoint>({ x: 0, y: 0 });
+  const translation = reactive(Point.BLANK);
   const cursor = ref<EditorCursor>(EditorCursor.CROSSHAIR);
   const cursorTarget = ref<EditorCursorTarget>(EditorCursorTarget.CONTENT);
 
