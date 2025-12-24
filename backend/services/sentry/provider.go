@@ -33,6 +33,7 @@ func Provider(options Options) (*Container, error) {
 		EnableTracing:    true,
 		TracesSampleRate: 0.5,
 		Environment:      "production",
+		SendDefaultPII:   false,
 	})
 
 	if err != nil {
