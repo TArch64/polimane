@@ -2,7 +2,7 @@
   <Card
     interactable
     ref="cardRef"
-    class="home-list-card"
+    class="home-list-card tap-animation"
     :active="selected"
     :binding="cardBinding"
   >
@@ -51,6 +51,7 @@ useContextMenu({
   .home-list-card {
     overflow: clip;
     box-shadow: var(--box-shadow);
+    --tap-scale: 0.99;
   }
 }
 </style>
