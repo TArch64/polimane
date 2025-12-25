@@ -1,5 +1,5 @@
 <template>
-  <h2 class="dropdown__title">
+  <h2 class="context-menu__title text-truncate">
     <slot />
   </h2>
 </template>
@@ -14,9 +14,10 @@ defineSlots<{
 
 <style scoped>
 @layer components {
-  .dropdown__title {
+  .context-menu__title {
     font-size: var(--font-sm);
     font-weight: 570;
+    max-width: 100%;
   }
 }
 </style>

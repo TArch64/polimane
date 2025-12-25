@@ -1,7 +1,7 @@
 <template>
   <DropdownMenu
     ref="menuRef"
-    class="dropdown-menu"
+    class="context-menu"
     view-transition-name="context-menu"
     :control="menu.control"
     :class="classes"
@@ -46,7 +46,7 @@ const routeTransition = useRouteTransition();
 const menuRef = useDomRef();
 
 const classes = computed(() => ({
-  'dropdown--initial': !props.menu.menuRect,
+  'context-menu--initial': !props.menu.menuRect,
 }));
 
 onMounted(() => {
@@ -105,18 +105,19 @@ useEventListener('mousedown', closeEvent, { capture: true });
 
 <style scoped>
 @layer components {
-  .dropdown-menu {
+  .context-menu {
     z-index: 9999;
     margin: 4px 0 0;
     min-width: 200px;
+    max-width: 250px;
 
-    &:not(.dropdown--initial) {
+    &:not(.context-menu--initial) {
       position-anchor: v-bind("menu.anchorVar");
       position-area: bottom center;
     }
   }
 
-  .dropdown--initial {
+  .context-menu--initial {
     top: v-bind("menu.position.y + 'px'");
     left: v-bind("menu.position.x + 'px'");
   }
