@@ -41,6 +41,7 @@ func (h *Handler) deleteUserSchemas(ctx context.Context, tx *gorm.DB, user *mode
 func (h *Handler) getUserSchemaIDs(ctx context.Context, tx *gorm.DB, user *model.User) ([]model.ID, error) {
 	var ids []model.ID
 	err := h.userSchemas.ListOutTx(ctx, tx, &ids,
+		repository.IncludeSoftDeleted,
 		repository.Select("schema_id"),
 		repository.UserIDEq(user.ID),
 	)
@@ -49,6 +50,7 @@ func (h *Handler) getUserSchemaIDs(ctx context.Context, tx *gorm.DB, user *model
 
 func (h *Handler) deleteSchemaRelation(ctx context.Context, tx *gorm.DB, user *model.User, schemaIDs []model.ID) error {
 	return h.userSchemas.DeleteTx(ctx, tx,
+		repository.IncludeSoftDeleted,
 		repository.UserIDEq(user.ID),
 		repository.SchemaIDsIn(schemaIDs),
 	)
@@ -59,6 +61,7 @@ type schemaIDUsedPlaceholder struct{}
 func (h *Handler) filterOrphanSchemaIDs(ctx context.Context, tx *gorm.DB, schemaIDs *[]model.ID) error {
 	var withUserIDs []model.ID
 	err := h.userSchemas.ListOutTx(ctx, tx, &withUserIDs,
+		repository.IncludeSoftDeleted,
 		repository.Select("DISTINCT ON (schema_id) schema_id"),
 		repository.SchemaIDsIn(*schemaIDs),
 	)
@@ -85,6 +88,7 @@ func (h *Handler) filterOrphanSchemaIDs(ctx context.Context, tx *gorm.DB, schema
 
 func (h *Handler) deleteSchemas(ctx context.Context, tx *gorm.DB, schemaIDs []model.ID) error {
 	return h.schemas.DeleteTx(ctx, tx,
+		repository.IncludeSoftDeleted,
 		repository.IDsIn(schemaIDs),
 	)
 }

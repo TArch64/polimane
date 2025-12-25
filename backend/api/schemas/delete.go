@@ -28,14 +28,16 @@ func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
 	}
 
 	err = c.db.WithContext(reqCtx).Transaction(func(tx *gorm.DB) error {
-		err = c.schemas.Delete(reqCtx,
+		err = c.schemas.DeleteTx(reqCtx, tx,
 			repository.IDsIn(body.IDs),
 		)
 		if err != nil {
 			return err
 		}
 
-		return c.schemaScreenshot.Delete(reqCtx, body.IDs)
+		return c.userSchemas.DeleteTx(reqCtx, tx,
+			repository.SchemaIDsIn(body.IDs),
+		)
 	})
 
 	return base.NewSuccessResponse(ctx)

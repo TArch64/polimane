@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type errorResponse struct {
+type ErrorResponse struct {
 	Success bool            `json:"success"`
 	Message string          `json:"message"`
 	Data    CustomErrorData `json:"data,omitempty"`
@@ -38,7 +38,7 @@ func getErrorData(err error) CustomErrorData {
 }
 
 func ErrorHandler(ctx *fiber.Ctx, err error) error {
-	return ctx.Status(getErrorStatus(err)).JSON(errorResponse{
+	return ctx.Status(getErrorStatus(err)).JSON(ErrorResponse{
 		Success: false,
 		Message: err.Error(),
 		Data:    getErrorData(err),

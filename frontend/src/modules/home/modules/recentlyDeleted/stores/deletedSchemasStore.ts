@@ -20,10 +20,15 @@ export const useDeletedSchemasStore = defineStore('home/recently-deleted/schemas
 
   const list = useAsyncData({
     async loader(current): Promise<IListResponse> {
-      return http.get<IListResponse, ListRequestParams>(['/schemas/deleted'], {
+      const res = await http.get<IListResponse, ListRequestParams>(['/schemas/deleted'], {
         limit: PAGINATION_PAGE,
         offset: current.schemas.length,
       });
+
+      return {
+        schemas: [...current.schemas, ...res.schemas],
+        total: res.total || current.total,
+      };
     },
 
     default: {
@@ -38,7 +43,7 @@ export const useDeletedSchemasStore = defineStore('home/recently-deleted/schemas
   const selected: Ref<Set<string>> = ref(new Set());
   const clearSelection = () => selected.value = new Set();
 
-  async function load(id: string): Promise<void> {
+  async function load(): Promise<void> {
     await list.load();
   }
 

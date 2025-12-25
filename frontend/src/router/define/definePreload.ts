@@ -12,18 +12,21 @@ type RouteLocation<N extends RouteName> = RouteLocationNormalizedTyped<RouteMap,
 export type RoutePreloadResult = void | undefined | RouteLocationRaw;
 export type RoutePreload<N extends RouteName> = (route: RouteLocation<N>) => Promise<RoutePreloadResult>;
 
+type ProgressState = 'start' | 'success' | 'error';
+
 export function definePreload<N extends RouteName = RouteName>(preload: RoutePreload<N>): NavigationGuard {
-  const toggleProgress = useDebounceFn((isActive: boolean) => {
-    isActive ? startProgress() : doneProgress();
+  const toggleProgress = useDebounceFn((state: ProgressState) => {
+    state === 'start' ? startProgress() : doneProgress(state === 'error');
   }, 100);
 
   return async (to, _, next) => {
     try {
-      toggleProgress(true);
+      toggleProgress('start');
       const result = await preload(to as RouteLocation<N>);
-      await toggleProgress(false);
+      await toggleProgress('success');
       result === undefined ? next() : next(result);
     } catch (error) {
+      await toggleProgress('error');
       return next(error as Error);
     }
   };

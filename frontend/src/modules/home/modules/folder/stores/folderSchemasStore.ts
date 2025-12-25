@@ -28,11 +28,16 @@ export const useFolderSchemasStore = defineStore('home/folder/schemas', () => {
 
   const list = useAsyncData({
     async loader(current): Promise<IListResponse> {
-      return http.get<IListResponse, ListRequestParams>(['/schemas'], {
+      const res = await http.get<IListResponse, ListRequestParams>(['/schemas'], {
         folder: folderId.value,
         limit: PAGINATION_PAGE,
         offset: current.schemas.length,
       });
+
+      return {
+        schemas: [...current.schemas, ...res.schemas],
+        total: res.total || current.total,
+      };
     },
 
     default: {

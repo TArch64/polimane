@@ -1,8 +1,16 @@
 <template />
 
 <script setup lang="ts">
+import { definePreload } from '@/router/define';
 import { useHomeStore } from '../../stores';
 import { useSchemasSelection } from './composables';
+import { useDeletedSchemasStore } from './stores';
+
+defineOptions({
+  beforeRouteEnter: definePreload<'home-recently-deleted'>(async () => {
+    await useDeletedSchemasStore().load();
+  }),
+});
 
 const homeStore = useHomeStore();
 
@@ -11,11 +19,11 @@ homeStore.setRouteConfig({
   selection: useSchemasSelection(),
 
   // implement later
-  addSchemaToFolder: undefined!,
-  copySchema: undefined!,
-  createSchema: undefined!,
-  deleteSchema: undefined!,
-  updateFolder: undefined!,
-  updateSchema: undefined!,
+  addSchemaToFolder: null!,
+  copySchema: null!,
+  createSchema: null!,
+  deleteSchema: null!,
+  updateFolder: null!,
+  updateSchema: null!,
 });
 </script>

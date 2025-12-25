@@ -25,7 +25,7 @@ func (l *ListQuery) FolderID() *model.ID {
 	return &id
 }
 
-type listResponse struct {
+type ListResponse struct {
 	Folders []*ListFolder `json:"folders"`
 	Schemas []*ListSchema `json:"schemas"`
 	Total   int64         `json:"total"`
@@ -37,7 +37,7 @@ type listContext struct {
 	query        *ListQuery
 	schemasTotal int64
 	foldersTotal int64
-	res          *listResponse
+	res          *ListResponse
 }
 
 func (l *listContext) calcTotal() {
@@ -50,39 +50,53 @@ func (c *Controller) List(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	eg, egCtx := errgroup.WithContext(ctx.Context())
-
 	listCtx := &listContext{
-		Context: egCtx,
+		Context: ctx.Context(),
 		query:   &query,
-		res:     &listResponse{},
+		res:     &ListResponse{},
 		user:    auth.GetSessionUser(ctx),
 	}
 
-	eg.Go(func() (err error) {
+	if query.Offset == 0 {
+		var eg *errgroup.Group
+		eg, listCtx.Context = errgroup.WithContext(ctx.Context())
+
+		eg.Go(func() (err error) {
+			if query.FolderIDStr == nil {
+				if err = c.queryFolders(listCtx); err != nil {
+					return err
+				}
+			}
+
+			return c.querySchemas(listCtx)
+		})
+
+		if query.FolderIDStr == nil {
+			eg.Go(func() error {
+				return c.countFolders(listCtx)
+			})
+		}
+
+		eg.Go(func() error {
+			return c.countSchemas(listCtx)
+		})
+
+		if err = eg.Wait(); err != nil {
+			return err
+		}
+
+		listCtx.calcTotal()
+	} else {
 		if query.FolderIDStr == nil {
 			if err = c.queryFolders(listCtx); err != nil {
 				return err
 			}
 		}
 
-		return c.querySchemas(listCtx)
-	})
-
-	if query.FolderIDStr == nil {
-		eg.Go(func() error {
-			return c.countFolders(listCtx)
-		})
+		if err = c.querySchemas(listCtx); err != nil {
+			return err
+		}
 	}
 
-	eg.Go(func() error {
-		return c.countSchemas(listCtx)
-	})
-
-	if err = eg.Wait(); err != nil {
-		return err
-	}
-
-	listCtx.calcTotal()
 	return ctx.JSON(listCtx.res)
 }

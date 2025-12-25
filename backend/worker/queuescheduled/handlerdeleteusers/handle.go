@@ -35,6 +35,6 @@ func (h *Handler) Handle(ctx context.Context, _ *events.Message) error {
 
 func (h *Handler) getDeletedUsers(ctx context.Context) ([]*model.User, error) {
 	return h.users.List(ctx,
-		repository.SoftDeleted(30),
+		repository.SoftDeletedDaysAgo(30),
 	)
 }

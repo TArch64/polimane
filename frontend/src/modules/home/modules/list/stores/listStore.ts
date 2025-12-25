@@ -29,7 +29,7 @@ export const useHomeListStore = defineStore('home/list', () => {
       return {
         folders: [...current.folders, ...response.folders],
         schemas: [...current.schemas, ...response.schemas],
-        total: response.total,
+        total: response.total || current.total,
       };
     },
 

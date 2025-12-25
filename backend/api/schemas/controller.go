@@ -66,6 +66,7 @@ func (c *Controller) Private(group fiber.Router) {
 		group.Get("", c.List)
 		group.Post("", c.Create)
 		group.Delete("delete-many", c.Delete)
+		group.Get("deleted", c.ListDeleted)
 
 		c.usersController.Private(group)
 
