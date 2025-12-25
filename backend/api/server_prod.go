@@ -18,6 +18,7 @@ import (
 func OptionsProvider() *Options {
 	return &Options{
 		Protocol: "https",
+
 		Configure: func(config *fiber.Config) {
 			config.DisableStartupMessage = true
 		},
