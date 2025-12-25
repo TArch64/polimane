@@ -1,3 +1,9 @@
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @property --tap-scale {
   inherits: true;
   initial-value: 0.95;

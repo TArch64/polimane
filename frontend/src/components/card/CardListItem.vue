@@ -1,6 +1,6 @@
 <template>
   <li class="card-list-item">
-    <p class="card-list-item__title">
+    <p class="text-truncate card-list-item__title">
       {{ title }}
     </p>
 
@@ -39,9 +39,6 @@ const slots = defineSlots<{
   .card-list-item__title {
     flex: 1;
     min-width: 0;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
     margin-right: 40px;
   }
 

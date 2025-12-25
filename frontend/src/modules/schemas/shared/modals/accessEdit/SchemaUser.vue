@@ -44,35 +44,3 @@ const deleteUser = useAsyncAction(async () => {
   await usersStore.deleteUser(props.user);
 });
 </script>
-
-<style scoped>
-@layer page {
-  .access-user {
-    display: flex;
-    align-items: center;
-    min-height: 32px;
-    gap: 8px;
-  }
-
-  .access-user__name {
-    flex-basis: 0;
-    flex-grow: 1;
-    min-width: 0;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
-
-  .access-user__name-label {
-    font-weight: 400;
-    color: var(--color-text-3)
-  }
-
-  .access-user__actions {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-}
-</style>

@@ -1,5 +1,7 @@
 <template>
   <HomeBarRouteActions>
+    <HomeBarCreateSchema />
+
     <Button icon variant="secondary" @click="openRenameModal">
       <EditIcon />
     </Button>
@@ -19,7 +21,11 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { FolderRenameModal, HomeBarRouteActions } from '@/modules/home/components';
+import {
+  FolderRenameModal,
+  HomeBarCreateSchema,
+  HomeBarRouteActions,
+} from '@/modules/home/components';
 import { Button } from '@/components/button';
 import { EditIcon, TrashIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';

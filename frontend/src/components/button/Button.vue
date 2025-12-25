@@ -15,7 +15,7 @@
 
     <slot v-if="icon" />
 
-    <span class="button__text" v-else>
+    <span class="button__text" :class="textClasses" v-else>
       <slot />
     </span>
   </ButtonRoot>
@@ -41,6 +41,7 @@ const props = withDefaults(defineProps<{
   disabled?: boolean;
   loading?: boolean;
   active?: boolean;
+  truncate?: boolean;
 }>(), {
   icon: false,
   danger: false,
@@ -64,6 +65,10 @@ const classes = computed(() => [
     'button--icon-only': props.mobileIconOnly,
   },
 ]);
+
+const textClasses = computed(() => ({
+  'text-truncate': props.truncate,
+}));
 </script>
 
 <style scoped>
@@ -84,6 +89,7 @@ const classes = computed(() => [
   .button__prepend-icon {
     margin-left: -4px;
     margin-right: 4px;
+    flex-shrink: 0;
   }
 
   .button--icon {

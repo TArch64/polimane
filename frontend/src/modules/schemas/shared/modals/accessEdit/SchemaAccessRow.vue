@@ -1,6 +1,6 @@
 <template>
   <li class="access-row">
-    <p class="access-row__name">
+    <p class="text-truncate access-row__name">
       {{ displayName }}
 
       <span v-if="!editable" class="access-row__name-label">
@@ -76,9 +76,6 @@ async function deleteUserIntent(): Promise<void> {
     flex-basis: 0;
     flex-grow: 1;
     min-width: 0;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
   }
 
   .access-row__name-label {

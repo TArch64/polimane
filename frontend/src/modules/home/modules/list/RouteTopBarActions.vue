@@ -1,5 +1,7 @@
 <template>
   <HomeBarRouteActions>
+    <HomeBarCreateSchema />
+
     <Button icon title="Нещодавно Видалені" :to="recentlyDeletedRoute">
       <TrashIcon />
     </Button>
@@ -36,7 +38,7 @@ import { Dropdown, DropdownAction, DropdownText } from '@/components/dropdown';
 import { Button } from '@/components/button';
 import { useSessionStore } from '@/stores';
 import { useAsyncAction, useProgressBar } from '@/composables';
-import { HomeBarRouteActions } from '@/modules/home/components';
+import { HomeBarCreateSchema, HomeBarRouteActions } from '@/modules/home/components';
 
 const sessionStore = useSessionStore();
 
