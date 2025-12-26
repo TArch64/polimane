@@ -1,8 +1,14 @@
 <template>
-  <HomeListEmpty description="Поки що не створено жодної схеми для бісеру">
-    <Button variant="primary" @click="createModal.open()">
-      Нова Схема
-    </Button>
+  <HomeListEmpty>
+    <template #description>
+      <p>Поки що не створено жодної схеми для бісеру</p>
+    </template>
+
+    <template #actions>
+      <Button variant="primary" @click="createModal.open()">
+        Нова Схема
+      </Button>
+    </template>
   </HomeListEmpty>
 </template>
 
