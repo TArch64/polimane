@@ -2,7 +2,7 @@
   <Card as="header" class="editor-header">
     <Button
       class="editor-header__back"
-      :to="{ name: 'home' }"
+      :to="backLocation"
       :prepend-icon="ArrowBackIcon"
     >
       Едітор
@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { type RouteLocationRaw, useRoute, useRouter } from 'vue-router';
 import { type Component, computed } from 'vue';
 import { useHotKeys } from '@editor/composables';
 import { Button } from '@/components/button';
@@ -114,6 +114,8 @@ import { useEditorStore, useHistoryStore, useSelectionStore } from '../stores';
 import { SchemaExportModal } from './modals';
 
 const router = useRouter();
+const route = useRoute<'schema-editor'>();
+
 const historyStore = useHistoryStore();
 const editorStore = useEditorStore();
 const schemaUsersStore = useSchemaUsersStore();
@@ -124,6 +126,11 @@ const isMobile = useMobileScreen();
 const renameModal = useModal(SchemaRenameModal);
 const exportModal = useModal(SchemaExportModal);
 const accessEditModal = useModal(SchemaAccessEditModal);
+
+const backLocation = computed((): RouteLocationRaw => {
+  const from = route.query.from as string | undefined;
+  return from || { name: 'home' };
+});
 
 const SavingIcon = computed((): Component => {
   if (editorStore.isSaving) {

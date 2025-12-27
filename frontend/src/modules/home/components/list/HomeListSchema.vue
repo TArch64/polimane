@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { type RouteLocationRaw } from 'vue-router';
+import { type RouteLocationRaw, useRoute } from 'vue-router';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { type ListSchema, useHomeStore } from '../../stores';
 import HomeListCard from './HomeListCard.vue';
@@ -30,6 +30,7 @@ const props = defineProps<{
   menuActions: MaybeContextMenuAction[];
 }>();
 
+const route = useRoute();
 const homeStore = useHomeStore();
 
 const isSelected = computed(() => homeStore.selection.ids.has(props.schema.id));
@@ -37,5 +38,6 @@ const isSelected = computed(() => homeStore.selection.ids.has(props.schema.id));
 const editorRoute = computed((): RouteLocationRaw => ({
   name: 'schema-editor',
   params: { schemaId: props.schema.id },
+  query: { from: route.path },
 }));
 </script>
