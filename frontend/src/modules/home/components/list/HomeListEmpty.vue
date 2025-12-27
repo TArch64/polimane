@@ -1,12 +1,5 @@
 <template>
   <div class="home-list-empty">
-    <Component
-      :is="icon"
-      size="48"
-      class="home-list-empty__icon"
-      v-if="icon"
-    />
-
     <div class="home-list-empty__description">
       <slot name="description" />
     </div>
@@ -19,11 +12,6 @@
 
 <script setup lang="ts">
 import type { Slot } from 'vue';
-import type { IconComponent } from '@/components/icon';
-
-defineProps<{
-  icon?: IconComponent;
-}>();
 
 const slots = defineSlots<{
   description: Slot;
@@ -39,11 +27,6 @@ const slots = defineSlots<{
     align-items: center;
     justify-content: center;
     flex-grow: 1;
-  }
-
-  .home-list-empty__icon {
-    margin-bottom: 12px;
-    color: var(--color-text-3);
   }
 
   .home-list-empty__description {

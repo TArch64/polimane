@@ -13,18 +13,20 @@
     </HomeGridList>
   </template>
 
-  <HomeListHeading>
-    Схеми для Бісеру
-  </HomeListHeading>
+  <template v-if="schemasStore.hasSchemas">
+    <HomeListHeading>
+      Схеми для Бісеру
+    </HomeListHeading>
 
-  <HomeGridList
-    selectable
-    :list="schemasStore.schemas"
-    v-model:selected="schemasStore.selected"
-    v-slot="{ item, itemRef }"
-  >
-    <HomeListSchema :ref="itemRef" :schema="item" />
-  </HomeGridList>
+    <HomeGridList
+      selectable
+      :list="schemasStore.schemas"
+      v-model:selected="schemasStore.selected"
+      v-slot="{ item, itemRef }"
+    >
+      <HomeListSchema :ref="itemRef" :schema="item" />
+    </HomeGridList>
+  </template>
 
   <HomeListLoader :visible="listStore.list.isLoading" />
 </template>
