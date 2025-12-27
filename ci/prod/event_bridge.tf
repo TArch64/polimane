@@ -40,6 +40,27 @@ resource "aws_scheduler_schedule" "delete_users" {
   }
 }
 
+resource "aws_scheduler_schedule" "permanently_delete_schemas" {
+  name                         = "${local.app_name}-permanently-delete-schemas"
+  schedule_expression          = "cron(0 2 ? * WED *)"
+  schedule_expression_timezone = "Europe/Kyiv"
+
+  flexible_time_window {
+    mode                      = "FLEXIBLE"
+    maximum_window_in_minutes = 15
+  }
+
+  target {
+    arn      = aws_sqs_queue.scheduled.arn
+    role_arn = aws_iam_role.scheduler_sqs.arn
+
+    input = jsonencode({
+      eventType = "permanently-delete-schemas"
+      payload   = {}
+    })
+  }
+}
+
 resource "aws_iam_role" "scheduler_sqs" {
   name = "${local.app_name}-scheduler-sqs"
   tags = local.aws_common_tags

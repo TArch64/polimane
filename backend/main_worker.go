@@ -28,6 +28,7 @@ import (
 	"polimane/backend/worker/queuescheduled"
 	"polimane/backend/worker/queuescheduled/handlercleanupinvitations"
 	"polimane/backend/worker/queuescheduled/handlerdeleteusers"
+	"polimane/backend/worker/queuescheduled/handlerpermanentlydeleteschemas"
 )
 
 func AsQueue(f any) any {
@@ -71,6 +72,7 @@ func main() {
 
 			handlercleanupinvitations.Provider,
 			handlerdeleteusers.Provider,
+			handlerpermanentlydeleteschemas.Provider,
 			AsQueue(queuescheduled.Provider),
 
 			worker.Provider,
