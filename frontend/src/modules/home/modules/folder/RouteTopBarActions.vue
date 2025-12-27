@@ -58,10 +58,10 @@ const deleteFolder = useAsyncAction(async (deleteSchemas: boolean) => {
 useProgressBar(deleteFolder);
 
 async function deleteIntent(): Promise<void> {
-  const confirmed = await deleteConfirm.ask();
+  const confirmation = await deleteConfirm.ask();
 
-  if (confirmed.isAccepted) {
-    await deleteFolder(confirmed.isSecondaryAccepted ?? false);
+  if (confirmation.isAccepted) {
+    await deleteFolder(confirmation.isSecondaryAccepted ?? false);
   }
 }
 </script>

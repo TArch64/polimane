@@ -1,6 +1,6 @@
 import { computed, type Ref, ref, toRef } from 'vue';
 import { defineStore } from 'pinia';
-import { type HttpBody, useAsyncData, useHttpClient } from '@/composables';
+import { type HttpBody, type OptimisticExecute, useAsyncData, useHttpClient } from '@/composables';
 import type { IDeleteManySchemasRequest, ListSchema } from '@/modules/home/stores';
 
 const PAGINATION_PAGE = 100;
@@ -53,26 +53,39 @@ export const useDeletedSchemasStore = defineStore('home/recently-deleted/schemas
     return list.load();
   }
 
-  async function deleteMany(ids: string[]): Promise<void> {
-    const idsSet = new Set(ids);
-
+  async function deletableAction(ids: string[], commit: OptimisticExecute) {
     await list.optimisticUpdate()
       .inTransition()
       .begin((state) => {
+        const idsSet = new Set(ids);
         state.schemas = state.schemas.filter((schema) => !idsSet.has(schema.id));
         state.total -= ids.length;
       })
-      .commit(async () => {
-        await http.delete<HttpBody, IDeleteManySchemasRequest>(['/schemas', 'delete-many'], { ids });
-      });
+      .commit(commit);
 
     if (canLoadNext.value && schemas.value.length < PAGINATION_PAGE) {
       await loadNext();
     }
   }
 
+  async function deleteMany(ids: string[]): Promise<void> {
+    await deletableAction(ids, async () => {
+      await http.delete<HttpBody, IDeleteManySchemasRequest>(['/schemas', 'delete-permanently'], { ids });
+    });
+  }
+
+  async function restoreMany(ids: string[]): Promise<void> {
+    await deletableAction(ids, async () => {
+      await http.delete<HttpBody, IDeleteManySchemasRequest>(['/schemas', 'restore'], { ids });
+    });
+  }
+
   async function deleteSchema(deleting: ListSchema): Promise<void> {
     return deleteMany([deleting.id]);
+  }
+
+  async function restoreSchema(restoring: ListSchema): Promise<void> {
+    return restoreMany([restoring.id]);
   }
 
   return {
@@ -85,5 +98,7 @@ export const useDeletedSchemasStore = defineStore('home/recently-deleted/schemas
     clearSelection,
     deleteMany,
     deleteSchema,
+    restoreMany,
+    restoreSchema,
   };
 });

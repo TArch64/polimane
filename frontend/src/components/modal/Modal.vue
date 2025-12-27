@@ -87,7 +87,7 @@ onBackdropClick(close);
     max-height: 100%;
     background-color: var(--color-background-1);
     border: var(--divider);
-    border-radius: var(--rounded-md);
+    border-radius: var(--rounded-lg);
     view-transition-name: modal;
 
     &::backdrop {

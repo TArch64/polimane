@@ -64,7 +64,7 @@ useContextMenu({
   .home-list-card {
     overflow: clip;
     box-shadow: var(--box-shadow);
-    --tap-scale: 0.98;
+    --tap-scale: 0.988;
   }
 }
 </style>

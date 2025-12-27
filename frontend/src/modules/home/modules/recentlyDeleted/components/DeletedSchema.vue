@@ -11,7 +11,7 @@ import { HomeListSchema } from '@/modules/home/components';
 import type { ListSchema } from '@/modules/home/stores';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { useConfirm } from '@/components/confirm';
-import { TrashIcon } from '@/components/icon';
+import { CornerUpLeftIcon, TrashIcon } from '@/components/icon';
 import { useDeletedSchemasStore } from '../stores';
 
 const props = defineProps<{
@@ -29,16 +29,22 @@ const deleteConfirm = useConfirm({
 
 const menuActions: MaybeContextMenuAction[] = [
   {
+    title: 'Відновити Схему',
+    icon: CornerUpLeftIcon,
+    onAction: () => schemasStore.restoreSchema(props.schema),
+  },
+
+  {
     danger: true,
     title: 'Видалити Остаточно',
     icon: TrashIcon,
 
     async onAction(event) {
-      const confirmed = await deleteConfirm.ask({
+      const confirmation = await deleteConfirm.ask({
         virtualTarget: event.menuRect,
       });
 
-      if (confirmed.isAccepted) {
+      if (confirmation.isAccepted) {
         await schemasStore.deleteSchema(props.schema);
       }
     },

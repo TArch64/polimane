@@ -1,7 +1,6 @@
 <template>
   <Card as="header" class="editor-header">
     <Button
-      icon
       class="editor-header__back"
       :to="{ name: 'home' }"
       :prepend-icon="ArrowBackIcon"
@@ -163,8 +162,8 @@ const deleteSchema = useAsyncAction(async () => {
 });
 
 async function deleteSchemaIntent() {
-  const confirmed = await deleteConfirm.ask();
-  if (confirmed.isAccepted) await deleteSchema();
+  const confirmation = await deleteConfirm.ask();
+  if (confirmation.isAccepted) await deleteSchema();
 }
 
 function undo() {

@@ -95,11 +95,11 @@ export function useSchemaMenuActions(schemaRef: MaybeRefOrGetter<ListSchema>): C
       icon: TrashIcon,
 
       async onAction(event) {
-        const confirmed = await deleteConfirm.ask({
+        const confirmation = await deleteConfirm.ask({
           virtualTarget: event.menuRect,
         });
 
-        if (confirmed.isAccepted) {
+        if (confirmation.isAccepted) {
           await deleteSchema.do(schema.value);
         }
       },

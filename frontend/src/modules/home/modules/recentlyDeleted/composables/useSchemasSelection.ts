@@ -3,7 +3,7 @@ import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import type { ISchemaSelectionAdapter } from '@/modules/home/stores';
 import { useConfirm } from '@/components/confirm';
 import { useAsyncAction } from '@/composables';
-import { TrashIcon } from '@/components/icon';
+import { CornerUpLeftIcon, TrashIcon } from '@/components/icon';
 import { useDeletedSchemasStore } from '../stores';
 
 export function useSchemasSelection(): ISchemaSelectionAdapter {
@@ -22,18 +22,29 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
     schemasStore.clearSelection();
   });
 
+  const restoreSchemas = useAsyncAction(async () => {
+    await schemasStore.restoreMany(actionIds.value);
+    schemasStore.clearSelection();
+  });
+
   const actions = computed((): MaybeContextMenuAction[] => [
+    {
+      title: 'Відновити Схеми',
+      icon: CornerUpLeftIcon,
+      onAction: restoreSchemas,
+    },
+
     {
       title: 'Видалити Остаточно',
       icon: TrashIcon,
       danger: true,
 
       async onAction(event) {
-        const confirmed = await deleteConfirm.ask({
+        const confirmation = await deleteConfirm.ask({
           virtualTarget: event.menuRect,
         });
 
-        if (confirmed.isAccepted) {
+        if (confirmation.isAccepted) {
           await deleteSchemas();
         }
       },

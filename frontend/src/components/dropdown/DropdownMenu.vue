@@ -29,7 +29,7 @@ const backgroundColor = computed(() => {
   .dropdown-menu {
     background-color: v-bind("backgroundColor");
     border: var(--divider);
-    border-radius: var(--rounded-md);
+    border-radius: var(--rounded-lg);
     box-shadow: var(--box-shadow);
     display: flex;
     flex-direction: column;

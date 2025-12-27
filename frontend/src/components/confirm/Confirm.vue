@@ -102,7 +102,7 @@ onBackdropClick(decline);
     overflow-y: auto;
     background-color: v-bind("backgroundColor");
     border: var(--divider);
-    border-radius: var(--rounded-md);
+    border-radius: var(--rounded-lg);
     box-shadow: var(--box-shadow);
     view-transition-name: confirm;
   }

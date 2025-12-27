@@ -93,7 +93,7 @@ const textClasses = computed(() => ({
   }
 
   .button--icon {
-    --tap-scale: 0.95;
+    --tap-scale: 0.9;
   }
 
   .button--sm {

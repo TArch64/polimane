@@ -23,6 +23,7 @@
 
   --rounded-sm: 4px;
   --rounded-md: 8px;
+  --rounded-lg: 12px;
   --rounded-full: 9999px;
 
   --divider: 1px solid var(--color-divider);

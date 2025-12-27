@@ -74,7 +74,7 @@ const classes = computed(() => [
     padding: var(--card-padding-top) var(--card-padding-right) var(--card-padding-bottom) var(--card-padding-left);
     background-color: var(--card-background);
     border: var(--divider);
-    border-radius: var(--rounded-md);
+    border-radius: var(--rounded-lg);
 
     --card-padding-top: 8px;
     --card-padding-bottom: 8px;
