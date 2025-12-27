@@ -1,5 +1,5 @@
 <template>
-  <FadeTransition switch>
+  <FadeTransition>
     <CommonLayoutSelectionBar
       :selected
       :selectedTitle
@@ -7,11 +7,11 @@
       @clear-selection="$emit('clear-selection')"
       v-if="selected"
     />
-
-    <CommonLayoutTopBar :title data-cursor-selection-ignore v-else>
-      <slot name="top-bar-actions" />
-    </CommonLayoutTopBar>
   </FadeTransition>
+
+  <CommonLayoutTopBar :title data-cursor-selection-ignore>
+    <slot name="top-bar-actions" />
+  </CommonLayoutTopBar>
 
   <div class="common-layout__row common-layout__content" v-if="slots.submenu">
     <CommonLayoutSubmenu class="common-layout__submenu">
