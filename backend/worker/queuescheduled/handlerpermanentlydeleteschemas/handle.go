@@ -14,6 +14,10 @@ func (h *Handler) Handle(ctx context.Context, _ *events.Message) error {
 		return err
 	}
 
+	if len(schemaIDs) == 0 {
+		return nil
+	}
+
 	return h.delete.Delete(ctx, schemaIDs)
 }
 
