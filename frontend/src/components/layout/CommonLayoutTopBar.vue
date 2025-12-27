@@ -8,7 +8,7 @@
       </h1>
     </template>
 
-    <div class="common-layout-top-bar__back-button-container" :class="backContainerClasses" v-else>
+    <div class="common-layout-top-bar__back-button-container" v-else>
       <Button
         truncate
         :to="homeRoute"
@@ -20,18 +20,17 @@
       </Button>
     </div>
 
-    <CommonLayoutActions v-model:has-actions="hasActions" v-show="hasActions">
+    <div class="common-layout-top-bar__actions">
       <slot />
-    </CommonLayoutActions>
+    </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, type Slot } from 'vue';
+import { computed, type Slot } from 'vue';
 import { type RouteLocationRaw, useRoute } from 'vue-router';
 import { ArrowBackIcon, LogoIcon } from '../icon';
 import { Button } from '../button';
-import CommonLayoutActions from './CommonLayoutActions.vue';
 
 defineProps<{
   title: string;
@@ -43,14 +42,8 @@ defineSlots<{
 
 const route = useRoute();
 
-const hasActions = ref(false);
-
 const homeRoute: RouteLocationRaw = { name: 'home' };
 const isHomeRoute = computed(() => route.name === homeRoute.name);
-
-const backContainerClasses = computed(() => ({
-  'common-layout-top-bar__back-button-container--with-actions': hasActions.value,
-}));
 </script>
 
 <style scoped>
@@ -73,10 +66,7 @@ const backContainerClasses = computed(() => ({
     font-weight: 500;
   }
 
-  .common-layout-top-bar__back-button-container--with-actions {
-    min-width: 0;
-    flex-basis: 0;
-    flex-grow: 1;
+  .common-layout-top-bar__back-button-container {
     margin-right: 32px;
     max-width: 350px;
   }
@@ -85,6 +75,14 @@ const backContainerClasses = computed(() => ({
     font-size: 16px;
     font-weight: 450;
     max-width: 100%;
+  }
+
+  .common-layout-top-bar__actions {
+    margin-left: auto;
+    margin-right: 2px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
   }
 }
 </style>
