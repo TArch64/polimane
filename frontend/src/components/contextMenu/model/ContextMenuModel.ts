@@ -1,5 +1,5 @@
 import { shallowReactive } from 'vue';
-import { NodeRect, Point } from '@/models';
+import { Callback, NodeRect, Point } from '@/models';
 import { ContextActionModel, type IContextMenuAction } from './ContextActionModel';
 import { ContextGroupModel, type IContextMenuGroup } from './ContextGroupModel';
 
@@ -34,6 +34,7 @@ export class ContextMenuModel {
   readonly position;
   readonly control;
   readonly actions;
+  readonly onHide = new Callback();
 
   private readonly state = shallowReactive<IState>({});
 

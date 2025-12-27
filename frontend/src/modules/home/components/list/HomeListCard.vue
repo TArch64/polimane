@@ -2,7 +2,7 @@
   <Card
     ref="cardRef"
     class="home-list-card"
-    :active="selected"
+    :active="selected || isContextMenuActive"
     :binding="cardBinding"
     :interactable="!disabled"
   >
@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { type RouteLocationRaw, RouterLink } from 'vue-router';
-import { computed, type Slot, toRef } from 'vue';
+import { computed, ref, type Slot, toRef } from 'vue';
 import { Card } from '@/components/card';
 import { makeBinding } from '@/components/binding';
 import { type MaybeContextMenuAction, useContextMenu } from '@/components/contextMenu';
@@ -48,11 +48,14 @@ const cardBinding = computed(() => {
   return props.disabled ? disabledBinding.value : linkBinding.value;
 });
 
+const isContextMenuActive = ref(false);
+
 useContextMenu({
   el: cardRef,
   control: false,
   title: toRef(props, 'menuTitle'),
   actions: toRef(props, 'menuActions'),
+  isActive: isContextMenuActive,
 });
 </script>
 

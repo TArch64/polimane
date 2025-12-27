@@ -15,14 +15,19 @@ export class ContextMenuPlugin {
 
   activeMenu = shallowRef<ContextMenuModel | null>(null);
 
-  show(options: Omit<IContextMenuOptions, 'id'>) {
-    this.activeMenu.value = new ContextMenuModel({
+  show(options: Omit<IContextMenuOptions, 'id'>): ContextMenuModel {
+    const menu = new ContextMenuModel({
       ...options,
       id: newId(),
     });
+
+    this.activeMenu.value?.onHide.dispatch();
+    this.activeMenu.value = menu;
+    return menu;
   }
 
   hide() {
+    this.activeMenu.value?.onHide.dispatch();
     this.activeMenu.value = null;
   }
 }
