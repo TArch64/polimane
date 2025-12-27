@@ -62,7 +62,7 @@ const slots = defineSlots<{
 const classes = computed(() => [
   `card--variant-${props.variant}`,
   {
-    'card--interactable': props.interactable,
+    'card--interactable tap-animation': props.interactable,
     'card--active': props.active,
   },
 ]);

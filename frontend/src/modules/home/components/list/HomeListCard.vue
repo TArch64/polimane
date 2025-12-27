@@ -1,10 +1,10 @@
 <template>
   <Card
-    interactable
     ref="cardRef"
-    class="home-list-card tap-animation"
+    class="home-list-card"
     :active="selected"
     :binding="cardBinding"
+    :interactable="!disabled"
   >
     <slot />
   </Card>

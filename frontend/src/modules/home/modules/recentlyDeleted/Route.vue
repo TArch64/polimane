@@ -5,6 +5,7 @@
 
 <script setup lang="ts">
 import { definePreload } from '@/router/define';
+import { lazyDestroyStore } from '@/helpers';
 import { useHomeStore } from '../../stores';
 import { useSchemasSelection } from './composables';
 import { useDeletedSchemasStore } from './stores';
@@ -14,6 +15,11 @@ defineOptions({
   beforeRouteEnter: definePreload<'home-recently-deleted'>(async () => {
     await useDeletedSchemasStore().load();
   }),
+
+  beforeRouteLeave: async (_, __, next) => {
+    lazyDestroyStore(useDeletedSchemasStore);
+    next();
+  },
 });
 
 const homeStore = useHomeStore();

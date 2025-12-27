@@ -9,8 +9,8 @@
     v-model:selected="schemasStore.selected"
     v-slot="{ item, itemRef }"
   >
-    <HomeListSchema
-      disabled
+    <DeletedSchema
+
       :ref="itemRef"
       :schema="item"
     />
@@ -20,13 +20,9 @@
 </template>
 
 <script setup lang="ts">
-import {
-  HomeGridList,
-  HomeListHeading,
-  HomeListLoader,
-  HomeListSchema,
-} from '@/modules/home/components';
+import { HomeGridList, HomeListHeading, HomeListLoader } from '@/modules/home/components';
 import { useDeletedSchemasStore } from '../stores';
+import DeletedSchema from './DeletedSchema.vue';
 
 const schemasStore = useDeletedSchemasStore();
 </script>
