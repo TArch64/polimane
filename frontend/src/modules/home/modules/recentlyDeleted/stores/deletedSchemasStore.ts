@@ -76,7 +76,7 @@ export const useDeletedSchemasStore = defineStore('home/recently-deleted/schemas
 
   async function restoreMany(ids: string[]): Promise<void> {
     await deletableAction(ids, async () => {
-      await http.delete<HttpBody, IDeleteManySchemasRequest>(['/schemas', 'restore'], { ids });
+      await http.post<HttpBody, IDeleteManySchemasRequest>(['/schemas', 'restore'], { ids });
     });
   }
 

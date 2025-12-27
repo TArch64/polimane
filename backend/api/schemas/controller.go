@@ -5,8 +5,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 
+	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/api/schemas/users"
+	"polimane/backend/model"
 	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
@@ -66,6 +68,7 @@ func (c *Controller) Private(group fiber.Router) {
 		group.Post("", c.Create)
 		group.Delete("delete", c.Delete)
 		group.Delete("delete-permanently", c.DeletePermanently)
+		group.Post("restore", c.Restore)
 		group.Get("deleted", c.ListDeleted)
 
 		c.usersController.Private(group)
@@ -77,4 +80,8 @@ func (c *Controller) Private(group fiber.Router) {
 			group.Get("preview", c.Preview)
 		})
 	})
+}
+
+func (c *Controller) filterSchemaIDsByAccess(ctx *fiber.Ctx, IDs *[]model.ID) error {
+	return c.userSchemas.FilterByAccess(ctx.Context(), auth.GetSessionUser(ctx), IDs, model.AccessAdmin)
 }

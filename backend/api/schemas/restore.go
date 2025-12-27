@@ -6,7 +6,7 @@ import (
 	"polimane/backend/api/base"
 )
 
-func (c *Controller) DeletePermanently(ctx *fiber.Ctx) (err error) {
+func (c *Controller) Restore(ctx *fiber.Ctx) (err error) {
 	var body base.BulkOperationBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
@@ -16,7 +16,7 @@ func (c *Controller) DeletePermanently(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	if err = c.schemaDelete.Delete(ctx.Context(), body.IDs); err != nil {
+	if err = c.schemas.Restore(ctx.Context(), body.IDs); err != nil {
 		return err
 	}
 

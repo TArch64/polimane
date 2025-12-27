@@ -7,6 +7,7 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import { HomeListSchema } from '@/modules/home/components';
 import type { ListSchema } from '@/modules/home/stores';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
@@ -19,6 +20,7 @@ const props = defineProps<{
 }>();
 
 const schemasStore = useDeletedSchemasStore();
+const router = useRouter();
 
 const deleteConfirm = useConfirm({
   danger: true,
@@ -27,11 +29,20 @@ const deleteConfirm = useConfirm({
   acceptButton: 'Видалити',
 });
 
+async function onDeletableFinish() {
+  if (!schemasStore.schemas.length) {
+    await router.push({ name: 'home' });
+  }
+}
+
 const menuActions: MaybeContextMenuAction[] = [
   {
     title: 'Відновити Схему',
     icon: CornerUpLeftIcon,
-    onAction: () => schemasStore.restoreSchema(props.schema),
+    async onAction() {
+      await schemasStore.restoreSchema(props.schema);
+      await onDeletableFinish();
+    },
   },
 
   {
@@ -46,6 +57,7 @@ const menuActions: MaybeContextMenuAction[] = [
 
       if (confirmation.isAccepted) {
         await schemasStore.deleteSchema(props.schema);
+        await onDeletableFinish();
       }
     },
   },

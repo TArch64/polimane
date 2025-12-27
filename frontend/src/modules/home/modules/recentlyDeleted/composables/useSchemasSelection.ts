@@ -1,4 +1,5 @@
 import { computed, reactive, toRef } from 'vue';
+import { useRouter } from 'vue-router';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import type { ISchemaSelectionAdapter } from '@/modules/home/stores';
 import { useConfirm } from '@/components/confirm';
@@ -10,6 +11,8 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
   const schemasStore = useDeletedSchemasStore();
   const actionIds = computed(() => [...schemasStore.selected]);
 
+  const router = useRouter();
+
   const deleteConfirm = useConfirm({
     danger: true,
     control: false,
@@ -17,14 +20,22 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
     acceptButton: 'Видалити',
   });
 
+  async function onDeletableComplete() {
+    if (schemasStore.schemas.length) {
+      schemasStore.clearSelection();
+    } else {
+      await router.push({ name: 'home' });
+    }
+  }
+
   const deleteSchemas = useAsyncAction(async () => {
     await schemasStore.deleteMany(actionIds.value);
-    schemasStore.clearSelection();
+    await onDeletableComplete();
   });
 
   const restoreSchemas = useAsyncAction(async () => {
     await schemasStore.restoreMany(actionIds.value);
-    schemasStore.clearSelection();
+    await onDeletableComplete();
   });
 
   const actions = computed((): MaybeContextMenuAction[] => [

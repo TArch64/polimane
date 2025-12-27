@@ -9,7 +9,6 @@ import {
   SchemaAccessEditModal,
   useSchemaUsersStore,
 } from '@/modules/schemas/shared/modals/accessEdit';
-import { useConfirm } from '@/components/confirm';
 import type { ISchema } from '@/models';
 import { FolderAddSchemaModal } from '../components';
 import { type ListSchema, useHomeFoldersStore, useHomeStore } from '../stores';
@@ -28,13 +27,6 @@ export function useSchemaMenuActions(schemaRef: MaybeRefOrGetter<ListSchema>): C
   const renameModal = useModal(SchemaRenameModal);
   const folderAddModal = useModal(FolderAddSchemaModal);
   const accessEditModal = useModal(SchemaAccessEditModal);
-
-  const deleteConfirm = useConfirm({
-    danger: true,
-    control: false,
-    message: 'Ви впевнені, що хочете видалити цю схему?',
-    acceptButton: 'Видалити',
-  });
 
   return computed((): MaybeContextMenuAction[] => [
     permissions.write && {
@@ -95,13 +87,7 @@ export function useSchemaMenuActions(schemaRef: MaybeRefOrGetter<ListSchema>): C
       icon: TrashIcon,
 
       async onAction(event) {
-        const confirmation = await deleteConfirm.ask({
-          virtualTarget: event.menuRect,
-        });
-
-        if (confirmation.isAccepted) {
-          await deleteSchema.do(schema.value);
-        }
+        await deleteSchema.do(schema.value);
       },
     },
   ]);
