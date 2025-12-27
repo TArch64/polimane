@@ -1,18 +1,19 @@
 package schemas
 
 import (
-	"gorm.io/gorm"
-
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 
+	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/api/schemas/users"
+	"polimane/backend/model"
 	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 	"polimane/backend/services/awssqs"
+	"polimane/backend/services/schemadelete"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/views"
 )
@@ -27,9 +28,9 @@ type ControllerOptions struct {
 	UserSchemas      *repositoryuserschemas.Client
 	SQS              *awssqs.Client
 	S3               *s3.Client
-	DB               *gorm.DB
 	Renderer         *views.Renderer
 	SchemaScreenshot *schemascreenshot.Service
+	SchemaDelete     *schemadelete.Service
 	UsersController  *users.Controller
 }
 
@@ -39,9 +40,9 @@ type Controller struct {
 	userSchemas      *repositoryuserschemas.Client
 	sqs              *awssqs.Client
 	s3               *s3.Client
-	db               *gorm.DB
 	renderer         *views.Renderer
 	schemaScreenshot *schemascreenshot.Service
+	schemaDelete     *schemadelete.Service
 	usersController  *users.Controller
 }
 
@@ -52,9 +53,9 @@ func Provider(options ControllerOptions) base.Controller {
 		userSchemas:      options.UserSchemas,
 		sqs:              options.SQS,
 		s3:               options.S3,
-		db:               options.DB,
 		renderer:         options.Renderer,
 		schemaScreenshot: options.SchemaScreenshot,
+		schemaDelete:     options.SchemaDelete,
 		usersController:  options.UsersController,
 	}
 }
@@ -65,7 +66,10 @@ func (c *Controller) Private(group fiber.Router) {
 	base.WithGroup(group, "schemas", func(group fiber.Router) {
 		group.Get("", c.List)
 		group.Post("", c.Create)
-		group.Delete("delete-many", c.Delete)
+		group.Delete("delete", c.Delete)
+		group.Delete("delete-permanently", c.DeletePermanently)
+		group.Post("restore", c.Restore)
+		group.Get("deleted", c.ListDeleted)
 
 		c.usersController.Private(group)
 
@@ -76,4 +80,8 @@ func (c *Controller) Private(group fiber.Router) {
 			group.Get("preview", c.Preview)
 		})
 	})
+}
+
+func (c *Controller) filterSchemaIDsByAccess(ctx *fiber.Ctx, IDs *[]model.ID) error {
+	return c.userSchemas.FilterByAccess(ctx.Context(), auth.GetSessionUser(ctx), IDs, model.AccessAdmin)
 }

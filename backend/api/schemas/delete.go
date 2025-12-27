@@ -2,41 +2,23 @@ package schemas
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 
-	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
-	"polimane/backend/model"
-	"polimane/backend/repository"
 )
 
-type DeleteBody struct {
-	IDs []model.ID `json:"ids" validate:"required"`
-}
-
 func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
-	var body DeleteBody
+	var body base.BulkOperationBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
 
-	user := auth.GetSessionUser(ctx)
-	reqCtx := ctx.Context()
-	err = c.userSchemas.FilterByAccess(reqCtx, user, &body.IDs, model.AccessAdmin)
-	if err != nil {
+	if err = c.filterSchemaIDsByAccess(ctx, &body.IDs); err != nil {
 		return err
 	}
 
-	err = c.db.WithContext(reqCtx).Transaction(func(tx *gorm.DB) error {
-		err = c.schemas.Delete(reqCtx,
-			repository.IDsIn(body.IDs),
-		)
-		if err != nil {
-			return err
-		}
-
-		return c.schemaScreenshot.Delete(reqCtx, body.IDs)
-	})
+	if err = c.schemas.DeleteSoft(ctx.Context(), body.IDs); err != nil {
+		return err
+	}
 
 	return base.NewSuccessResponse(ctx)
 }

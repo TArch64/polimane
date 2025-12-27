@@ -1,6 +1,6 @@
 <template>
   <Badge interactable :binding class="copy-badge">
-    <span class="copy-badge__text">
+    <span class="text-truncate copy-badge__text">
       {{ text }}
     </span>
 
@@ -46,9 +46,6 @@ const binding = makeBinding('button', () => ({
   }
 
   .copy-badge__text {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     max-width: 100%;
 
     &:has(+ .copy-badge__icon) {

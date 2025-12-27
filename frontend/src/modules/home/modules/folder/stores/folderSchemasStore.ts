@@ -28,11 +28,16 @@ export const useFolderSchemasStore = defineStore('home/folder/schemas', () => {
 
   const list = useAsyncData({
     async loader(current): Promise<IListResponse> {
-      return http.get<IListResponse, ListRequestParams>(['/schemas'], {
+      const res = await http.get<IListResponse, ListRequestParams>(['/schemas'], {
         folder: folderId.value,
         limit: PAGINATION_PAGE,
         offset: current.schemas.length,
       });
+
+      return {
+        schemas: [...current.schemas, ...res.schemas],
+        total: res.total || current.total,
+      };
     },
 
     default: {
@@ -77,16 +82,15 @@ export const useFolderSchemasStore = defineStore('home/folder/schemas', () => {
   }
 
   async function deleteMany(ids: string[]): Promise<void> {
-    const idsSet = new Set(ids);
-
     await list.optimisticUpdate()
       .inTransition()
       .begin((state) => {
+        const idsSet = new Set(ids);
         state.schemas = state.schemas.filter((schema) => !idsSet.has(schema.id));
         state.total -= ids.length;
       })
       .commit(async () => {
-        await http.delete<HttpBody, IDeleteManySchemasRequest>(['/schemas', 'delete-many'], { ids });
+        await http.delete<HttpBody, IDeleteManySchemasRequest>(['/schemas', 'delete'], { ids });
       });
 
     if (canLoadNext.value && schemas.value.length < PAGINATION_PAGE) {

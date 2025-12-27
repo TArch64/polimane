@@ -12,7 +12,7 @@ import (
 )
 
 type UpdateAccessBody struct {
-	BulkOperationBody
+	base.BulkOperationBody
 	Access model.AccessLevel `validate:"required,gte=1,lte=3" json:"access"`
 }
 

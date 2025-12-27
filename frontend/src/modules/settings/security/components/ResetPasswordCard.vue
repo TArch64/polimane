@@ -41,8 +41,8 @@ const resetPassword = useAsyncAction(async (): Promise<void> => {
 });
 
 async function resetPasswordIntent() {
-  const confirmed = await resetPasswordConfirm.ask();
-  if (confirmed.isAccepted) await resetPassword();
+  const confirmation = await resetPasswordConfirm.ask();
+  if (confirmation.isAccepted) await resetPassword();
 }
 
 useProgressBar(resetPassword);

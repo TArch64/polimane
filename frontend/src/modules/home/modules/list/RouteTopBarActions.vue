@@ -1,5 +1,11 @@
 <template>
   <HomeBarRouteActions>
+    <HomeBarCreateSchema />
+
+    <Button icon title="Нещодавно Видалені" :to="recentlyDeletedRoute">
+      <TrashIcon />
+    </Button>
+
     <Dropdown>
       <template #activator="{ activatorStyle, open }">
         <Button icon title="Профіль" :style="activatorStyle" @click="open">
@@ -27,12 +33,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
-import { LogOutIcon, PersonFillIcon, SettingsIcon } from '@/components/icon';
+import { LogOutIcon, PersonFillIcon, SettingsIcon, TrashIcon } from '@/components/icon';
 import { Dropdown, DropdownAction, DropdownText } from '@/components/dropdown';
 import { Button } from '@/components/button';
 import { useSessionStore } from '@/stores';
 import { useAsyncAction, useProgressBar } from '@/composables';
-import { HomeBarRouteActions } from '@/modules/home/components';
+import { HomeBarCreateSchema, HomeBarRouteActions } from '@/modules/home/components';
 
 const sessionStore = useSessionStore();
 
@@ -46,6 +52,7 @@ const displayName = computed(() => {
   return email;
 });
 
+const recentlyDeletedRoute: RouteLocationRaw = { name: 'home-recently-deleted' };
 const settingsProfileRoute: RouteLocationRaw = { name: 'settings-profile' };
 
 const logout = useAsyncAction(sessionStore.logout);

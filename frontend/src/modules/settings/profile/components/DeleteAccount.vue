@@ -40,8 +40,8 @@ const deleteAccount = useAsyncAction(async () => {
 });
 
 async function deleteIntent(): Promise<void> {
-  const confirmed = await deleteConfirm.ask();
-  if (confirmed.isAccepted) await deleteAccount();
+  const confirmation = await deleteConfirm.ask();
+  if (confirmation.isAccepted) await deleteAccount();
 }
 </script>
 

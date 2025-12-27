@@ -13,7 +13,7 @@ export function useSchemaSelectionEditAccess(actionIds: Ref<string[]>): Ref<Mayb
   const accessEditModal = useModal(SchemaAccessEditModal);
 
   return computed(() => !!actionIds.value.length && {
-    title: 'Редагувати доступ',
+    title: 'Редагувати Доступ',
     icon: PeopleIcon,
 
     async onAction() {

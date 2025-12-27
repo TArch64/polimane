@@ -1,6 +1,6 @@
 <template>
   <li class="access-row">
-    <p class="access-row__name">
+    <p class="text-truncate access-row__name">
       {{ displayName }}
 
       <span v-if="!editable" class="access-row__name-label">
@@ -57,8 +57,8 @@ const deleteConfirm = useConfirm({
 });
 
 async function deleteUserIntent(): Promise<void> {
-  const confirmed = await deleteConfirm.ask();
-  if (confirmed.isAccepted) emit('delete');
+  const confirmation = await deleteConfirm.ask();
+  if (confirmation.isAccepted) emit('delete');
 }
 
 </script>
@@ -76,14 +76,11 @@ async function deleteUserIntent(): Promise<void> {
     flex-basis: 0;
     flex-grow: 1;
     min-width: 0;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
   }
 
   .access-row__name-label {
     font-weight: 400;
-    color: var(--color-text-3)
+    color: var(--color-text-2)
   }
 
   .access-row__actions {

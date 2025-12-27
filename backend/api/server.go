@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"go.uber.org/fx"
 
 	"polimane/backend/api/auth"
@@ -67,6 +68,10 @@ func Provider(options ServerOptions) (*fiber.App, error) {
 	app.Use(encryptcookie.New(encryptcookie.Config{
 		Key: options.Env.SecretKey,
 	}))
+
+	if env.IsDev {
+		app.Use(logger.New())
+	}
 
 	base.InitValidator()
 

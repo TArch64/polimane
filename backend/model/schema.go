@@ -20,6 +20,7 @@ const (
 type Schema struct {
 	*Identifiable
 	*Timestamps
+	*SoftDeletable
 	Name            string                    `json:"name"`
 	Palette         t.JSONType[SchemaPalette] `json:"palette,omitempty"`
 	Size            t.JSONType[*SchemaSize]   `json:"size,omitempty"`

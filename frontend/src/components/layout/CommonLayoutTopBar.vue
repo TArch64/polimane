@@ -8,15 +8,17 @@
       </h1>
     </template>
 
-    <Button
-      :to="homeRoute"
-      :prepend-icon="ArrowBackIcon"
-      title="Назад"
-      class="common-layout-top-bar__back-button"
-      v-else
-    >
-      {{ title }}
-    </Button>
+    <div class="common-layout-top-bar__back-button-container" v-else>
+      <Button
+        truncate
+        :to="homeRoute"
+        :prepend-icon="ArrowBackIcon"
+        title="Назад"
+        class="common-layout-top-bar__back-button"
+      >
+        {{ title }}
+      </Button>
+    </div>
 
     <div class="common-layout-top-bar__actions">
       <slot />
@@ -39,6 +41,7 @@ defineSlots<{
 }>();
 
 const route = useRoute();
+
 const homeRoute: RouteLocationRaw = { name: 'home' };
 const isHomeRoute = computed(() => route.name === homeRoute.name);
 </script>
@@ -63,9 +66,15 @@ const isHomeRoute = computed(() => route.name === homeRoute.name);
     font-weight: 500;
   }
 
+  .common-layout-top-bar__back-button-container {
+    margin-right: 32px;
+    max-width: 350px;
+  }
+
   .common-layout-top-bar__back-button {
     font-size: 16px;
     font-weight: 450;
+    max-width: 100%;
   }
 
   .common-layout-top-bar__actions {

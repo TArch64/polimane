@@ -1,20 +1,22 @@
 <template>
   <div class="home-list-empty">
-    <p class="home-list-empty__description">
-      {{ description }}
-    </p>
+    <div class="home-list-empty__description">
+      <slot name="description" />
+    </div>
 
-    <div class="home-list-empty__actions">
-      <slot />
+    <div class="home-list-empty__actions" v-if="slots.actions">
+      <slot name="actions" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  description: string;
-}>();
+import type { Slot } from 'vue';
 
+const slots = defineSlots<{
+  description: Slot;
+  actions?: Slot;
+}>();
 </script>
 
 <style scoped>
@@ -29,6 +31,11 @@ defineProps<{
 
   .home-list-empty__description {
     margin-bottom: 12px;
+    text-align: center;
+
+    :deep(p:not(:first-child)) {
+      margin-top: 8px;
+    }
   }
 
   .home-list-empty__actions {

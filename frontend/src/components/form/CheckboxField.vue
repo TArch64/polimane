@@ -2,7 +2,7 @@
   <LabeledContent :label gap="12">
     <input
       type="checkbox"
-      class="checkbox"
+      class="checkbox__input tap-animation"
       v-model="model"
     >
   </LabeledContent>
@@ -20,11 +20,12 @@ const model = defineModel<boolean>({ required: true });
 
 <style scoped>
 @layer components {
-  .checkbox {
+  .checkbox__input {
     accent-color: var(--color-primary);
     width: 16px;
     height: 16px;
     cursor: pointer;
+    --tap-scale: 0.9;
   }
 }
 </style>

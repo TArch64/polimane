@@ -1,2 +1,3 @@
 0 * * * * /app/send-message.sh cleanup-invitations >> /var/log/cron.log 2>&1
 5 * * * * /app/send-message.sh delete-users >> /var/log/cron.log 2>&1
+10 * * * * /app/send-message.sh permanently-delete-schemas >> /var/log/cron.log 2>&1

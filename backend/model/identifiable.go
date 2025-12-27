@@ -6,6 +6,8 @@ import (
 
 type ID = pgtype.UUID
 
+var NilID = &ID{Valid: false}
+
 func StringToID(str string) (ID, error) {
 	id := pgtype.UUID{}
 	err := id.Scan(str)

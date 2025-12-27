@@ -54,7 +54,7 @@ const deleteFactor = useAsyncAction(async () => {
 useProgressBar(deleteFactor);
 
 async function deleteIntent() {
-  const confirmed = await deleteConfirm.ask();
-  if (confirmed.isAccepted) await deleteFactor();
+  const confirmation = await deleteConfirm.ask();
+  if (confirmation.isAccepted) await deleteFactor();
 }
 </script>

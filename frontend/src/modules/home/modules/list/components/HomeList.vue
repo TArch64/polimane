@@ -13,18 +13,20 @@
     </HomeGridList>
   </template>
 
-  <HomeListHeading>
-    Схеми для Бісеру
-  </HomeListHeading>
+  <template v-if="schemasStore.hasSchemas">
+    <HomeListHeading>
+      Схеми для Бісеру
+    </HomeListHeading>
 
-  <HomeGridList
-    selectable
-    :list="schemasStore.schemas"
-    v-model:selected="schemasStore.selected"
-    v-slot="{ item, itemRef }"
-  >
-    <HomeListSchema :ref="itemRef" :schema="item" />
-  </HomeGridList>
+    <HomeGridList
+      selectable
+      :list="schemasStore.schemas"
+      v-model:selected="schemasStore.selected"
+      v-slot="{ item, itemRef }"
+    >
+      <HomeSchema :ref="itemRef" :schema="item" />
+    </HomeGridList>
+  </template>
 
   <HomeListLoader :visible="listStore.list.isLoading" />
 </template>
@@ -32,14 +34,10 @@
 <script setup lang="ts">
 import { toRef } from 'vue';
 import { useInfinityScroll } from '@/composables';
-import {
-  HomeGridList,
-  HomeListHeading,
-  HomeListLoader,
-  HomeListSchema,
-} from '@/modules/home/components';
+import { HomeGridList, HomeListHeading, HomeListLoader } from '@/modules/home/components';
 import { useFoldersStore, useHomeListStore, useSchemasStore } from '../stores';
 import HomeFolder from './HomeFolder.vue';
+import HomeSchema from './HomeSchema.vue';
 
 const listStore = useHomeListStore();
 const schemasStore = useSchemasStore();

@@ -59,15 +59,11 @@ func (c *Controller) Private(group fiber.Router) {
 	})
 }
 
-func (c *Controller) FilterSchemaIDsByAccess(ctx *fiber.Ctx, IDs *[]model.ID) error {
+func (c *Controller) filterSchemaIDsByAccess(ctx *fiber.Ctx, IDs *[]model.ID) error {
 	return c.userSchemas.FilterByAccess(ctx.Context(), auth.GetSessionUser(ctx), IDs, model.AccessAdmin)
 }
 
-type BulkOperationBody struct {
-	IDs []model.ID `json:"ids" validate:"required"`
-}
-
 type InvitationBody struct {
-	BulkOperationBody
+	base.BulkOperationBody
 	Email string `json:"email" validate:"required,email,max=255"`
 }

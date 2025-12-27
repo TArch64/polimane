@@ -24,7 +24,11 @@ const controlClasses = computed(() => {
 });
 
 const Picker: FunctionalComponent = () => h('span', {
-  class: ['color-picker__control', controlClasses.value],
+  class: [
+    'color-picker__control',
+    'tap-animation',
+    controlClasses.value,
+  ],
 }, [
   h('input', {
     type: 'color',

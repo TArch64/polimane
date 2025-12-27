@@ -9,7 +9,7 @@
     v-model:selected="schemasStore.selected"
     v-slot="{ item, itemRef }"
   >
-    <HomeListSchema :ref="itemRef" :schema="item" />
+    <FolderSchema :ref="itemRef" :schema="item" />
   </HomeGridList>
 
   <HomeListLoader :visible="schemasStore.isLoading" />
@@ -18,13 +18,9 @@
 <script setup lang="ts">
 import { toRef } from 'vue';
 import { useInfinityScroll } from '@/composables';
-import {
-  HomeGridList,
-  HomeListHeading,
-  HomeListLoader,
-  HomeListSchema,
-} from '@/modules/home/components';
+import { HomeGridList, HomeListHeading, HomeListLoader } from '@/modules/home/components';
 import { useFolderSchemasStore } from '../stores';
+import FolderSchema from './FolderSchema.vue';
 
 const schemasStore = useFolderSchemasStore();
 

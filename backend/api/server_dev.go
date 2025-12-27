@@ -14,6 +14,7 @@ import (
 func OptionsProvider() *Options {
 	return &Options{
 		Protocol: "http",
+
 		Configure: func(config *fiber.Config) {
 			config.EnablePrintRoutes = true
 		},

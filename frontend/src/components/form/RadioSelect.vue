@@ -9,7 +9,7 @@
       >
         <input
           type="radio"
-          class="radio-select__input"
+          class="radio-select__input tap-animation"
           :name="id"
           :value="option.value"
           :disabled="option.disabled"
@@ -69,6 +69,7 @@ const getOptionLabelClasses = (option: ISelectOption<V>) => ({
     width: 16px;
     height: 16px;
     cursor: pointer;
+    --tap-scale: 0.9;
   }
 
   .radio-select__option,

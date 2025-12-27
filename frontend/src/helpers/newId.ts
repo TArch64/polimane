@@ -1,3 +1,1 @@
-import { ulid } from 'ulid';
-
-export const newId = (): string => ulid().toLowerCase();
+export const newId = (): string => crypto.randomUUID();

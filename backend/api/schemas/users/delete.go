@@ -20,7 +20,7 @@ func (c *Controller) Delete(ctx *fiber.Ctx) error {
 		return base.InvalidRequestErr
 	}
 
-	var body BulkOperationBody
+	var body base.BulkOperationBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}

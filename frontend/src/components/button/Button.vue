@@ -1,9 +1,9 @@
 <template>
   <ButtonRoot
     :to
-    class="button"
+    class="button tap-animation"
     :class="classes"
-    :disabled="disabled ? 'disabled' : undefined"
+    :disabled="disabled || loading ? 'disabled' : undefined"
   >
     <Component
       :is="prependIcon"
@@ -15,7 +15,7 @@
 
     <slot v-if="icon" />
 
-    <span class="button__text" v-else>
+    <span class="button__text" :class="textClasses" v-else>
       <slot />
     </span>
   </ButtonRoot>
@@ -41,6 +41,7 @@ const props = withDefaults(defineProps<{
   disabled?: boolean;
   loading?: boolean;
   active?: boolean;
+  truncate?: boolean;
 }>(), {
   icon: false,
   danger: false,
@@ -64,6 +65,10 @@ const classes = computed(() => [
     'button--icon-only': props.mobileIconOnly,
   },
 ]);
+
+const textClasses = computed(() => ({
+  'text-truncate': props.truncate,
+}));
 </script>
 
 <style scoped>
@@ -78,11 +83,17 @@ const classes = computed(() => [
     justify-content: center;
     cursor: pointer;
     position: relative;
+    --tap-scale: 0.98;
   }
 
   .button__prepend-icon {
     margin-left: -4px;
     margin-right: 4px;
+    flex-shrink: 0;
+  }
+
+  .button--icon {
+    --tap-scale: 0.9;
   }
 
   .button--sm {
@@ -125,12 +136,12 @@ const classes = computed(() => [
     transition: background-color 0.15s ease-out, color 0.15s ease-out;
     will-change: background-color, color;
 
-    &:where(:hover, .router-link-exact-active, .button--active, .button--loading):not([disabled]) {
+    &:where(:hover, .router-link-exact-active, .button--active):not([disabled]) {
       color: var(--button-hover-foreground, var(--button-foreground));
       background-color: var(--button-hover-background);
     }
 
-    &[disabled] {
+    &[disabled]:not(.button--loading) {
       background-color: var(--button-disabled-background);
       color: var(--button-disabled-foreground);
       cursor: default;

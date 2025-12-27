@@ -41,10 +41,22 @@ func IncludeSoftDeleted(stmt *gorm.Statement) {
 	stmt.Unscoped = true
 }
 
-func SoftDeleted(days uint8) Scope {
+func SoftDeletedOnly(table ...string) Scope {
+	column := "deleted_at"
+	if len(table) > 0 {
+		column = fmt.Sprintf("%s.%s", table[0], column)
+	}
+
 	return func(stmt *gorm.Statement) {
 		IncludeSoftDeleted(stmt)
+		Where(fmt.Sprintf("%s IS NOT NULL", column))(stmt)
+	}
+}
+
+func SoftDeletedDaysAgo(days uint8, table ...string) Scope {
+	return func(stmt *gorm.Statement) {
+		SoftDeletedOnly(table...)(stmt)
 		interval := fmt.Sprintf("%d days", days)
-		Where("deleted_at IS NOT NULL AND deleted_at <= NOW() - ?::INTERVAL", interval)(stmt)
+		Where("deleted_at <= NOW() - ?::INTERVAL", interval)(stmt)
 	}
 }

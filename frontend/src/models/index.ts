@@ -6,3 +6,4 @@ export type * from './ISchemaUser';
 export * from './SchemaBeadCoord';
 export * from './NodeRect';
 export * from './Point';
+export * from './Callback';

@@ -34,8 +34,9 @@ defineEmits<{
 <style scoped>
 @layer components {
   .common-layout-selection-bar {
-    position: sticky;
+    position: fixed;
     top: 0;
+    width: 100%;
     display: flex;
     align-items: center;
     padding: 12px 16px;
@@ -43,7 +44,7 @@ defineEmits<{
     background-color: var(--color-primary);
     border-bottom: var(--divider);
     color: var(--color-white);
-    z-index: 10;
+    z-index: 11;
     --button-base-color: var(--color-white);
   }
 

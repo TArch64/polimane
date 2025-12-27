@@ -13,7 +13,7 @@ func (c *Controller) DeleteInvitation(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	if err = c.FilterSchemaIDsByAccess(ctx, &body.IDs); err != nil {
+	if err = c.filterSchemaIDsByAccess(ctx, &body.IDs); err != nil {
 		return err
 	}
 

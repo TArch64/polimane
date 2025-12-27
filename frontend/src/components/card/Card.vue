@@ -62,7 +62,7 @@ const slots = defineSlots<{
 const classes = computed(() => [
   `card--variant-${props.variant}`,
   {
-    'card--interactable': props.interactable,
+    'card--interactable tap-animation': props.interactable,
     'card--active': props.active,
   },
 ]);
@@ -74,7 +74,7 @@ const classes = computed(() => [
     padding: var(--card-padding-top) var(--card-padding-right) var(--card-padding-bottom) var(--card-padding-left);
     background-color: var(--card-background);
     border: var(--divider);
-    border-radius: var(--rounded-md);
+    border-radius: var(--rounded-lg);
 
     --card-padding-top: 8px;
     --card-padding-bottom: 8px;
@@ -99,10 +99,10 @@ const classes = computed(() => [
     &:focus-within:not(.card--active) {
       border-color: var(--color-hover-divider);
     }
+  }
 
-    &.card--active {
-      border-color: var(--color-primary);
-    }
+  .card--active {
+    border-color: var(--color-primary);
   }
 
   .card__title {

@@ -1,0 +1,33 @@
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@property --tap-scale {
+  inherits: true;
+  initial-value: 0.95;
+  syntax: '<number>';
+}
+
+@keyframes tap {
+  from {
+    scale: 1;
+  }
+
+  to {
+    scale: var(--tap-scale);
+  }
+}
+
+@media (min-width: 768px) {
+  .tap-animation:active:not([disabled]):not(:has([disabled])) {
+    animation: tap 300ms ease-out;
+  }
+}
+
+@media (max-width: 768px) {
+  .tap-animation:where(:focus, :active, :hover):not([disabled]):not(:has([disabled])) {
+    animation: tap 300ms ease-out;
+  }
+}
