@@ -10,7 +10,6 @@
     v-slot="{ item, itemRef }"
   >
     <DeletedSchema
-
       :ref="itemRef"
       :schema="item"
     />

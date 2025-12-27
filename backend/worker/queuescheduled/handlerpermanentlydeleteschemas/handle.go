@@ -22,9 +22,9 @@ func (h *Handler) Handle(ctx context.Context, _ *events.Message) error {
 }
 
 func (h *Handler) getSoftDeletedSchemaIDs(ctx context.Context) ([]model.ID, error) {
-	var IDs []model.ID
+	var ids []model.ID
 
-	err := h.schemas.ListOut(ctx, &IDs,
+	err := h.schemas.ListOut(ctx, &ids,
 		repository.Select("id"),
 		repository.SoftDeletedDaysAgo(30),
 	)
@@ -33,5 +33,5 @@ func (h *Handler) getSoftDeletedSchemaIDs(ctx context.Context) ([]model.ID, erro
 		return nil, err
 	}
 
-	return IDs, nil
+	return ids, nil
 }
