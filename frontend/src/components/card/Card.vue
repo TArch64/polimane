@@ -99,10 +99,10 @@ const classes = computed(() => [
     &:focus-within:not(.card--active) {
       border-color: var(--color-hover-divider);
     }
+  }
 
-    &.card--active {
-      border-color: var(--color-primary);
-    }
+  .card--active {
+    border-color: var(--color-primary);
   }
 
   .card__title {

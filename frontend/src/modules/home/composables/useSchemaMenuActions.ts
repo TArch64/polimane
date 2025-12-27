@@ -38,7 +38,7 @@ export function useSchemaMenuActions(schemaRef: MaybeRefOrGetter<ListSchema>): C
 
   return computed((): MaybeContextMenuAction[] => [
     permissions.write && {
-      title: 'Змінити назву',
+      title: 'Змінити Назву',
       icon: EditIcon,
 
       onAction() {

@@ -21,7 +21,7 @@ export function useSchemaSelectionDelete(actionIds: Ref<string[]>, clear: () => 
   });
 
   return computed(() => !!actionIds.value.length && {
-    title: 'Видалити схеми',
+    title: 'Видалити Схеми',
     icon: TrashIcon,
     danger: true,
 
