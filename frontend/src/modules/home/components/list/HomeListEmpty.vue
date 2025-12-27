@@ -43,7 +43,7 @@ const slots = defineSlots<{
 
   .home-list-empty__icon {
     margin-bottom: 12px;
-    color: var(--color-text-2);
+    color: var(--color-text-3);
   }
 
   .home-list-empty__description {

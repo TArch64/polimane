@@ -80,7 +80,7 @@ async function deleteUserIntent(): Promise<void> {
 
   .access-row__name-label {
     font-weight: 400;
-    color: var(--color-text-3)
+      color: var(--color-text-2)
   }
 
   .access-row__actions {

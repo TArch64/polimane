@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { type RouteLocationRaw, RouterLink } from 'vue-router';
-import { type Slot, toRef } from 'vue';
+import { computed, type Slot, toRef } from 'vue';
 import { Card } from '@/components/card';
 import { makeBinding } from '@/components/binding';
 import { type MaybeContextMenuAction, useContextMenu } from '@/components/contextMenu';
@@ -21,10 +21,12 @@ import { useDomRef } from '@/composables';
 const props = withDefaults(defineProps<{
   to: RouteLocationRaw;
   selected?: boolean;
+  disabled?: boolean;
   menuTitle: string;
   menuActions: MaybeContextMenuAction[];
 }>(), {
   selected: false,
+  disabled: false,
 });
 
 defineSlots<{
@@ -33,10 +35,18 @@ defineSlots<{
 
 const cardRef = useDomRef<HTMLElement>();
 
-const cardBinding = makeBinding(RouterLink, () => ({
+const linkBinding = makeBinding(RouterLink, () => ({
   draggable: false,
   to: props.to,
 }));
+
+const disabledBinding = makeBinding('div', () => ({
+  draggable: false,
+}));
+
+const cardBinding = computed(() => {
+  return props.disabled ? disabledBinding.value : linkBinding.value;
+});
 
 useContextMenu({
   el: cardRef,

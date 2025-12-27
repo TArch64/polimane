@@ -1,8 +1,5 @@
 <template>
-  <p v-if="schemasStore.schemas.length">
-    schemas
-  </p>
-
+  <DeletedList v-if="schemasStore.schemas.length" />
   <DeletedEmpty v-else />
 </template>
 
@@ -11,7 +8,7 @@ import { definePreload } from '@/router/define';
 import { useHomeStore } from '../../stores';
 import { useSchemasSelection } from './composables';
 import { useDeletedSchemasStore } from './stores';
-import { DeletedEmpty } from './components';
+import { DeletedEmpty, DeletedList } from './components';
 
 defineOptions({
   beforeRouteEnter: definePreload<'home-recently-deleted'>(async () => {
@@ -26,7 +23,7 @@ homeStore.setRouteConfig({
   title: 'Нещодавно Видалені Схеми',
   selection: useSchemasSelection(),
 
-  // implement later
+  // unavailable in current route
   addSchemaToFolder: null!,
   copySchema: null!,
   createSchema: null!,

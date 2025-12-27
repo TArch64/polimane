@@ -1,5 +1,6 @@
 <template>
   <HomeListCard
+    :disabled
     :to="editorRoute"
     :selected="isSelected"
     :menu-title="schema.name"
@@ -36,6 +37,7 @@ import HomeListScreenshot from './HomeListScreenshot.vue';
 
 const props = defineProps<{
   schema: ListSchema;
+  disabled?: boolean;
 }>();
 
 const router = useRouter();
