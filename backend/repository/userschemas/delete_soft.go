@@ -10,7 +10,7 @@ import (
 	"polimane/backend/repository"
 )
 
-func (c *Client) SoftDeleteTx(ctx context.Context, tx *gorm.DB, scopes ...repository.Scope) error {
+func (c *Client) DeleteSoftTx(ctx context.Context, tx *gorm.DB, scopes ...repository.Scope) error {
 	scopes = append(scopes, repository.IncludeSoftDeleted)
 
 	affected, err := gorm.

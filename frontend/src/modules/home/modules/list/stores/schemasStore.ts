@@ -41,16 +41,15 @@ export const useSchemasStore = defineStore('schemas/list/schemas', () => {
   }
 
   async function deleteMany(ids: string[]): Promise<void> {
-    const idsSet = new Set(ids);
-
     await listStore.list.optimisticUpdate()
       .inTransition()
       .begin((state) => {
+        const idsSet = new Set(ids);
         state.schemas = state.schemas.filter((schema) => !idsSet.has(schema.id));
         state.total -= ids.length;
       })
       .commit(async () => {
-        await http.delete<HttpBody, IDeleteManySchemasRequest>(['/schemas', 'delete-many'], { ids });
+        await http.delete<HttpBody, IDeleteManySchemasRequest>(['/schemas', 'delete'], { ids });
       });
 
     if (listStore.canLoadNext && schemas.value.length < PAGINATION_PAGE) {

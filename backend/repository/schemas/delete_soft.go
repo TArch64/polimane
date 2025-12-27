@@ -9,7 +9,7 @@ import (
 	"polimane/backend/repository"
 )
 
-func (c *Client) SoftDelete(ctx context.Context, IDs []model.ID) error {
+func (c *Client) DeleteSoft(ctx context.Context, IDs []model.ID) error {
 	return c.DB.
 		WithContext(ctx).
 		Transaction(func(tx *gorm.DB) error {
@@ -20,7 +20,7 @@ func (c *Client) SoftDelete(ctx context.Context, IDs []model.ID) error {
 				return err
 			}
 
-			return c.userSchemas.SoftDeleteTx(ctx, tx,
+			return c.userSchemas.DeleteSoftTx(ctx, tx,
 				repository.SchemaIDsIn(IDs),
 			)
 		})

@@ -8,12 +8,12 @@ import (
 	"polimane/backend/model"
 )
 
-type DeleteBody struct {
+type DeletePermanentlyBody struct {
 	IDs []model.ID `json:"ids" validate:"required"`
 }
 
-func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
-	var body DeleteBody
+func (c *Controller) DeletePermanently(ctx *fiber.Ctx) (err error) {
+	var body DeletePermanentlyBody
 	if err = base.ParseBody(ctx, &body); err != nil {
 		return err
 	}
@@ -25,7 +25,7 @@ func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	if err = c.schemas.DeleteSoft(reqCtx, body.IDs); err != nil {
+	if err = c.schemaDelete.Delete(reqCtx, body.IDs); err != nil {
 		return err
 	}
 

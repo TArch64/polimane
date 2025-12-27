@@ -23,6 +23,7 @@ import (
 	"polimane/backend/services/awssqs"
 	"polimane/backend/services/bitwarden"
 	"polimane/backend/services/db"
+	"polimane/backend/services/schemadelete"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/services/sentry"
 	"polimane/backend/services/workos"
@@ -56,6 +57,7 @@ func main() {
 			awssqs.Provider,
 			views.Provider,
 			schemascreenshot.Provider,
+			schemadelete.Provider,
 
 			// repositories
 			repositoryuserschemas.Provider,

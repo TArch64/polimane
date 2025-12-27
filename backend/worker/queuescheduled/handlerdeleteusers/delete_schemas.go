@@ -31,11 +31,7 @@ func (h *Handler) deleteUserSchemas(ctx context.Context, tx *gorm.DB, user *mode
 		return nil
 	}
 
-	if err = h.schemaScreenshot.Delete(ctx, schemaIDs); err != nil {
-		return err
-	}
-
-	return h.deleteSchemas(ctx, tx, schemaIDs)
+	return h.schemaDelete.DeleteTx(ctx, tx, schemaIDs)
 }
 
 func (h *Handler) getUserSchemaIDs(ctx context.Context, tx *gorm.DB, user *model.User) ([]model.ID, error) {
@@ -84,11 +80,4 @@ func (h *Handler) filterOrphanSchemaIDs(ctx context.Context, tx *gorm.DB, schema
 
 	*schemaIDs = orphanIDs
 	return nil
-}
-
-func (h *Handler) deleteSchemas(ctx context.Context, tx *gorm.DB, schemaIDs []model.ID) error {
-	return h.schemas.DeleteTx(ctx, tx,
-		repository.IncludeSoftDeleted,
-		repository.IDsIn(schemaIDs),
-	)
 }

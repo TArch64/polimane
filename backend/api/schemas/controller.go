@@ -11,6 +11,7 @@ import (
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 	"polimane/backend/services/awssqs"
+	"polimane/backend/services/schemadelete"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/views"
 )
@@ -27,6 +28,7 @@ type ControllerOptions struct {
 	S3               *s3.Client
 	Renderer         *views.Renderer
 	SchemaScreenshot *schemascreenshot.Service
+	SchemaDelete     *schemadelete.Service
 	UsersController  *users.Controller
 }
 
@@ -38,6 +40,7 @@ type Controller struct {
 	s3               *s3.Client
 	renderer         *views.Renderer
 	schemaScreenshot *schemascreenshot.Service
+	schemaDelete     *schemadelete.Service
 	usersController  *users.Controller
 }
 
@@ -50,6 +53,7 @@ func Provider(options ControllerOptions) base.Controller {
 		s3:               options.S3,
 		renderer:         options.Renderer,
 		schemaScreenshot: options.SchemaScreenshot,
+		schemaDelete:     options.SchemaDelete,
 		usersController:  options.UsersController,
 	}
 }
@@ -60,7 +64,8 @@ func (c *Controller) Private(group fiber.Router) {
 	base.WithGroup(group, "schemas", func(group fiber.Router) {
 		group.Get("", c.List)
 		group.Post("", c.Create)
-		group.Delete("delete-many", c.Delete)
+		group.Delete("delete", c.Delete)
+		group.Delete("delete-permanently", c.DeletePermanently)
 		group.Get("deleted", c.ListDeleted)
 
 		c.usersController.Private(group)
