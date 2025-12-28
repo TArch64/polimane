@@ -23,16 +23,18 @@
       </option>
     </SelectField>
 
-    <TextField
-      label
-      required
-      ref="nameRef"
-      placeholder="Назва Директорії"
-      variant="control"
-      class="folder-add-schema-modal__folder-name"
-      v-model="form.folderName"
-      v-if="isNewFolder"
-    />
+    <VerticalSlideTransition :duration="200">
+      <TextField
+        label
+        required
+        ref="nameRef"
+        placeholder="Назва Директорії"
+        variant="control"
+        class="folder-add-schema-modal__folder-name"
+        v-model="form.folderName"
+        v-if="isNewFolder"
+      />
+    </VerticalSlideTransition>
   </Modal>
 </template>
 
@@ -42,6 +44,7 @@ import type { ComponentExposed } from 'vue-component-type-helpers';
 import { Modal, useActiveModal } from '@/components/modal';
 import { SelectField, TextField } from '@/components/form';
 import { HttpError, HttpErrorReason, useAsyncAction } from '@/composables';
+import { VerticalSlideTransition } from '@/components/transition';
 import { useHomeFoldersStore, useHomeStore } from '../../stores';
 
 const props = defineProps<{
