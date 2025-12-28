@@ -5,7 +5,9 @@ import (
 	"go.uber.org/fx"
 	"gorm.io/gorm"
 
+	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/model"
 	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
@@ -57,7 +59,34 @@ func (c *Controller) Private(group fiber.Router) {
 			group.Get("", c.ByID)
 			group.Patch("", c.Update)
 			group.Delete("", c.Delete)
-			group.Post("schemas", c.AddSchema)
+			group.Post("schemas", c.AddSchemas)
+			group.Delete("schemas", c.RemoveSchemas)
 		})
 	})
+}
+
+func (c *Controller) getFolderID(ctx *fiber.Ctx) (model.ID, error) {
+	folderID, err := base.GetParamID(ctx, ParamFolderID)
+	if err != nil {
+		return folderID, err
+	}
+
+	if err = c.checkFolderAccess(ctx, folderID); err != nil {
+		return folderID, err
+	}
+
+	return folderID, nil
+}
+
+func (c *Controller) checkFolderAccess(ctx *fiber.Ctx, folderID model.ID) error {
+	user := auth.GetSessionUser(ctx)
+	return c.folders.HasAccess(ctx.Context(), user.ID, folderID)
+}
+
+func (c *Controller) filterSchemaIDsByAccess(ctx *fiber.Ctx, IDs *[]model.ID) error {
+	return c.userSchemas.FilterByAccess(ctx.Context(), auth.GetSessionUser(ctx), IDs, model.AccessRead)
+}
+
+type BulkSchemasBody struct {
+	SchemaIDs []model.ID `json:"schemaIds" validate:"required,dive,required"`
 }

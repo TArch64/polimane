@@ -7,6 +7,7 @@ import {
   useSchemaSelectionDelete,
   useSchemaSelectionEditAccess,
 } from '@/modules/home/composables';
+import { FolderRemoveIcon } from '@/components/icon';
 import { useFolderSchemasStore } from '../stores';
 
 export function useSchemasSelection(): ISchemaSelectionAdapter {
@@ -29,6 +30,16 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
 
     return [
       addToFolderAction.value,
+
+      {
+        title: 'Видалити з Директорії',
+        icon: FolderRemoveIcon,
+        async onAction() {
+          await schemasStore.removeManyFromFolder(allActionIds.value);
+          schemasStore.clearSelection();
+        },
+      },
+
       editAccessAction.value,
       deleteAction.value,
     ];

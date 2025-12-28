@@ -60,6 +60,7 @@ export const PeopleIcon = makeIcon(() => import('~icons/eva/people-outline'));
 export const MoveIcon = makeIcon(() => import('~icons/eva/move-outline'));
 export const MaximizeIcon = makeIcon(() => import('~icons/eva/maximize-outline'));
 export const FolderIcon = makeIcon(() => import('~icons/eva/folder-outline'));
+export const FolderRemoveIcon = makeIcon(() => import('~icons/eva/folder-remove-outline'));
 
 export const PersonFillIcon = makeIcon(() => import('~icons/eva/person-fill'));
 

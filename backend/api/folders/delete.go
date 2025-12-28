@@ -17,7 +17,7 @@ type DeleteBody struct {
 }
 
 func (c *Controller) Delete(ctx *fiber.Ctx) error {
-	folderID, err := base.GetParamID(ctx, ParamFolderID)
+	folderID, err := c.getFolderID(ctx)
 	if err != nil {
 		return err
 	}
@@ -30,24 +30,16 @@ func (c *Controller) Delete(ctx *fiber.Ctx) error {
 	reqCtx := ctx.Context()
 	currentUser := auth.GetSessionUser(ctx)
 
-	folder, err := c.folders.Get(reqCtx,
-		repository.IDEq(folderID),
-		repository.UserIDEq(currentUser.ID),
-	)
-	if err != nil {
-		return err
-	}
-
 	if body.DeleteSchemas {
 		err = c.db.WithContext(reqCtx).Transaction(func(tx *gorm.DB) error {
-			if err = c.deleteScreenshots(reqCtx, folder); err != nil {
+			if err = c.deleteScreenshots(reqCtx, folderID); err != nil {
 				return err
 			}
 
-			return c.deleteFolder(reqCtx, tx, folder, currentUser)
+			return c.deleteFolder(reqCtx, tx, folderID, currentUser)
 		})
 	} else {
-		err = c.deleteFolder(reqCtx, c.db, folder, currentUser)
+		err = c.deleteFolder(reqCtx, c.db, folderID, currentUser)
 	}
 
 	if err != nil {
@@ -57,18 +49,18 @@ func (c *Controller) Delete(ctx *fiber.Ctx) error {
 	return base.NewSuccessResponse(ctx)
 }
 
-func (c *Controller) deleteFolder(ctx context.Context, tx *gorm.DB, folder *model.Folder, user *model.User) error {
+func (c *Controller) deleteFolder(ctx context.Context, tx *gorm.DB, folderID model.ID, user *model.User) error {
 	return c.folders.DeleteTx(ctx, tx,
-		repository.IDEq(folder.ID),
+		repository.IDEq(folderID),
 		repository.UserIDEq(user.ID),
 	)
 }
 
-func (c *Controller) deleteScreenshots(ctx context.Context, folder *model.Folder) error {
+func (c *Controller) deleteScreenshots(ctx context.Context, folderID model.ID) error {
 	var schemaIDs []model.ID
 	err := c.userSchemas.ListOut(ctx, &schemaIDs,
 		repository.Select("schema_id"),
-		repository.Where("folder_id = ?", folder.ID),
+		repository.Where("folder_id = ?", folderID),
 	)
 	if err != nil {
 		return err

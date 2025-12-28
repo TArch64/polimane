@@ -1,6 +1,6 @@
 import { computed, type Ref, ref, toRef } from 'vue';
 import { defineStore } from 'pinia';
-import { type HttpBody, useAsyncData, useHttpClient } from '@/composables';
+import { type HttpBody, type OptimisticExecute, useAsyncData, useHttpClient } from '@/composables';
 import type {
   IDeleteManySchemasRequest,
   ISchemaCreateRequest,
@@ -21,6 +21,10 @@ type ListRequestParams = {
   offset: number;
   limit: number;
 };
+
+interface IFolderSchemasRequest {
+  schemaIds: string[];
+}
 
 export const useFolderSchemasStore = defineStore('home/folder/schemas', () => {
   const http = useHttpClient();
@@ -85,7 +89,7 @@ export const useFolderSchemasStore = defineStore('home/folder/schemas', () => {
     return item;
   }
 
-  async function deleteMany(ids: string[]): Promise<void> {
+  async function deletableAction(ids: string[], commit: OptimisticExecute): Promise<void> {
     await list.optimisticUpdate()
       .inTransition()
       .begin((state) => {
@@ -93,17 +97,33 @@ export const useFolderSchemasStore = defineStore('home/folder/schemas', () => {
         state.schemas = state.schemas.filter((schema) => !idsSet.has(schema.id));
         state.total -= ids.length;
       })
-      .commit(async () => {
-        await http.delete<HttpBody, IDeleteManySchemasRequest>(['/schemas', 'delete'], { ids });
-      });
+      .commit(commit);
 
     if (canLoadNext.value && schemas.value.length < PAGINATION_PAGE) {
       await loadNext();
     }
   }
 
+  function deleteMany(ids: string[]): Promise<void> {
+    return deletableAction(ids, async () => {
+      await http.delete<HttpBody, IDeleteManySchemasRequest>(['/schemas', 'delete'], { ids });
+    });
+  }
+
   async function deleteSchema(deleting: ListSchema): Promise<void> {
     return deleteMany([deleting.id]);
+  }
+
+  function removeManyFromFolder(ids: string[]): Promise<void> {
+    return deletableAction(ids, async () => {
+      await http.delete<HttpBody, IFolderSchemasRequest>(['/folders', folderId.value, 'schemas'], {
+        schemaIds: ids,
+      });
+    });
+  }
+
+  function removeSchemaFromFolder(removing: ListSchema): Promise<void> {
+    return removeManyFromFolder([removing.id]);
   }
 
   async function copySchema(copyingSchema: ListSchema): Promise<ListSchema> {
@@ -131,5 +151,7 @@ export const useFolderSchemasStore = defineStore('home/folder/schemas', () => {
     deleteSchema,
     copySchema,
     updateSchema,
+    removeManyFromFolder,
+    removeSchemaFromFolder,
   };
 });

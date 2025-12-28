@@ -17,7 +17,7 @@ import (
 )
 
 type CreateBody struct {
-	AddBody
+	BulkSchemasBody
 	Name   string `json:"name" validate:"required,min=1,max=255"`
 	AsList *bool  `json:"asList"`
 }
