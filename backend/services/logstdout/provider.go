@@ -1,0 +1,16 @@
+package logstdout
+
+import (
+	"log/slog"
+	"os"
+)
+
+type Logger struct {
+	*slog.Logger
+}
+
+func Provider() *Logger {
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+	return &Logger{Logger: logger}
+}

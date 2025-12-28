@@ -1,15 +1,21 @@
 package api
 
 import (
-	"log"
+	"log/slog"
 
 	"github.com/gofiber/fiber/v2"
+
+	"polimane/backend/services/logstdout"
 )
 
-func NotFound(c *fiber.Ctx) error {
-	log.Println("Unhandled route:", c.Path())
+func NotFound(ctx *fiber.Ctx, stdout *logstdout.Logger) error {
+	stdout.InfoContext(ctx.Context(),
+		"Unhandled route",
+		slog.String("method", ctx.Method()),
+		slog.String("path", ctx.Path()),
+	)
 
-	return c.
+	return ctx.
 		Status(404).
 		JSON(fiber.Map{"error": "Not Found"})
 }

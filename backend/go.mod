@@ -20,6 +20,7 @@ require (
 	github.com/kittipat1413/go-common v0.20.0
 	github.com/lestrrat-go/jwx/v3 v3.0.12
 	github.com/maniartech/signals v1.3.1
+	github.com/samber/slog-fiber v1.19.0
 	github.com/workos/workos-go/v4 v4.46.1
 	go.opentelemetry.io/otel v1.39.0
 	go.opentelemetry.io/otel/sdk v1.39.0

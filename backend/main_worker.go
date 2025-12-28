@@ -15,6 +15,7 @@ import (
 	"polimane/backend/services/awssqs"
 	"polimane/backend/services/bitwarden"
 	"polimane/backend/services/db"
+	"polimane/backend/services/logstdout"
 	"polimane/backend/services/schemadelete"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/services/sentry"
@@ -58,6 +59,7 @@ func main() {
 			signal.Provider,
 			views.Provider,
 			workos.Provider,
+			logstdout.Provider,
 
 			// repositories
 			repositoryusers.Provider,

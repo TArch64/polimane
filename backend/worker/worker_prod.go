@@ -5,7 +5,7 @@ package worker
 import (
 	"context"
 	"encoding/json"
-	"log"
+	"log/slog"
 	"strings"
 	"sync"
 
@@ -15,17 +15,21 @@ import (
 	"go.uber.org/fx"
 
 	"polimane/backend/services/awssqs"
+	"polimane/backend/services/logstdout"
 	"polimane/backend/worker/events"
 	"polimane/backend/worker/queue"
 )
 
-func (c *Controller) handleError(ctx context.Context, err error) {
+func (c *Controller) handleError(ctx context.Context, err error, attrs map[string]string) {
 	hub := sentry.GetHubFromContext(ctx)
 	client, scope := hub.Client(), hub.Scope()
 
 	client.CaptureException(
 		err,
-		&sentry.EventHint{Context: ctx},
+		&sentry.EventHint{
+			Context: ctx,
+			Data:    attrs,
+		},
 		scope,
 	)
 }
@@ -34,6 +38,7 @@ type StartOptions struct {
 	fx.In
 	Ctx        context.Context
 	Controller *Controller
+	Stdout     *logstdout.Logger
 }
 
 type QueueSubscription struct {
@@ -72,7 +77,10 @@ func Start(options StartOptions) {
 			var body awssqs.QueueEvent
 			err := json.Unmarshal([]byte(message.Body), &body)
 			if err != nil {
-				log.Println("error unmarshaling message body:", err)
+				options.Stdout.ErrorContext(options.Ctx, "error unmarshaling message body",
+					slog.String("Queue", subscription.Queue.Name()),
+					slog.String("Error", err.Error()),
+				)
 				continue
 			}
 
