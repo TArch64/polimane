@@ -17,8 +17,15 @@ type CopyOptions struct {
 
 var nameCopyCounter = regexp.MustCompile(`\((\d+)\)$`)
 
+type copyingSource struct {
+	*model.Schema
+	FolderID *model.ID
+}
+
 func (c *Client) Copy(ctx context.Context, options *CopyOptions) (*model.Schema, error) {
-	original, err := c.Get(ctx,
+	var source copyingSource
+	err := c.GetOut(ctx, &source,
+		repository.Select("schemas.*", "folder_id"),
 		repository.IDEq(options.SchemaID),
 		IncludeUserSchemaScope(options.User.ID),
 	)
@@ -26,7 +33,7 @@ func (c *Client) Copy(ctx context.Context, options *CopyOptions) (*model.Schema,
 		return nil, err
 	}
 
-	copyName, err := c.findLastCopiedByName(ctx, options.User.ID, original.Name)
+	copyName, err := c.findLastCopiedByName(ctx, options.User.ID, source.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -34,11 +41,12 @@ func (c *Client) Copy(ctx context.Context, options *CopyOptions) (*model.Schema,
 	return c.Create(ctx, &CreateOptions{
 		User:            options.User,
 		Name:            copyName,
-		Layout:          original.Layout,
-		BackgroundColor: original.BackgroundColor,
-		Palette:         original.Palette.Data(),
-		Size:            original.Size.Data(),
-		Beads:           original.Beads.Data(),
+		Layout:          source.Layout,
+		BackgroundColor: source.BackgroundColor,
+		Palette:         source.Palette.Data(),
+		Size:            source.Size.Data(),
+		Beads:           source.Beads.Data(),
+		FolderID:        source.FolderID,
 	})
 }
 
@@ -62,12 +70,12 @@ func (c *Client) findLastCopiedByName(ctx context.Context, userID model.ID, name
 	return c.buildCopyName(namePattern, names), nil
 }
 
-func (c *Client) buildCopyNamePattern(originalName string) string {
-	counterMatch := nameCopyCounter.FindStringSubmatch(originalName)
+func (c *Client) buildCopyNamePattern(sourceName string) string {
+	counterMatch := nameCopyCounter.FindStringSubmatch(sourceName)
 	if len(counterMatch) == 0 {
-		return originalName + " (%)"
+		return sourceName + " (%)"
 	}
-	return strings.Replace(originalName, counterMatch[0], "(%)", 1)
+	return strings.Replace(sourceName, counterMatch[0], "(%)", 1)
 }
 
 func (c *Client) buildCopyName(pattern string, names []string) string {

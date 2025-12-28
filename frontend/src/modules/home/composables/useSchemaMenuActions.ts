@@ -1,5 +1,5 @@
 import { computed, type ComputedRef, type MaybeRefOrGetter, toValue } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { CopyIcon, EditIcon, FolderIcon, PeopleIcon, TrashIcon } from '@/components/icon';
 import { useAccessPermissions } from '@/composables';
@@ -22,6 +22,7 @@ export function useSchemaMenuActions(schemaRef: MaybeRefOrGetter<ListSchema>): C
   const { updateSchema, copySchema, deleteSchema } = homeStore;
 
   const router = useRouter();
+  const route = useRoute();
   const permissions = useAccessPermissions(() => schema.value.access);
 
   const renameModal = useModal(SchemaRenameModal);
@@ -64,9 +65,8 @@ export function useSchemaMenuActions(schemaRef: MaybeRefOrGetter<ListSchema>): C
 
         await router.push({
           name: 'schema-editor',
-          params: {
-            schemaId: created.id,
-          },
+          params: { schemaId: created.id },
+          query: { from: route.path },
         });
       },
     },

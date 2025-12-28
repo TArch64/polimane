@@ -17,6 +17,7 @@ type CreateOptions struct {
 	Palette         model.SchemaPalette
 	Size            *model.SchemaSize
 	Beads           model.SchemaBeads
+	FolderID        *model.ID
 }
 
 func (c *Client) Create(ctx context.Context, options *CreateOptions) (schema *model.Schema, err error) {
@@ -37,31 +38,33 @@ func (c *Client) Create(ctx context.Context, options *CreateOptions) (schema *mo
 		options.Beads = make(model.SchemaBeads)
 	}
 
-	err = c.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		schema = &model.Schema{
-			Name:            options.Name,
-			BackgroundColor: options.BackgroundColor,
-			Layout:          options.Layout,
-			Palette:         datatypes.NewJSONType(options.Palette),
-			Size:            datatypes.NewJSONType(options.Size),
-			Beads:           datatypes.NewJSONType(options.Beads),
-		}
+	err = c.DB.
+		WithContext(ctx).
+		Transaction(func(tx *gorm.DB) error {
+			schema = &model.Schema{
+				Name:            options.Name,
+				BackgroundColor: options.BackgroundColor,
+				Layout:          options.Layout,
+				Palette:         datatypes.NewJSONType(options.Palette),
+				Size:            datatypes.NewJSONType(options.Size),
+				Beads:           datatypes.NewJSONType(options.Beads),
+			}
 
-		if err = c.InsertTx(ctx, tx, schema); err != nil {
-			return err
-		}
+			if err = c.InsertTx(ctx, tx, schema); err != nil {
+				return err
+			}
 
-		return c.userSchemas.InsertTx(ctx, tx, &model.UserSchema{
-			UserID:   options.User.ID,
-			SchemaID: schema.ID,
-			Access:   model.AccessAdmin,
+			return c.userSchemas.InsertTx(ctx, tx, &model.UserSchema{
+				UserID:   options.User.ID,
+				SchemaID: schema.ID,
+				FolderID: options.FolderID,
+				Access:   model.AccessAdmin,
+			})
 		})
-	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	c.signals.InvalidateUserCache.Emit(ctx, options.User.ID)
 	return schema, nil
 }

@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { Modal, useActiveModal } from '@/components/modal';
 import { RadioSelect, type SelectOptions, TextField } from '@/components/form';
 import { useAsyncAction } from '@/composables';
@@ -45,6 +45,7 @@ import { type ISchemaCreateRequest, useHomeStore } from '../../stores';
 const homeStore = useHomeStore();
 
 const router = useRouter();
+const route = useRoute();
 const modal = useActiveModal();
 
 const schema: ISchemaCreateRequest = reactive({
@@ -70,9 +71,8 @@ const create = useAsyncAction(async () => {
   modal.close(null, async () => {
     await router.push({
       name: 'schema-editor',
-      params: {
-        schemaId: created.id,
-      },
+      params: { schemaId: created.id },
+      query: { from: route.path },
     });
   });
 });

@@ -76,7 +76,11 @@ export const useFolderSchemasStore = defineStore('home/folder/schemas', () => {
   }
 
   async function createSchema(input: ISchemaCreateRequest): Promise<ListSchema> {
-    const item = await http.post<ListSchema, ISchemaCreateRequest>('/schemas', input);
+    const item = await http.post<ListSchema, ISchemaCreateRequest>('/schemas', {
+      ...input,
+      folderId: folderId.value,
+    });
+
     list.data.total++;
     return item;
   }
