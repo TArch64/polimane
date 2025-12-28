@@ -3,13 +3,36 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { HomeListSchema } from '@/modules/home/components';
-import { useSchemaMenuActions } from '@/modules/home/composables';
+import {
+  useSchemaMenuAddToDirectory,
+  useSchemaMenuCopy,
+  useSchemaMenuDelete,
+  useSchemaMenuEditAccess,
+  useSchemaMenuRename,
+} from '@/modules/home/composables';
 import type { ListSchema } from '@/modules/home/stores';
+import type { MaybeContextMenuAction } from '@/components/contextMenu';
+import { useFolderStore } from '../stores';
 
 const props = defineProps<{
   schema: ListSchema;
 }>();
 
-const menuActions = useSchemaMenuActions(() => props.schema);
+const folderStore = useFolderStore();
+
+const renameAction = useSchemaMenuCopy(() => props.schema);
+const addToDirectoryAction = useSchemaMenuAddToDirectory(() => props.schema, folderStore.folder.id);
+const copyAction = useSchemaMenuRename(() => props.schema);
+const editAccessAction = useSchemaMenuEditAccess(() => props.schema);
+const deleteAction = useSchemaMenuDelete(() => props.schema);
+
+const menuActions = computed((): MaybeContextMenuAction[] => [
+  renameAction.value,
+  addToDirectoryAction.value,
+  copyAction.value,
+  editAccessAction.value,
+  deleteAction.value,
+]);
 </script>

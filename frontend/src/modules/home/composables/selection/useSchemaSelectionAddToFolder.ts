@@ -2,8 +2,8 @@ import { computed, type Ref } from 'vue';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { useModal } from '@/components/modal';
 import { FolderIcon } from '@/components/icon';
-import { FolderAddSchemaModal } from '../components';
-import { useHomeFoldersStore } from '../stores';
+import { FolderAddSchemaModal } from '../../components';
+import { useHomeFoldersStore } from '../../stores';
 
 export function useSchemaSelectionAddToFolder(actionIds: Ref<string[]>): Ref<MaybeContextMenuAction> {
   const homeFoldersStore = useHomeFoldersStore();
