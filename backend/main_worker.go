@@ -15,6 +15,7 @@ import (
 	"polimane/backend/services/awssqs"
 	"polimane/backend/services/bitwarden"
 	"polimane/backend/services/db"
+	"polimane/backend/services/logpersistent"
 	"polimane/backend/services/logstdout"
 	"polimane/backend/services/schemadelete"
 	"polimane/backend/services/schemascreenshot"
@@ -60,6 +61,7 @@ func main() {
 			views.Provider,
 			workos.Provider,
 			logstdout.Provider,
+			logpersistent.Provider,
 
 			// repositories
 			repositoryusers.Provider,

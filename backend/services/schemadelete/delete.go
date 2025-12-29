@@ -14,6 +14,10 @@ func (s *Service) Delete(ctx context.Context, IDs []model.ID) (err error) {
 }
 
 func (s *Service) DeleteTx(ctx context.Context, tx *gorm.DB, IDs []model.ID) (err error) {
+	if err = s.logAffected(ctx, tx, IDs); err != nil {
+		return err
+	}
+
 	if err = s.screenshot.Delete(ctx, IDs); err != nil {
 		return err
 	}
