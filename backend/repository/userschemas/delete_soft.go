@@ -2,7 +2,6 @@ package userschemas
 
 import (
 	"context"
-	"time"
 
 	"gorm.io/gorm"
 
@@ -13,25 +12,11 @@ import (
 func (c *Client) DeleteSoftTx(ctx context.Context, tx *gorm.DB, scopes ...repository.Scope) error {
 	scopes = append(scopes, repository.IncludeSoftDeleted)
 
-	affected, err := gorm.
-		G[model.UserSchema](tx).
-		Scopes(scopes...).
-		Updates(ctx, model.UserSchema{
-			SoftDeletable: &model.SoftDeletable{
-				DeletedAt: gorm.DeletedAt{
-					Valid: true,
-					Time:  time.Now(),
-				},
-			},
-			FolderID: model.NilID,
-		})
-
-	if err != nil {
-		return err
-	}
-	if affected == 0 {
-		return gorm.ErrRecordNotFound
-	}
-
-	return nil
+	return c.UpdateTx(ctx, tx,
+		model.UserSchema{
+			SoftDeletable: model.SoftDeletedNow(),
+			FolderID:      model.NilID,
+		},
+		scopes...,
+	)
 }

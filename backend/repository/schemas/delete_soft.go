@@ -9,13 +9,18 @@ import (
 	"polimane/backend/repository"
 )
 
-func (c *Client) DeleteSoft(ctx context.Context, IDs []model.ID) error {
+func (c *Client) DeleteSoft(ctx context.Context, user *model.User, IDs []model.ID) error {
 	return c.DB.
 		WithContext(ctx).
 		Transaction(func(tx *gorm.DB) error {
-			err := c.DeleteTx(ctx, tx,
+			err := c.UpdateTx(ctx, tx,
+				model.Schema{
+					SoftDeletable: model.SoftDeletedNow(),
+					DeletedBy:     &user.ID,
+				},
 				repository.IDsIn(IDs),
 			)
+
 			if err != nil {
 				return err
 			}

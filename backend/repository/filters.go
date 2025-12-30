@@ -29,8 +29,9 @@ func EmailEq(email string) Scope {
 	return Where("email = ?", email)
 }
 
-func IDsIn(IDs []model.ID) Scope {
-	return Where("id IN (?)", IDs)
+func IDsIn(IDs []model.ID, table ...string) Scope {
+	column := Column("id", table...)
+	return Where(column+" IN (?)", IDs)
 }
 
 func SchemaIDsIn(IDs []model.ID) Scope {
@@ -42,14 +43,10 @@ func IncludeSoftDeleted(stmt *gorm.Statement) {
 }
 
 func SoftDeletedOnly(table ...string) Scope {
-	column := "deleted_at"
-	if len(table) > 0 {
-		column = fmt.Sprintf("%s.%s", table[0], column)
-	}
-
 	return func(stmt *gorm.Statement) {
+		column := Column("deleted_at", table...)
 		IncludeSoftDeleted(stmt)
-		Where(fmt.Sprintf("%s IS NOT NULL", column))(stmt)
+		Where(column + " IS NOT NULL")(stmt)
 	}
 }
 
@@ -59,4 +56,11 @@ func SoftDeletedDaysAgo(days uint8, table ...string) Scope {
 		interval := fmt.Sprintf("%d days", days)
 		Where("deleted_at <= NOW() - ?::INTERVAL", interval)(stmt)
 	}
+}
+
+func Column(name string, table ...string) string {
+	if len(table) > 0 {
+		return fmt.Sprintf("%s.%s", table[0], name)
+	}
+	return name
 }
