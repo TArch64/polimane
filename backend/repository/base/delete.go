@@ -12,18 +12,28 @@ func (c *Client[M]) Delete(ctx context.Context, scopes ...repository.Scope) erro
 	return c.DeleteTx(ctx, c.DB, scopes...)
 }
 
+func (c *Client[M]) DeleteCounted(ctx context.Context, scopes ...repository.Scope) (int, error) {
+	return c.DeleteCountedTx(ctx, c.DB, scopes...)
+}
+
 func (c *Client[M]) DeleteTx(ctx context.Context, tx *gorm.DB, scopes ...repository.Scope) error {
+	_, err := c.DeleteCountedTx(ctx, tx, scopes...)
+	return err
+}
+
+func (c *Client[M]) DeleteCountedTx(ctx context.Context, tx *gorm.DB, scopes ...repository.Scope) (int, error) {
 	affected, err := gorm.
 		G[M](tx).
 		Scopes(scopes...).
 		Delete(ctx)
 
 	if err != nil {
-		return err
-	}
-	if affected == 0 {
-		return gorm.ErrRecordNotFound
+		return 0, err
 	}
 
-	return nil
+	if affected == 0 {
+		return 0, gorm.ErrRecordNotFound
+	}
+
+	return affected, nil
 }

@@ -3,6 +3,7 @@ package handlercleanupinvitations
 import (
 	"context"
 	"errors"
+	"log/slog"
 
 	"gorm.io/gorm"
 
@@ -11,9 +12,20 @@ import (
 )
 
 func (h *Handler) Handle(ctx context.Context, _ *events.Message) error {
-	err := h.schemaInvitations.Delete(ctx, repositoryschemainvitations.FilterExpired)
+	affected, err := h.schemaInvitations.DeleteCounted(ctx, repositoryschemainvitations.FilterExpired)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil
 	}
-	return err
+	if err != nil {
+		return err
+	}
+
+	h.logAffected(ctx, affected)
+	return nil
+}
+
+func (h *Handler) logAffected(ctx context.Context, affected int) {
+	h.persistentLogger.InfoContext(ctx, "Cleaned up expired schema invitations",
+		slog.Int("affected", affected),
+	)
 }

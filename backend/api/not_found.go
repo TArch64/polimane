@@ -9,8 +9,7 @@ import (
 )
 
 func NotFound(ctx *fiber.Ctx, stdout *logstdout.Logger) error {
-	stdout.InfoContext(ctx.Context(),
-		"Unhandled route",
+	stdout.InfoContext(ctx.Context(), "Unhandled route",
 		slog.String("method", ctx.Method()),
 		slog.String("path", ctx.Path()),
 	)
