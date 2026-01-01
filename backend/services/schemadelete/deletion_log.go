@@ -6,6 +6,7 @@ import (
 
 	"polimane/backend/model"
 	"polimane/backend/repository"
+	"polimane/backend/services/logpersistent"
 )
 
 type affectedResource struct {
@@ -19,7 +20,7 @@ type affectedResource struct {
 
 func (a *affectedResource) getAttrs() []any {
 	args := []any{
-		slog.String("operation", "schema_deletion"),
+		logpersistent.Operation("schema_deletion"),
 		slog.String("id", a.ID.String()),
 		slog.String("name", a.Name),
 		slog.Time("created_at", a.CreatedAt),

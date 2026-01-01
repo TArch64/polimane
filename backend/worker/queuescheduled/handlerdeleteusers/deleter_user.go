@@ -30,7 +30,7 @@ func (d *DeleterUser) Delete(ctx context.Context) error {
 
 func (d *DeleterUser) LogResults(ctx context.Context) {
 	d.PersistentLogger.InfoContext(ctx, "deleted user record",
-		slog.String("operation", "user_deletion"),
+		logpersistent.Operation("user_deletion"),
 		slog.String("id", d.affected.ID.String()),
 		slog.String("email", d.affected.Email),
 		slog.Time("delete_initiated_at", d.affected.DeletedAt.Time),

@@ -23,3 +23,7 @@ func Provider(options ProviderOptions) (*Logger, error) {
 	logger := slog.New(slog.NewTextHandler(writer, nil))
 	return &Logger{Logger: logger}, nil
 }
+
+func Operation(name string) any {
+	return slog.String("operation", name)
+}

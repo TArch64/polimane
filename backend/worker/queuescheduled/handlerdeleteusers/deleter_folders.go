@@ -18,7 +18,7 @@ type affectedFolder struct {
 
 func (a *affectedFolder) getAttrs() []any {
 	return []any{
-		slog.String("operation", "user_deletion"),
+		logpersistent.Operation("user_deletion"),
 		slog.String("id", a.ID.String()),
 		slog.String("name", a.Name),
 		slog.Time("created_at", a.CreatedAt),
@@ -55,12 +55,12 @@ func (d *DeleterFolders) Delete(ctx context.Context) error {
 func (d *DeleterFolders) LogResults(ctx context.Context) {
 	if len(d.affected) == 0 {
 		d.PersistentLogger.InfoContext(ctx, "no user Folders to delete for user",
-			slog.String("operation", "user_deletion"),
+			logpersistent.Operation("user_deletion"),
 		)
 	} else {
 		for _, resource := range d.affected {
 			d.PersistentLogger.InfoContext(ctx, "deleted folder due to user deletion",
-				slog.String("operation", "user_deletion"),
+				logpersistent.Operation("user_deletion"),
 				slog.String("id", resource.ID.String()),
 				slog.String("name", resource.Name),
 				slog.Time("created_at", resource.CreatedAt),

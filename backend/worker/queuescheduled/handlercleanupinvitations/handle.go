@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
+	"polimane/backend/services/logpersistent"
 	"polimane/backend/worker/events"
 )
 
@@ -26,7 +27,7 @@ func (h *Handler) Handle(ctx context.Context, _ *events.Message) error {
 
 func (h *Handler) logAffected(ctx context.Context, affected int) {
 	h.persistentLogger.InfoContext(ctx, "cleaned up expired schema invitations",
-		slog.String("operation", "cleanup_expired_invitations"),
+		logpersistent.Operation("cleanup_expired_invitations"),
 		slog.Int("affected", affected),
 	)
 }
