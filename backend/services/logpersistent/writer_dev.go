@@ -7,10 +7,6 @@ import (
 	"os"
 )
 
-func newWriter(options ProviderOptions) (io.Writer, error) {
-	file, err := os.OpenFile("/tmp/app/persistent.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return nil, err
-	}
-	return file, nil
+func newWriter(_ ProviderOptions) (io.Writer, error) {
+	return os.Stdout, nil
 }

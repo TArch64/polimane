@@ -2,45 +2,54 @@ package handlerdeleteusers
 
 import (
 	"go.uber.org/fx"
-	"gorm.io/gorm"
 
 	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryusers "polimane/backend/repository/users"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
+	"polimane/backend/services/logpersistent"
 	"polimane/backend/services/schemadelete"
 	"polimane/backend/services/workos"
 )
 
 type Handler struct {
-	db           *gorm.DB
-	users        *repositoryusers.Client
-	folders      *repositoryfolders.Client
-	userSchemas  *repositoryuserschemas.Client
-	schemas      *repositoryschemas.Client
-	schemaDelete *schemadelete.Service
-	workos       *workos.Client
+	users    *repositoryusers.Client
+	deleters []Deleter
 }
 
 type ProviderOptions struct {
 	fx.In
-	DB           *gorm.DB
-	Users        *repositoryusers.Client
-	Folders      *repositoryfolders.Client
-	UserSchemas  *repositoryuserschemas.Client
-	Schemas      *repositoryschemas.Client
-	SchemaDelete *schemadelete.Service
-	Workos       *workos.Client
+	Users            *repositoryusers.Client
+	Folders          *repositoryfolders.Client
+	UserSchemas      *repositoryuserschemas.Client
+	Schemas          *repositoryschemas.Client
+	SchemaDelete     *schemadelete.Service
+	Workos           *workos.Client
+	PersistentLogger *logpersistent.Logger
 }
 
 func Provider(options ProviderOptions) *Handler {
 	return &Handler{
-		db:           options.DB,
-		users:        options.Users,
-		folders:      options.Folders,
-		userSchemas:  options.UserSchemas,
-		schemas:      options.Schemas,
-		schemaDelete: options.SchemaDelete,
-		workos:       options.Workos,
+		users: options.Users,
+		deleters: []Deleter{
+			&DeleterFolders{
+				Folders:          options.Folders,
+				PersistentLogger: options.PersistentLogger,
+			},
+			&DeleterWorkos{
+				Workos:           options.Workos,
+				PersistentLogger: options.PersistentLogger,
+			},
+			&DeleterUser{
+				Users:            options.Users,
+				PersistentLogger: options.PersistentLogger,
+			},
+			&DeleterOrphanSchemas{
+				Schemas:          options.Schemas,
+				UserSchemas:      options.UserSchemas,
+				SchemaDelete:     options.SchemaDelete,
+				PersistentLogger: options.PersistentLogger,
+			},
+		},
 	}
 }

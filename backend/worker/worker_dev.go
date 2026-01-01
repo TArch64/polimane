@@ -50,20 +50,7 @@ func Start(options StartOptions) {
 }
 
 func watchQueue(q queue.Interface, options StartOptions) {
-	messagesChan := make(chan *events.Message, 100)
-	go options.Controller.Process(options.Ctx, q, messagesChan)
-
 	for {
-		select {
-		case <-options.Ctx.Done():
-			close(messagesChan)
-			options.Stdout.InfoContext(options.Ctx, "stopping queue watcher",
-				slog.String("queue", q.Name()),
-			)
-			return
-		default:
-		}
-
 		time.Sleep(1 * time.Second)
 		messages, err := options.SQS.Receive(options.Ctx, q.Name())
 
@@ -87,18 +74,16 @@ func watchQueue(q queue.Interface, options StartOptions) {
 					continue
 				}
 
-				messagesChan <- &events.Message{
+				options.Stdout.InfoContext(options.Ctx, "processing actions",
+					slog.String("queue", q.Name()),
+					slog.String("event_type", body.EventType),
+				)
+
+				options.Controller.Process(options.Ctx, q, &events.Message{
 					Body:          string(body.Payload),
 					ReceiptHandle: *message.ReceiptHandle,
 					EventType:     body.EventType,
-					OnEnd:         func() {},
-				}
-
-				options.Stdout.InfoContext(options.Ctx, "Processing actions",
-					slog.String("queue", q.Name()),
-					slog.String("event_type", body.EventType),
-					slog.Int("count", len(messages)),
-				)
+				})
 			}
 		}
 	}

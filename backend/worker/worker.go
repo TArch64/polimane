@@ -2,7 +2,6 @@ package worker
 
 import (
 	"context"
-	"sync"
 
 	"go.uber.org/fx"
 
@@ -38,35 +37,19 @@ func Provider(options ProviderOptions) *Controller {
 func (c *Controller) Process(
 	ctx context.Context,
 	q queue.Interface,
-	messages chan *events.Message,
+	message *events.Message,
 ) {
-	var wg sync.WaitGroup
-	semaphore := make(chan struct{}, 10)
-
-	for message := range messages {
-		semaphore <- struct{}{}
-
-		wg.Go(func() {
-			defer func() { <-semaphore }()
-
-			if err := q.Process(ctx, message); err != nil {
-				c.handleError(ctx, err, map[string]string{
-					"Queue": q.Name(),
-				})
-				message.OnEnd()
-				return
-			}
-
-			if err := c.sqs.Delete(ctx, q.Name(), message.ReceiptHandle); err != nil {
-				c.handleError(ctx, err, map[string]string{
-					"Queue":     q.Name(),
-					"EventType": message.EventType,
-				})
-			}
-
-			message.OnEnd()
+	if err := q.Process(ctx, message); err != nil {
+		c.handleError(ctx, err, map[string]string{
+			"Queue": q.Name(),
 		})
+		return
 	}
 
-	wg.Wait()
+	if err := c.sqs.Delete(ctx, q.Name(), message.ReceiptHandle); err != nil {
+		c.handleError(ctx, err, map[string]string{
+			"Queue":     q.Name(),
+			"EventType": message.EventType,
+		})
+	}
 }

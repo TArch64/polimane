@@ -3,18 +3,13 @@ package schemadelete
 import (
 	"context"
 
-	"gorm.io/gorm"
-
 	"polimane/backend/model"
 	"polimane/backend/repository"
 )
 
 func (s *Service) Delete(ctx context.Context, IDs []model.ID) (err error) {
-	return s.DeleteTx(ctx, s.schemas.DB, IDs)
-}
-
-func (s *Service) DeleteTx(ctx context.Context, tx *gorm.DB, IDs []model.ID) (err error) {
-	if err = s.logAffected(ctx, tx, IDs); err != nil {
+	affected, err := s.getAffectedResources(ctx, IDs)
+	if err != nil {
 		return err
 	}
 
@@ -22,8 +17,17 @@ func (s *Service) DeleteTx(ctx context.Context, tx *gorm.DB, IDs []model.ID) (er
 		return err
 	}
 
-	return s.schemas.DeleteTx(ctx, tx,
-		repository.IncludeSoftDeleted,
+	err = s.schemas.Delete(ctx,
+		repository.HardDelete,
 		repository.IDsIn(IDs),
 	)
+	if err != nil {
+		return err
+	}
+
+	if err = s.logAffectedResources(ctx, affected); err != nil {
+		return err
+	}
+
+	return nil
 }

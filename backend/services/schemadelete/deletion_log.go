@@ -4,8 +4,6 @@ import (
 	"context"
 	"log/slog"
 
-	"gorm.io/gorm"
-
 	"polimane/backend/model"
 	"polimane/backend/repository"
 )
@@ -19,20 +17,30 @@ type affectedResource struct {
 	UsersCount     int64
 }
 
-func (s *Service) logAffected(ctx context.Context, tx *gorm.DB, schemaIDs []model.ID) error {
-	affected, err := s.getAffectedResources(ctx, tx, schemaIDs)
-	if err != nil {
-		return err
+func (a *affectedResource) getAttrs() []any {
+	args := []any{
+		slog.String("operation", "schema_deletion"),
+		slog.String("id", a.ID.String()),
+		slog.String("name", a.Name),
+		slog.Time("created_at", a.CreatedAt),
 	}
 
-	for _, resource := range affected {
-		s.logAffectedResource(ctx, resource)
+	if a.InitiatorID == nil || !a.InitiatorID.Valid {
+		args = append(args,
+			slog.String("initiator_id", "system"),
+			slog.String("initiator_email", "system"),
+		)
+	} else {
+		args = append(args,
+			slog.String("initiator_id", a.InitiatorID.String()),
+			slog.String("initiator_email", *a.InitiatorEmail),
+		)
 	}
 
-	return nil
+	return append(args, slog.Int64("users_count", a.UsersCount))
 }
 
-func (s *Service) getAffectedResources(ctx context.Context, tx *gorm.DB, schemaIDs []model.ID) ([]*affectedResource, error) {
+func (s *Service) getAffectedResources(ctx context.Context, schemaIDs []model.ID) ([]*affectedResource, error) {
 	var resources []*affectedResource
 
 	err := s.schemas.ListOut(ctx, &resources,
@@ -45,7 +53,7 @@ func (s *Service) getAffectedResources(ctx context.Context, tx *gorm.DB, schemaI
 			"MIN(users.email) AS initiator_email",
 			"COUNT(user_schemas.user_id) AS users_count",
 		),
-		repository.Join("JOIN user_schemas ON schemas.id = user_schemas.schema_id"),
+		repository.Join("LEFT JOIN user_schemas ON schemas.id = user_schemas.schema_id"),
 		repository.Join("LEFT JOIN users ON schemas.deleted_by = users.id"),
 		repository.IDsIn(schemaIDs, "schemas"),
 		repository.Group("schemas.id"),
@@ -58,25 +66,10 @@ func (s *Service) getAffectedResources(ctx context.Context, tx *gorm.DB, schemaI
 	return resources, nil
 }
 
-func (s *Service) logAffectedResource(ctx context.Context, resource *affectedResource) {
-	args := []any{
-		slog.String("id", resource.ID.String()),
-		slog.String("name", resource.Name),
-		slog.Time("created_at", resource.CreatedAt),
+func (s *Service) logAffectedResources(ctx context.Context, affected []*affectedResource) error {
+	for _, resource := range affected {
+		s.persistentLogger.InfoContext(ctx, "schema deleted", resource.getAttrs()...)
 	}
 
-	if resource.InitiatorID == nil || !resource.InitiatorID.Valid {
-		args = append(args,
-			slog.String("initiator_id", "system"),
-			slog.String("initiator_email", "system"),
-		)
-	} else {
-		args = append(args,
-			slog.String("initiator_id", resource.InitiatorID.String()),
-			slog.String("initiator_email", *resource.InitiatorEmail),
-		)
-	}
-
-	args = append(args, slog.Int64("users_count", resource.UsersCount))
-	s.persistentLogger.InfoContext(ctx, "Schema deleted", args...)
+	return nil
 }

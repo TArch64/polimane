@@ -38,10 +38,6 @@ func SchemaIDsIn(IDs []model.ID) Scope {
 	return Where("schema_id IN (?)", IDs)
 }
 
-func IncludeSoftDeleted(stmt *gorm.Statement) {
-	stmt.Unscoped = true
-}
-
 func SoftDeletedOnly(table ...string) Scope {
 	return func(stmt *gorm.Statement) {
 		column := Column("deleted_at", table...)
