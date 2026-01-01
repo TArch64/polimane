@@ -15,6 +15,7 @@ import (
 	"polimane/backend/services/awssqs"
 	"polimane/backend/services/bitwarden"
 	"polimane/backend/services/db"
+	"polimane/backend/services/fxlogger"
 	"polimane/backend/services/logpersistent"
 	"polimane/backend/services/logstdout"
 	"polimane/backend/services/schemadelete"
@@ -81,6 +82,7 @@ func main() {
 
 			worker.Provider,
 		),
+		fx.WithLogger(fxlogger.Provider),
 		fx.Invoke(worker.Start),
 	).Run()
 }

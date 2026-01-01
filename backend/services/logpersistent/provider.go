@@ -20,7 +20,7 @@ func Provider(options ProviderOptions) (*Logger, error) {
 		return nil, err
 	}
 
-	logger := slog.New(slog.NewTextHandler(writer, nil))
+	logger := slog.New(slog.NewJSONHandler(writer, nil))
 	return &Logger{Logger: logger}, nil
 }
 
