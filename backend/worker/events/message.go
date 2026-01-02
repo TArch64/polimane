@@ -4,5 +4,4 @@ type Message struct {
 	Body          string
 	EventType     string
 	ReceiptHandle string
-	OnEnd         func()
 }

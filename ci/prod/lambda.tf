@@ -34,6 +34,11 @@ resource "aws_lambda_function" "lambda" {
   source_code_hash = local.lambda_sources_hash
   tags             = local.aws_common_tags
 
+  logging_config {
+    log_format = "json"
+    log_group  = aws_cloudwatch_log_group.lambda_logs.name
+  }
+
   environment {
     variables = local.lambda_environment
   }
@@ -41,12 +46,6 @@ resource "aws_lambda_function" "lambda" {
   lifecycle {
     create_before_destroy = true
   }
-}
-
-resource "aws_cloudwatch_log_group" "lambda_logs" {
-  name              = "/aws/lambda/${local.lambda_name}"
-  retention_in_days = 1
-  tags              = local.aws_common_tags
 }
 
 resource "null_resource" "lambda_migrations" {

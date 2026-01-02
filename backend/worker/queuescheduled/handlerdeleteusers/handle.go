@@ -2,8 +2,8 @@ package handlerdeleteusers
 
 import (
 	"context"
-
-	"gorm.io/gorm"
+	"errors"
+	"fmt"
 
 	"polimane/backend/model"
 	"polimane/backend/repository"
@@ -20,14 +20,18 @@ func (h *Handler) Handle(ctx context.Context, _ *events.Message) error {
 		return nil
 	}
 
-	for _, user := range users {
-		err = h.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-			return h.deleteUser(ctx, tx, user)
-		})
+	var errs []error
 
-		if err != nil {
-			return err
+	for _, user := range users {
+		if err = h.deleteUser(ctx, user); err != nil {
+			err = fmt.Errorf("failed to delete user %s: %w", user.ID.String(), err)
+			errs = append(errs, err)
+			continue
 		}
+	}
+
+	if len(errs) > 0 {
+		return errors.Join(errs...)
 	}
 
 	return nil
@@ -37,4 +41,23 @@ func (h *Handler) getDeletedUsers(ctx context.Context) ([]*model.User, error) {
 	return h.users.List(ctx,
 		repository.SoftDeletedDaysAgo(30),
 	)
+}
+
+func (h *Handler) deleteUser(ctx context.Context, user *model.User) error {
+	for _, deleter := range h.deleters {
+		if err := deleter.Collect(ctx, user); err != nil {
+			return err
+		}
+	}
+
+	for _, deleter := range h.deleters {
+		if err := deleter.Delete(ctx); err != nil {
+			return err
+		}
+
+		deleter.LogResults(ctx)
+		deleter.Cleanup()
+	}
+
+	return nil
 }

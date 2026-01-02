@@ -6,7 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"reflect"
 	"runtime"
@@ -16,60 +16,50 @@ import (
 	"go.uber.org/fx"
 
 	"polimane/backend/base"
+	"polimane/backend/services/appcontext"
 	"polimane/backend/services/awssqs"
+	"polimane/backend/services/logstdout"
 	"polimane/backend/worker/events"
 	"polimane/backend/worker/queue"
 )
 
-func (c *Controller) handleError(_ context.Context, err error) {
-	log.Println(err)
+func (c *Controller) handleError(_ context.Context, err error, attrs map[string]string) {
+	var args []any
+	for name, value := range attrs {
+		args = append(args, slog.String(name, value))
+	}
+
+	c.stdout.Error(err.Error(), args...)
 }
 
 type StartOptions struct {
 	fx.In
-	Ctx        context.Context
+	Ctx        *appcontext.Ctx
 	SQS        *awssqs.Client
 	Controller *Controller
+	Stdout     *logstdout.Logger
 }
 
 func Start(options StartOptions) {
-	log.Println("starting worker...")
+	options.Stdout.InfoContext(options.Ctx, "starting worker...")
 
 	for _, q := range options.Controller.queues {
-		go watchQueue(
-			options.Ctx,
-			q,
-			options.Controller,
-			options.SQS,
-		)
+		go watchQueue(q, options)
 	}
 
 	go printStartupMessage(options.Controller)
 }
 
-func watchQueue(
-	ctx context.Context,
-	q queue.Interface,
-	controller *Controller,
-	client *awssqs.Client,
-) {
-	messagesChan := make(chan *events.Message, 100)
-	go controller.Process(ctx, q, messagesChan)
-
+func watchQueue(q queue.Interface, options StartOptions) {
 	for {
-		select {
-		case <-ctx.Done():
-			close(messagesChan)
-			log.Println("context cancelled, stopping queue watcher:", q.Name())
-			return
-		default:
-		}
-
 		time.Sleep(1 * time.Second)
-		messages, err := client.Receive(ctx, q.Name())
+		messages, err := options.SQS.Receive(options.Ctx, q.Name())
 
 		if err != nil {
-			log.Println("error receiving message:", err)
+			options.Stdout.ErrorContext(options.Ctx, "error receiving message",
+				slog.String("queue", q.Name()),
+				slog.String("err", err.Error()),
+			)
 			continue
 		}
 
@@ -78,18 +68,23 @@ func watchQueue(
 				var body awssqs.QueueEvent
 				err = json.Unmarshal([]byte(*message.Body), &body)
 				if err != nil {
-					log.Println("error unmarshaling message body:", err)
+					options.Stdout.ErrorContext(options.Ctx, "error unmarshaling message body",
+						slog.String("queue", q.Name()),
+						slog.String("err", err.Error()),
+					)
 					continue
 				}
 
-				messagesChan <- &events.Message{
+				options.Stdout.InfoContext(options.Ctx, "processing actions",
+					slog.String("queue", q.Name()),
+					slog.String("event_type", body.EventType),
+				)
+
+				options.Controller.Process(options.Ctx, q, &events.Message{
 					Body:          string(body.Payload),
 					ReceiptHandle: *message.ReceiptHandle,
 					EventType:     body.EventType,
-					OnEnd:         func() {},
-				}
-
-				log.Printf("Processing %s action from %s queue\n", body.EventType, q.Name())
+				})
 			}
 		}
 	}
@@ -111,7 +106,7 @@ func printStartupMessage(controller *Controller) {
 
 	err := writer.Flush()
 	if err != nil {
-		log.Println("error printing startup message:", err)
+		controller.stdout.Error("error printing startup message", slog.String("err", err.Error()))
 	}
 }
 

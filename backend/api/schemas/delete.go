@@ -3,6 +3,7 @@ package schemas
 import (
 	"github.com/gofiber/fiber/v2"
 
+	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 )
 
@@ -16,7 +17,8 @@ func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	if err = c.schemas.DeleteSoft(ctx.Context(), body.IDs); err != nil {
+	user := auth.GetSessionUser(ctx)
+	if err = c.schemas.DeleteSoft(ctx.Context(), user, body.IDs); err != nil {
 		return err
 	}
 

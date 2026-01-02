@@ -1,7 +1,8 @@
 package autoanalyze
 
 import (
-	"log"
+	"fmt"
+	"log/slog"
 	"math/rand"
 	"strings"
 	"time"
@@ -9,6 +10,7 @@ import (
 	"gorm.io/gorm"
 
 	"polimane/backend/base"
+	"polimane/backend/services/logstdout"
 )
 
 var (
@@ -16,13 +18,19 @@ var (
 )
 
 type Plugin struct {
-	logs *pluginLogs
-	rand *rand.Rand
+	logs   *pluginLogs
+	rand   *rand.Rand
+	stdout *logstdout.Logger
 }
 
-func New() gorm.Plugin {
+type PluginOptions struct {
+	Stdout *logstdout.Logger
+}
+
+func New(options *PluginOptions) gorm.Plugin {
 	return &Plugin{
-		rand: rand.New(rand.NewSource(time.Now().UnixNano())),
+		rand:   rand.New(rand.NewSource(time.Now().UnixNano())),
+		stdout: options.Stdout,
 	}
 }
 
@@ -48,16 +56,22 @@ func (p *Plugin) Initialize(db *gorm.DB) (err error) {
 
 			var explained string
 			if explained, err = p.explainQuery(db, queryStr); err != nil {
-				log.Println("autoanalyze: failed to analyze query:", err)
+				p.logErr("failed to explain query", err)
 				return
 			}
 
 			if p.containsFullScan(explained) {
 				if err = p.logFullScan(queryStr, explained); err != nil {
-					log.Println("autoanalyze: failed to log full scan:", err)
+					p.logErr("failed to log full scan", err)
 				}
 			}
 		})
+}
+
+func (p *Plugin) logErr(title string, err error) {
+	p.stdout.Error(fmt.Sprintf("autoanalyze: %s", title),
+		slog.String("err", err.Error()),
+	)
 }
 
 func (p *Plugin) logFullScan(query, explained string) error {

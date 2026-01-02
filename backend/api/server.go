@@ -5,12 +5,13 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
-	"github.com/gofiber/fiber/v2/middleware/logger"
+	slogfiber "github.com/samber/slog-fiber"
 	"go.uber.org/fx"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
 	"polimane/backend/env"
+	"polimane/backend/services/logstdout"
 	"polimane/backend/services/sentry"
 )
 
@@ -26,6 +27,7 @@ type ServerOptions struct {
 	Sentry         *sentry.Container
 	Env            *env.Environment
 	AuthMiddleware *auth.Middleware
+	Stdout         *logstdout.Logger
 }
 
 func Provider(options ServerOptions) (*fiber.App, error) {
@@ -70,7 +72,7 @@ func Provider(options ServerOptions) (*fiber.App, error) {
 	}))
 
 	if env.IsDev {
-		app.Use(logger.New())
+		app.Use(slogfiber.New(options.Stdout.Logger))
 	}
 
 	base.InitValidator()
@@ -87,6 +89,9 @@ func Provider(options ServerOptions) (*fiber.App, error) {
 		}
 	})
 
-	app.Use(NotFound)
+	app.Use(func(ctx *fiber.Ctx) error {
+		return NotFound(ctx, options.Stdout)
+	})
+
 	return app, nil
 }

@@ -1,18 +1,17 @@
 package awsconfig
 
 import (
-	"context"
-
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"go.uber.org/fx"
 
 	"polimane/backend/env"
+	"polimane/backend/services/appcontext"
 )
 
 type Options struct {
 	fx.In
-	Ctx context.Context
+	Ctx *appcontext.Ctx
 	Env *env.Environment
 }
 

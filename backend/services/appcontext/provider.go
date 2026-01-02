@@ -2,6 +2,12 @@ package appcontext
 
 import "context"
 
-func Provider() context.Context {
-	return context.Background()
+type Ctx struct {
+	context.Context
+}
+
+func Provider() *Ctx {
+	return &Ctx{
+		Context: context.Background(),
+	}
 }

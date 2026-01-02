@@ -16,7 +16,7 @@ func (c *Client) FilterByAccess(
 	access model.AccessLevel,
 ) error {
 	err := c.ListOut(ctx, schemaIDs,
-		repository.IncludeSoftDeleted,
+		repository.IncludeSoftDeleted, // required for deleted schemas
 		repository.Select("schema_id"),
 		repository.UserIDEq(user.ID),
 		repository.SchemaIDsIn(*schemaIDs),

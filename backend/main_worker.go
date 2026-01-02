@@ -10,11 +10,15 @@ import (
 	repositoryusers "polimane/backend/repository/users"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 	"polimane/backend/services/appcontext"
+	"polimane/backend/services/awscloudwatch"
 	"polimane/backend/services/awsconfig"
 	"polimane/backend/services/awss3"
 	"polimane/backend/services/awssqs"
 	"polimane/backend/services/bitwarden"
 	"polimane/backend/services/db"
+	"polimane/backend/services/fxlogger"
+	"polimane/backend/services/logpersistent"
+	"polimane/backend/services/logstdout"
 	"polimane/backend/services/schemadelete"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/services/sentry"
@@ -53,11 +57,14 @@ func main() {
 			awsconfig.Provider,
 			awss3.Provider,
 			awssqs.Provider,
+			awscloudwatch.Provider,
 			schemascreenshot.Provider,
 			schemadelete.Provider,
 			signal.Provider,
 			views.Provider,
 			workos.Provider,
+			logstdout.Provider,
+			logpersistent.Provider,
 
 			// repositories
 			repositoryusers.Provider,
@@ -77,6 +84,7 @@ func main() {
 
 			worker.Provider,
 		),
+		fx.WithLogger(fxlogger.Provider),
 		fx.Invoke(worker.Start),
 	).Run()
 }

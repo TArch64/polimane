@@ -33,6 +33,7 @@ func (c *Controller) Delete(ctx *fiber.Ctx) error {
 
 	err = c.userSchemas.Delete(
 		reqCtx,
+		repository.HardDelete,
 		repository.UserIDEq(userID),
 		repository.SchemaIDsIn(body.IDs),
 	)

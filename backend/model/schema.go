@@ -28,6 +28,7 @@ type Schema struct {
 	BackgroundColor string                    `gorm:"default:#f8f8f8" json:"backgroundColor"`
 	Layout          SchemaLayout              `json:"layout"`
 	ScreenshotedAt  *time.Time                `json:"screenshotedAt"`
+	DeletedBy       *ID                       `json:"-"`
 
 	// Relations
 	Users       []User             `gorm:"many2many:user_schemas" json:"-"`
