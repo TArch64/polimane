@@ -75,19 +75,19 @@ func (d *DeleterOrphanSchemas) LogResults(ctx context.Context) {
 			logpersistent.OperationUserDeletion,
 		)
 	} else {
-		var schemaIDsStrBuilder strings.Builder
-		schemaIDsStrBuilder.Grow(len(d.affected))
+		var schemaIDsBuilder strings.Builder
+		schemaIDsBuilder.Grow(len(d.affected) * 36)
 		for index, id := range d.affected {
 			if index > 0 {
-				schemaIDsStrBuilder.WriteRune(',')
+				schemaIDsBuilder.WriteRune(',')
 			}
-			schemaIDsStrBuilder.WriteString(id.String())
+			schemaIDsBuilder.WriteString(id.String())
 		}
 
 		d.PersistentLogger.InfoContext(ctx, "deleted orphan Schemas due to user deletion",
 			logpersistent.OperationUserDeletion,
 			slog.Int("schemas_count", len(d.affected)),
-			slog.String("schema_ids", schemaIDsStrBuilder.String()),
+			slog.String("schema_ids", schemaIDsBuilder.String()),
 		)
 	}
 }
