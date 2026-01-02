@@ -35,6 +35,9 @@ func (d *DeleterOrphanSchemas) Collect(ctx context.Context, user *model.User) er
 }
 
 func (d *DeleterOrphanSchemas) Delete(ctx context.Context) error {
+	if err := d.filterOrphanSchemaIDs(ctx); err != nil {
+		return err
+	}
 	if len(d.affected) == 0 {
 		return nil
 	}
