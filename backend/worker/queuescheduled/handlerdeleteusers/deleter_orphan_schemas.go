@@ -13,8 +13,6 @@ import (
 	"polimane/backend/services/schemadelete"
 )
 
-type schemaIDUsedPlaceholder struct{}
-
 type DeleterOrphanSchemas struct {
 	user             *model.User
 	affected         []model.ID
@@ -56,10 +54,9 @@ func (d *DeleterOrphanSchemas) filterOrphanSchemaIDs(ctx context.Context) error 
 	}
 
 	var orphanIDs []model.ID
-	schemaIDSet := make(map[model.ID]*schemaIDUsedPlaceholder, len(withUserIDs))
-	placeholder := &schemaIDUsedPlaceholder{}
+	schemaIDSet := make(map[model.ID]struct{}, len(withUserIDs))
 	for _, id := range withUserIDs {
-		schemaIDSet[id] = placeholder
+		schemaIDSet[id] = struct{}{}
 	}
 
 	for _, id := range d.affected {
