@@ -16,7 +16,7 @@ resource "aws_lambda_function" "worker" {
   tags             = local.aws_common_tags
 
   logging_config {
-    log_format = "text"
+    log_format = "json"
     log_group  = aws_cloudwatch_log_group.worker_logs.name
   }
 
@@ -49,10 +49,3 @@ resource "aws_lambda_event_source_mapping" "sqs_worker_scheduled" {
     maximum_concurrency = 2
   }
 }
-
-resource "aws_cloudwatch_log_group" "worker_logs" {
-  name              = "/${local.app_name}/lambda/${local.worker_name}"
-  retention_in_days = 1
-  tags              = local.aws_common_tags
-}
-
