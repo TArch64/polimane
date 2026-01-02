@@ -73,7 +73,7 @@ func (c *cloudwatchWriter) buildLogEvents(rows [][]byte) map[string][]types.Inpu
 			continue
 		}
 
-		if _, ok := byStream[row.Operation]; ok {
+		if _, ok := byStream[row.Operation]; !ok {
 			byStream[row.Operation] = []types.InputLogEvent{}
 		}
 
