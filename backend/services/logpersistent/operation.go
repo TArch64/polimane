@@ -4,8 +4,6 @@ import (
 	"log/slog"
 )
 
-type OperationName string
-
 var (
 	OperationSchemaDeletion            = operation("schema_deletion")
 	OperationUserDeletion              = operation("user_deletion")
