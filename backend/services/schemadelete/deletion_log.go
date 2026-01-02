@@ -67,10 +67,8 @@ func (s *Service) getAffectedResources(ctx context.Context, schemaIDs []model.ID
 	return resources, nil
 }
 
-func (s *Service) logAffectedResources(ctx context.Context, affected []*affectedResource) error {
+func (s *Service) logAffectedResources(ctx context.Context, affected []*affectedResource) {
 	for _, resource := range affected {
 		s.persistentLogger.InfoContext(ctx, "schema deleted", resource.getAttrs()...)
 	}
-
-	return nil
 }

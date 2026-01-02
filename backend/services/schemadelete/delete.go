@@ -25,9 +25,6 @@ func (s *Service) Delete(ctx context.Context, IDs []model.ID) (err error) {
 		return err
 	}
 
-	if err = s.logAffectedResources(ctx, affected); err != nil {
-		return err
-	}
-
+	s.logAffectedResources(ctx, affected)
 	return nil
 }
