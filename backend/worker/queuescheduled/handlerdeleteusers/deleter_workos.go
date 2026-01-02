@@ -39,7 +39,7 @@ func (d *DeleterWorkos) LogResults(ctx context.Context) {
 	lastSignedInAt, _ := time.Parse(time.RFC3339, d.affected.LastSignInAt)
 
 	d.PersistentLogger.InfoContext(ctx, "deleted Workos user",
-		logpersistent.Operation("user_deletion"),
+		logpersistent.OperationUserDeletion,
 		slog.String("id", d.affected.ID),
 		slog.String("email", d.affected.Email),
 		slog.String("first_name", d.affected.FirstName),

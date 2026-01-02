@@ -72,7 +72,7 @@ func (d *DeleterOrphanSchemas) filterOrphanSchemaIDs(ctx context.Context) error 
 func (d *DeleterOrphanSchemas) LogResults(ctx context.Context) {
 	if len(d.affected) == 0 {
 		d.PersistentLogger.InfoContext(ctx, "no orphan Schemas to delete for user",
-			logpersistent.Operation("user_deletion"),
+			logpersistent.OperationUserDeletion,
 		)
 	} else {
 		var schemaIDsStrBuilder strings.Builder
@@ -85,7 +85,7 @@ func (d *DeleterOrphanSchemas) LogResults(ctx context.Context) {
 		}
 
 		d.PersistentLogger.InfoContext(ctx, "deleted orphan Schemas due to user deletion",
-			logpersistent.Operation("user_deletion"),
+			logpersistent.OperationUserDeletion,
 			slog.Int("schemas_count", len(d.affected)),
 			slog.String("schema_ids", schemaIDsStrBuilder.String()),
 		)

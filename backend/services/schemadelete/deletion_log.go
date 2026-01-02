@@ -20,7 +20,7 @@ type affectedResource struct {
 
 func (a *affectedResource) getAttrs() []any {
 	args := []any{
-		logpersistent.Operation("schema_deletion"),
+		logpersistent.OperationSchemaDeletion,
 		slog.String("id", a.ID.String()),
 		slog.String("name", a.Name),
 		slog.Time("created_at", a.CreatedAt),

@@ -10,6 +10,7 @@ import (
 	repositoryusers "polimane/backend/repository/users"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
 	"polimane/backend/services/appcontext"
+	"polimane/backend/services/awscloudwatch"
 	"polimane/backend/services/awsconfig"
 	"polimane/backend/services/awss3"
 	"polimane/backend/services/awssqs"
@@ -56,6 +57,7 @@ func main() {
 			awsconfig.Provider,
 			awss3.Provider,
 			awssqs.Provider,
+			awscloudwatch.Provider,
 			schemascreenshot.Provider,
 			schemadelete.Provider,
 			signal.Provider,

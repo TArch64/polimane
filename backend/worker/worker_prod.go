@@ -14,6 +14,7 @@ import (
 	"github.com/getsentry/sentry-go"
 	"go.uber.org/fx"
 
+	"polimane/backend/services/appcontext"
 	"polimane/backend/services/awssqs"
 	"polimane/backend/services/logstdout"
 	"polimane/backend/worker/events"
@@ -40,7 +41,7 @@ func (c *Controller) handleError(ctx context.Context, err error, attrs map[strin
 
 type StartOptions struct {
 	fx.In
-	Ctx        context.Context
+	Ctx        *appcontext.Ctx
 	Controller *Controller
 	Stdout     *logstdout.Logger
 }

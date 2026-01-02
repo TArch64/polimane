@@ -16,6 +16,7 @@ import (
 	"go.uber.org/fx"
 
 	"polimane/backend/base"
+	"polimane/backend/services/appcontext"
 	"polimane/backend/services/awssqs"
 	"polimane/backend/services/logstdout"
 	"polimane/backend/worker/events"
@@ -33,7 +34,7 @@ func (c *Controller) handleError(_ context.Context, err error, attrs map[string]
 
 type StartOptions struct {
 	fx.In
-	Ctx        context.Context
+	Ctx        *appcontext.Ctx
 	SQS        *awssqs.Client
 	Controller *Controller
 	Stdout     *logstdout.Logger
