@@ -22,7 +22,7 @@ type ProviderOptions struct {
 	Stdout     *logstdout.Logger
 }
 
-func Provider(options ProviderOptions) (*Logger, error) {
+func Provider(options ProviderOptions) *Logger {
 	writer := newWriter(options)
 
 	options.Lifecycle.Append(fx.StopHook(func() error {
@@ -30,5 +30,5 @@ func Provider(options ProviderOptions) (*Logger, error) {
 	}))
 
 	logger := slog.New(slog.NewJSONHandler(writer, nil))
-	return &Logger{Logger: logger}, nil
+	return &Logger{Logger: logger}
 }
