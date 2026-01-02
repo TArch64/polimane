@@ -84,7 +84,7 @@ func main() {
 			api.OptionsProvider,
 			api.Provider,
 		),
-		fx.WithLogger(fxlogger.Provider),
+		fxlogger.Provider,
 		fx.Invoke(api.Start),
 	).Run()
 }

@@ -84,7 +84,7 @@ func main() {
 
 			worker.Provider,
 		),
-		fx.WithLogger(fxlogger.Provider),
+		fxlogger.Provider,
 		fx.Invoke(worker.Start),
 	).Run()
 }
