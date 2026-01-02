@@ -16,7 +16,7 @@ resource "aws_lambda_function" "worker" {
   tags             = local.aws_common_tags
 
   logging_config {
-    log_format = "json"
+    log_format = "JSON"
     log_group  = aws_cloudwatch_log_group.worker_logs.name
   }
 

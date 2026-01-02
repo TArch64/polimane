@@ -35,7 +35,7 @@ resource "aws_lambda_function" "lambda" {
   tags             = local.aws_common_tags
 
   logging_config {
-    log_format = "json"
+    log_format = "JSON"
     log_group  = aws_cloudwatch_log_group.lambda_logs.name
   }
 
