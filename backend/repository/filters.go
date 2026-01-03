@@ -17,8 +17,9 @@ func Where(expr string, args ...interface{}) Scope {
 	}
 }
 
-func IDEq(id model.ID) Scope {
-	return Where("id = ?", id)
+func IDEq(id model.ID, table ...string) Scope {
+	column := Column("id", table...)
+	return Where(column+" = ?", id)
 }
 
 func UserIDEq(id model.ID) Scope {

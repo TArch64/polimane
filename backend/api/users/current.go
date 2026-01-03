@@ -8,11 +8,12 @@ import (
 )
 
 type UserResponse struct {
-	ID            model.ID `json:"id"`
-	FirstName     string   `json:"firstName"`
-	LastName      string   `json:"lastName"`
-	Email         string   `json:"email"`
-	EmailVerified bool     `json:"isEmailVerified"`
+	ID            model.ID                `json:"id"`
+	FirstName     string                  `json:"firstName"`
+	LastName      string                  `json:"lastName"`
+	Email         string                  `json:"email"`
+	EmailVerified bool                    `json:"isEmailVerified"`
+	Subscription  *model.UserSubscription `json:"subscription"`
 }
 
 func (c *Controller) Current(ctx *fiber.Ctx) error {
@@ -24,5 +25,6 @@ func (c *Controller) Current(ctx *fiber.Ctx) error {
 		LastName:      session.User.LastName,
 		Email:         session.User.Email,
 		EmailVerified: session.WorkosUser.EmailVerified,
+		Subscription:  session.User.Subscription,
 	})
 }

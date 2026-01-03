@@ -11,6 +11,7 @@ import (
 	"github.com/workos/workos-go/v4/pkg/usermanagement"
 	"go.uber.org/fx"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"polimane/backend/api/base"
 	"polimane/backend/env"
@@ -155,7 +156,12 @@ func (m *Middleware) getWorkosUser(ctx context.Context, accessTokenClaims *worko
 
 func (m *Middleware) getUser(ctx context.Context, id model.ID) (*model.User, error) {
 	return m.userCache.Get(ctx, id.String(), func() (*model.User, *time.Duration, error) {
-		user, err := m.users.Get(ctx, repository.IDEq(id))
+		user, err := m.users.GetCustomizable(ctx,
+			func(chain gorm.ChainInterface[*model.User]) gorm.ChainInterface[*model.User] {
+				return chain.Joins(clause.InnerJoin.Association("Subscription"), nil)
+			},
+			repository.IDEq(id, "users"),
+		)
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil, m.newUnauthorizedErr(err, base.CustomErrorData{

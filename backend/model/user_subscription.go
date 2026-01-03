@@ -22,11 +22,11 @@ type UserSubscription struct {
 	*Timestamps
 	Plan           SubscriptionPlan   `json:"plan"`
 	Status         SubscriptionStatus `json:"status" gorm:"default:'active'"`
-	BillingTry     uint8              `json:"billingTry" gorm:"default:0"`
-	TrialStartedAt time.Time          `json:"trialStartedAt"`
-	TrialEndsAt    time.Time          `json:"trialEndsAt"`
-	CanceledAt     *time.Time         `json:"canceledAt"`
-	LastBilledAt   *time.Time         `json:"lastBilledAt"`
+	BillingTry     uint8              `json:"-" gorm:"default:0"`
+	TrialStartedAt time.Time          `json:"-"`
+	TrialEndsAt    time.Time          `json:"-"`
+	CanceledAt     *time.Time         `json:"-"`
+	LastBilledAt   *time.Time         `json:"-"`
 
 	// Relations
 	User *User `json:"-" gorm:"foreignKey:ID"`
