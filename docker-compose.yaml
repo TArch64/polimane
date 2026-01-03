@@ -21,6 +21,8 @@ x-backend-common: &backend-common
       condition: service_healthy
     sqs:
       condition: service_started
+    s3:
+      condition: service_started
 
 services:
   nginx:

@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM debian:13.2-slim
 
 WORKDIR /app
 
@@ -8,10 +8,12 @@ RUN --mount=type=cache,target=/var/cache/apt \
     apt-get install -y --no-install-recommends cron jq curl
 
 RUN touch /var/log/cron.log
-COPY ./start.sh ./
 
+COPY ./bin ./bin
+ENV PATH="/app/bin:$PATH"
+
+COPY  ./start.sh ./send-message.sh ./
 COPY ./schedule /etc/cron.d/
-COPY ./send-message.sh ./
 RUN crontab /etc/cron.d/schedule
 
 CMD ./start.sh
