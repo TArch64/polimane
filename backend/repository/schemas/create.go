@@ -22,16 +22,12 @@ type CreateOptions struct {
 
 func (c *Client) Create(ctx context.Context, options *CreateOptions) (schema *model.Schema, err error) {
 	if options.Palette == nil {
-		options.Palette = make(model.SchemaPalette, model.SchemaPaletteSize)
+		options.Palette = model.DefaultPalette
 	}
 
 	if options.Size == nil {
-		options.Size = &model.SchemaSize{
-			Left:   50,
-			Right:  49,
-			Top:    15,
-			Bottom: 14,
-		}
+		size := model.DefaultSchemaSize
+		options.Size = &size
 	}
 
 	if options.Beads == nil {
