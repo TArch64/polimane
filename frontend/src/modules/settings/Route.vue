@@ -21,7 +21,7 @@
 import type { RouteLocationRaw } from 'vue-router';
 import { CommonLayout } from '@/components/layout';
 import { Button } from '@/components/button';
-import { type IconComponent, PersonIcon, UnlockIcon } from '@/components/icon';
+import { CreditCartIcon, type IconComponent, PersonIcon, UnlockIcon } from '@/components/icon';
 
 interface ISettingsRoute {
   title: string;
@@ -39,6 +39,11 @@ const routes: ISettingsRoute[] = [
     title: 'Безпека',
     icon: UnlockIcon,
     to: { name: 'settings-security' },
+  },
+  {
+    title: 'Підписка',
+    icon: CreditCartIcon,
+    to: { name: 'settings-subscription' },
   },
 ];
 </script>

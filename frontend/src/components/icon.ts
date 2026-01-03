@@ -61,6 +61,7 @@ export const MoveIcon = makeIcon(() => import('~icons/eva/move-outline'));
 export const MaximizeIcon = makeIcon(() => import('~icons/eva/maximize-outline'));
 export const FolderIcon = makeIcon(() => import('~icons/eva/folder-outline'));
 export const FolderRemoveIcon = makeIcon(() => import('~icons/eva/folder-remove-outline'));
+export const CreditCartIcon = makeIcon(() => import('~icons/eva/credit-card-outline'));
 
 export const PersonFillIcon = makeIcon(() => import('~icons/eva/person-fill'));
 
