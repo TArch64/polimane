@@ -1,14 +1,7 @@
 <template>
-  <p>
-    subscription
-  </p>
+  <SubscriptionInfo />
 </template>
 
 <script setup lang="ts">
-import { definePreload } from '@/router/define';
-
-defineOptions({
-  beforeRouteEnter: definePreload<'settings-subscription'>(async () => {
-  }),
-});
+import { SubscriptionInfo } from './components';
 </script>
