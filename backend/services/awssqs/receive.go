@@ -11,7 +11,8 @@ func (c *Client) Receive(ctx context.Context, queue string) ([]types.Message, er
 	output, err := c.sqs.ReceiveMessage(ctx, &sqs.ReceiveMessageInput{
 		QueueUrl:              c.buildQueueUrl(queue),
 		MessageAttributeNames: []string{"All"},
-	})
+		WaitTimeSeconds:       20,
+	}, SkipLogging)
 
 	if err != nil {
 		return nil, err

@@ -32,3 +32,7 @@ func Provider(options ClientOptions) *Client {
 		env: options.Env,
 	}
 }
+
+func SkipLogging(options *sqs.Options) {
+	options.ClientLogMode = 0
+}

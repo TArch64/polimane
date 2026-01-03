@@ -7,17 +7,19 @@ import (
 
 	"polimane/backend/env"
 	"polimane/backend/services/appcontext"
+	"polimane/backend/services/logstdout"
 )
 
 type Options struct {
 	fx.In
-	Ctx *appcontext.Ctx
-	Env *env.Environment
+	Ctx    *appcontext.Ctx
+	Env    *env.Environment
+	Stdout *logstdout.Logger
 }
 
 func Provider(options Options) (*aws.Config, error) {
 	cfg, err := config.LoadDefaultConfig(options.Ctx, func(loadOptions *config.LoadOptions) error {
-		configure(options.Env, loadOptions)
+		configure(&options, loadOptions)
 		return nil
 	})
 
