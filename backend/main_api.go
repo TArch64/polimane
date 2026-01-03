@@ -17,6 +17,7 @@ import (
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryusers "polimane/backend/repository/users"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
+	repositoryusersubscriptions "polimane/backend/repository/usersubscriptions"
 	"polimane/backend/services/appcontext"
 	"polimane/backend/services/awscloudwatch"
 	"polimane/backend/services/awsconfig"
@@ -72,6 +73,7 @@ func main() {
 			repositoryschemas.Provider,
 			repositoryschemainvitations.Provider,
 			repositoryfolders.Provider,
+			repositoryusersubscriptions.Provider,
 
 			// api
 			apiauth.MiddlewareProvider,

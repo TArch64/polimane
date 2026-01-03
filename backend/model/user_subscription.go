@@ -17,11 +17,15 @@ const (
 	SubscriptionUnpaid   SubscriptionStatus = "unpaid"
 )
 
+var (
+	SubscriptionTrialDuration = 14 * 24 * time.Hour
+)
+
 type UserSubscription struct {
 	*Identifiable
 	*Timestamps
 	Plan           SubscriptionPlan   `json:"plan"`
-	Status         SubscriptionStatus `json:"status" gorm:"default:'active'"`
+	Status         SubscriptionStatus `json:"status" gorm:"default:active"`
 	BillingTry     uint8              `json:"-" gorm:"default:0"`
 	TrialStartedAt time.Time          `json:"-"`
 	TrialEndsAt    time.Time          `json:"-"`
