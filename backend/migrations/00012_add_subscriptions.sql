@@ -4,9 +4,7 @@ CREATE TYPE subscription_status AS enum ('active', 'canceled', 'unpaid');
 
 CREATE TABLE IF NOT EXISTS user_subscriptions
 (
-  id               uuid                NOT NULL,
-  created_at       timestamptz         NOT NULL,
-  updated_at       timestamptz         NOT NULL,
+  user_id uuid NOT NULL,
   plan             subscription_plan   NOT NULL,
   status           subscription_status NOT NULL DEFAULT 'active',
   billing_try      smallint            NOT NULL DEFAULT 0,
@@ -14,10 +12,10 @@ CREATE TABLE IF NOT EXISTS user_subscriptions
   trial_ends_at    timestamptz         NOT NULL,
   canceled_at      timestamptz,
   last_billed_at   timestamptz,
-  PRIMARY KEY (id),
+  PRIMARY KEY (user_id),
 
   CONSTRAINT fk_user_subscriptions_user
-    FOREIGN KEY (id)
+    FOREIGN KEY (user_id)
       REFERENCES users (id)
       ON UPDATE NO ACTION
       ON DELETE CASCADE
@@ -26,10 +24,10 @@ CREATE TABLE IF NOT EXISTS user_subscriptions
 CREATE INDEX idx_user_subscriptions_status
   ON user_subscriptions (status);
 
-INSERT INTO user_subscriptions (id, created_at, updated_at, plan, trial_started_at, trial_ends_at)
-SELECT id, NOW(), NOW(), 'beta', NOW(), NOW() + INTERVAL '14 days'
+INSERT INTO user_subscriptions (user_id, plan, trial_started_at, trial_ends_at)
+SELECT id, 'beta', NOW(), NOW() + INTERVAL '14 days'
 FROM users
-WHERE id NOT IN (SELECT id FROM user_subscriptions);
+ON CONFLICT (user_id) DO NOTHING;
 
 -- +goose Down
 DROP TABLE IF EXISTS user_subscriptions;

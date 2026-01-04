@@ -22,17 +22,15 @@ var (
 )
 
 type UserSubscription struct {
-	ID             ID                 `gorm:"primaryKey" json:"-"`
+	UserID         ID                 `gorm:"primaryKey" json:"-"`
 	Plan           SubscriptionPlan   `json:"plan"`
 	Status         SubscriptionStatus `json:"status" gorm:"default:active"`
 	BillingTry     uint8              `json:"-" gorm:"default:0"`
-	CreatedAt      time.Time          `json:"-"`
-	UpdatedAt      time.Time          `json:"-"`
 	TrialStartedAt time.Time          `json:"-"`
 	TrialEndsAt    time.Time          `json:"-"`
 	CanceledAt     *time.Time         `json:"-"`
 	LastBilledAt   *time.Time         `json:"-"`
 
 	// Relations
-	User *User `json:"-" gorm:"foreignKey:ID"`
+	User *User `json:"-"`
 }

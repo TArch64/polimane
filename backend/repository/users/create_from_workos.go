@@ -41,7 +41,7 @@ func (c *Client) CreateFromWorkos(ctx context.Context, workosUser *usermanagemen
 
 func (c *Client) createSubscription(ctx context.Context, tx *gorm.DB, user *model.User) error {
 	return c.userSubscriptions.InsertTx(ctx, tx, &model.UserSubscription{
-		ID:             user.ID,
+		UserID:         user.ID,
 		Plan:           model.SubscriptionBasic,
 		TrialStartedAt: time.Now(),
 		TrialEndsAt:    time.Now().Add(model.SubscriptionTrialDuration),

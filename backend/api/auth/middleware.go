@@ -158,7 +158,8 @@ func (m *Middleware) getUser(ctx context.Context, id model.ID) (*model.User, err
 	return m.userCache.Get(ctx, id.String(), func() (*model.User, *time.Duration, error) {
 		user, err := m.users.GetCustomizable(ctx,
 			func(chain gorm.ChainInterface[*model.User]) gorm.ChainInterface[*model.User] {
-				return chain.Joins(clause.InnerJoin.Association("Subscription"), nil)
+				join := clause.InnerJoin.Association("Subscription").As("us")
+				return chain.Joins(join, nil)
 			},
 			repository.IDEq(id, "users"),
 		)
