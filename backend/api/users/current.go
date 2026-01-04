@@ -8,12 +8,19 @@ import (
 )
 
 type UserResponse struct {
-	ID            model.ID                `json:"id"`
-	FirstName     string                  `json:"firstName"`
-	LastName      string                  `json:"lastName"`
-	Email         string                  `json:"email"`
-	EmailVerified bool                    `json:"isEmailVerified"`
-	Subscription  *model.UserSubscription `json:"subscription"`
+	ID            model.ID              `json:"id"`
+	FirstName     string                `json:"firstName"`
+	LastName      string                `json:"lastName"`
+	Email         string                `json:"email"`
+	EmailVerified bool                  `json:"isEmailVerified"`
+	Subscription  *SubscriptionResponse `json:"subscription"`
+}
+
+type SubscriptionResponse struct {
+	Plan     model.SubscriptionPlan      `json:"plan"`
+	Status   model.SubscriptionStatus    `json:"status"`
+	Counters *model.SubscriptionCounters `json:"counters"`
+	Limits   *model.SubscriptionLimits   `json:"limits"`
 }
 
 func (c *Controller) Current(ctx *fiber.Ctx) error {
@@ -25,6 +32,12 @@ func (c *Controller) Current(ctx *fiber.Ctx) error {
 		LastName:      session.User.LastName,
 		Email:         session.User.Email,
 		EmailVerified: session.WorkosUser.EmailVerified,
-		Subscription:  session.User.Subscription,
+
+		Subscription: &SubscriptionResponse{
+			Plan:     session.User.Subscription.Plan,
+			Status:   session.User.Subscription.Status,
+			Counters: session.User.Subscription.Counters.Data(),
+			Limits:   session.User.Subscription.Limits(),
+		},
 	})
 }

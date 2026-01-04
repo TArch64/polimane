@@ -29,11 +29,11 @@ const planTitle = computed(() => planTitles[subscriptionStore.subscription.plan]
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px;
+    padding: 32px;
   }
 
   .subscription-info__plan-title {
-    font-size: 32px;
+    font-size: 28px;
   }
 }
 </style>
