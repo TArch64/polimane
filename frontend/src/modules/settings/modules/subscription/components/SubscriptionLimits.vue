@@ -22,6 +22,8 @@ const subscriptionStore = useSubscriptionStore();
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 16px;
+    padding: 28px 16px;
+    place-items: center;
   }
 }
 </style>

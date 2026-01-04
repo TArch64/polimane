@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { computed } from 'vue';
 import { useSessionStore } from '@/stores';
 import type { ISubscriptionCounters, ISubscriptionLimits, IUserSubscription } from '@/models';
-import { getObjectKeys } from '@/helpers';
+import { getObjectEntries } from '@/helpers';
 
 type LimitKey = keyof ISubscriptionLimits;
 
@@ -14,39 +14,42 @@ export enum SubscriptionLimitType {
 export interface ISubscriptionLimit {
   key: LimitKey;
   type: SubscriptionLimitType;
+  title: string;
   max: number | null;
   used: number | null;
 }
 
-const LIMIT_KEYS = {
-  schemasCreated: true,
-  sharedAccess: true,
-} as const satisfies Record<LimitKey, boolean>;
-
-const COUNTER_LIMIT_KEYS: LimitKey[] = [
-  'schemasCreated',
-];
-
-function getLimitType(limitKey: LimitKey): SubscriptionLimitType {
-  return COUNTER_LIMIT_KEYS.includes(limitKey)
-    ? SubscriptionLimitType.COUNTER
-    : SubscriptionLimitType.PER_FEATURE;
+interface ILimitConfig {
+  type: SubscriptionLimitType;
+  title: string;
 }
 
-type LimitFactory = (subscription: IUserSubscription, key: LimitKey) => ISubscriptionLimit;
+const LIMIT_KEYS: Record<LimitKey, ILimitConfig> = {
+  schemasCreated: {
+    type: SubscriptionLimitType.COUNTER,
+    title: 'Створені Схеми',
+  },
 
-const createCounterLimit: LimitFactory = (subscription, key) => ({
+  sharedAccess: {
+    type: SubscriptionLimitType.PER_FEATURE,
+    title: 'Спільний доступ',
+  },
+};
+
+type LimitFactory = (subscription: IUserSubscription, key: LimitKey, config: ILimitConfig) => ISubscriptionLimit;
+
+const createCounterLimit: LimitFactory = (subscription, key, config) => ({
   key,
-  type: SubscriptionLimitType.COUNTER,
   max: subscription.limits[key] ?? null,
   used: subscription.counters[key as keyof ISubscriptionCounters] ?? null,
+  ...config,
 });
 
-const createPerFeatureLimit: LimitFactory = (subscription, key) => ({
+const createPerFeatureLimit: LimitFactory = (subscription, key, config) => ({
   key,
-  type: SubscriptionLimitType.PER_FEATURE,
   max: subscription.limits[key] ?? null,
   used: null,
+  ...config,
 });
 
 const limitFactories: Record<SubscriptionLimitType, LimitFactory> = {
@@ -61,10 +64,9 @@ export const useSubscriptionStore = defineStore('settings/subscription', () => {
   const limits = computed(() => {
     const limits: ISubscriptionLimit[] = [];
 
-    for (const limitKey of getObjectKeys(LIMIT_KEYS)) {
-      const type = getLimitType(limitKey);
-      const createLimit = limitFactories[type];
-      limits.push(createLimit(subscription.value, limitKey));
+    for (const [key, config] of getObjectEntries(LIMIT_KEYS)) {
+      const createLimit = limitFactories[config.type];
+      limits.push(createLimit(subscription.value, key, config));
     }
 
     return limits;
