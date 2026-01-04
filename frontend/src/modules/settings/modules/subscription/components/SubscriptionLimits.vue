@@ -1,22 +1,19 @@
 <template>
   <Card class="subscription-limits">
     <SubscriptionLimit
-      v-for="(_, limitKey) in limitKeys"
-      :key="limitKey"
-      :limitKey
+      v-for="limit in subscriptionStore.limits"
+      :key="limit.key"
+      :limit
     />
   </Card>
 </template>
 
 <script setup lang="ts">
-import type { ISubscriptionLimits } from '@/models';
 import { Card } from '@/components/card';
-import SubscriptionLimit from './SubscriptionLimit.vue';
+import { useSubscriptionStore } from '../stores';
+import { SubscriptionLimit } from './limit';
 
-const limitKeys = {
-  schemasCreated: true,
-  sharedAccess: true,
-} as const satisfies Record<keyof ISubscriptionLimits, boolean>;
+const subscriptionStore = useSubscriptionStore();
 </script>
 
 <style scoped>
