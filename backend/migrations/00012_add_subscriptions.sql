@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS user_subscriptions
   trial_ends_at    timestamptz         NOT NULL,
   canceled_at      timestamptz,
   last_billed_at   timestamptz,
+  PRIMARY KEY (id),
 
   CONSTRAINT fk_user_subscriptions_user
     FOREIGN KEY (id)
