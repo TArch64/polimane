@@ -5,6 +5,8 @@
       :key="limit.key"
       :limit
     />
+
+    <div class="subscription-limits__holder" />
   </Card>
 </template>
 
@@ -20,10 +22,21 @@ const subscriptionStore = useSubscriptionStore();
 @layer page {
   .subscription-limits {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    padding: 28px 16px;
+    grid-template-columns: repeat(auto-fit, 140px);
+    gap: 32px 24px;
+    padding: 28px 16px 36px;
     place-items: center;
+    justify-content: space-evenly;
+  }
+
+  .subscription-limits__holder {
+    display: none;
+  }
+
+  @media (min-width: 900px) {
+    .subscription-limits__holder {
+      display: block;
+    }
   }
 }
 </style>
