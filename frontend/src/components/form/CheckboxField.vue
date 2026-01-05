@@ -2,13 +2,15 @@
   <LabeledContent :label gap="12">
     <input
       type="checkbox"
-      class="checkbox__input tap-animation"
+      class="checkbox__input"
       v-model="model"
+      v-tappable
     >
   </LabeledContent>
 </template>
 
 <script setup lang="ts">
+import { vTappable } from '@/directives';
 import LabeledContent from './LabeledContent.vue';
 
 defineProps<{
@@ -25,7 +27,6 @@ const model = defineModel<boolean>({ required: true });
     width: 16px;
     height: 16px;
     cursor: pointer;
-    --tap-scale: 0.9;
   }
 }
 </style>

@@ -1,9 +1,11 @@
 <template>
   <ButtonRoot
     :to
-    class="button tap-animation"
+    draggable="false"
+    class="button"
     :class="classes"
     :disabled="disabled || loading ? 'disabled' : undefined"
+    v-tappable
   >
     <Component
       :is="prependIcon"
@@ -24,6 +26,7 @@
 <script setup lang="ts">
 import { computed, type Slot } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
+import { vTappable } from '@/directives';
 import type { IconComponent } from '../icon';
 import Spinner from '../Spinner.vue';
 import ButtonRoot from './ButtonRoot.vue';
@@ -83,7 +86,6 @@ const textClasses = computed(() => ({
     justify-content: center;
     cursor: pointer;
     position: relative;
-    --tap-scale: 0.98;
   }
 
   .button__prepend-icon {
@@ -93,7 +95,6 @@ const textClasses = computed(() => ({
   }
 
   .button--icon {
-    --tap-scale: 0.9;
   }
 
   .button--sm {

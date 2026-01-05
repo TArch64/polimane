@@ -7,7 +7,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type FunctionalComponent, h } from 'vue';
+import { computed, type FunctionalComponent, h, withDirectives } from 'vue';
+import { vTappable } from '@/directives';
 import LabeledContent from './LabeledContent.vue';
 
 withDefaults(defineProps<{
@@ -23,23 +24,22 @@ const controlClasses = computed(() => {
   return `color-picker__control--${modifier}`;
 });
 
-const Picker: FunctionalComponent = () => h('span', {
-  class: [
-    'color-picker__control',
-    'tap-animation',
-    controlClasses.value,
-  ],
-}, [
-  h('input', {
-    type: 'color',
-    class: 'color-picker__input',
-    value: model.value,
+const Picker: FunctionalComponent = () => withDirectives(
+  h('span', {
+    class: ['color-picker__control', controlClasses.value],
+  }, [
+    h('input', {
+      type: 'color',
+      class: 'color-picker__input',
+      value: model.value,
 
-    onInput: (event: Event) => {
-      model.value = (event.target as HTMLInputElement).value;
-    },
-  }),
-]);
+      onInput: (event: Event) => {
+        model.value = (event.target as HTMLInputElement).value;
+      },
+    }),
+  ]),
+  [[vTappable]],
+);
 </script>
 
 <style scoped>

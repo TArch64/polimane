@@ -9,11 +9,12 @@
       >
         <input
           type="radio"
-          class="radio-select__input tap-animation"
+          class="radio-select__input"
           :name="id"
           :value="option.value"
           :disabled="option.disabled"
           v-model="model"
+          v-tappable
         >
       </LabeledContent>
 
@@ -30,6 +31,7 @@
 <script setup lang="ts" generic="V extends SelectValue">
 import { type Slot, useId } from 'vue';
 import { VerticalSlideTransition } from '@/components/transition';
+import { vTappable } from '@/directives';
 import LabeledContent from './LabeledContent.vue';
 import type { ISelectOption, SelectOptions, SelectValue } from './ISelectOption';
 
@@ -69,7 +71,6 @@ const getOptionLabelClasses = (option: ISelectOption<V>) => ({
     width: 16px;
     height: 16px;
     cursor: pointer;
-    --tap-scale: 0.9;
   }
 
   .radio-select__option,

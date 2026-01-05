@@ -4,13 +4,21 @@
   text-overflow: ellipsis;
 }
 
+.tap-animation-in {
+  animation: tap-in 300ms ease-out forwards;
+}
+
+.tap-animation-out {
+  animation: tap-out 150ms ease-out forwards;
+}
+
 @property --tap-scale {
   inherits: true;
   initial-value: 0.95;
   syntax: '<number>';
 }
 
-@keyframes tap {
+@keyframes tap-in {
   from {
     scale: 1;
   }
@@ -20,14 +28,12 @@
   }
 }
 
-@media (min-width: 768px) {
-  .tap-animation:active:not([disabled]):not(:has([disabled])) {
-    animation: tap 300ms ease-out;
+@keyframes tap-out {
+  from {
+    scale: var(--tap-scale);
   }
-}
 
-@media (max-width: 768px) {
-  .tap-animation:where(:focus, :active, :hover):not([disabled]):not(:has([disabled])) {
-    animation: tap 300ms ease-out;
+  to {
+    scale: 1;
   }
 }
