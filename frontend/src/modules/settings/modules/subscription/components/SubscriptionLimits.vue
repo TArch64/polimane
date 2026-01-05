@@ -5,8 +5,6 @@
       :key="limit.key"
       :limit
     />
-
-    <div class="subscription-limits__holder" />
   </Card>
 </template>
 

@@ -27,12 +27,17 @@ interface ILimitConfig {
 const LIMIT_KEYS: Record<LimitKey, ILimitConfig> = {
   schemasCreated: {
     type: SubscriptionLimitType.COUNTER,
-    title: 'Створені Схеми',
+    title: 'Створено Схем',
+  },
+
+  schemaBeads: {
+    type: SubscriptionLimitType.PER_FEATURE,
+    title: 'Кіл. Бісеру Схеми',
   },
 
   sharedAccess: {
     type: SubscriptionLimitType.PER_FEATURE,
-    title: 'Спільний доступ',
+    title: 'Користувачі Схеми',
   },
 };
 

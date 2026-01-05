@@ -6,6 +6,7 @@ export interface ISubscriptionCounters {
 
 export interface ISubscriptionLimits {
   schemasCreated?: number;
+  schemaBeads?: number;
   sharedAccess?: number;
 }
 

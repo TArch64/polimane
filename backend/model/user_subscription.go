@@ -22,15 +22,15 @@ const (
 var (
 	SubscriptionTrialDuration = 14 * 24 * time.Hour
 
-	BetaLimits = SubscriptionLimits{}
-
 	BasicLimits = SubscriptionLimits{
 		SchemasCreated: ptr[uint16](20),
+		SchemaBeads:    ptr[uint16](1500),
 		SharedAccess:   ptr[uint8](1),
 	}
 
 	ProLimits = SubscriptionLimits{
 		SchemasCreated: ptr[uint16](100),
+		SchemaBeads:    nil,
 		SharedAccess:   ptr[uint8](5),
 	}
 )
@@ -56,13 +56,14 @@ type SubscriptionCounters struct {
 
 type SubscriptionLimits struct {
 	SchemasCreated *uint16 `json:"schemasCreated,omitempty"`
+	SchemaBeads    *uint16 `json:"schemaBeads,omitempty"`
 	SharedAccess   *uint8  `json:"sharedAccess,omitempty"`
 }
 
 func (u *UserSubscription) Limits() *SubscriptionLimits {
 	switch u.Plan {
 	case SubscriptionBeta:
-		return &BetaLimits
+		return &ProLimits
 	case SubscriptionBasic:
 		return &BasicLimits
 	case SubscriptionPro:
