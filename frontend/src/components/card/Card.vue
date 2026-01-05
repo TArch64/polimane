@@ -4,6 +4,7 @@
     v-bind="binding.props"
     class="card"
     :class="classes"
+    v-tappable="{ disabled: !interactable }"
   >
     <header v-if="title">
       <h2 class="card__title">
@@ -24,6 +25,7 @@
 <script setup lang="ts">
 import { computed, type Slot } from 'vue';
 import type { ComponentAs } from '@/types';
+import { vTappable } from '@/directives';
 import type { AnyBinding } from '../binding';
 import { VerticalSlideTransition } from '../transition';
 import type { ICardFooterTransition } from './ICardFooterTransition';
@@ -62,7 +64,7 @@ const slots = defineSlots<{
 const classes = computed(() => [
   `card--variant-${props.variant}`,
   {
-    'card--interactable tap-animation': props.interactable,
+    'card--interactable': props.interactable,
     'card--active': props.active,
   },
 ]);

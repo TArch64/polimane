@@ -3,8 +3,8 @@ import {
   defineWrapperRoute,
   type InferWrapperRouteInfo,
 } from '@/router/define';
-import { settingsProfileRoute, type SettingsProfileRouteInfo } from './profile';
-import { settingsSecurityRoute, type SettingsSecurityRouteInfo } from './security';
+import { settingsProfileRoute, type SettingsProfileRouteInfo } from './modules/profile';
+import { settingsSecurityRoute, type SettingsSecurityRouteInfo } from './modules/security';
 
 const notFoundRoute = defineRedirectRoute('', settingsProfileRoute.name);
 

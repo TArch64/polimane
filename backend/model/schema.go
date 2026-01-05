@@ -11,10 +11,33 @@ import (
 type SchemaLayout string
 
 const (
-	SchemaPaletteSize = 10
-
 	SchemaLinear SchemaLayout = "linear"
 	SchemaRadial SchemaLayout = "radial"
+)
+
+var (
+	defaultSchemaWidth  uint16 = 50
+	defaultSchemaHeight uint16 = 15
+
+	DefaultSchemaSize = SchemaSize{
+		Left:   defaultSchemaWidth,
+		Right:  defaultSchemaWidth - 1,
+		Top:    defaultSchemaHeight,
+		Bottom: defaultSchemaHeight - 1,
+	}
+
+	DefaultPalette = SchemaPalette{
+		"#333333",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+	}
 )
 
 type Schema struct {
