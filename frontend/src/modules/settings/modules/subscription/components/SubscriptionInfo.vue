@@ -28,7 +28,7 @@ const planTitle = computed(() => planTitles[subscriptionStore.subscription.plan]
   .subscription-info {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
     padding: 32px;
   }
 

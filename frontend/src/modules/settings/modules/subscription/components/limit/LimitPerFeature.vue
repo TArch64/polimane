@@ -1,14 +1,15 @@
 <template>
-  <LimitView
-    :title="limit.title"
-    :subtitle="`${limit.max}`"
-    :progress="0"
-  />
+  <LimitView>
+    <LimitInfo
+      :title="limit.title"
+      :value="`${limit.max}`"
+    />
+  </LimitView>
 </template>
 
 <script setup lang="ts">
 import type { ISubscriptionLimit } from '../../stores';
-import LimitView from './LimitView.vue';
+import { LimitInfo, LimitView } from './base';
 
 defineProps<{
   limit: ISubscriptionLimit;

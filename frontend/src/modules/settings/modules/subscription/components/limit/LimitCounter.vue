@@ -1,21 +1,24 @@
 <template>
-  <LimitView
-    :title="limit.title"
-    :subtitle="`${limit.used}/${limit.max}`"
-    :progress="usedPercentage"
-  />
+  <LimitView>
+    <LimitInfo
+      :title="limit.title"
+      :value="`${limit.used}/${limit.max}`"
+    />
+
+    <LimitProgress :value="usage" />
+  </LimitView>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { ISubscriptionLimit } from '../../stores';
-import LimitView from './LimitView.vue';
+import { LimitInfo, LimitProgress, LimitView } from './base';
 
 const props = defineProps<{
   limit: ISubscriptionLimit;
 }>();
 
-const usedPercentage = computed(() => {
+const usage = computed(() => {
   if (props.limit.max === null) {
     return 0;
   }

@@ -32,12 +32,12 @@ const LIMIT_KEYS: Record<LimitKey, ILimitConfig> = {
 
   schemaBeads: {
     type: SubscriptionLimitType.PER_FEATURE,
-    title: 'Кіл. Бісеру Схеми',
+    title: 'Кількість Бісеру в Схемі',
   },
 
   sharedAccess: {
     type: SubscriptionLimitType.PER_FEATURE,
-    title: 'Користувачі Схеми',
+    title: 'Користувачі з доступом до Схеми',
   },
 };
 
