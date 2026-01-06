@@ -42,5 +42,10 @@ func (c *Controller) Delete(ctx *fiber.Ctx) error {
 		return err
 	}
 
+	err = c.subscriptionCounters.SyncSchemasCreated(reqCtx, userID)
+	if err != nil {
+		return err
+	}
+
 	return base.NewSuccessResponse(ctx)
 }

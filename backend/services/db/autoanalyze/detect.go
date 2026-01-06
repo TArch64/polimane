@@ -10,7 +10,7 @@ func (p *Plugin) explainQuery(db *gorm.DB, query string) (string, error) {
 	var explained []string
 
 	err := db.
-		Raw("EXPLAIN ANALYZE " + query).
+		Raw("EXPLAIN " + query).
 		Scan(&explained).
 		Error
 

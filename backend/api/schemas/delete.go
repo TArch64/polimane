@@ -1,10 +1,14 @@
 package schemas
 
 import (
+	"context"
+
 	"github.com/gofiber/fiber/v2"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/model"
+	"polimane/backend/repository"
 )
 
 func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
@@ -23,10 +27,24 @@ func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	err = c.subscriptionCounters.SyncSchemasCreated(reqCtx, user.ID)
+	affectedUserIDs, err := c.getAffectedUsersOnDelete(reqCtx, body.IDs)
+	if err != nil {
+		return err
+	}
+
+	err = c.subscriptionCounters.SyncSchemasCreated(reqCtx, affectedUserIDs...)
 	if err != nil {
 		return err
 	}
 
 	return base.NewSuccessResponse(ctx)
+}
+
+func (c *Controller) getAffectedUsersOnDelete(ctx context.Context, schemaIDs []model.ID) (out []model.ID, err error) {
+	err = c.userSchemas.ListOut(ctx, &out,
+		repository.IncludeSoftDeleted,
+		repository.Select("DISTINCT ON (user_id) user_id"),
+		repository.SchemaIDsIn(schemaIDs),
+	)
+	return
 }

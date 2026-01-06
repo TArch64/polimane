@@ -2,20 +2,35 @@ package subscriptioncounters
 
 import (
 	"context"
+	"database/sql"
 
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
-	"polimane/backend/repository"
 )
 
-func (s *Service) SyncSchemasCreated(ctx context.Context, userID model.ID) error {
-	return s.updateCounter(ctx, userID, func(expr *datatypes.JSONSetExpression) *datatypes.JSONSetExpression {
-		countQuery := s.userSchemas.CountQuery(ctx,
-			repository.UserIDEq(userID),
+const syncSchemasCreatedSQL = `
+UPDATE user_subscriptions
+SET counters = JSON_SET(counters, '{schemasCreated}', TO_JSONB(computed.count))
+FROM (
+	SELECT user_schemas.user_id, COUNT(user_schemas.schema_id) AS count
+	FROM user_schemas
+	WHERE user_schemas.user_id IN @user_ids AND user_schemas.deleted_at IS NULL
+	GROUP BY user_schemas.user_id
+) AS computed
+WHERE user_subscriptions.user_id = computed.user_id
+`
+
+func (s *Service) SyncSchemasCreated(ctx context.Context, userIDs ...model.ID) error {
+	err := gorm.
+		G[model.UserSubscription](s.userSubscriptions.DB).
+		Exec(ctx, syncSchemasCreatedSQL,
+			sql.Named("user_ids", userIDs),
 		)
 
-		return expr.Set("{schemasCreated}", gorm.Expr("to_jsonb((?))", countQuery))
-	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -61,6 +61,11 @@ func (c *Controller) Add(ctx *fiber.Ctx) (err error) {
 		response, err = c.inviteUser(reqCtx, currentUser, body.IDs, body.Email)
 	} else {
 		response, err = c.addExistingUser(reqCtx, currentUser, body.IDs, user)
+		if err != nil {
+			return err
+		}
+
+		err = c.subscriptionCounters.SyncSchemasCreated(reqCtx, user.ID)
 	}
 
 	if err != nil {

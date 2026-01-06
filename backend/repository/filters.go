@@ -26,6 +26,10 @@ func UserIDEq(id model.ID) Scope {
 	return Where("user_id = ?", id)
 }
 
+func UserIDsIn(ids []model.ID) Scope {
+	return Where("user_id IN (?)", ids)
+}
+
 func EmailEq(email string) Scope {
 	return Where("email = ?", email)
 }
