@@ -18,7 +18,13 @@ func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
 	}
 
 	user := auth.GetSessionUser(ctx)
-	if err = c.schemas.DeleteSoft(ctx.Context(), user, body.IDs); err != nil {
+	reqCtx := ctx.Context()
+	if err = c.schemas.DeleteSoft(reqCtx, user, body.IDs); err != nil {
+		return err
+	}
+
+	err = c.subscriptionCounters.SyncSchemasCreated(reqCtx, user.ID)
+	if err != nil {
 		return err
 	}
 

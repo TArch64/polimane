@@ -50,6 +50,14 @@ func main() {
 			// external
 			appcontext.Provider,
 
+			// repositories
+			repositoryusers.Provider,
+			repositoryschemas.Provider,
+			repositoryuserschemas.Provider,
+			repositoryschemainvitations.Provider,
+			repositoryfolders.Provider,
+			repositoryusersubscriptions.Provider,
+
 			// services
 			bitwarden.Provider,
 			env.Provider,
@@ -66,14 +74,6 @@ func main() {
 			workos.Provider,
 			logstdout.Provider,
 			logpersistent.Provider,
-
-			// repositories
-			repositoryusers.Provider,
-			repositoryschemas.Provider,
-			repositoryuserschemas.Provider,
-			repositoryschemainvitations.Provider,
-			repositoryfolders.Provider,
-			repositoryusersubscriptions.Provider,
 
 			// queues
 			handlerschemascreenshot.Provider,

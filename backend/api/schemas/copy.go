@@ -15,8 +15,10 @@ func (c *Controller) Copy(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	schema, err := c.schemas.Copy(ctx.Context(), &repositoryschemas.CopyOptions{
-		User:     auth.GetSessionUser(ctx),
+	reqCtx := ctx.Context()
+	user := auth.GetSessionUser(ctx)
+	schema, err := c.schemas.Copy(reqCtx, &repositoryschemas.CopyOptions{
+		User:     user,
 		SchemaID: schemaID,
 	})
 
@@ -24,7 +26,12 @@ func (c *Controller) Copy(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	if err = c.updateScreenshot(ctx.Context(), schema.ID, false); err != nil {
+	err = c.subscriptionCounters.SyncSchemasCreated(reqCtx, user.ID)
+	if err != nil {
+		return err
+	}
+
+	if err = c.updateScreenshot(reqCtx, schema.ID, false); err != nil {
 		return err
 	}
 

@@ -58,6 +58,11 @@ func (c *Controller) Create(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
+	err = c.subscriptionCounters.SyncSchemasCreated(reqCtx, user.ID)
+	if err != nil {
+		return err
+	}
+
 	if err = c.updateScreenshot(reqCtx, schema.ID, false); err != nil {
 		return err
 	}

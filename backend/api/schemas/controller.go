@@ -15,6 +15,7 @@ import (
 	"polimane/backend/services/awssqs"
 	"polimane/backend/services/schemadelete"
 	"polimane/backend/services/schemascreenshot"
+	"polimane/backend/services/subscriptioncounters"
 	"polimane/backend/views"
 )
 
@@ -23,40 +24,41 @@ const ParamDefSchemaID = ":" + ParamSchemaID
 
 type ControllerOptions struct {
 	fx.In
-	Schemas          *repositoryschemas.Client
-	Folders          *repositoryfolders.Client
-	UserSchemas      *repositoryuserschemas.Client
-	SQS              *awssqs.Client
-	S3               *s3.Client
-	Renderer         *views.Renderer
-	SchemaScreenshot *schemascreenshot.Service
-	SchemaDelete     *schemadelete.Service
-	UsersController  *users.Controller
+	Schemas              *repositoryschemas.Client
+	Folders              *repositoryfolders.Client
+	UserSchemas          *repositoryuserschemas.Client
+	SQS                  *awssqs.Client
+	S3                   *s3.Client
+	Renderer             *views.Renderer
+	SchemaScreenshot     *schemascreenshot.Service
+	SchemaDelete         *schemadelete.Service
+	UsersController      *users.Controller
+	SubscriptionCounters *subscriptioncounters.Service
 }
 
 type Controller struct {
-	schemas          *repositoryschemas.Client
-	folders          *repositoryfolders.Client
-	userSchemas      *repositoryuserschemas.Client
-	sqs              *awssqs.Client
-	s3               *s3.Client
-	renderer         *views.Renderer
-	schemaScreenshot *schemascreenshot.Service
-	schemaDelete     *schemadelete.Service
-	usersController  *users.Controller
+	schemas              *repositoryschemas.Client
+	folders              *repositoryfolders.Client
+	userSchemas          *repositoryuserschemas.Client
+	sqs                  *awssqs.Client
+	renderer             *views.Renderer
+	schemaScreenshot     *schemascreenshot.Service
+	schemaDelete         *schemadelete.Service
+	usersController      *users.Controller
+	subscriptionCounters *subscriptioncounters.Service
 }
 
 func Provider(options ControllerOptions) base.Controller {
 	return &Controller{
-		schemas:          options.Schemas,
-		folders:          options.Folders,
-		userSchemas:      options.UserSchemas,
-		sqs:              options.SQS,
-		s3:               options.S3,
-		renderer:         options.Renderer,
-		schemaScreenshot: options.SchemaScreenshot,
-		schemaDelete:     options.SchemaDelete,
-		usersController:  options.UsersController,
+		schemas:              options.Schemas,
+		folders:              options.Folders,
+		userSchemas:          options.UserSchemas,
+		sqs:                  options.SQS,
+		renderer:             options.Renderer,
+		schemaScreenshot:     options.SchemaScreenshot,
+		schemaDelete:         options.SchemaDelete,
+		usersController:      options.UsersController,
+		subscriptionCounters: options.SubscriptionCounters,
 	}
 }
 

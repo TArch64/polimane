@@ -31,6 +31,7 @@ import (
 	"polimane/backend/services/schemadelete"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/services/sentry"
+	"polimane/backend/services/subscriptioncounters"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
 	"polimane/backend/views"
@@ -50,6 +51,14 @@ func main() {
 			// external
 			appcontext.Provider,
 
+			// repositories
+			repositoryuserschemas.Provider,
+			repositoryusers.Provider,
+			repositoryschemas.Provider,
+			repositoryschemainvitations.Provider,
+			repositoryfolders.Provider,
+			repositoryusersubscriptions.Provider,
+
 			// services
 			bitwarden.Provider,
 			env.Provider,
@@ -66,14 +75,7 @@ func main() {
 			schemadelete.Provider,
 			logstdout.Provider,
 			logpersistent.Provider,
-
-			// repositories
-			repositoryuserschemas.Provider,
-			repositoryusers.Provider,
-			repositoryschemas.Provider,
-			repositoryschemainvitations.Provider,
-			repositoryfolders.Provider,
-			repositoryusersubscriptions.Provider,
+			subscriptioncounters.Provider,
 
 			// api
 			apiauth.MiddlewareProvider,
