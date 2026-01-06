@@ -32,7 +32,10 @@ SELECT id,
        NOW() + INTERVAL '14 days',
        JSON_BUILD_OBJECT(
          'schemasCreated',
-         (SELECT COUNT(user_schemas.schema_id) FROM user_schemas WHERE user_id = users.id)
+         (SELECT COUNT(user_schemas.schema_id)
+          FROM user_schemas
+          WHERE user_id = users.id
+            AND user_schemas.deleted_at IS NULL)
        )
 FROM users
 ON CONFLICT (user_id) DO NOTHING;

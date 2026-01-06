@@ -1,10 +1,12 @@
 <template>
   <Card title="Обмеження Підписки" class="subscription-limits">
-    <SubscriptionLimit
-      v-for="limit in subscriptionStore.limits"
-      :key="limit.key"
-      :limit
-    />
+    <div class="subscription-limits__list">
+      <SubscriptionLimit
+        v-for="limit in subscriptionStore.limits"
+        :key="limit.key"
+        :limit
+      />
+    </div>
   </Card>
 </template>
 
@@ -19,10 +21,14 @@ const subscriptionStore = useSubscriptionStore();
 <style scoped>
 @layer page {
   .subscription-limits {
+    padding: 16px;
+  }
+
+  .subscription-limits__list {
+    margin-top: 16px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    padding: 16px;
+    gap: 20px;
   }
 }
 </style>

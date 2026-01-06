@@ -18,12 +18,11 @@ const props = defineProps<{
   limit: ISubscriptionLimit;
 }>();
 
-const usage = computed(() => {
-  if (props.limit.max === null) {
-    return 0;
-  }
+const used = computed(() => props.limit.used!);
+const max = computed(() => props.limit.max);
 
-  const used = Math.min(props.limit.used!, props.limit.max);
-  return (used / props.limit.max) * 100;
+const usage = computed(() => {
+  if (max.value === null) return 0;
+  return Math.min((used.value / max.value) * 100, 100);
 });
 </script>
