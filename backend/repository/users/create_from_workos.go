@@ -12,7 +12,13 @@ import (
 	"polimane/backend/repository"
 )
 
-func (c *Client) CreateFromWorkos(ctx context.Context, workosUser *usermanagement.User) (user *model.User, err error) {
+type CreatingFlags struct {
+	NeedSyncSchemaCreatedCounter bool
+}
+
+func (c *Client) CreateFromWorkos(ctx context.Context, workosUser *usermanagement.User) (user *model.User, flags *CreatingFlags, err error) {
+	flags = &CreatingFlags{}
+
 	user = &model.User{
 		WorkosID:  workosUser.ID,
 		Email:     workosUser.Email,
@@ -29,14 +35,10 @@ func (c *Client) CreateFromWorkos(ctx context.Context, workosUser *usermanagemen
 			return err
 		}
 
-		return c.acceptInvitations(ctx, tx, user)
+		return c.acceptInvitations(ctx, tx, user, flags)
 	})
 
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
+	return
 }
 
 func (c *Client) createSubscription(ctx context.Context, tx *gorm.DB, user *model.User) error {
@@ -48,7 +50,12 @@ func (c *Client) createSubscription(ctx context.Context, tx *gorm.DB, user *mode
 	})
 }
 
-func (c *Client) acceptInvitations(ctx context.Context, tx *gorm.DB, user *model.User) error {
+func (c *Client) acceptInvitations(
+	ctx context.Context,
+	tx *gorm.DB,
+	user *model.User,
+	flags *CreatingFlags,
+) error {
 	schemaInvitations, err := c.schemaInvitations.List(ctx,
 		repository.EmailEq(user.Email),
 	)
@@ -68,6 +75,7 @@ func (c *Client) acceptInvitations(ctx context.Context, tx *gorm.DB, user *model
 		}
 	}
 
+	flags.NeedSyncSchemaCreatedCounter = true
 	err = c.userSchemas.InsertManyTx(ctx, tx, &userSchemas,
 		clause.OnConflict{DoNothing: true},
 	)

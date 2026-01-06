@@ -7,6 +7,7 @@ import (
 	"polimane/backend/api/base"
 	"polimane/backend/env"
 	repositoryusers "polimane/backend/repository/users"
+	"polimane/backend/services/subscriptioncounters"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
 )
@@ -15,25 +16,28 @@ const GroupPrefix = "auth"
 
 type ControllerOptions struct {
 	fx.In
-	Workos  *workos.Client
-	Env     *env.Environment
-	Users   *repositoryusers.Client
-	Signals *signal.Container
+	Workos               *workos.Client
+	Env                  *env.Environment
+	Users                *repositoryusers.Client
+	Signals              *signal.Container
+	SubscriptionCounters *subscriptioncounters.Service
 }
 
 type Controller struct {
-	workos  *workos.Client
-	env     *env.Environment
-	users   *repositoryusers.Client
-	signals *signal.Container
+	workos               *workos.Client
+	env                  *env.Environment
+	users                *repositoryusers.Client
+	signals              *signal.Container
+	subscriptionCounters *subscriptioncounters.Service
 }
 
 func Provider(options ControllerOptions) base.Controller {
 	return &Controller{
-		workos:  options.Workos,
-		env:     options.Env,
-		users:   options.Users,
-		signals: options.Signals,
+		workos:               options.Workos,
+		env:                  options.Env,
+		users:                options.Users,
+		signals:              options.Signals,
+		subscriptionCounters: options.SubscriptionCounters,
 	}
 }
 

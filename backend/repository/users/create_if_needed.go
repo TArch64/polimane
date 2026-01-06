@@ -11,7 +11,7 @@ import (
 	"polimane/backend/repository"
 )
 
-func (c *Client) CreateIfNeeded(ctx context.Context, workosUser *usermanagement.User) (*model.User, error) {
+func (c *Client) CreateIfNeeded(ctx context.Context, workosUser *usermanagement.User) (*model.User, *CreatingFlags, error) {
 	user, err := c.Get(ctx,
 		WorkosIDEq(workosUser.ID),
 		repository.IncludeSoftDeleted,
@@ -20,7 +20,7 @@ func (c *Client) CreateIfNeeded(ctx context.Context, workosUser *usermanagement.
 		return c.CreateFromWorkos(ctx, workosUser)
 	}
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return user, nil
+	return user, &CreatingFlags{}, nil
 }

@@ -28,7 +28,7 @@ func (c *Controller) LoginComplete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := c.users.CreateIfNeeded(reqCtx, &data.User)
+	user, flags, err := c.users.CreateIfNeeded(reqCtx, &data.User)
 	if err != nil {
 		return err
 	}
@@ -36,6 +36,13 @@ func (c *Controller) LoginComplete(ctx *fiber.Ctx) error {
 		return c.completeRedirect(ctx, map[string]string{
 			"deleted": "1",
 		})
+	}
+
+	if flags.NeedSyncSchemaCreatedCounter {
+		err = c.subscriptionCounters.SyncSchemasCreated(reqCtx, user.ID)
+		if err != nil {
+			return err
+		}
 	}
 
 	_, err = c.workos.UserManagement.UpdateUser(reqCtx, usermanagement.UpdateUserOpts{
