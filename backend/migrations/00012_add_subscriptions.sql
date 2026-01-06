@@ -4,10 +4,10 @@ CREATE TYPE subscription_status AS enum ('active', 'canceled', 'unpaid');
 
 CREATE TABLE IF NOT EXISTS user_subscriptions
 (
-  user_id  uuid NOT NULL,
+  user_id  uuid  NOT NULL,
   plan             subscription_plan   NOT NULL,
   status           subscription_status NOT NULL DEFAULT 'active',
-  counters json NOT NULL DEFAULT '{}'::json,
+  counters jsonb NOT NULL DEFAULT '{}'::jsonb,
   billing_try      smallint            NOT NULL DEFAULT 0,
   trial_started_at timestamptz         NOT NULL,
   trial_ends_at    timestamptz         NOT NULL,
