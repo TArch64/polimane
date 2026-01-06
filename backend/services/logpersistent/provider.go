@@ -24,11 +24,11 @@ type ProviderOptions struct {
 
 func Provider(options ProviderOptions) *Logger {
 	writer := newWriter(options)
+	logger := slog.New(newHandler(writer))
 
 	options.Lifecycle.Append(fx.StopHook(func() error {
 		return writer.Close()
 	}))
 
-	logger := slog.New(slog.NewJSONHandler(writer, nil))
 	return &Logger{Logger: logger}
 }

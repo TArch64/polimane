@@ -3,6 +3,7 @@ module polimane/backend
 go 1.25.0
 
 require (
+	github.com/Marlliton/slogpretty v0.1.3
 	github.com/Netflix/go-env v0.1.2
 	github.com/aws/aws-lambda-go v1.51.1
 	github.com/aws/aws-sdk-go-v2 v1.41.0
@@ -11,6 +12,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.63.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.95.0
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.20
+	github.com/aws/smithy-go v1.24.0
 	github.com/bitwarden/sdk-go v1.0.2
 	github.com/getsentry/sentry-go v0.40.0
 	github.com/getsentry/sentry-go/fiber v0.40.0

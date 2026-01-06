@@ -9,7 +9,11 @@
     />
   </FadeTransition>
 
-  <CommonLayoutTopBar :title data-cursor-selection-ignore>
+  <CommonLayoutTopBar
+    :title
+    data-cursor-selection-ignore
+    v-visible="!selected"
+  >
     <slot name="top-bar-actions" />
   </CommonLayoutTopBar>
 
@@ -39,6 +43,7 @@
 import { ref, type Slot, toRef } from 'vue';
 import { usePageClass } from '@/composables';
 import { type MaybeContextMenuAction, useContextMenu } from '@/components/contextMenu';
+import { vVisible } from '@/directives';
 import { FadeTransition } from '../transition';
 import CommonLayoutTopBar from './CommonLayoutTopBar.vue';
 import CommonLayoutSelectionBar from './CommonLayoutSelectionBar.vue';
