@@ -31,6 +31,7 @@ func New(options *PluginOptions) gorm.Plugin {
 	return &Plugin{
 		rand:   rand.New(rand.NewSource(time.Now().UnixNano())),
 		stdout: options.Stdout,
+		logs:   newLogs(),
 	}
 }
 
@@ -39,33 +40,92 @@ func (p *Plugin) Name() string {
 }
 
 func (p *Plugin) Initialize(db *gorm.DB) (err error) {
-	if p.logs, err = newLogs(); err != nil {
+	err = db.
+		Callback().
+		Create().
+		After("gorm:after_create").
+		Register(p.Name()+":after_create", func(query *gorm.DB) {
+			p.onExecute(db, query)
+		})
+
+	if err != nil {
 		return err
 	}
 
-	return db.
+	err = db.
 		Callback().
 		Query().
-		After("gorm:query").
+		After("gorm:after_query").
 		Register(p.Name()+":after_query", func(query *gorm.DB) {
-			if p.rand.Float64() < 0.5 {
-				return
-			}
-
-			queryStr := db.Explain(query.Statement.SQL.String(), query.Statement.Vars...)
-
-			var explained string
-			if explained, err = p.explainQuery(db, queryStr); err != nil {
-				p.logErr("failed to explain query", err)
-				return
-			}
-
-			if p.containsFullScan(explained) {
-				if err = p.logFullScan(queryStr, explained); err != nil {
-					p.logErr("failed to log full scan", err)
-				}
-			}
+			p.onExecute(db, query)
 		})
+
+	if err != nil {
+		return err
+	}
+
+	err = db.
+		Callback().
+		Update().
+		After("gorm:after_update").
+		Register(p.Name()+":after_update", func(query *gorm.DB) {
+			p.onExecute(db, query)
+		})
+
+	if err != nil {
+		return err
+	}
+
+	err = db.
+		Callback().
+		Delete().
+		After("gorm:after_delete").
+		Register(p.Name()+":after_delete", func(query *gorm.DB) {
+			p.onExecute(db, query)
+		})
+
+	if err != nil {
+		return err
+	}
+
+	err = db.
+		Callback().
+		Row().
+		After("gorm:after_row").
+		Register(p.Name()+":after_row", func(query *gorm.DB) {
+			p.onExecute(db, query)
+		})
+
+	err = db.
+		Callback().
+		Raw().
+		After("gorm:after_raw").
+		Register(p.Name()+":after_raw", func(query *gorm.DB) {
+			p.onExecute(db, query)
+		})
+
+	return err
+}
+
+func (p *Plugin) onExecute(db, query *gorm.DB) {
+	if p.rand.Float64() < 0.5 {
+		return
+	}
+
+	queryStr := db.Explain(query.Statement.SQL.String(), query.Statement.Vars...)
+	queryStr = strings.TrimSpace(queryStr)
+	queryStr = strings.Trim(queryStr, "\n")
+
+	var err error
+	var explained string
+	if explained, err = p.explainQuery(db, queryStr); err != nil {
+		p.logErr("failed to explain query", err)
+		return
+	}
+
+	if p.containsFullScan(explained) {
+		p.logFullScan(queryStr, explained)
+	}
 }
 
 func (p *Plugin) logErr(title string, err error) {
@@ -74,24 +134,11 @@ func (p *Plugin) logErr(title string, err error) {
 	)
 }
 
-func (p *Plugin) logFullScan(query, explained string) error {
-	return p.logs.Open(func(logs *pluginLogs) (err error) {
-		if err = logs.WriteLine("--- Full Scan Detected ---"); err != nil {
-			return err
-		}
-		if err = logs.WriteLine(time.Now().Format(time.RFC3339)); err != nil {
-			return err
-		}
-		if err = logs.WritePadding(1); err != nil {
-			return err
-		}
-		if err = logs.WriteLine(query); err != nil {
-			return err
-		}
-		if err = logs.WritePadding(1); err != nil {
-			return err
-		}
-		explained = strings.ReplaceAll(explained, "FULL SCAN", fullScanMarker)
-		return logs.WriteLine(explained)
-	})
+func (p *Plugin) logFullScan(query, explained string) {
+	p.logs.WriteLine("--- Full Scan Detected ---")
+	p.logs.WriteLine(time.Now().Format(time.RFC3339))
+	p.logs.WritePadding(1)
+	p.logs.WriteLine(query)
+	p.logs.WritePadding(1)
+	p.logs.WriteLine(strings.ReplaceAll(explained, "FULL SCAN", fullScanMarker))
 }
