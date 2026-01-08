@@ -22,10 +22,14 @@ type Options struct {
 }
 
 func Provider(options Options) (*gorm.DB, error) {
-	dialect := postgres.Open(options.Env.Database.URL)
+	dialect := postgres.New(postgres.Config{
+		DSN:                  options.Env.Database.URL,
+		PreferSimpleProtocol: true,
+	})
 
 	instance, err := gorm.Open(dialect, &gorm.Config{
-		Logger: newLogger(),
+		Logger:      newLogger(),
+		PrepareStmt: false,
 	})
 
 	if err != nil {
