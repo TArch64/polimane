@@ -65,7 +65,7 @@ func (c *Controller) Add(ctx *fiber.Ctx) (err error) {
 			return err
 		}
 
-		err = c.subscriptionCounters.SyncSchemasCreated(reqCtx, user.ID)
+		err = c.subscriptionCounters.SchemasCreated.Sync(reqCtx, user.ID)
 	}
 
 	if err != nil {

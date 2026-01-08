@@ -23,7 +23,10 @@ func (c *Controller) Restore(ctx *fiber.Ctx) (err error) {
 	}
 
 	user := auth.GetSessionUser(ctx)
-	err = c.subscriptionCounters.SyncSchemasCreated(reqCtx, user.ID)
+	err = c.subscriptionCounters.SchemasCreated.Add(reqCtx,
+		uint16(len(body.IDs)),
+		user.ID,
+	)
 	if err != nil {
 		return err
 	}

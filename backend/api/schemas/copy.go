@@ -26,7 +26,7 @@ func (c *Controller) Copy(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	err = c.subscriptionCounters.SyncSchemasCreated(reqCtx, user.ID)
+	err = c.subscriptionCounters.SchemasCreated.Add(reqCtx, 1, user.ID)
 	if err != nil {
 		return err
 	}

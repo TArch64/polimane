@@ -39,8 +39,7 @@ func (c *Controller) LoginComplete(ctx *fiber.Ctx) error {
 	}
 
 	if flags.NeedSyncSchemaCreatedCounter {
-		err = c.subscriptionCounters.SyncSchemasCreated(reqCtx, user.ID)
-		if err != nil {
+		if err = c.subscriptionCounters.SchemasCreated.Sync(reqCtx, user.ID); err != nil {
 			return err
 		}
 	}

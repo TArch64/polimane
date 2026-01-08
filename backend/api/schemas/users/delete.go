@@ -42,7 +42,10 @@ func (c *Controller) Delete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	err = c.subscriptionCounters.SyncSchemasCreated(reqCtx, userID)
+	err = c.subscriptionCounters.SchemasCreated.Remove(reqCtx,
+		uint16(len(body.IDs)),
+		userID,
+	)
 	if err != nil {
 		return err
 	}

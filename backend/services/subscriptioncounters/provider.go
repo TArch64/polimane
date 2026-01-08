@@ -2,29 +2,31 @@ package subscriptioncounters
 
 import (
 	"go.uber.org/fx"
+	"gorm.io/gorm"
 
-	repositoryuserschemas "polimane/backend/repository/userschemas"
-	repositoryusersubscriptions "polimane/backend/repository/usersubscriptions"
 	"polimane/backend/signal"
 )
 
 type Service struct {
-	userSchemas       *repositoryuserschemas.Client
-	userSubscriptions *repositoryusersubscriptions.Client
-	signals           *signal.Container
+	db             *gorm.DB
+	signals        *signal.Container
+	SchemasCreated *PerUser
 }
 
 type ProviderOptions struct {
 	fx.In
-	UserSchemas       *repositoryuserschemas.Client
-	UserSubscriptions *repositoryusersubscriptions.Client
-	Signals           *signal.Container
+	DB      *gorm.DB
+	Signals *signal.Container
 }
 
 func Provider(options ProviderOptions) *Service {
+	userDeps := &perUserDeps{
+		DB:      options.DB,
+		Signals: options.Signals,
+	}
+
 	return &Service{
-		userSchemas:       options.UserSchemas,
-		userSubscriptions: options.UserSubscriptions,
-		signals:           options.Signals,
+		signals:        options.Signals,
+		SchemasCreated: newSchemasCreated(userDeps),
 	}
 }
