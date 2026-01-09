@@ -24,7 +24,7 @@ SET counters = json_set(counters, '{%s}', TO_JSONB((counters->>'%s')::smallint %
 WHERE user_id IN @user_ids
 `
 
-type PerUser struct {
+type UserCounter struct {
 	syncSQL   string
 	addSQL    string
 	removeSQL string
@@ -32,19 +32,19 @@ type PerUser struct {
 	signals   *signal.Container
 }
 
-type perUserDeps struct {
+type userCounterDeps struct {
 	DB      *gorm.DB
 	Signals *signal.Container
 }
 
-type perUserOptions struct {
-	Deps     *perUserDeps
+type userCounterOptions struct {
+	Deps     *userCounterDeps
 	Name     string
 	CountSQL string
 }
 
-func newPerUser(options *perUserOptions) *PerUser {
-	return &PerUser{
+func newUserCounter(options *userCounterOptions) *UserCounter {
+	return &UserCounter{
 		syncSQL:   fmt.Sprintf(syncUserCounterSQL, options.Name, options.CountSQL),
 		addSQL:    fmt.Sprintf(changeUserCounterSQL, options.Name, options.Name, '+'),
 		removeSQL: fmt.Sprintf(changeUserCounterSQL, options.Name, options.Name, '-'),
@@ -53,7 +53,7 @@ func newPerUser(options *perUserOptions) *PerUser {
 	}
 }
 
-func (p *PerUser) Sync(ctx context.Context, userIDs ...model.ID) error {
+func (p *UserCounter) Sync(ctx context.Context, userIDs ...model.ID) error {
 	err := gorm.
 		G[model.UserSubscription](p.db).
 		Exec(ctx, p.syncSQL, sql.Named("user_ids", userIDs))
@@ -66,7 +66,7 @@ func (p *PerUser) Sync(ctx context.Context, userIDs ...model.ID) error {
 	return nil
 }
 
-func (p *PerUser) Add(
+func (p *UserCounter) Add(
 	ctx context.Context,
 	value uint16,
 	userIDs ...model.ID,
@@ -74,7 +74,7 @@ func (p *PerUser) Add(
 	return p.change(ctx, p.addSQL, value, userIDs)
 }
 
-func (p *PerUser) Remove(
+func (p *UserCounter) Remove(
 	ctx context.Context,
 	value uint16,
 	userIDs ...model.ID,
@@ -82,7 +82,7 @@ func (p *PerUser) Remove(
 	return p.change(ctx, p.removeSQL, value, userIDs)
 }
 
-func (p *PerUser) change(
+func (p *UserCounter) change(
 	ctx context.Context,
 	querySQL string,
 	value uint16,
@@ -103,7 +103,7 @@ func (p *PerUser) change(
 	return nil
 }
 
-func (p *PerUser) invalidateCache(ctx context.Context, userIDs []model.ID) {
+func (p *UserCounter) invalidateCache(ctx context.Context, userIDs []model.ID) {
 	for _, userID := range userIDs {
 		p.signals.InvalidateUserCache.Emit(ctx, userID)
 	}

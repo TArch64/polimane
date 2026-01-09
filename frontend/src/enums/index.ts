@@ -5,3 +5,4 @@ export * from './AccessLevel';
 export * from './SchemaLayout';
 export * from './SubscriptionPlan';
 export * from './SubscriptionStatus';
+export * from './SubscriptionLimit';

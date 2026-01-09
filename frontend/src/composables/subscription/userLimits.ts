@@ -1,45 +1,22 @@
 import { computed, reactive } from 'vue';
 import { useSessionStore } from '@/stores';
-import type { ISubscriptionCounters, ISubscriptionLimits } from '@/models';
+import { SubscriptionLimit, type UserLimit } from '@/enums';
 
-type UserLimitName = keyof ISubscriptionCounters & keyof ISubscriptionLimits;
-
-export interface IUserLimits {
-  value: number;
-  limit: number;
+export interface IUserLimit {
   isReached: boolean;
-  increase: (delta?: number) => void;
-  decrease: (delta?: number) => void;
 }
 
-function useUserLimits(name: UserLimitName): IUserLimits {
+function useUserLimit(name: UserLimit): IUserLimit {
   const sessionStore = useSessionStore();
   const subscription = computed(() => sessionStore.user.subscription);
-  const value = computed(() => subscription.value.counters[name]);
+
+  const counter = computed(() => subscription.value.counters[name]);
   const limit = computed(() => subscription.value.limits[name]!);
-  const isReached = computed(() => value.value >= limit.value);
+  const isReached = computed(() => counter.value >= limit.value);
 
-  function increase(delta = 1) {
-    subscription.value.counters[name] += delta;
-  }
-
-  function decrease(delta = 1) {
-    subscription.value.counters[name] -= delta;
-
-    if (subscription.value.counters[name] < 0) {
-      subscription.value.counters[name] = 0;
-    }
-  }
-
-  return reactive({
-    value,
-    limit,
-    isReached,
-    increase,
-    decrease,
-  });
+  return reactive({ isReached });
 }
 
 export function useSchemasCreatedLimit() {
-  return useUserLimits('schemasCreated');
+  return useUserLimit(SubscriptionLimit.SCHEMAS_CREATED);
 }

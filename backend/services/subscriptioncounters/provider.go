@@ -10,7 +10,7 @@ import (
 type Service struct {
 	db             *gorm.DB
 	signals        *signal.Container
-	SchemasCreated *PerUser
+	SchemasCreated *UserCounter
 }
 
 type ProviderOptions struct {
@@ -20,7 +20,7 @@ type ProviderOptions struct {
 }
 
 func Provider(options ProviderOptions) *Service {
-	userDeps := &perUserDeps{
+	userDeps := &userCounterDeps{
 		DB:      options.DB,
 		Signals: options.Signals,
 	}

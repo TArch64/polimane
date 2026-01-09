@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
 import { computed } from 'vue';
 import { useSessionStore } from '@/stores';
-import type { ISubscriptionCounters, ISubscriptionLimits, IUserSubscription } from '@/models';
+import type { IUserSubscription, SubscriptionLimits, UserCounters } from '@/models';
 import { getObjectEntries } from '@/helpers';
 
-type LimitKey = keyof ISubscriptionLimits;
+type LimitKey = keyof SubscriptionLimits;
 
 export enum SubscriptionLimitType {
   USER = 'user',
@@ -46,7 +46,7 @@ type LimitFactory = (subscription: IUserSubscription, key: LimitKey, config: ILi
 const createUserLimit: LimitFactory = (subscription, key, config) => ({
   key,
   max: subscription.limits[key] ?? null,
-  used: subscription.counters[key as keyof ISubscriptionCounters] ?? null,
+  used: subscription.counters[key as keyof UserCounters] ?? null,
   ...config,
 });
 

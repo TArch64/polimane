@@ -7,8 +7,8 @@ const countSchemasSQL = `
 	GROUP BY user_schemas.user_id
 `
 
-func newSchemasCreated(deps *perUserDeps) *PerUser {
-	return newPerUser(&perUserOptions{
+func newSchemasCreated(deps *userCounterDeps) *UserCounter {
+	return newUserCounter(&userCounterOptions{
 		Deps:     deps,
 		Name:     "schemasCreated",
 		CountSQL: countSchemasSQL,
