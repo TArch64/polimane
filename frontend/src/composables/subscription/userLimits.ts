@@ -2,9 +2,9 @@ import { computed, reactive } from 'vue';
 import { useSessionStore } from '@/stores';
 import type { ISubscriptionCounters, ISubscriptionLimits } from '@/models';
 
-type CounterName = keyof ISubscriptionCounters & keyof ISubscriptionLimits;
+type UserLimitName = keyof ISubscriptionCounters & keyof ISubscriptionLimits;
 
-export interface ICounterLimit {
+export interface IUserLimits {
   value: number;
   limit: number;
   isReached: boolean;
@@ -12,7 +12,7 @@ export interface ICounterLimit {
   decrease: (delta?: number) => void;
 }
 
-function useCounterLimit(name: CounterName): ICounterLimit {
+function useUserLimits(name: UserLimitName): IUserLimits {
   const sessionStore = useSessionStore();
   const subscription = computed(() => sessionStore.user.subscription);
   const value = computed(() => subscription.value.counters[name]);
@@ -40,6 +40,6 @@ function useCounterLimit(name: CounterName): ICounterLimit {
   });
 }
 
-export function useSchemasCreatedCounterLimit() {
-  return useCounterLimit('schemasCreated');
+export function useSchemasCreatedLimit() {
+  return useUserLimits('schemasCreated');
 }

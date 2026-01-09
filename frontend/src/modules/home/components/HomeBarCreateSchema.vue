@@ -16,9 +16,9 @@ import { PlusIcon } from '@/components/icon';
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
 import { SchemaCreateModal } from '@/modules/home/components/modals';
-import { useSchemasCreatedCounterLimit } from '@/composables/subscription';
+import { useSchemasCreatedLimit } from '@/composables/subscription';
 
-const limit = useSchemasCreatedCounterLimit();
+const limit = useSchemasCreatedLimit();
 const createModal = useModal(SchemaCreateModal);
 </script>
 

@@ -7,8 +7,8 @@ import { getObjectEntries } from '@/helpers';
 type LimitKey = keyof ISubscriptionLimits;
 
 export enum SubscriptionLimitType {
-  COUNTER = 'counter',
-  PER_FEATURE = 'per_feature',
+  USER = 'user',
+  FEATURE = 'feature',
 }
 
 export interface ISubscriptionLimit {
@@ -26,31 +26,31 @@ interface ILimitConfig {
 
 const LIMIT_KEYS: Record<LimitKey, ILimitConfig> = {
   schemasCreated: {
-    type: SubscriptionLimitType.COUNTER,
+    type: SubscriptionLimitType.USER,
     title: 'Створено Схем',
   },
 
   schemaBeads: {
-    type: SubscriptionLimitType.PER_FEATURE,
+    type: SubscriptionLimitType.FEATURE,
     title: 'Кількість Бісеру в Схемі',
   },
 
   sharedAccess: {
-    type: SubscriptionLimitType.PER_FEATURE,
+    type: SubscriptionLimitType.FEATURE,
     title: 'Користувачі з доступом до Схеми',
   },
 };
 
 type LimitFactory = (subscription: IUserSubscription, key: LimitKey, config: ILimitConfig) => ISubscriptionLimit;
 
-const createCounterLimit: LimitFactory = (subscription, key, config) => ({
+const createUserLimit: LimitFactory = (subscription, key, config) => ({
   key,
   max: subscription.limits[key] ?? null,
   used: subscription.counters[key as keyof ISubscriptionCounters] ?? null,
   ...config,
 });
 
-const createPerFeatureLimit: LimitFactory = (subscription, key, config) => ({
+const createFeatureLimit: LimitFactory = (subscription, key, config) => ({
   key,
   max: subscription.limits[key] ?? null,
   used: null,
@@ -58,8 +58,8 @@ const createPerFeatureLimit: LimitFactory = (subscription, key, config) => ({
 });
 
 const limitFactories: Record<SubscriptionLimitType, LimitFactory> = {
-  [SubscriptionLimitType.COUNTER]: createCounterLimit,
-  [SubscriptionLimitType.PER_FEATURE]: createPerFeatureLimit,
+  [SubscriptionLimitType.USER]: createUserLimit,
+  [SubscriptionLimitType.FEATURE]: createFeatureLimit,
 };
 
 export const useSubscriptionStore = defineStore('settings/subscription', () => {
