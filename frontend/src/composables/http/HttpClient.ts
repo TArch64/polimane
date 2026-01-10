@@ -7,7 +7,7 @@ import {
   type IHttpTransport,
 } from './transports';
 import { HttpError } from './HttpError';
-import type { HttpMiddleware, HttpMiddlewareExecutor } from './HttpMiddlewareExecutor';
+import type { HttpMiddlewareExecutor, MiddlewareConstructor } from './HttpMiddlewareExecutor';
 
 export type HttpBody = object | string;
 
@@ -39,7 +39,9 @@ export class HttpClient {
 
   constructor(options: IHttpClientOptions) {
     this.baseUrl = options.baseUrl;
+
     this.middlewareExecutor = options.middlewareExecutor;
+    this.middlewareExecutor.client = this;
   }
 
   get<R extends HttpBody, P extends UrlParams = UrlParams>(
@@ -94,8 +96,12 @@ export class HttpClient {
     });
   }
 
-  middleware(middleware: HttpMiddleware): void {
-    this.middlewareExecutor.add(middleware);
+  middleware<M extends MiddlewareConstructor>(Class: M): void {
+    this.middlewareExecutor.add(Class);
+  }
+
+  getMiddleware<M extends MiddlewareConstructor>(Class: M): InstanceType<M> | null {
+    return this.middlewareExecutor.get(Class);
   }
 
   private async request<
@@ -109,9 +115,13 @@ export class HttpClient {
     const request = new Request(this.buildUrl(config), {
       method: config.method,
       body,
+
       headers: {
-        'Content-Type': responseType === 'text' ? 'text/plain' : 'application/json',
+        'Content-Type': responseType === 'text'
+          ? 'text/plain'
+          : 'application/json',
       },
+
       credentials: 'include',
     });
 

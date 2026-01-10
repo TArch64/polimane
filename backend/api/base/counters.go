@@ -1,6 +1,8 @@
 package base
 
 import (
+	"encoding/base64"
+
 	"github.com/gofiber/fiber/v2"
 
 	"polimane/backend/model"
@@ -16,6 +18,6 @@ func SetResponseUserCounters(ctx *fiber.Ctx, subscription *model.UserSubscriptio
 }
 
 func setResponseCounter(ctx *fiber.Ctx, header string, counters []byte) {
-	//encoded := base64.StdEncoding.EncodeToString(counters)
-	ctx.Set(header, string(counters))
+	encoded := base64.StdEncoding.EncodeToString(counters)
+	ctx.Set(header, encoded)
 }

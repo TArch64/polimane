@@ -1,8 +1,9 @@
 import { type FunctionPlugin, inject, type InjectionKey } from 'vue';
+import { UpdateUserCountersMiddleware } from '@/composables/http/UpdateUserCountersMiddleware';
 import { HttpClient } from './HttpClient';
 import { HttpMiddlewareExecutor } from './HttpMiddlewareExecutor';
-import { HttpAuthorization } from './HttpAuthorization';
-import { HttpApiPing } from './HttpApiPing';
+import { HttpAuthorizationMiddleware } from './HttpAuthorizationMiddleware';
+import { HttpApiPingMiddleware } from './HttpApiPingMiddleware';
 
 const Provider = Symbol('HttpClient') as InjectionKey<HttpClient>;
 
@@ -19,8 +20,9 @@ export const httpClientPlugin: FunctionPlugin<IPluginHttpClientOptions> = (app, 
   app.provide(Provider, client);
 
   app.runWithContext(() => {
-    client.middleware(HttpAuthorization.use());
-    client.middleware(HttpApiPing.use(client));
+    client.middleware(HttpAuthorizationMiddleware);
+    client.middleware(HttpApiPingMiddleware);
+    client.middleware(UpdateUserCountersMiddleware);
   });
 };
 

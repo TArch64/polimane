@@ -18,7 +18,7 @@ resource "aws_apigatewayv2_api" "lambda_api" {
       "Cookie"
     ]
     allow_credentials = true
-    expose_headers    = ["Set-Cookie"]
+    expose_headers    = ["Set-Cookie", "X-User-Counters"]
     max_age           = 300
   }
 }

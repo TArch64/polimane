@@ -10,7 +10,7 @@ export const UserLimits = [
 
 export type UserLimit = typeof UserLimits[number];
 
-function isUserLimit(limit: SubscriptionLimit): limit is UserLimit {
+export function isUserLimit(limit: string): limit is UserLimit {
   return UserLimits.includes(limit as UserLimit);
 }
 
@@ -21,6 +21,6 @@ export const FeatureLimits = [
 
 export type FeatureLimit = typeof FeatureLimits[number];
 
-function isFeatureLimit(limit: SubscriptionLimit): limit is FeatureLimit {
+export function isFeatureLimit(limit: string): limit is FeatureLimit {
   return FeatureLimits.includes(limit as FeatureLimit);
 }
