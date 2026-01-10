@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
@@ -23,29 +24,32 @@ func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
 
 	user := auth.GetSessionUser(ctx)
 	reqCtx := ctx.Context()
-	if err = c.schemas.DeleteSoft(reqCtx, user, body.IDs); err != nil {
-		return err
-	}
 
 	affectedUserIDs, err := c.getAffectedUsersOnDelete(reqCtx, body.IDs)
 	if err != nil {
 		return err
 	}
 
-	err = c.subscriptionCounters.SchemasCreated.Remove(reqCtx,
-		uint16(len(body.IDs)),
-		affectedUserIDs...,
-	)
+	err = c.schemas.DB.
+		WithContext(reqCtx).
+		Transaction(func(tx *gorm.DB) error {
+			if err = c.schemas.DeleteSoftTx(reqCtx, tx, user, body.IDs); err != nil {
+				return err
+			}
+
+			return c.subscriptionCounters.SchemasCreated.RemoveTx(reqCtx, tx, uint16(len(body.IDs)), affectedUserIDs...)
+		})
+
 	if err != nil {
 		return err
 	}
 
+	base.SetResponseUserCounters(ctx, user.Subscription)
 	return base.NewSuccessResponse(ctx)
 }
 
 func (c *Controller) getAffectedUsersOnDelete(ctx context.Context, schemaIDs []model.ID) (out []model.ID, err error) {
 	err = c.userSchemas.ListOut(ctx, &out,
-		repository.IncludeSoftDeleted,
 		repository.Select("DISTINCT ON (user_id) user_id"),
 		repository.SchemaIDsIn(schemaIDs),
 	)

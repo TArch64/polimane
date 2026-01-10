@@ -12,16 +12,18 @@ import (
 )
 
 const syncUserCounterSQL = `
-UPDATE user_subscriptions
-SET counters = json_set(counters, '{%s}', TO_JSONB(computed.count))
-FROM (%s) AS computed
-WHERE user_subscriptions.user_id = computed.user_id
+UPDATE user_subscriptions AS us
+SET counters = json_set(counters, '{%[1]s}', TO_JSONB(c.count))
+FROM (%[2]s) AS c
+WHERE us.user_id = c.user_id
+RETURNING us.user_id AS id, (counters->>'%[1]s')::smallint AS count
 `
 
 const changeUserCounterSQL = `
 UPDATE user_subscriptions
-SET counters = json_set(counters, '{%s}', TO_JSONB((counters->>'%s')::smallint %c @value))
+SET counters = json_set(counters, '{%[1]s}', TO_JSONB((counters->>'%[1]s')::smallint %[2]c @value))
 WHERE user_id IN @user_ids
+RETURNING user_id AS id, (counters->>'%[1]s')::smallint AS count
 `
 
 type UserCounter struct {
@@ -30,6 +32,7 @@ type UserCounter struct {
 	removeSQL string
 	db        *gorm.DB
 	signals   *signal.Container
+	local     *accessor[model.UserSubscription]
 }
 
 type userCounterDeps struct {
@@ -41,70 +44,85 @@ type userCounterOptions struct {
 	Deps     *userCounterDeps
 	Name     string
 	CountSQL string
+	Local    *accessor[model.UserSubscription]
 }
 
 func newUserCounter(options *userCounterOptions) *UserCounter {
 	return &UserCounter{
 		syncSQL:   fmt.Sprintf(syncUserCounterSQL, options.Name, options.CountSQL),
-		addSQL:    fmt.Sprintf(changeUserCounterSQL, options.Name, options.Name, '+'),
-		removeSQL: fmt.Sprintf(changeUserCounterSQL, options.Name, options.Name, '-'),
+		addSQL:    fmt.Sprintf(changeUserCounterSQL, options.Name, '+'),
+		removeSQL: fmt.Sprintf(changeUserCounterSQL, options.Name, '-'),
 		db:        options.Deps.DB,
 		signals:   options.Deps.Signals,
+		local:     options.Local,
 	}
 }
 
 func (p *UserCounter) Sync(ctx context.Context, userIDs ...model.ID) error {
+	var updated []*updatedCounter
+
 	err := gorm.
 		G[model.UserSubscription](p.db).
-		Exec(ctx, p.syncSQL, sql.Named("user_ids", userIDs))
+		Raw(p.syncSQL, sql.Named("user_ids", userIDs)).
+		Scan(ctx, &updated)
 
 	if err != nil {
 		return err
 	}
 
-	p.invalidateCache(ctx, userIDs)
+	p.updateCache(ctx, updated)
 	return nil
 }
 
-func (p *UserCounter) Add(
+func (p *UserCounter) AddTx(
 	ctx context.Context,
+	tx *gorm.DB,
 	value uint16,
 	userIDs ...model.ID,
 ) error {
-	return p.change(ctx, p.addSQL, value, userIDs)
+	return p.change(ctx, tx, p.addSQL, value, userIDs)
 }
 
-func (p *UserCounter) Remove(
+func (p *UserCounter) RemoveTx(
 	ctx context.Context,
+	tx *gorm.DB,
 	value uint16,
 	userIDs ...model.ID,
 ) error {
-	return p.change(ctx, p.removeSQL, value, userIDs)
+	return p.change(ctx, tx, p.removeSQL, value, userIDs)
 }
 
 func (p *UserCounter) change(
 	ctx context.Context,
+	tx *gorm.DB,
 	querySQL string,
 	value uint16,
 	userIDs []model.ID,
 ) error {
+	var updated []*updatedCounter
+
 	err := gorm.
-		G[model.UserSubscription](p.db).
-		Exec(ctx, querySQL,
+		G[model.UserSubscription](tx).
+		Raw(querySQL,
 			sql.Named("value", value),
 			sql.Named("user_ids", userIDs),
-		)
+		).
+		Scan(ctx, &updated)
 
 	if err != nil {
 		return err
 	}
 
-	p.invalidateCache(ctx, userIDs)
+	p.updateCache(ctx, updated)
 	return nil
 }
 
-func (p *UserCounter) invalidateCache(ctx context.Context, userIDs []model.ID) {
-	for _, userID := range userIDs {
-		p.signals.InvalidateUserCache.Emit(ctx, userID)
+func (p *UserCounter) updateCache(ctx context.Context, updated []*updatedCounter) {
+	for _, row := range updated {
+		event := signal.NewUpdateUserCacheEvent(row.ID, func(user *model.User) {
+			p.local.Set(user.Subscription, row.Count)
+		})
+
+		p.signals.UpdateUserCacheSync.Emit(ctx, event)
 	}
 }

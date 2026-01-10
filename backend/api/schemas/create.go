@@ -47,21 +47,30 @@ func (c *Controller) Create(ctx *fiber.Ctx) (err error) {
 		}
 	}
 
-	schema, err := c.schemas.Create(reqCtx, &repositoryschemas.CreateOptions{
-		User:     user,
-		Name:     body.Name,
-		Layout:   body.Layout,
-		FolderID: folderID,
-	})
+	var schema *model.Schema
+
+	err = c.schemas.DB.
+		WithContext(reqCtx).
+		Transaction(func(tx *gorm.DB) error {
+			schema, err = c.schemas.CreateTx(reqCtx, tx, &repositoryschemas.CreateOptions{
+				User:     user,
+				Name:     body.Name,
+				Layout:   body.Layout,
+				FolderID: folderID,
+			})
+
+			if err != nil {
+				return err
+			}
+
+			return c.subscriptionCounters.SchemasCreated.AddTx(reqCtx, tx, 1, user.ID)
+		})
 
 	if err != nil {
 		return err
 	}
 
-	err = c.subscriptionCounters.SchemasCreated.Add(reqCtx, 1, user.ID)
-	if err != nil {
-		return err
-	}
+	base.SetResponseUserCounters(ctx, user.Subscription)
 
 	if err = c.updateScreenshot(reqCtx, schema.ID, false); err != nil {
 		return err

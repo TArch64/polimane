@@ -2,6 +2,7 @@ package schemas
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
@@ -17,19 +18,28 @@ func (c *Controller) Copy(ctx *fiber.Ctx) error {
 
 	reqCtx := ctx.Context()
 	user := auth.GetSessionUser(ctx)
-	schema, err := c.schemas.Copy(reqCtx, &repositoryschemas.CopyOptions{
-		User:     user,
-		SchemaID: schemaID,
-	})
+	var schema *model.Schema
+
+	err = c.schemas.DB.
+		WithContext(reqCtx).
+		Transaction(func(tx *gorm.DB) error {
+			schema, err = c.schemas.CopyTx(reqCtx, tx, &repositoryschemas.CopyOptions{
+				User:     user,
+				SchemaID: schemaID,
+			})
+
+			if err != nil {
+				return err
+			}
+
+			return c.subscriptionCounters.SchemasCreated.AddTx(reqCtx, tx, 1, user.ID)
+		})
 
 	if err != nil {
 		return err
 	}
 
-	err = c.subscriptionCounters.SchemasCreated.Add(reqCtx, 1, user.ID)
-	if err != nil {
-		return err
-	}
+	base.SetResponseUserCounters(ctx, user.Subscription)
 
 	if err = c.updateScreenshot(reqCtx, schema.ID, false); err != nil {
 		return err

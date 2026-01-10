@@ -60,18 +60,23 @@ func (c *Controller) Add(ctx *fiber.Ctx) (err error) {
 	if user == nil {
 		response, err = c.inviteUser(reqCtx, currentUser, body.IDs, body.Email)
 	} else {
-		response, err = c.addExistingUser(reqCtx, currentUser, body.IDs, user)
-		if err != nil {
-			return err
-		}
+		err = c.userSchemas.DB.
+			WithContext(reqCtx).
+			Transaction(func(tx *gorm.DB) error {
+				response, err = c.addExistingUser(reqCtx, tx, currentUser, body.IDs, user)
+				if err != nil {
+					return err
+				}
 
-		err = c.subscriptionCounters.SchemasCreated.Sync(reqCtx, user.ID)
+				return c.subscriptionCounters.SchemasCreated.AddTx(reqCtx, tx, uint16(len(body.IDs)), user.ID)
+			})
 	}
 
 	if err != nil {
 		return err
 	}
 
+	base.SetResponseUserCounters(ctx, currentUser.Subscription)
 	return ctx.JSON(response)
 }
 
@@ -127,6 +132,7 @@ func (c *Controller) inviteUser(
 
 func (c *Controller) addExistingUser(
 	ctx context.Context,
+	tx *gorm.DB,
 	currentUser *model.User,
 	schemaIDs []model.ID,
 	user *model.User,
@@ -144,7 +150,11 @@ func (c *Controller) addExistingUser(
 		}
 	}
 
-	if err := c.userSchemas.InsertMany(ctx, &userSchemas, clause.OnConflict{DoNothing: true}); err != nil {
+	err := c.userSchemas.InsertManyTx(ctx, tx,
+		&userSchemas,
+		clause.OnConflict{DoNothing: true},
+	)
+	if err != nil {
 		return nil, err
 	}
 

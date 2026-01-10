@@ -2,6 +2,7 @@ package users
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
@@ -31,24 +32,26 @@ func (c *Controller) Delete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	err = c.userSchemas.Delete(
-		reqCtx,
-		repository.HardDelete,
-		repository.UserIDEq(userID),
-		repository.SchemaIDsIn(body.IDs),
-	)
+	err = c.userSchemas.DB.
+		WithContext(reqCtx).
+		Transaction(func(tx *gorm.DB) error {
+			err = c.userSchemas.DeleteTx(reqCtx, tx,
+				repository.HardDelete,
+				repository.UserIDEq(userID),
+				repository.SchemaIDsIn(body.IDs),
+			)
+
+			if err != nil {
+				return err
+			}
+
+			return c.subscriptionCounters.SchemasCreated.RemoveTx(reqCtx, tx, uint16(len(body.IDs)), userID)
+		})
 
 	if err != nil {
 		return err
 	}
 
-	err = c.subscriptionCounters.SchemasCreated.Remove(reqCtx,
-		uint16(len(body.IDs)),
-		userID,
-	)
-	if err != nil {
-		return err
-	}
-
+	base.SetResponseUserCounters(ctx, currentUser.Subscription)
 	return base.NewSuccessResponse(ctx)
 }
