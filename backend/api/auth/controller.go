@@ -8,6 +8,7 @@ import (
 	"polimane/backend/env"
 	repositoryusers "polimane/backend/repository/users"
 	"polimane/backend/services/subscriptioncounters"
+	"polimane/backend/services/usercreate"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
 )
@@ -21,23 +22,22 @@ type ControllerOptions struct {
 	Users                *repositoryusers.Client
 	Signals              *signal.Container
 	SubscriptionCounters *subscriptioncounters.Service
+	UserCreate           *usercreate.Service
 }
 
 type Controller struct {
-	workos               *workos.Client
-	env                  *env.Environment
-	users                *repositoryusers.Client
-	signals              *signal.Container
-	subscriptionCounters *subscriptioncounters.Service
+	workos     *workos.Client
+	env        *env.Environment
+	signals    *signal.Container
+	userCreate *usercreate.Service
 }
 
 func Provider(options ControllerOptions) base.Controller {
 	return &Controller{
-		workos:               options.Workos,
-		env:                  options.Env,
-		users:                options.Users,
-		signals:              options.Signals,
-		subscriptionCounters: options.SubscriptionCounters,
+		workos:     options.Workos,
+		env:        options.Env,
+		signals:    options.Signals,
+		userCreate: options.UserCreate,
 	}
 }
 

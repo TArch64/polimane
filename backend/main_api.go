@@ -32,6 +32,7 @@ import (
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/services/sentry"
 	"polimane/backend/services/subscriptioncounters"
+	"polimane/backend/services/usercreate"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
 	"polimane/backend/views"
@@ -76,6 +77,7 @@ func main() {
 			logstdout.Provider,
 			logpersistent.Provider,
 			subscriptioncounters.Provider,
+			usercreate.Provider,
 
 			// api
 			apiauth.MiddlewareProvider,

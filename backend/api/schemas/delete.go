@@ -37,7 +37,7 @@ func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
 				return err
 			}
 
-			return c.subscriptionCounters.SchemasCreated.RemoveTx(reqCtx, tx, uint16(len(body.IDs)), affectedUserIDs...)
+			return c.subscriptionCounters.SchemasCreated.RemoveTx(reqCtx, tx, len(body.IDs), affectedUserIDs...)
 		})
 
 	if err != nil {

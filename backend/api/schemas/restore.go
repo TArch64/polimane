@@ -28,7 +28,7 @@ func (c *Controller) Restore(ctx *fiber.Ctx) (err error) {
 				return err
 			}
 
-			return c.subscriptionCounters.SchemasCreated.AddTx(reqCtx, tx, uint16(len(body.IDs)), user.ID)
+			return c.subscriptionCounters.SchemasCreated.AddTx(reqCtx, tx, len(body.IDs), user.ID)
 		})
 
 	if err != nil {

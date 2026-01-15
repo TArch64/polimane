@@ -22,6 +22,24 @@ FROM schema_users_count
 WHERE user_schemas.schema_id = schema_users_count.id;
 
 
+CREATE
+OR
+REPLACE
+FUNCTION jsonb_increment(
+    target jsonb,
+    KEY TEXT,
+    delta SMALLINT
+) RETURNS jsonb STABLE LANGUAGE SQL AS $$
+    SELECT jsonb_set(
+        target,
+        ARRAY[key],
+        TO_JSONB(COALESCE((target ->> key)::smallint, 0) + delta)
+    )
+$$;
+
 -- +goose Down
+DROP
+FUNCTION jsonb_increment;
+
 ALTER TABLE user_schemas
   DROP COLUMN IF EXISTS counters;

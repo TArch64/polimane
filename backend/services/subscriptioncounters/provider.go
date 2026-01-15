@@ -4,13 +4,14 @@ import (
 	"go.uber.org/fx"
 	"gorm.io/gorm"
 
+	"polimane/backend/model"
 	"polimane/backend/signal"
 )
 
 type Service struct {
-	db             *gorm.DB
-	signals        *signal.Container
 	SchemasCreated *UserCounter
+	SchemaBeads    *SchemaCounter
+	SharedAccess   *SchemaCounter
 }
 
 type ProviderOptions struct {
@@ -21,12 +22,22 @@ type ProviderOptions struct {
 
 func Provider(options ProviderOptions) *Service {
 	userDeps := &userCounterDeps{
-		DB:      options.DB,
-		Signals: options.Signals,
+		db:      options.DB,
+		signals: options.Signals,
+	}
+
+	schemaDeps := &schemaCounterDeps{
+		db: options.DB,
 	}
 
 	return &Service{
-		signals:        options.Signals,
 		SchemasCreated: newSchemasCreated(userDeps),
+		SchemaBeads:    newSchemaBeads(schemaDeps),
+		SharedAccess:   newSharedAccess(schemaDeps),
 	}
+}
+
+type updatedCounter struct {
+	ID    model.ID
+	Count uint16
 }
