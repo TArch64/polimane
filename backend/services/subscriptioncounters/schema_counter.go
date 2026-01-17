@@ -20,24 +20,18 @@ type schemaCounterDeps struct {
 	db *gorm.DB
 }
 
-type SchemaCounter struct {
+type schemaCounterOptions struct {
 	*schemaCounterDeps
 	name     string
 	localSet model.Set[*model.UserSchema, uint16]
 }
 
-type schemaCounterOptions struct {
-	deps     *schemaCounterDeps
-	name     string
-	localSet model.Set[*model.UserSchema, uint16]
+type SchemaCounter struct {
+	*schemaCounterOptions
 }
 
 func newSchemaCounter(options *schemaCounterOptions) *SchemaCounter {
-	return &SchemaCounter{
-		name:              options.name,
-		localSet:          options.localSet,
-		schemaCounterDeps: options.deps,
-	}
+	return &SchemaCounter{schemaCounterOptions: options}
 }
 
 func (s *SchemaCounter) AddTx(ctx context.Context, tx *gorm.DB, userSchema *model.UserSchema, value int) error {

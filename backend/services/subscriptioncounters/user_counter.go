@@ -22,26 +22,18 @@ type userCounterDeps struct {
 	signals *signal.Container
 }
 
-type UserCounter struct {
+type userCounterOptions struct {
 	*userCounterDeps
 	name     string
-	db       *gorm.DB
-	signals  *signal.Container
 	localSet model.Set[*model.UserSubscription, uint16]
 }
 
-type userCounterOptions struct {
-	deps     *userCounterDeps
-	name     string
-	localSet model.Set[*model.UserSubscription, uint16]
+type UserCounter struct {
+	*userCounterOptions
 }
 
 func newUserCounter(options *userCounterOptions) *UserCounter {
-	return &UserCounter{
-		name:            options.name,
-		localSet:        options.localSet,
-		userCounterDeps: options.deps,
-	}
+	return &UserCounter{userCounterOptions: options}
 }
 
 func (u *UserCounter) AddTx(ctx context.Context, tx *gorm.DB, value int, userIDs ...model.ID) error {

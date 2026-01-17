@@ -6,8 +6,8 @@ import (
 
 func newSchemaBeads(deps *schemaCounterDeps) *SchemaCounter {
 	return newSchemaCounter(&schemaCounterOptions{
-		deps: deps,
-		name: "schemaBeads",
+		name:              "schemaBeads",
+		schemaCounterDeps: deps,
 
 		localSet: func(target *model.UserSchema, value uint16) {
 			target.Counters.Data().SchemaBeads = value
@@ -17,8 +17,8 @@ func newSchemaBeads(deps *schemaCounterDeps) *SchemaCounter {
 
 func newSharedAccess(deps *schemaCounterDeps) *SchemaCounter {
 	return newSchemaCounter(&schemaCounterOptions{
-		deps: deps,
-		name: "sharedAccess",
+		name:              "sharedAccess",
+		schemaCounterDeps: deps,
 
 		localSet: func(target *model.UserSchema, value uint16) {
 			target.Counters.Data().SharedAccess = uint8(value)
