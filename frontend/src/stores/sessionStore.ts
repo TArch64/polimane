@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { nextTick, type Ref, ref } from 'vue';
 import type { IUser } from '@/models';
-import { UpdateUserCountersMiddleware, useAuthorized, useHttpClient } from '@/composables';
+import { useAuthorized, useHttpClient } from '@/composables';
 
 export const useSessionStore = defineStore('session', () => {
   const http = useHttpClient();
@@ -31,12 +31,10 @@ export const useSessionStore = defineStore('session', () => {
   }
 
   function updateUser(newUser: Partial<IUser>): void {
-    user.value = { ...user.value!, ...newUser };
+    if (user.value) {
+      user.value = { ...user.value, ...newUser };
+    }
   }
-
-  http.getMiddleware(UpdateUserCountersMiddleware)?.onUpdate.listen((counters) => {
-    if (user.value) user.value.subscription.counters = counters;
-  });
 
   return {
     user: user as Ref<IUser>,

@@ -1,4 +1,4 @@
-export * from './newId';
+export * from './id';
 export * from './getMappedValue';
 export * from './wait';
 export * from './chainRef';
@@ -16,3 +16,4 @@ export * from './createAnimatedFrame';
 export * from './startViewTransition';
 export * from './requestIdleCallback';
 export * from './cloneReactive';
+export * from './xor';

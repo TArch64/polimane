@@ -1,6 +1,8 @@
 import type { MaybePromise } from '@/types';
-import { Callback, type UserCounters } from '@/models';
+import type { UserCounters } from '@/models';
 import { UserLimits } from '@/enums';
+import type { useSessionStore } from '@/stores';
+import { decryptXor, parseIdBytes } from '@/helpers';
 import type { IHttpResponseSuccessInterceptor } from './HttpMiddlewareExecutor';
 
 export class UpdateUserCountersMiddleware implements IHttpResponseSuccessInterceptor {
@@ -8,16 +10,27 @@ export class UpdateUserCountersMiddleware implements IHttpResponseSuccessInterce
     return new UpdateUserCountersMiddleware();
   }
 
-  readonly onUpdate = new Callback<[counters: UserCounters]>();
+  private sessionStore!: ReturnType<typeof useSessionStore>;
+
+  setSessionStore(store: ReturnType<typeof useSessionStore>): void {
+    this.sessionStore = store;
+  }
 
   interceptResponseSuccess(response: Response): MaybePromise<void> {
+    if (!this.sessionStore.isLoggedIn) return;
+
     const input = this.getCountersInput(response);
     if (!input) return;
 
     const counters = this.validateCounters(input);
     if (!counters) return;
 
-    this.onUpdate.dispatch(counters);
+    this.sessionStore.updateUser({
+      subscription: {
+        ...this.sessionStore.user.subscription,
+        counters,
+      },
+    });
   }
 
   private getCountersInput(response: Response): object | null {
@@ -25,10 +38,16 @@ export class UpdateUserCountersMiddleware implements IHttpResponseSuccessInterce
     if (!encoded) return null;
 
     try {
-      return JSON.parse(atob(encoded));
+      return JSON.parse(this.decodeCountersInput(encoded));
     } catch {
       return null;
     }
+  }
+
+  private decodeCountersInput(encoded: string): string {
+    const key = parseIdBytes(this.sessionStore.user.id);
+    const encrypted = Uint8Array.from(atob(encoded), (c) => c.charCodeAt(0));
+    return new TextDecoder().decode(decryptXor(key, encrypted));
   }
 
   private validateCounters(input: object): UserCounters | null {
