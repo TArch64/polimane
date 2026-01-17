@@ -51,6 +51,8 @@ class VTappable implements ObjectDirective<HTMLElement, ITappableValue> {
       if (event.animationName === 'tap-out') {
         this.cleanUp(el);
       }
+    }, {
+      signal: this.abortController.signal,
     });
   }
 
