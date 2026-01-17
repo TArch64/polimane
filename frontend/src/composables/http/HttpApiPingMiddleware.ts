@@ -2,11 +2,11 @@ import type { Ref } from 'vue';
 import { requestIdleCallback } from '@/helpers';
 import { useAuthorized } from '../useAuthorized';
 import type { HttpClient } from './HttpClient';
-import type { HttpMiddleware, IHttpBeforeRequestInterceptor } from './HttpMiddlewareExecutor';
+import type { IHttpBeforeRequestInterceptor } from './HttpMiddlewareExecutor';
 
-export class HttpApiPing implements IHttpBeforeRequestInterceptor {
-  static use(http: HttpClient): HttpMiddleware {
-    return new HttpApiPing(http, useAuthorized());
+export class HttpApiPingMiddleware implements IHttpBeforeRequestInterceptor {
+  static use(http: HttpClient): IHttpBeforeRequestInterceptor {
+    return new HttpApiPingMiddleware(http, useAuthorized());
   }
 
   private timeoutId: TimeoutId | null = null;

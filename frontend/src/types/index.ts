@@ -8,3 +8,4 @@ export type * from './MaybeArray';
 export type * from './MarkOptional';
 export type * from './NumericString';
 export type * from './PascalToKebab';
+export type * from './Constructor';

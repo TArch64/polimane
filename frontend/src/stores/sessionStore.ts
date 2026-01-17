@@ -31,7 +31,9 @@ export const useSessionStore = defineStore('session', () => {
   }
 
   function updateUser(newUser: Partial<IUser>): void {
-    user.value = { ...user.value!, ...newUser };
+    if (user.value) {
+      user.value = { ...user.value, ...newUser };
+    }
   }
 
   return {

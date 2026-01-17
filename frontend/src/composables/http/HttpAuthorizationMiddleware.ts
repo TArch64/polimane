@@ -1,13 +1,13 @@
 import { type LocationQueryRaw, type RouteMap, type Router, useRouter } from 'vue-router';
 import type { Ref } from 'vue';
 import { useAuthorized } from '../useAuthorized';
-import type { HttpMiddleware, IHttpResponseErrorInterceptor } from './HttpMiddlewareExecutor';
+import type { IHttpResponseErrorInterceptor } from './HttpMiddlewareExecutor';
 import { HttpError } from './HttpError';
 import { HttpErrorReason } from './HttpErrorReason';
 
-export class HttpAuthorization implements IHttpResponseErrorInterceptor {
-  static use(): HttpMiddleware {
-    return new HttpAuthorization(useRouter(), useAuthorized());
+export class HttpAuthorizationMiddleware implements IHttpResponseErrorInterceptor {
+  static use(): IHttpResponseErrorInterceptor {
+    return new HttpAuthorizationMiddleware(useRouter(), useAuthorized());
   }
 
   constructor(

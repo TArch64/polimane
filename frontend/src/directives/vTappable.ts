@@ -31,13 +31,16 @@ class VTappable implements ObjectDirective<HTMLElement, ITappableValue> {
   private attach(el: HTMLElement) {
     this.abortController = new AbortController();
 
-    el.addEventListener('mousedown', () => {
-      this.configureAnimation(el);
+    el.addEventListener('mousedown', (downEvent) => {
+      if (downEvent.button !== 0) return;
 
+      this.configureAnimation(el);
       this.setAnimationClasses(el, 'in');
 
-      window.addEventListener('mouseup', () => {
-        this.setAnimationClasses(el, 'out');
+      window.addEventListener('mouseup', (upEvent) => {
+        upEvent.button === 0
+          ? this.setAnimationClasses(el, 'out')
+          : this.cleanUp(el);
       }, { once: true, capture: true });
     }, {
       capture: true,
@@ -46,9 +49,10 @@ class VTappable implements ObjectDirective<HTMLElement, ITappableValue> {
 
     el.addEventListener('animationend', (event) => {
       if (event.animationName === 'tap-out') {
-        el.classList.remove('tap-animation-out', 'tap-animation-in');
-        el.style.removeProperty('--tap-scale');
+        this.cleanUp(el);
       }
+    }, {
+      signal: this.abortController.signal,
     });
   }
 
@@ -71,6 +75,11 @@ class VTappable implements ObjectDirective<HTMLElement, ITappableValue> {
   private setAnimationClasses(el: HTMLElement, state: 'in' | 'out') {
     el.classList.toggle('tap-animation-in', state === 'in');
     el.classList.toggle('tap-animation-out', state === 'out');
+  }
+
+  private cleanUp(el: HTMLElement) {
+    el.classList.remove('tap-animation-out', 'tap-animation-in');
+    el.style.removeProperty('--tap-scale');
   }
 }
 

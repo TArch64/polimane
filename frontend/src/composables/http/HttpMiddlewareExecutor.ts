@@ -1,5 +1,10 @@
-import type { MaybePromise } from '@/types';
+import type { Constructor, MaybePromise } from '@/types';
 import type { HttpError } from './HttpError';
+import type { HttpClient } from './HttpClient';
+
+export type MiddlewareConstructor = Constructor<HttpMiddleware> & {
+  use: (client: HttpClient) => HttpMiddleware;
+};
 
 export interface IHttpBeforeRequestInterceptor {
   interceptBeforeRequest(request: Request): MaybePromise<void>;
@@ -19,14 +24,23 @@ export type HttpMiddleware
     | IHttpResponseSuccessInterceptor;
 
 export class HttpMiddlewareExecutor {
-  private readonly middlewares: HttpMiddleware[] = [];
+  private readonly middlewares = new Map<MiddlewareConstructor, HttpMiddleware>();
+  client!: HttpClient;
 
-  add(middleware: HttpMiddleware): void {
-    this.middlewares.push(middleware);
+  get list(): HttpMiddleware[] {
+    return Array.from(this.middlewares.values());
+  }
+
+  add<M extends MiddlewareConstructor>(Class: M): void {
+    this.middlewares.set(Class, Class.use(this.client));
+  }
+
+  get<M extends MiddlewareConstructor>(Class: M): InstanceType<M> | null {
+    return (this.middlewares.get(Class) as InstanceType<M>) || null;
   }
 
   async callBeforeRequestInterceptor(request: Request): Promise<void> {
-    const middlewares = this.middlewares.filter((m): m is IHttpBeforeRequestInterceptor => 'interceptBeforeRequest' in m);
+    const middlewares = this.list.filter((m): m is IHttpBeforeRequestInterceptor => 'interceptBeforeRequest' in m);
 
     for (const middleware of middlewares) {
       await middleware.interceptBeforeRequest(request);
@@ -34,7 +48,7 @@ export class HttpMiddlewareExecutor {
   }
 
   async callResponseErrorInterceptor(error: HttpError): Promise<void> {
-    const middlewares = this.middlewares.filter((m): m is IHttpResponseErrorInterceptor => 'interceptResponseError' in m);
+    const middlewares = this.list.filter((m): m is IHttpResponseErrorInterceptor => 'interceptResponseError' in m);
 
     for (const middleware of middlewares) {
       await middleware.interceptResponseError(error);
@@ -42,7 +56,7 @@ export class HttpMiddlewareExecutor {
   }
 
   async callResponseSuccessInterceptor(response: Response): Promise<void> {
-    const middlewares = this.middlewares.filter((m): m is IHttpResponseSuccessInterceptor => 'interceptResponseSuccess' in m);
+    const middlewares = this.list.filter((m): m is IHttpResponseSuccessInterceptor => 'interceptResponseSuccess' in m);
 
     for (const middleware of middlewares) {
       await middleware.interceptResponseSuccess(response);
