@@ -1,9 +1,9 @@
 import { type FunctionPlugin, inject, type InjectionKey } from 'vue';
-import { UpdateUserCountersMiddleware } from '@/composables/http/UpdateUserCountersMiddleware';
 import { HttpClient } from './HttpClient';
 import { HttpMiddlewareExecutor } from './HttpMiddlewareExecutor';
 import { HttpAuthorizationMiddleware } from './HttpAuthorizationMiddleware';
 import { HttpApiPingMiddleware } from './HttpApiPingMiddleware';
+import { UpdateUserCountersMiddleware } from './UpdateUserCountersMiddleware';
 
 const Provider = Symbol('HttpClient') as InjectionKey<HttpClient>;
 
