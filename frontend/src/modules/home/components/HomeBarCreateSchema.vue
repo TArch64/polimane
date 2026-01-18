@@ -4,7 +4,7 @@
     variant="primary"
     class="home-bar__create-schema"
     :prepend-icon="PlusIcon"
-    :disabled="limit.isReached"
+    :disabled="schemasCreatedLimit.isReached"
     @click="createModal.open()"
   >
     Нова Схема
@@ -18,7 +18,7 @@ import { useModal } from '@/components/modal';
 import { SchemaCreateModal } from '@/modules/home/components/modals';
 import { useSchemasCreatedLimit } from '@/composables/subscription';
 
-const limit = useSchemasCreatedLimit();
+const schemasCreatedLimit = useSchemasCreatedLimit();
 const createModal = useModal(SchemaCreateModal);
 </script>
 

@@ -4,6 +4,7 @@ import { SubscriptionLimit, type UserLimit } from '@/enums';
 
 export interface IUserLimit {
   isReached: boolean;
+  isNear: (value: number) => boolean;
 }
 
 function useUserLimit(name: UserLimit): IUserLimit {
@@ -14,7 +15,11 @@ function useUserLimit(name: UserLimit): IUserLimit {
   const limit = computed(() => subscription.value.limits[name]!);
   const isReached = computed(() => counter.value >= limit.value);
 
-  return reactive({ isReached });
+  function isNear(value: number): boolean {
+    return counter.value + value >= limit.value;
+  }
+
+  return reactive({ isReached, isNear });
 }
 
 export function useSchemasCreatedLimit() {

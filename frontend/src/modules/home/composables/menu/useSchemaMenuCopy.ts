@@ -12,12 +12,12 @@ export function useSchemaMenuCopy(schemaRef: MaybeRefOrGetter<ListSchema>): Ref<
 
   const router = useRouter();
   const route = useRoute();
-  const limit = useSchemasCreatedLimit();
+  const schemasCreatedLimit = useSchemasCreatedLimit();
 
   return computed(() => ({
     title: 'Зробити Копію',
     icon: CopyIcon,
-    disabled: limit.isReached,
+    disabled: schemasCreatedLimit.isReached,
 
     async onAction() {
       const created = await homeStore.copySchema.do(schema.value);
