@@ -10,6 +10,7 @@ import (
 	"polimane/backend/api/base"
 	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
+	"polimane/backend/services/subscriptioncounters"
 )
 
 type CreateBody struct {
@@ -63,7 +64,9 @@ func (c *Controller) Create(ctx *fiber.Ctx) (err error) {
 				return err
 			}
 
-			return c.subscriptionCounters.SchemasCreated.AddTx(reqCtx, tx, 1, user.ID)
+			return c.subscriptionCounters.SchemasCreated.ChangeTx(reqCtx, tx, subscriptioncounters.ChangeSet{
+				user.ID: 1,
+			})
 		})
 
 	if err != nil {

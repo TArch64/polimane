@@ -16,6 +16,7 @@ import (
 	"polimane/backend/model"
 	"polimane/backend/repository"
 	repositoryschemasinvitations "polimane/backend/repository/schemainvitations"
+	"polimane/backend/services/subscriptioncounters"
 	"polimane/backend/services/workos"
 )
 
@@ -68,7 +69,9 @@ func (c *Controller) Add(ctx *fiber.Ctx) (err error) {
 					return err
 				}
 
-				return c.subscriptionCounters.SchemasCreated.AddTx(reqCtx, tx, len(body.IDs), user.ID)
+				return c.subscriptionCounters.SchemasCreated.ChangeTx(reqCtx, tx, subscriptioncounters.ChangeSet{
+					user.ID: int16(len(body.IDs)),
+				})
 			})
 	}
 

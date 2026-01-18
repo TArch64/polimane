@@ -10,6 +10,7 @@ import (
 	"polimane/backend/api/base"
 	"polimane/backend/model"
 	"polimane/backend/repository"
+	"polimane/backend/services/subscriptioncounters"
 )
 
 func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
@@ -25,7 +26,7 @@ func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
 	user := auth.GetSessionUser(ctx)
 	reqCtx := ctx.Context()
 
-	affectedUserIDs, err := c.getAffectedUsersOnDelete(reqCtx, body.IDs)
+	affectedUsers, err := c.getAffectedUsersOnDelete(reqCtx, body.IDs)
 	if err != nil {
 		return err
 	}
@@ -37,7 +38,7 @@ func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
 				return err
 			}
 
-			return c.subscriptionCounters.SchemasCreated.RemoveTx(reqCtx, tx, len(body.IDs), affectedUserIDs...)
+			return c.subscriptionCounters.SchemasCreated.ChangeTx(reqCtx, tx, affectedUsers)
 		})
 
 	if err != nil {
@@ -48,10 +49,30 @@ func (c *Controller) Delete(ctx *fiber.Ctx) (err error) {
 	return base.NewSuccessResponse(ctx)
 }
 
-func (c *Controller) getAffectedUsersOnDelete(ctx context.Context, schemaIDs []model.ID) (out []model.ID, err error) {
-	err = c.userSchemas.ListOut(ctx, &out,
-		repository.Select("DISTINCT ON (user_id) user_id"),
+func (c *Controller) getAffectedUsersOnDelete(ctx context.Context, schemaIDs []model.ID) (subscriptioncounters.ChangeSet, error) {
+	rows, err := c.userSchemas.ListRows(ctx,
+		repository.Table("user_schemas"),
+		repository.Select("user_id", "COUNT(schema_id)"),
 		repository.SchemaIDsIn(schemaIDs),
+		repository.Group("user_id"),
 	)
-	return
+
+	if err != nil {
+		return nil, err
+	}
+
+	changeSet := make(subscriptioncounters.ChangeSet)
+
+	for rows.Next() {
+		var id model.ID
+		var count int16
+
+		if err = rows.Scan(&id, &count); err != nil {
+			return nil, err
+		}
+
+		changeSet[id] = count
+	}
+
+	return changeSet, err
 }

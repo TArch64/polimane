@@ -8,6 +8,7 @@ import (
 
 	"polimane/backend/model"
 	"polimane/backend/repository"
+	"polimane/backend/services/subscriptioncounters"
 )
 
 func (s *Service) acceptInvitations(ctx context.Context, tx *gorm.DB, user *model.User) error {
@@ -46,5 +47,7 @@ func (s *Service) acceptInvitations(ctx context.Context, tx *gorm.DB, user *mode
 		return err
 	}
 
-	return s.subscriptionCounters.SchemasCreated.AddTx(ctx, tx, int(insertResult.RowsAffected), user.ID)
+	return s.subscriptionCounters.SchemasCreated.ChangeTx(ctx, tx, subscriptioncounters.ChangeSet{
+		user.ID: int16(insertResult.RowsAffected),
+	})
 }

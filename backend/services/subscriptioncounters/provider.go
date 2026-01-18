@@ -8,6 +8,8 @@ import (
 	"polimane/backend/signal"
 )
 
+type ChangeSet map[model.ID]int16
+
 type Service struct {
 	SchemasCreated *UserCounter
 	SchemaBeads    *SchemaCounter

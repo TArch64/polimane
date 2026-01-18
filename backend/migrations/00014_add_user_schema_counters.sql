@@ -26,15 +26,18 @@ CREATE
 OR
 REPLACE
 FUNCTION jsonb_increment(
-    target jsonb,
-    KEY TEXT,
-    delta SMALLINT
-) RETURNS jsonb STABLE LANGUAGE SQL AS $$
-    SELECT jsonb_set(
-        target,
-        ARRAY[key],
-        TO_JSONB(COALESCE((target ->> key)::smallint, 0) + delta)
-    )
+  target jsonb,
+  KEY TEXT,
+  delta SMALLINT
+) RETURNS jsonb
+  STABLE
+  LANGUAGE sql AS
+$$
+SELECT JSONB_SET(
+         target,
+         ARRAY [key],
+         TO_JSONB(COALESCE((target ->> key)::smallint, 0) + delta)
+       )
 $$;
 
 -- +goose Down

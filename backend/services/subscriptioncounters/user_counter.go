@@ -3,18 +3,21 @@ package subscriptioncounters
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"gorm.io/gorm"
 
 	"polimane/backend/model"
+	"polimane/backend/repository"
 	"polimane/backend/signal"
 )
 
 const changeUserCounterSQL = `
 UPDATE user_subscriptions
-SET counters = jsonb_increment(counters, @counter_name, @delta)
-WHERE user_id IN @user_ids
-RETURNING user_id AS id, (counters->>@counter_name)::smallint AS count
+SET counters = jsonb_increment(counters, @counter_name, change_set.delta)
+FROM (VALUES %s) as change_set(user_id, delta)
+WHERE user_subscriptions.user_id = change_set.user_id
+RETURNING user_subscriptions.user_id AS id, (counters->>@counter_name)::smallint AS count
 `
 
 type userCounterDeps struct {
@@ -36,24 +39,15 @@ func newUserCounter(options *userCounterOptions) *UserCounter {
 	return &UserCounter{userCounterOptions: options}
 }
 
-func (u *UserCounter) AddTx(ctx context.Context, tx *gorm.DB, value int, userIDs ...model.ID) error {
-	return u.change(ctx, tx, value, userIDs)
-}
-
-func (u *UserCounter) RemoveTx(ctx context.Context, tx *gorm.DB, value int, userIDs ...model.ID) error {
-	return u.change(ctx, tx, -value, userIDs)
-}
-
-func (u *UserCounter) change(ctx context.Context, tx *gorm.DB, value int, userIDs []model.ID) error {
+func (u *UserCounter) ChangeTx(ctx context.Context, tx *gorm.DB, values ChangeSet) error {
+	queryValues, args := repository.NamedUpdateValues(values)
+	query := fmt.Sprintf(changeUserCounterSQL, queryValues)
+	args = append(args, sql.Named("counter_name", u.name))
 	var updated []*updatedCounter
 
 	err := gorm.
 		G[model.UserSubscription](tx).
-		Raw(changeUserCounterSQL,
-			sql.Named("counter_name", u.name),
-			sql.Named("delta", value),
-			sql.Named("user_ids", userIDs),
-		).
+		Raw(query, args...).
 		Scan(ctx, &updated)
 
 	if err != nil {

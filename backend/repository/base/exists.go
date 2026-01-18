@@ -9,22 +9,18 @@ import (
 	"polimane/backend/repository"
 )
 
-func (c *Client[M]) Exists(ctx context.Context, scopes ...repository.Scope) (bool, error) {
-	var exists bool
-
+func (c *Client[M]) Exists(ctx context.Context, scopes ...repository.Scope) (exists bool, err error) {
 	scopes = append(scopes,
 		repository.Select("1 AS exists"),
 		repository.Limit(1),
 	)
 
-	err := c.GetOut(ctx, &exists, scopes...)
+	err = c.GetOut(ctx, &exists, scopes...)
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return false, nil
-	}
-	if err != nil {
-		return false, err
+		exists = false
+		err = nil
 	}
 
-	return exists, nil
+	return
 }

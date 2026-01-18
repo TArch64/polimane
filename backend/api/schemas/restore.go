@@ -6,6 +6,7 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/services/subscriptioncounters"
 )
 
 func (c *Controller) Restore(ctx *fiber.Ctx) (err error) {
@@ -28,7 +29,9 @@ func (c *Controller) Restore(ctx *fiber.Ctx) (err error) {
 				return err
 			}
 
-			return c.subscriptionCounters.SchemasCreated.AddTx(reqCtx, tx, len(body.IDs), user.ID)
+			return c.subscriptionCounters.SchemasCreated.ChangeTx(reqCtx, tx, subscriptioncounters.ChangeSet{
+				user.ID: int16(len(body.IDs)),
+			})
 		})
 
 	if err != nil {
