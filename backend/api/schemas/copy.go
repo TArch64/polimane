@@ -17,8 +17,13 @@ func (c *Controller) Copy(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	reqCtx := ctx.Context()
 	user := auth.GetSessionUser(ctx)
+
+	if !c.subscriptionCounters.SchemasCreated.CanAdd(user.Subscription, 1) {
+		return base.SchemasCreatedLimitReachedErr
+	}
+
+	reqCtx := ctx.Context()
 	var schema *model.Schema
 
 	err = c.schemas.DB.

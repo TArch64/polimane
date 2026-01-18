@@ -9,8 +9,19 @@ func newSchemasCreated(deps *userCounterDeps) *UserCounter {
 		name:            "schemasCreated",
 		userCounterDeps: deps,
 
-		localSet: func(subscription *model.UserSubscription, value uint16) {
-			subscription.Counters.Data().SchemasCreated = value
-		},
+		counterValue: model.NewAccessor[*model.UserSubscription, uint16](
+			func(target *model.UserSubscription) uint16 {
+				return target.Counters.Data().SchemasCreated
+			},
+			func(target *model.UserSubscription, value uint16) {
+				target.Counters.Data().SchemasCreated = value
+			},
+		),
+
+		counterLimit: model.NewAccessor[*model.UserSubscription, *uint16](
+			func(target *model.UserSubscription) *uint16 {
+				return target.Limits().SchemasCreated
+			}, nil,
+		),
 	})
 }

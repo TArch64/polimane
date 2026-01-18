@@ -22,6 +22,11 @@ func (c *Controller) Restore(ctx *fiber.Ctx) (err error) {
 	reqCtx := ctx.Context()
 	user := auth.GetSessionUser(ctx)
 
+	schemasLen := len(body.IDs)
+	if !c.subscriptionCounters.SchemasCreated.CanAdd(user.Subscription, uint16(schemasLen)) {
+		return base.SchemasCreatedLimitReachedErr
+	}
+
 	err = c.schemas.DB.
 		WithContext(reqCtx).
 		Transaction(func(tx *gorm.DB) error {
@@ -30,7 +35,7 @@ func (c *Controller) Restore(ctx *fiber.Ctx) (err error) {
 			}
 
 			return c.subscriptionCounters.SchemasCreated.ChangeTx(reqCtx, tx, subscriptioncounters.ChangeSet{
-				user.ID: int16(len(body.IDs)),
+				user.ID: int16(schemasLen),
 			})
 		})
 

@@ -43,9 +43,7 @@ func (c *Controller) Add(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	user, err := c.users.Get(
-		reqCtx,
-		repository.Select("id", "email", "first_name", "last_name"),
+	user, err := c.users.GetWithSubscription(reqCtx,
 		repository.EmailEq(body.Email),
 	)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -61,6 +59,11 @@ func (c *Controller) Add(ctx *fiber.Ctx) (err error) {
 	if user == nil {
 		response, err = c.inviteUser(reqCtx, currentUser, body.IDs, body.Email)
 	} else {
+		schemasLen := len(body.IDs)
+		if !c.subscriptionCounters.SchemasCreated.CanAdd(user.Subscription, uint16(schemasLen)) {
+			return base.SchemasCreatedLimitReachedErr
+		}
+
 		err = c.userSchemas.DB.
 			WithContext(reqCtx).
 			Transaction(func(tx *gorm.DB) error {
@@ -70,7 +73,7 @@ func (c *Controller) Add(ctx *fiber.Ctx) (err error) {
 				}
 
 				return c.subscriptionCounters.SchemasCreated.ChangeTx(reqCtx, tx, subscriptioncounters.ChangeSet{
-					user.ID: int16(len(body.IDs)),
+					user.ID: int16(schemasLen),
 				})
 			})
 	}

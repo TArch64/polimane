@@ -34,8 +34,12 @@ func (c *Controller) Create(ctx *fiber.Ctx) (err error) {
 	}
 
 	user := auth.GetSessionUser(ctx)
-	reqCtx := ctx.Context()
 
+	if !c.subscriptionCounters.SchemasCreated.CanAdd(user.Subscription, 1) {
+		return base.SchemasCreatedLimitReachedErr
+	}
+
+	reqCtx := ctx.Context()
 	folderID := body.FolderID()
 	if folderID != nil {
 		err = c.folders.HasAccess(reqCtx, user.ID, *folderID)

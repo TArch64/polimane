@@ -27,8 +27,9 @@ type userCounterDeps struct {
 
 type userCounterOptions struct {
 	*userCounterDeps
-	name     string
-	localSet model.Set[*model.UserSubscription, uint16]
+	name         string
+	counterValue *model.Accessor[*model.UserSubscription, uint16]
+	counterLimit *model.Accessor[*model.UserSubscription, *uint16]
 }
 
 type UserCounter struct {
@@ -37,6 +38,15 @@ type UserCounter struct {
 
 func newUserCounter(options *userCounterOptions) *UserCounter {
 	return &UserCounter{userCounterOptions: options}
+}
+
+func (u *UserCounter) CanAdd(subscription *model.UserSubscription, delta uint16) bool {
+	limit := u.counterLimit.Get(subscription)
+	if limit == nil {
+		return true
+	}
+	value := u.counterValue.Get(subscription) + delta
+	return value <= *limit
 }
 
 func (u *UserCounter) ChangeTx(ctx context.Context, tx *gorm.DB, values ChangeSet) error {
@@ -61,7 +71,7 @@ func (u *UserCounter) ChangeTx(ctx context.Context, tx *gorm.DB, values ChangeSe
 func (u *UserCounter) updateCache(ctx context.Context, updated []*updatedCounter) {
 	for _, row := range updated {
 		event := signal.NewUpdateUserCacheEvent(row.ID, func(user *model.User) {
-			u.localSet(user.Subscription, row.Count)
+			u.counterValue.Set(user.Subscription, row.Count)
 		})
 
 		u.signals.UpdateUserCacheSync.Emit(ctx, event)
