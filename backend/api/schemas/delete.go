@@ -71,7 +71,7 @@ func (c *Controller) getAffectedUsersOnDelete(ctx context.Context, schemaIDs []m
 			return nil, err
 		}
 
-		changeSet[id] = count
+		changeSet[id] = -count
 	}
 
 	return changeSet, err
