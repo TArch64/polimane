@@ -10,10 +10,23 @@ import (
 
 type ChangeSet map[model.ID]int16
 
+type counterValue interface {
+	~uint8 | ~uint16
+}
+
+type counterDelta interface {
+	~int8 | ~int16
+}
+
+type updatedCounter[CV counterValue] struct {
+	ID    model.ID
+	Count CV
+}
+
 type Service struct {
-	SchemasCreated *UserCounter
-	SchemaBeads    *SchemaCounter
-	SharedAccess   *SchemaCounter
+	SchemasCreated *UserCounter[uint16, int16]
+	SchemaBeads    *SchemaCounter[uint16, int16]
+	SharedAccess   *SchemaCounter[uint8, int8]
 }
 
 type ProviderOptions struct {
@@ -37,9 +50,4 @@ func Provider(options ProviderOptions) *Service {
 		SchemaBeads:    newSchemaBeads(schemaDeps),
 		SharedAccess:   newSharedAccess(schemaDeps),
 	}
-}
-
-type updatedCounter struct {
-	ID    model.ID
-	Count uint16
 }

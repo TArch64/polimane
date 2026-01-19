@@ -11,45 +11,70 @@ import (
 
 const changeSchemaCounterSQL = `
 UPDATE user_schemas
-SET counters = jsonb_increment(counters, @counter_name, @delta)
+SET counters = jsonb_increment(counters, @counter_name, TO_JSONB(@counter_delta))
 WHERE schema_id = @schema_id
 RETURNING (counters->>@counter_name)::smallint AS count
+`
+
+const setSchemaCounterSQL = `
+UPDATE user_schemas
+SET counters = jsonb_set(counters, ARRAY [@counter_name], @counter_value)
+WHERE schema_id = @schema_id
 `
 
 type schemaCounterDeps struct {
 	db *gorm.DB
 }
 
-type schemaCounterOptions struct {
+type schemaCounterOptions[CV counterValue, CD counterDelta] struct {
 	*schemaCounterDeps
-	name     string
-	localSet model.Set[*model.UserSchema, uint16]
+	name         string
+	counterValue *model.Accessor[*model.UserSchema, CV]
+	counterLimit *model.Accessor[*model.UserSubscription, *CV]
 }
 
-type SchemaCounter struct {
-	*schemaCounterOptions
+type SchemaCounter[CV counterValue, CD counterDelta] struct {
+	*schemaCounterOptions[CV, CD]
 }
 
-func newSchemaCounter(options *schemaCounterOptions) *SchemaCounter {
-	return &SchemaCounter{schemaCounterOptions: options}
+func newSchemaCounter[CV counterValue, CD counterDelta](options *schemaCounterOptions[CV, CD]) *SchemaCounter[CV, CD] {
+	return &SchemaCounter[CV, CD]{schemaCounterOptions: options}
 }
 
-func (s *SchemaCounter) AddTx(ctx context.Context, tx *gorm.DB, userSchema *model.UserSchema, value int) error {
-	return s.change(ctx, tx, userSchema, value)
+func (s *SchemaCounter[CV, CD]) CanAdd(user *model.User, data *model.UserSchema, delta CV) bool {
+	limit := s.counterLimit.Get(user.Subscription)
+	if limit == nil {
+		return true
+	}
+	value := s.counterValue.Get(data) + delta
+	return value <= *limit
 }
 
-func (s *SchemaCounter) RemoveTx(ctx context.Context, tx *gorm.DB, userSchema *model.UserSchema, value int) error {
-	return s.change(ctx, tx, userSchema, -value)
+func (s *SchemaCounter[CV, CD]) SetTx(ctx context.Context, tx *gorm.DB, userSchema *model.UserSchema, value CV) error {
+	err := gorm.
+		G[model.UserSchema](tx).
+		Exec(ctx, setSchemaCounterSQL,
+			sql.Named("counter_name", s.name),
+			sql.Named("counter_value", value),
+			sql.Named("schema_id", userSchema.SchemaID),
+		)
+
+	if err != nil {
+		return err
+	}
+
+	s.counterValue.Set(userSchema, value)
+	return nil
 }
 
-func (s *SchemaCounter) change(ctx context.Context, tx *gorm.DB, userSchema *model.UserSchema, value int) error {
-	var updated []*updatedCounter
+func (s *SchemaCounter[CV, CD]) ChangeTx(ctx context.Context, tx *gorm.DB, userSchema *model.UserSchema, value CD) error {
+	var updated []*updatedCounter[CV]
 
 	err := gorm.
-		G[model.UserSubscription](tx).
+		G[model.UserSchema](tx).
 		Raw(changeSchemaCounterSQL,
 			sql.Named("counter_name", s.name),
-			sql.Named("delta", value),
+			sql.Named("counter_delta", value),
 			sql.Named("schema_id", userSchema.SchemaID),
 		).
 		Scan(ctx, &updated)
@@ -59,7 +84,7 @@ func (s *SchemaCounter) change(ctx context.Context, tx *gorm.DB, userSchema *mod
 	}
 
 	if len(updated) > 0 {
-		s.localSet(userSchema, updated[0].Count)
+		s.counterValue.Set(userSchema, updated[0].Count)
 	}
 
 	return nil

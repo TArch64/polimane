@@ -25,22 +25,22 @@ type userCounterDeps struct {
 	signals *signal.Container
 }
 
-type userCounterOptions struct {
+type userCounterOptions[CV counterValue, CD counterDelta] struct {
 	*userCounterDeps
 	name         string
-	counterValue *model.Accessor[*model.UserSubscription, uint16]
-	counterLimit *model.Accessor[*model.UserSubscription, *uint16]
+	counterValue *model.Accessor[*model.UserSubscription, CV]
+	counterLimit *model.Accessor[*model.UserSubscription, *CV]
 }
 
-type UserCounter struct {
-	*userCounterOptions
+type UserCounter[CV counterValue, CD counterDelta] struct {
+	*userCounterOptions[CV, CD]
 }
 
-func newUserCounter(options *userCounterOptions) *UserCounter {
-	return &UserCounter{userCounterOptions: options}
+func newUserCounter[CV counterValue, CD counterDelta](options *userCounterOptions[CV, CD]) *UserCounter[CV, CD] {
+	return &UserCounter[CV, CD]{userCounterOptions: options}
 }
 
-func (u *UserCounter) CanAdd(subscription *model.UserSubscription, delta uint16) bool {
+func (u *UserCounter[CV, CD]) CanAdd(subscription *model.UserSubscription, delta CV) bool {
 	limit := u.counterLimit.Get(subscription)
 	if limit == nil {
 		return true
@@ -49,11 +49,11 @@ func (u *UserCounter) CanAdd(subscription *model.UserSubscription, delta uint16)
 	return value <= *limit
 }
 
-func (u *UserCounter) ChangeTx(ctx context.Context, tx *gorm.DB, values ChangeSet) error {
+func (u *UserCounter[CV, CD]) ChangeTx(ctx context.Context, tx *gorm.DB, values ChangeSet) error {
 	queryValues, args := repository.NamedUpdateValues(values)
 	query := fmt.Sprintf(changeUserCounterSQL, queryValues)
 	args = append(args, sql.Named("counter_name", u.name))
-	var updated []*updatedCounter
+	var updated []*updatedCounter[CV]
 
 	err := gorm.
 		G[model.UserSubscription](tx).
@@ -68,7 +68,7 @@ func (u *UserCounter) ChangeTx(ctx context.Context, tx *gorm.DB, values ChangeSe
 	return nil
 }
 
-func (u *UserCounter) updateCache(ctx context.Context, updated []*updatedCounter) {
+func (u *UserCounter[CV, CD]) updateCache(ctx context.Context, updated []*updatedCounter[CV]) {
 	for _, row := range updated {
 		event := signal.NewUpdateUserCacheEvent(row.ID, func(user *model.User) {
 			u.counterValue.Set(user.Subscription, row.Count)

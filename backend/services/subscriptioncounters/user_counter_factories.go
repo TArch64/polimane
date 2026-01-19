@@ -4,8 +4,8 @@ import (
 	"polimane/backend/model"
 )
 
-func newSchemasCreated(deps *userCounterDeps) *UserCounter {
-	return newUserCounter(&userCounterOptions{
+func newSchemasCreated(deps *userCounterDeps) *UserCounter[uint16, int16] {
+	return newUserCounter[uint16, int16](&userCounterOptions[uint16, int16]{
 		name:            "schemasCreated",
 		userCounterDeps: deps,
 
