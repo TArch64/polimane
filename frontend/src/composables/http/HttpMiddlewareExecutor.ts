@@ -1,21 +1,24 @@
 import type { Constructor, MaybePromise } from '@/types';
-import type { HttpError } from './HttpError';
 import type { HttpClient } from './HttpClient';
 
 export type MiddlewareConstructor = Constructor<HttpMiddleware> & {
   use: (client: HttpClient) => HttpMiddleware;
 };
 
+export interface IInterceptorContext {
+  meta: Record<string, unknown>;
+}
+
 export interface IHttpBeforeRequestInterceptor {
-  interceptBeforeRequest(request: Request): MaybePromise<void>;
+  interceptBeforeRequest(request: Request, ctx: IInterceptorContext): MaybePromise<void>;
 }
 
 export interface IHttpResponseErrorInterceptor {
-  interceptResponseError(error: HttpError): MaybePromise<void>;
+  interceptResponseError(error: unknown, ctx: IInterceptorContext): MaybePromise<void>;
 }
 
 export interface IHttpResponseSuccessInterceptor {
-  interceptResponseSuccess(response: Response): MaybePromise<void>;
+  interceptResponseSuccess(response: Response, ctx: IInterceptorContext): MaybePromise<void>;
 }
 
 export type HttpMiddleware
@@ -39,27 +42,27 @@ export class HttpMiddlewareExecutor {
     return (this.middlewares.get(Class) as InstanceType<M>) || null;
   }
 
-  async callBeforeRequestInterceptor(request: Request): Promise<void> {
+  async callBeforeRequestInterceptor(request: Request, ctx: IInterceptorContext): Promise<void> {
     const middlewares = this.list.filter((m): m is IHttpBeforeRequestInterceptor => 'interceptBeforeRequest' in m);
 
     for (const middleware of middlewares) {
-      await middleware.interceptBeforeRequest(request);
+      await middleware.interceptBeforeRequest(request, ctx);
     }
   }
 
-  async callResponseErrorInterceptor(error: HttpError): Promise<void> {
+  async callResponseErrorInterceptor(error: unknown, ctx: IInterceptorContext): Promise<void> {
     const middlewares = this.list.filter((m): m is IHttpResponseErrorInterceptor => 'interceptResponseError' in m);
 
     for (const middleware of middlewares) {
-      await middleware.interceptResponseError(error);
+      await middleware.interceptResponseError(error, ctx);
     }
   }
 
-  async callResponseSuccessInterceptor(response: Response): Promise<void> {
+  async callResponseSuccessInterceptor(response: Response, ctx: IInterceptorContext): Promise<void> {
     const middlewares = this.list.filter((m): m is IHttpResponseSuccessInterceptor => 'interceptResponseSuccess' in m);
 
     for (const middleware of middlewares) {
-      await middleware.interceptResponseSuccess(response);
+      await middleware.interceptResponseSuccess(response, ctx);
     }
   }
 }
