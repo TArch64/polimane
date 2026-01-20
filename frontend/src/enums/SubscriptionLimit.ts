@@ -14,13 +14,19 @@ export function isUserLimit(limit: string): limit is UserLimit {
   return UserLimits.includes(limit as UserLimit);
 }
 
-export const FeatureLimits = [
+export const SchemaLimits = [
   SubscriptionLimit.SCHEMA_BEADS,
   SubscriptionLimit.SHARED_ACCESS,
 ] as const;
 
-export type FeatureLimit = typeof FeatureLimits[number];
+export type SchemaLimit = typeof SchemaLimits[number];
 
-export function isFeatureLimit(limit: string): limit is FeatureLimit {
-  return FeatureLimits.includes(limit as FeatureLimit);
+export function isSchemaLimit(limit: string): limit is SchemaLimit {
+  return SchemaLimits.includes(limit as SchemaLimit);
 }
+
+export {
+  isSchemaLimit as isFeatureLimit,
+  SchemaLimits as FeatureLimits,
+  type SchemaLimit as FeatureLimit,
+};

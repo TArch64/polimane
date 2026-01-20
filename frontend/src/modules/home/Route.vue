@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { CommonLayout } from '@/components/layout';
-import { SCHEMA_PLURAL, usePluralFormatter } from '@/composables';
+import { SCHEMA_PLURAL, usePageClass, usePluralFormatter } from '@/composables';
 import { useHomeStore } from './stores';
 import { HomeBanners, HomeTopBarActions } from './components';
 
@@ -31,4 +31,15 @@ const homeStore = useHomeStore();
 const selectionCount = computed(() => homeStore.selection.ids.size);
 const selectionSchemaPlural = usePluralFormatter(selectionCount, SCHEMA_PLURAL);
 const selectionTitle = computed(() => `Обрано ${selectionCount.value} ${selectionSchemaPlural.value}`);
+
+usePageClass('app-layout--home');
 </script>
+
+<style>
+@layer page {
+  .app-layout--home .common-layout__main {
+    gap: 32px;
+    padding-top: 32px;
+  }
+}
+</style>

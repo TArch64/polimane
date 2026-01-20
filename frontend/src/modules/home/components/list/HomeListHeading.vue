@@ -15,8 +15,8 @@ defineSlots<{
 <style scoped>
 @layer page {
   .home-list-heading {
-    padding: 8px 8px 8px 16px;
-    margin-top: 20px;
+    padding-left: 16px;
+    margin-bottom: 16px;
     font-weight: 450;
     font-size: var(--font-lg);
     color: var(--color-text-2);

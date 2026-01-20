@@ -1,19 +1,15 @@
 <template>
-  <template v-if="foldersStore.hasFolders">
+  <section v-if="foldersStore.hasFolders">
     <HomeListHeading>
       Директорії
     </HomeListHeading>
 
-    <HomeGridList
-      :list="foldersStore.folders"
-      class="home-list__folders"
-      v-slot="{ item }"
-    >
+    <HomeGridList :list="foldersStore.folders" v-slot="{ item }">
       <HomeFolder :folder="item" />
     </HomeGridList>
-  </template>
+  </section>
 
-  <template v-if="schemasStore.hasSchemas">
+  <section v-if="schemasStore.hasSchemas">
     <HomeListHeading>
       Схеми для Бісеру
     </HomeListHeading>
@@ -26,7 +22,7 @@
     >
       <HomeSchema :ref="itemRef" :schema="item" />
     </HomeGridList>
-  </template>
+  </section>
 
   <HomeListLoader :visible="listStore.list.isLoading" />
 </template>
@@ -48,11 +44,3 @@ useInfinityScroll({
   canLoadNext: toRef(listStore, 'canLoadNext'),
 });
 </script>
-
-<style scoped>
-@layer page {
-  .home-list__folders {
-    margin-bottom: 24px;
-  }
-}
-</style>

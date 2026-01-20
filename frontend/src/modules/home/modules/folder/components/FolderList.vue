@@ -1,16 +1,18 @@
 <template>
-  <HomeListHeading>
-    Схеми для Бісеру
-  </HomeListHeading>
+  <section>
+    <HomeListHeading>
+      Схеми для Бісеру
+    </HomeListHeading>
 
-  <HomeGridList
-    selectable
-    :list="schemasStore.schemas"
-    v-model:selected="schemasStore.selected"
-    v-slot="{ item, itemRef }"
-  >
-    <FolderSchema :ref="itemRef" :schema="item" />
-  </HomeGridList>
+    <HomeGridList
+      selectable
+      :list="schemasStore.schemas"
+      v-model:selected="schemasStore.selected"
+      v-slot="{ item, itemRef }"
+    >
+      <FolderSchema :ref="itemRef" :schema="item" />
+    </HomeGridList>
+  </section>
 
   <HomeListLoader :visible="schemasStore.isLoading" />
 </template>

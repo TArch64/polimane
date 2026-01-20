@@ -93,6 +93,7 @@ useContextMenu({
     margin: 0 auto;
     width: 100%;
     max-width: 1024px;
+    padding-top: 24px;
   }
 
   .common-layout__row {
@@ -136,7 +137,7 @@ useContextMenu({
     .common-layout__submenu {
       position: static;
       width: 100%;
-      margin: 0 0 16px;
+      margin: 0 0 32px;
     }
 
     .common-layout__main--aside-menu {

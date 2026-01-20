@@ -14,7 +14,7 @@ const schemasCreatedLimit = useSchemasCreatedLimit();
 <style scoped>
 @layer page {
   .home-banners {
-    padding: 32px 12px;
+    padding: 0 12px;
   }
 }
 </style>
