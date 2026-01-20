@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useNumberFormatter } from '@/composables/useNumberFormatter';
+import { useNumberFormatter } from '@/composables';
 import type { ISubscriptionLimit } from '../../stores';
 import { LimitInfo, LimitProgress, LimitView } from './base';
 

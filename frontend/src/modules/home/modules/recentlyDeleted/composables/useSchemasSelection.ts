@@ -44,7 +44,7 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
     {
       title: 'Відновити Схеми',
       icon: CornerUpLeftIcon,
-      disabled: schemasCreatedLimit.isNear(actionIds.value.length),
+      disabled: schemasCreatedLimit.willReach(actionIds.value.length),
       onAction: restoreSchemas,
     },
 

@@ -11,6 +11,7 @@
 </template>
 
 <script setup lang="ts" generic="V">
+import type { ComponentVariant } from '@/types';
 import FormField from './FormField.vue';
 
 withDefaults(defineProps<{
@@ -18,7 +19,7 @@ withDefaults(defineProps<{
   label?: boolean;
   required?: boolean;
   disabled?: boolean;
-  variant?: 'main' | 'control';
+  variant?: ComponentVariant;
 }>(), {
   placeholder: '',
   label: false,

@@ -52,6 +52,7 @@ export const CheckmarkCircleIcon = makeIcon(() => import('~icons/eva/checkmark-c
 export const CheckmarkIcon = makeIcon(() => import('~icons/eva/checkmark-outline'));
 export const LoaderIcon = makeIcon(() => import('~icons/eva/loader-outline'));
 export const UnlockIcon = makeIcon(() => import('~icons/eva/unlock-outline'));
+export const LockIcon = makeIcon(() => import('~icons/eva/lock-outline'));
 export const RepeatIcon = makeIcon(() => import('~icons/eva/repeat-outline'));
 export const FileTextIcon = makeIcon(() => import('~icons/eva/file-text-outline'));
 export const DropletOffIcon = makeIcon(() => import('~icons/eva/droplet-off-outline'));

@@ -16,11 +16,12 @@
 
 <script setup lang="ts">
 import { computed, type Slot } from 'vue';
+import type { ComponentVariant } from '@/types';
 
 const props = withDefaults(defineProps<{
   placeholder: string;
   label?: boolean;
-  variant?: 'main' | 'control';
+  variant?: ComponentVariant;
 }>(), {
   label: false,
   variant: 'main',

@@ -8,6 +8,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { computed } from 'vue';
 import { HomeListSchema } from '@/modules/home/components';
 import type { ListSchema } from '@/modules/home/stores';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
@@ -37,11 +38,11 @@ async function onDeletableFinish() {
   }
 }
 
-const menuActions: MaybeContextMenuAction[] = [
+const menuActions = computed((): MaybeContextMenuAction[] => [
   {
     title: 'Відновити Схему',
     icon: CornerUpLeftIcon,
-    disabled: schemasCreatedLimit.isNear(1),
+    disabled: schemasCreatedLimit.willReach(1),
 
     async onAction() {
       await schemasStore.restoreSchema(props.schema);
@@ -65,5 +66,5 @@ const menuActions: MaybeContextMenuAction[] = [
       }
     },
   },
-];
+]);
 </script>

@@ -4,22 +4,29 @@ import { SubscriptionLimit, type UserLimit } from '@/enums';
 
 export interface IUserLimit {
   isReached: boolean;
-  isNear: (value: number) => boolean;
+  willReach: (value: number) => boolean;
+  current: number;
+  max: number;
 }
 
 function useUserLimit(name: UserLimit): IUserLimit {
   const sessionStore = useSessionStore();
   const subscription = computed(() => sessionStore.user.subscription);
 
-  const counter = computed(() => subscription.value.counters[name]);
-  const limit = computed(() => subscription.value.limits[name]!);
-  const isReached = computed(() => counter.value >= limit.value);
+  const current = computed(() => subscription.value.counters[name]);
+  const max = computed(() => subscription.value.limits[name]!);
+  const isReached = computed(() => current.value >= max.value);
 
-  function isNear(value: number): boolean {
-    return counter.value + value >= limit.value;
+  function willReach(value: number): boolean {
+    return current.value + value > max.value;
   }
 
-  return reactive({ isReached, isNear });
+  return reactive({
+    isReached,
+    willReach,
+    current,
+    max,
+  });
 }
 
 export function useSchemasCreatedLimit() {
