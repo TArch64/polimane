@@ -1,5 +1,6 @@
 import { shallowReactive } from 'vue';
 import { Callback, NodeRect, Point } from '@/models';
+import type { MaybeValue } from '@/types';
 import { ContextActionModel, type IContextMenuAction } from './ContextActionModel';
 import { ContextGroupModel, type IContextMenuGroup } from './ContextGroupModel';
 
@@ -13,7 +14,7 @@ export function isContextMenuGroup(item: ContextMenuItem): item is IContextMenuG
 
 export type ContextMenuItem = IContextMenuAction | IContextMenuGroup;
 export type ContextMenuItemModel = ContextActionModel | ContextGroupModel;
-export type MaybeContextMenuAction = ContextMenuItem | null | undefined | false;
+export type MaybeContextMenuAction = MaybeValue<ContextMenuItem>;
 
 export interface IContextMenuOptions {
   id: string;
