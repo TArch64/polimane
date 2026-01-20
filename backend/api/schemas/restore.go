@@ -23,7 +23,7 @@ func (c *Controller) Restore(ctx *fiber.Ctx) (err error) {
 	user := auth.GetSessionUser(ctx)
 
 	schemasLen := len(body.IDs)
-	if !c.subscriptionCounters.SchemasCreated.CanAdd(user.Subscription, uint16(schemasLen)) {
+	if !c.subscriptionCounters.SchemasCreated.CanAdd(user, uint16(schemasLen)) {
 		return base.SchemasCreatedLimitReachedErr
 	}
 

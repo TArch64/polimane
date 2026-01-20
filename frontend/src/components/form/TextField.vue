@@ -62,14 +62,27 @@ function onBlur() {
   inputRef.value?.reportValidity();
 }
 
+function focus() {
+  inputRef.value?.focus();
+}
+
+function blur() {
+  inputRef.value?.blur();
+}
+
 function setError(message: string) {
   if (inputRef.value) {
+    inputRef.value.focus();
     inputRef.value.setCustomValidity(message);
-    inputRef.value.reportValidity();
+    setTimeout(() => inputRef.value?.reportValidity());
   }
 }
 
-defineExpose({ setError });
+defineExpose({
+  focus,
+  blur,
+  setError,
+});
 </script>
 
 <style scoped>

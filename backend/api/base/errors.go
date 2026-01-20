@@ -5,5 +5,5 @@ import (
 )
 
 var (
-	SchemasCreatedLimitReachedErr = NewReasonedError(fiber.StatusBadRequest, "SchemasCreatedLimitReached")
+	SchemasCreatedLimitReachedErr = NewReasonedError(fiber.StatusBadRequest, "LimitReached[SchemasCreated]")
 )

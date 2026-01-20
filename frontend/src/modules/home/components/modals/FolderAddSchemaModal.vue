@@ -83,7 +83,7 @@ const save = useAsyncAction(async () => {
 
     modal.close(null);
   } catch (error) {
-    if (HttpError.isReason(error, HttpErrorReason.NAME_ALREADY_IN_USE)) {
+    if (HttpError.isReason(error, HttpErrorReason.ALREADY_IN_USE_NAME)) {
       nameRef.value?.setError('Ця назва вже використовується');
     }
   }

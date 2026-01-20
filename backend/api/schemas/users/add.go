@@ -60,7 +60,7 @@ func (c *Controller) Add(ctx *fiber.Ctx) (err error) {
 		response, err = c.inviteUser(reqCtx, currentUser, body.IDs, body.Email)
 	} else {
 		schemasLen := len(body.IDs)
-		if !c.subscriptionCounters.SchemasCreated.CanAdd(user.Subscription, uint16(schemasLen)) {
+		if !c.subscriptionCounters.SchemasCreated.CanAdd(user, uint16(schemasLen)) {
 			return base.SchemasCreatedLimitReachedErr
 		}
 

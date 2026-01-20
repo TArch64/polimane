@@ -40,12 +40,12 @@ func newUserCounter[CV counterValue, CD counterDelta](options *userCounterOption
 	return &UserCounter[CV, CD]{userCounterOptions: options}
 }
 
-func (u *UserCounter[CV, CD]) CanAdd(subscription *model.UserSubscription, delta CV) bool {
-	limit := u.counterLimit.Get(subscription)
+func (u *UserCounter[CV, CD]) CanAdd(user *model.User, delta CV) bool {
+	limit := u.counterLimit.Get(user.Subscription)
 	if limit == nil {
 		return true
 	}
-	value := u.counterValue.Get(subscription) + delta
+	value := u.counterValue.Get(user.Subscription) + delta
 	return value <= *limit
 }
 

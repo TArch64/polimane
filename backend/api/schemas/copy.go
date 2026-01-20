@@ -19,7 +19,7 @@ func (c *Controller) Copy(ctx *fiber.Ctx) error {
 
 	user := auth.GetSessionUser(ctx)
 
-	if !c.subscriptionCounters.SchemasCreated.CanAdd(user.Subscription, 1) {
+	if !c.subscriptionCounters.SchemasCreated.CanAdd(user, 1) {
 		return base.SchemasCreatedLimitReachedErr
 	}
 
