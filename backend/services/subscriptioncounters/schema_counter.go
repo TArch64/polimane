@@ -18,7 +18,7 @@ RETURNING (counters->>@counter_name)::smallint AS count
 
 const setSchemaCounterSQL = `
 UPDATE user_schemas
-SET counters = jsonb_set(counters, ARRAY [@counter_name], @counter_value)
+SET counters = jsonb_set(counters, string_to_array(@counter_name, '.'), TO_JSONB(@counter_value))
 WHERE schema_id = @schema_id
 `
 
@@ -48,6 +48,14 @@ func (s *SchemaCounter[CV, CD]) CanAdd(user *model.User, data *model.UserSchema,
 	}
 	value := s.counterValue.Get(data) + delta
 	return value <= *limit
+}
+
+func (s *SchemaCounter[CV, CD]) CanSet(user *model.User, value CV) bool {
+	if limit := s.counterLimit.Get(user.Subscription); limit != nil {
+		return value <= *limit
+	}
+
+	return true
 }
 
 func (s *SchemaCounter[CV, CD]) SetTx(ctx context.Context, tx *gorm.DB, userSchema *model.UserSchema, value CV) error {

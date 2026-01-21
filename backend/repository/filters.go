@@ -39,8 +39,16 @@ func IDsIn(IDs []model.ID, table ...string) Scope {
 	return Where(column+" IN (?)", IDs)
 }
 
+func SchemaIDEq(id model.ID) Scope {
+	return Where("schema_id = ?", id)
+}
+
 func SchemaIDsIn(IDs []model.ID) Scope {
 	return Where("schema_id IN (?)", IDs)
+}
+
+func AccessGTE(level model.AccessLevel) Scope {
+	return Where("access >= ?", level)
 }
 
 func SoftDeletedOnly(table ...string) Scope {

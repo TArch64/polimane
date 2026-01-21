@@ -35,7 +35,7 @@ FUNCTION jsonb_increment(
 $$
 SELECT JSONB_SET(
          target,
-         ARRAY [key],
+         STRING_TO_ARRAY(key, '.'),
          TO_JSONB(COALESCE((target ->> key)::smallint, 0) + delta)
        )
 $$;
