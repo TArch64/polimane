@@ -1,6 +1,6 @@
 <template>
   <Banner type="danger" :prepend-icon="LockIcon" v-if="limit.isReached">
-    <p>Ліміт схем перевищено: {{ limit.current }} / {{ limit.max }}</p>
+    <p>Ліміт схем перевищено: <b>{{ limit.current }}</b> / <b>{{ limit.max }}</b></p>
     <p>Оновіть підписку або видаліть схеми</p>
   </Banner>
 </template>
