@@ -18,7 +18,7 @@ const ParamFolderID = "folderID"
 const ParamDefFolderID = ":" + ParamFolderID
 
 var (
-	NameAlreadyInUseErr = base.NewReasonedError(fiber.StatusBadRequest, "NameAlreadyInUse")
+	NameAlreadyInUseErr = base.NewReasonedError(fiber.StatusBadRequest, "AlreadyInUse[Name]")
 )
 
 type Controller struct {

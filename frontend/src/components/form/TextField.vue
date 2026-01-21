@@ -20,6 +20,7 @@
 
 <script setup lang="ts">
 import { type InputHTMLAttributes, ref, type Slot } from 'vue';
+import type { ComponentVariant } from '@/types';
 import FormField from './FormField.vue';
 
 withDefaults(defineProps<{
@@ -28,7 +29,7 @@ withDefaults(defineProps<{
   required?: boolean;
   disabled?: boolean;
   type?: 'text' | 'password' | 'number' | 'email';
-  variant?: 'main' | 'control';
+  variant?: ComponentVariant;
   inputAttrs?: InputHTMLAttributes;
 }>(), {
   label: false,
@@ -62,14 +63,27 @@ function onBlur() {
   inputRef.value?.reportValidity();
 }
 
+function focus() {
+  inputRef.value?.focus();
+}
+
+function blur() {
+  inputRef.value?.blur();
+}
+
 function setError(message: string) {
   if (inputRef.value) {
+    inputRef.value.focus();
     inputRef.value.setCustomValidity(message);
-    inputRef.value.reportValidity();
+    setTimeout(() => inputRef.value?.reportValidity());
   }
 }
 
-defineExpose({ setError });
+defineExpose({
+  focus,
+  blur,
+  setError,
+});
 </script>
 
 <style scoped>

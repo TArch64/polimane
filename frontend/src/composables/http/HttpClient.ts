@@ -7,7 +7,11 @@ import {
   type IHttpTransport,
 } from './transports';
 import { HttpError } from './HttpError';
-import type { HttpMiddlewareExecutor, MiddlewareConstructor } from './HttpMiddlewareExecutor';
+import type {
+  HttpMiddlewareExecutor,
+  IInterceptorContext,
+  MiddlewareConstructor,
+} from './HttpMiddlewareExecutor';
 
 export type HttpBody = object | string;
 
@@ -125,28 +129,24 @@ export class HttpClient {
       credentials: 'include',
     });
 
-    await this.middlewareExecutor.callBeforeRequestInterceptor(request);
+    const interceptorContext: IInterceptorContext = {
+      meta: config.meta ?? {},
+    };
+
+    await this.middlewareExecutor.callBeforeRequestInterceptor(request, interceptorContext);
+
     try {
       const transport = this.getTransport(config);
       const response = await transport.send(request);
 
       if (!response.ok) {
-        await this.handleError(response, config);
+        await this.handleError(response, interceptorContext);
       }
 
-      await this.middlewareExecutor.callResponseSuccessInterceptor(response);
+      await this.middlewareExecutor.callResponseSuccessInterceptor(response, interceptorContext);
       return response[responseType]();
     } catch (error) {
-      addBreadcrumb({
-        type: 'http-error',
-        level: 'error',
-        message: 'HTTP request failed',
-        data: {
-          exception: error,
-          requestBody: body,
-        },
-      });
-
+      await this.handleUnexpectedError(error, interceptorContext, body);
       throw error;
     }
   }
@@ -155,11 +155,24 @@ export class HttpClient {
     return buildUrl(this.baseUrl, config.path, config.params);
   }
 
-  private async handleError(response: Response, config: IRequestConfig): Promise<never> {
+  private async handleError(response: Response, interceptorContext: IInterceptorContext): Promise<never> {
     const error = await HttpError.fromResponse(response);
-    error.meta = config.meta ?? {};
-    await this.middlewareExecutor.callResponseErrorInterceptor(error);
+    await this.middlewareExecutor.callResponseErrorInterceptor(error, interceptorContext);
     throw error;
+  }
+
+  private async handleUnexpectedError(error: unknown, interceptorContext: IInterceptorContext, body?: BodyInit): Promise<void> {
+    addBreadcrumb({
+      type: 'http-error',
+      level: 'error',
+      message: 'HTTP request failed',
+      data: {
+        exception: error,
+        requestBody: body,
+      },
+    });
+
+    await this.middlewareExecutor.callResponseErrorInterceptor(error, interceptorContext);
   }
 
   private getTransport(config: IRequestConfig): IHttpTransport {

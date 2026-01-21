@@ -12,13 +12,14 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import type { ComponentVariant } from '@/types';
 import TextField from './TextField.vue';
 
 withDefaults(defineProps<{
   placeholder: string;
   label?: boolean;
   required?: boolean;
-  variant?: 'main' | 'control';
+  variant?: ComponentVariant;
   min?: number;
   max?: number;
 }>(), {

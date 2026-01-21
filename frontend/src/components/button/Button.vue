@@ -94,9 +94,6 @@ const textClasses = computed(() => ({
     flex-shrink: 0;
   }
 
-  .button--icon {
-  }
-
   .button--sm {
     min-height: 24px;
 

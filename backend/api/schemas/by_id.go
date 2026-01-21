@@ -25,7 +25,7 @@ func (c *Controller) ByID(ctx *fiber.Ctx) error {
 	user := auth.GetSessionUser(ctx)
 	err = c.schemas.GetOut(ctx.Context(), &schema,
 		repository.IDEq(schemaID),
-		repository.Select("schemas.*", "user_schemas.access AS access"),
+		repository.Select("schemas.*", "access"),
 		repositoryschemas.IncludeUserSchemaScope(user.ID),
 	)
 

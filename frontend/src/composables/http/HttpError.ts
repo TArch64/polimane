@@ -20,8 +20,6 @@ export class HttpError extends Error {
     return HttpError.isError(error) && error.reason === reason;
   }
 
-  meta: Record<string, unknown> = {};
-
   constructor(
     readonly response: unknown,
   ) {

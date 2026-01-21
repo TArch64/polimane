@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { computed, type Slot } from 'vue';
-import type { ComponentAs } from '@/types';
+import type { ComponentAs, ComponentVariant } from '@/types';
 import { vTappable } from '@/directives';
 import type { AnyBinding } from '../binding';
 import { VerticalSlideTransition } from '../transition';
@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<{
   binding?: AnyBinding;
   interactable?: boolean;
   active?: boolean;
-  variant?: 'main' | 'control';
+  variant?: ComponentVariant;
   title?: string;
   footerTransition?: Partial<ICardFooterTransition>;
 }>(), {

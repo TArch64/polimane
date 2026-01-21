@@ -1,5 +1,6 @@
 export type * from './Default';
 export type * from './ComponentAs';
+export type * from './ComponentVariant';
 export type * from './InferComponentProps';
 export type * from './MaybePromise';
 export type * from './WrapMaybeRef';
@@ -9,3 +10,4 @@ export type * from './MarkOptional';
 export type * from './NumericString';
 export type * from './PascalToKebab';
 export type * from './Constructor';
+export type * from './MaybeValue';

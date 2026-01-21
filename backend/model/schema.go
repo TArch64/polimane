@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	t "gorm.io/datatypes"
+	"gorm.io/datatypes"
 )
 
 type SchemaLayout string
@@ -44,14 +44,14 @@ type Schema struct {
 	*Identifiable
 	*Timestamps
 	*SoftDeletable
-	Name            string                    `json:"name"`
-	Palette         t.JSONType[SchemaPalette] `json:"palette,omitempty"`
-	Size            t.JSONType[*SchemaSize]   `json:"size,omitempty"`
-	Beads           t.JSONType[SchemaBeads]   `json:"beads,omitempty"`
-	BackgroundColor string                    `gorm:"default:#f8f8f8" json:"backgroundColor"`
-	Layout          SchemaLayout              `json:"layout"`
-	ScreenshotedAt  *time.Time                `json:"screenshotedAt"`
-	DeletedBy       *ID                       `json:"-"`
+	Name            string            `json:"name"`
+	Palette         SchemaPaletteJSON `json:"palette,omitempty"`
+	Size            SchemaSizeJSON    `json:"size,omitempty"`
+	Beads           SchemaBeadsJSON   `json:"beads,omitempty"`
+	BackgroundColor string            `gorm:"default:#f8f8f8" json:"backgroundColor"`
+	Layout          SchemaLayout      `json:"layout"`
+	ScreenshotedAt  *time.Time        `json:"screenshotedAt"`
+	DeletedBy       *ID               `json:"-"`
 
 	// Relations
 	Users       []User             `gorm:"many2many:user_schemas" json:"-"`
@@ -78,8 +78,7 @@ func SchemaScreenshotKey(id ID) string {
 }
 
 type SchemaPalette []string
-
-type SchemaBeads map[SchemaCoord]*SchemaBead
+type SchemaPaletteJSON = datatypes.JSONType[SchemaPalette]
 
 type SchemaSize struct {
 	Left   uint16 `validate:"required,gte=0,lte=65535" json:"left"`
@@ -87,3 +86,8 @@ type SchemaSize struct {
 	Right  uint16 `validate:"required,gte=0,lte=65535" json:"right"`
 	Bottom uint16 `validate:"required,gte=0,lte=65535" json:"bottom"`
 }
+
+type SchemaSizeJSON = datatypes.JSONType[*SchemaSize]
+
+type SchemaBeads map[SchemaCoord]*SchemaBead
+type SchemaBeadsJSON = datatypes.JSONType[SchemaBeads]

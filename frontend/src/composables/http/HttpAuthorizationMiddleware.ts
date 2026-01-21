@@ -1,7 +1,7 @@
 import { type LocationQueryRaw, type RouteMap, type Router, useRouter } from 'vue-router';
 import type { Ref } from 'vue';
 import { useAuthorized } from '../useAuthorized';
-import type { IHttpResponseErrorInterceptor } from './HttpMiddlewareExecutor';
+import type { IHttpResponseErrorInterceptor, IInterceptorContext } from './HttpMiddlewareExecutor';
 import { HttpError } from './HttpError';
 import { HttpErrorReason } from './HttpErrorReason';
 
@@ -16,14 +16,16 @@ export class HttpAuthorizationMiddleware implements IHttpResponseErrorIntercepto
   ) {
   }
 
-  async interceptResponseError(error: HttpError): Promise<void> {
-    switch (error.reason) {
-      case HttpErrorReason.UNAUTHORIZED:
-        this.authorized.value = false;
-        if (error.meta.unauthorizedRedirect === false) return;
-        return this.redirect('auth');
-      case HttpErrorReason.NOT_FOUND:
-        return this.redirect('home');
+  async interceptResponseError(error: unknown, ctx: IInterceptorContext): Promise<void> {
+    if (HttpError.isError(error)) {
+      switch (error.reason) {
+        case HttpErrorReason.UNAUTHORIZED:
+          this.authorized.value = false;
+          if (ctx.meta.unauthorizedRedirect === false) return;
+          return this.redirect('auth');
+        case HttpErrorReason.NOT_FOUND:
+          return this.redirect('home');
+      }
     }
   }
 
