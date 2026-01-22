@@ -1,5 +1,5 @@
 import type { Ref } from 'vue';
-import { useDebounceFn } from '@vueuse/core';
+import { useThrottleFn } from '@vueuse/core';
 import { type ISchema, isRefBead, type SchemaBeads } from '@/models';
 import { useSchemaBeadsLimit } from '@/composables/subscription';
 import { UpdateCountersMiddleware, useHttpClient } from '@/composables';
@@ -15,12 +15,12 @@ export function useEditorBeadsLimitUpdater(schema: Ref<ISchema>): IEditorBeadsLi
 
   const limit = useSchemaBeadsLimit(schema);
 
-  const onBeadsChange = useDebounceFn((beads: SchemaBeads) => {
+  const onBeadsChange = useThrottleFn((beads: SchemaBeads) => {
     limit.current = Object
       .values(beads)
       .filter((bead) => !isRefBead(bead))
       .length;
-  }, 200);
+  }, 200, true);
 
   const destroy = middleware.onSchemaUpdate.listen((schemaId, counters) => {
     if (schemaId === schema.value.id) {

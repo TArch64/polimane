@@ -1,12 +1,14 @@
 <template>
   <EditorHeader />
-  <EditorToolbar v-if="editorStore.canEdit && !isMobile" />
+  <EditorToolbar v-if="isEditable" />
   <EditorCanvas class="editor__fill" />
+  <EditorBottomBar v-if="isEditable" />
 </template>
 
 <script lang="ts" setup>
 import './colorLib';
 
+import { computed } from 'vue';
 import { useEventListener } from '@vueuse/core';
 import { definePreload } from '@/router/define';
 import { destroyStore, lazyDestroyStore } from '@/helpers';
@@ -19,7 +21,7 @@ import {
   useSelectionStore,
   useToolsStore,
 } from './stores';
-import { EditorCanvas, EditorHeader, EditorToolbar } from './components';
+import { EditorBottomBar, EditorCanvas, EditorHeader, EditorToolbar } from './components';
 import { provideHotKeysHandler, useEditorBackgroundRenderer } from './composables';
 
 defineProps<{
@@ -47,6 +49,8 @@ const editorStore = useEditorStore();
 const isMobile = useMobileScreen();
 useEditorBackgroundRenderer();
 provideHotKeysHandler();
+
+const isEditable = computed(() => editorStore.canEdit && !isMobile.value);
 
 useEventListener(window, 'beforeunload', (event) => {
   if (editorStore.hasUnsavedChanges) {
