@@ -33,13 +33,23 @@ const formattedMaxValue = computed(() => {
     : '00 000';
 });
 
-const classes = computed(() => ({
-  'bottom-bar-beads-count--limit-reached': counter.isReached,
-}));
+const classes = computed(() => {
+  if (counter.isReached) {
+    return 'bottom-bar-beads-count--limit-reached';
+  }
+  if (counter.willReach(300)) {
+    return 'bottom-bar-beads-count--limit-reach-soon';
+  }
+  return null;
+});
 </script>
 
 <style scoped>
 @layer page {
+  .bottom-bar-beads-count--limit-reach-soon {
+    --metric-value-color: var(--color-warning);
+  }
+
   .bottom-bar-beads-count--limit-reached {
     --metric-value-color: var(--color-danger);
   }
