@@ -43,8 +43,11 @@ export class HttpApiPingMiddleware implements IHttpBeforeRequestInterceptor,
     }
   }
 
-  interceptResponseError(): MaybePromise<void> {
-    this.#isBackendDown = true;
+  interceptResponseError(_: Response, ctx: IInterceptorContext): MaybePromise<void> {
+    if (ctx.meta.isPing) {
+      this.#isBackendDown = true;
+    }
+
     this.#schedulePing();
   }
 
