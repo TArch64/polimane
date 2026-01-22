@@ -1,7 +1,15 @@
 import { defineStore } from 'pinia';
 import { onScopeDispose, type Ref, ref, toRef } from 'vue';
-import { type ISchema, isRefBead, isSpannableBead, type SchemaUpdate } from '@/models';
+import { useDebounceFn } from '@vueuse/core';
+import {
+  type ISchema,
+  isRefBead,
+  isSpannableBead,
+  type SchemaBeads,
+  type SchemaUpdate,
+} from '@/models';
 import { type HttpBody, HttpTransport, useAccessPermissions, useHttpClient } from '@/composables';
+import { useSchemaBeadsLimit } from '@/composables/subscription';
 import { getObjectEntries } from '@/helpers';
 import { AccessLevel } from '@/enums';
 import { useEditorSaveDispatcher } from './composables';
@@ -13,6 +21,7 @@ export const useEditorStore = defineStore('schemas/editor', () => {
 
   const historyStore = useHistoryStore();
   const permissions = useAccessPermissions(() => schema.value?.access ?? AccessLevel.READ);
+  const schemaBeadsLimit = useSchemaBeadsLimit(schema);
 
   function cleanupOrphanBeads(patch: Partial<ISchema>): void {
     if (!patch.beads) {
@@ -30,18 +39,29 @@ export const useEditorStore = defineStore('schemas/editor', () => {
     }
   }
 
-  const saveDispatcher = useEditorSaveDispatcher(schema, async (patch) => {
-    cleanupOrphanBeads(patch);
+  const onBeadsChange = useDebounceFn((beads: SchemaBeads) => {
+    schemaBeadsLimit.current = Object
+      .values(beads)
+      .filter((bead) => !isRefBead(bead))
+      .length;
+  }, 100);
 
-    await http.patch<HttpBody, SchemaUpdate>(['/schemas', schema.value.id], patch, {
-      // Chrome has issues with fetch sending big request body
-      transport: HttpTransport.LEGACY,
-    });
+  const saveDispatcher = useEditorSaveDispatcher(schema, {
+    async onSave(patch) {
+      cleanupOrphanBeads(patch);
 
-    Object.assign(schema.value, {
-      ...patch,
-      updatedAt: new Date().toISOString(),
-    });
+      await http.patch<HttpBody, SchemaUpdate>(['/schemas', schema.value.id], patch, {
+        // Chrome has issues with fetch sending big request body
+        transport: HttpTransport.LEGACY,
+      });
+
+      Object.assign(schema.value, {
+        ...patch,
+        updatedAt: new Date().toISOString(),
+      });
+    },
+
+    onChange: { beads: onBeadsChange },
   });
 
   async function loadSchema(id: string): Promise<void> {

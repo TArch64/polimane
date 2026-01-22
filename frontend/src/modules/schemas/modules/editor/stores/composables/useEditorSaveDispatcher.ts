@@ -1,7 +1,7 @@
 import { computed, reactive, type Ref, ref, watch, type WatchStopHandle } from 'vue';
 import { combineStopHandles, getObjectKeys } from '@/helpers';
 import { type ISchema, isSchemaUpdatableAttr, type SchemaUpdatableAttr } from '@/models';
-import type { SafeAny } from '@/types';
+import type { MaybePromise } from '@/types';
 
 const SAVE_TIMEOUT = 30_000;
 
@@ -14,9 +14,16 @@ export interface IEditorSaveDispatcher {
   abandon: () => void;
 }
 
-type EditorSaveCallback = (patch: Partial<ISchema>) => Promise<void>;
+type ChangeCallbackMap = {
+  [K in SchemaUpdatableAttr]: (value: ISchema[K]) => void;
+};
 
-export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSaveCallback): IEditorSaveDispatcher {
+export interface IEditorSaveDispatcherOptions {
+  onSave: (patch: Partial<ISchema>) => MaybePromise<void>;
+  onChange: Partial<ChangeCallbackMap>;
+}
+
+export function useEditorSaveDispatcher(schema: Ref<ISchema>, options: IEditorSaveDispatcherOptions): IEditorSaveDispatcher {
   let saveTimeout: TimeoutId | null = null;
   let stopWatch: VoidFunction | null = null;
   const unsavedChanges = ref<Partial<ISchema> | null>(null);
@@ -29,7 +36,7 @@ export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSave
     if (unsavedChanges.value) {
       try {
         isSaving.value = true;
-        await onSave(unsavedChanges.value);
+        await options.onSave(unsavedChanges.value);
         unsavedChanges.value = null;
       } finally {
         isSaving.value = false;
@@ -37,15 +44,16 @@ export function useEditorSaveDispatcher(schema: Ref<ISchema>, onSave: EditorSave
     }
   }
 
-  function watchSavableAttribute(attr: SchemaUpdatableAttr): WatchStopHandle {
+  function watchSavableAttribute<A extends SchemaUpdatableAttr>(attr: A): WatchStopHandle {
     return watch(() => schema.value[attr], (value) => {
       if (saveTimeout) {
         clearTimeout(saveTimeout);
       }
 
       unsavedChanges.value ??= {};
-      (unsavedChanges.value as Record<SchemaUpdatableAttr, SafeAny>)[attr] = value;
+      unsavedChanges.value[attr] = value;
       saveTimeout = setTimeout(dispatchSave, SAVE_TIMEOUT);
+      options.onChange[attr]?.(value);
     }, { deep: true });
   }
 
