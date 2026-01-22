@@ -8,6 +8,11 @@ import type { IHttpResponseSuccessInterceptor } from './HttpMiddlewareExecutor';
 type AnyLimitKeys = readonly string[];
 type AnyCounter<K extends AnyLimitKeys> = Record<K[number], number>;
 
+interface ICountersPayload<K extends AnyLimitKeys> {
+  entityId: string;
+  counters: AnyCounter<K>;
+}
+
 export class UpdateCountersMiddleware implements IHttpResponseSuccessInterceptor {
   static use(): IHttpResponseSuccessInterceptor {
     return markRaw(new UpdateCountersMiddleware());
@@ -15,7 +20,7 @@ export class UpdateCountersMiddleware implements IHttpResponseSuccessInterceptor
 
   user: IUser | null = null;
   onUserUpdate = Callback.create<[counters: UserCounters]>();
-  onSchemaUpdate = Callback.create<[counters: SchemaCounters]>();
+  onSchemaUpdate = Callback.create<[id: string, counters: SchemaCounters]>();
 
   interceptResponseSuccess(response: Response): MaybePromise<void> {
     if (!this.user) return;
@@ -24,22 +29,22 @@ export class UpdateCountersMiddleware implements IHttpResponseSuccessInterceptor
   }
 
   #updateUserCounter(response: Response): void {
-    const counters = this.#getCounter(response, 'X-UC', UserLimits);
+    const payload = this.#getCounter(response, 'X-UC', UserLimits);
 
-    if (counters) {
-      this.onUserUpdate.dispatch(counters);
+    if (payload) {
+      this.onUserUpdate.dispatch(payload.counters);
     }
   }
 
   #updateSchemaCounter(response: Response): void {
-    const counters = this.#getCounter(response, 'X-SC', SchemaLimits);
+    const payload = this.#getCounter(response, 'X-SC', SchemaLimits);
 
-    if (counters) {
-      this.onSchemaUpdate.dispatch(counters);
+    if (payload) {
+      this.onSchemaUpdate.dispatch(payload.entityId, payload.counters);
     }
   }
 
-  #getCounter<K extends AnyLimitKeys>(response: Response, header: string, keys: K): AnyCounter<K> | null {
+  #getCounter<K extends AnyLimitKeys>(response: Response, header: string, keys: K): ICountersPayload<K> | null {
     const encoded = response.headers.get(header);
     if (!encoded) return null;
 
@@ -47,7 +52,7 @@ export class UpdateCountersMiddleware implements IHttpResponseSuccessInterceptor
       const counters = JSON.parse(this.#decodeInput(encoded));
       if (!counters) return null;
 
-      return this.#validate(counters, keys);
+      return this.#parse(counters, keys);
     } catch {
       return null;
     }
@@ -59,7 +64,24 @@ export class UpdateCountersMiddleware implements IHttpResponseSuccessInterceptor
     return new TextDecoder().decode(decryptXor(key, encrypted));
   }
 
-  #validate<K extends AnyLimitKeys>(input: object, keys: K): AnyCounter<K> | null {
+  // Maybe will be rewritten into valibot or another parsing library later
+  #parse<K extends AnyLimitKeys>(input: object, keys: K): ICountersPayload<K> | null {
+    const payload = {} as ICountersPayload<K>;
+
+    if ('entityId' in input && typeof input.entityId === 'string') {
+      payload.entityId = input.entityId;
+    }
+
+    if ('counters' in input && typeof input.counters === 'object' && input.counters !== null) {
+      const counters = this.#validateCounters(input.counters as object, keys);
+      if (!counters) return null;
+      payload.counters = counters;
+    }
+
+    return payload;
+  }
+
+  #validateCounters<K extends AnyLimitKeys>(input: object, keys: K): AnyCounter<K> | null {
     const output = {} as Record<K[number], number>;
 
     for (const key of keys) {

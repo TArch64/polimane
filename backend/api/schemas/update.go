@@ -83,6 +83,10 @@ func (c *Controller) Update(ctx *fiber.Ctx) error {
 		return err
 	}
 
+	if beadsCounter != nil {
+		base.SetResponseSchemaCounters(ctx, userSchema)
+	}
+
 	needImmediateScreenshotUpdate := body.BackgroundColor != ""
 	if err = c.updateScreenshot(reqCtx, schemaID, needImmediateScreenshotUpdate); err != nil {
 		return err

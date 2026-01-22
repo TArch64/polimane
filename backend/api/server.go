@@ -64,7 +64,7 @@ func Provider(options ServerOptions) (*fiber.App, error) {
 		AllowHeaders:     "Origin, Content-Type, Accept",
 		AllowMethods:     "GET, POST, PUT, PATCH, DELETE, OPTIONS",
 		AllowCredentials: true,
-		ExposeHeaders:    "Set-Cookie, X-UC",
+		ExposeHeaders:    "Set-Cookie, X-UC, X-SC",
 	}))
 
 	app.Use(encryptcookie.New(encryptcookie.Config{
