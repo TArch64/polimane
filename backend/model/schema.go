@@ -90,4 +90,15 @@ type SchemaSize struct {
 type SchemaSizeJSON = datatypes.JSONType[*SchemaSize]
 
 type SchemaBeads map[SchemaCoord]*SchemaBead
+
+func (s SchemaBeads) CountVisible() uint16 {
+	beadsCount := uint16(len(s))
+	for _, bead := range s {
+		if bead.Ref != nil {
+			beadsCount--
+		}
+	}
+	return beadsCount
+}
+
 type SchemaBeadsJSON = datatypes.JSONType[SchemaBeads]

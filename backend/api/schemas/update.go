@@ -47,19 +47,14 @@ func (c *Controller) Update(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	updates := collectUpdates(&body)
+	updates, beadsCounter := c.collectUpdates(&body)
 	if updates == nil {
 		return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
 	}
 
-	var beadsCounter *uint16
-	if beads := updates.Beads.Data(); beads != nil {
-		beadsLen := uint16(len(beads))
-		if c.subscriptionCounters.SchemaBeads.CanSet(user, beadsLen) {
-			beadsCounter = &beadsLen
-		} else {
-			return base.SchemasCreatedLimitReachedErr
-		}
+	if beadsCounter != nil &&
+		!c.subscriptionCounters.SchemaBeads.CanSet(user, *beadsCounter) {
+		return base.SchemasCreatedLimitReachedErr
 	}
 
 	err = c.schemas.DB.
@@ -95,9 +90,10 @@ func (c *Controller) Update(ctx *fiber.Ctx) error {
 	return base.NewSuccessResponse(ctx)
 }
 
-func collectUpdates(body *UpdateBody) *model.Schema {
+func (c *Controller) collectUpdates(body *UpdateBody) (*model.Schema, *uint16) {
 	changed := false
 	updates := &model.Schema{}
+	var beadsCounter *uint16
 
 	if body.Name != "" {
 		changed = true
@@ -122,13 +118,15 @@ func collectUpdates(body *UpdateBody) *model.Schema {
 	if body.Beads != nil {
 		changed = true
 		updates.Beads = datatypes.NewJSONType(body.Beads)
+		beadsCount := body.Beads.CountVisible()
+		beadsCounter = &beadsCount
 	}
 
 	if changed {
-		return updates
+		return updates, beadsCounter
 	}
 
-	return nil
+	return nil, nil
 }
 
 func (c *Controller) updateScreenshot(ctx context.Context, schemaID model.ID, needImmediateUpdate bool) error {

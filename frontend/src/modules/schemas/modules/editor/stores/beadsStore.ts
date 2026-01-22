@@ -13,6 +13,7 @@ import {
 } from '@/models';
 import { BeadKind, Direction } from '@/enums';
 import { getObjectEntries } from '@/helpers';
+import { useSchemaBeadsLimit } from '@/composables/subscription';
 import { useEditorStore } from './editorStore';
 
 export enum PaintEffect {
@@ -21,6 +22,7 @@ export enum PaintEffect {
 
 export const useBeadsStore = defineStore('schemas/editor/beads', () => {
   const editorStore = useEditorStore();
+  const limit = useSchemaBeadsLimit(() => editorStore.schema);
 
   function getColor(coord: BeadCoord) {
     return editorStore.schema.beads[coord] ?? null;
@@ -141,6 +143,10 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
   }
 
   function paint(coord: BeadCoord, color: SchemaBead | null): PaintEffect | null {
+    if (limit.isReached && color) {
+      return null;
+    }
+
     const currentColor = getColor(coord);
 
     if (currentColor === color) {
