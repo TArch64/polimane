@@ -1,6 +1,11 @@
 import { computed, reactive, type Ref, ref, watch, type WatchStopHandle } from 'vue';
 import { combineStopHandles, getObjectKeys } from '@/helpers';
-import { type ISchema, isSchemaUpdatableAttr, type SchemaUpdatableAttr } from '@/models';
+import {
+  type ISchema,
+  isSchemaUpdatableAttr,
+  type SchemaUpdatableAttr,
+  type SchemaUpdate,
+} from '@/models';
 import type { MaybePromise } from '@/types';
 
 const SAVE_TIMEOUT = 30_000;
@@ -15,18 +20,18 @@ export interface IEditorSaveDispatcher {
 }
 
 type ChangeCallbackMap = {
-  [K in SchemaUpdatableAttr]: (value: ISchema[K]) => void;
+  [K in SchemaUpdatableAttr]: (value: Required<SchemaUpdate>[K]) => void;
 };
 
 export interface IEditorSaveDispatcherOptions {
-  onSave: (patch: Partial<ISchema>) => MaybePromise<void>;
+  onSave: (patch: SchemaUpdate) => MaybePromise<void>;
   onChange: Partial<ChangeCallbackMap>;
 }
 
 export function useEditorSaveDispatcher(schema: Ref<ISchema>, options: IEditorSaveDispatcherOptions): IEditorSaveDispatcher {
   let saveTimeout: TimeoutId | null = null;
   let stopWatch: VoidFunction | null = null;
-  const unsavedChanges = ref<Partial<ISchema> | null>(null);
+  const unsavedChanges = ref<SchemaUpdate | null>(null);
   const hasUnsavedChanges = computed(() => !!unsavedChanges.value);
   const isSaving = ref(false);
 

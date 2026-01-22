@@ -4,4 +4,4 @@ export * from './HttpError';
 export * from './HttpErrorReason';
 export * from './HttpMiddlewareExecutor';
 export { HttpTransport } from './transports';
-export * from './UpdateUserCountersMiddleware';
+export * from './UpdateCountersMiddleware';

@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	userCountersHeader = "X-User-Counters"
+	userCountersHeader = "X-UC"
 )
 
 func SetResponseUserCounters(ctx *fiber.Ctx, subscription *model.UserSubscription) {
