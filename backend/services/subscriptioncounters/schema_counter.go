@@ -11,14 +11,14 @@ import (
 
 const changeSchemaCounterSQL = `
 UPDATE user_schemas
-SET counters = jsonb_increment(counters, @counter_name, TO_JSONB(@counter_delta))
+SET counters = jsonb_increment(counters, @counter_name, @counter_delta)
 WHERE schema_id = @schema_id
 RETURNING (counters->>@counter_name)::smallint AS count
 `
 
 const setSchemaCounterSQL = `
 UPDATE user_schemas
-SET counters = jsonb_set(counters, string_to_array(@counter_name, '.'), TO_JSONB(@counter_value))
+SET counters = jsonb_set(counters, string_to_array(@counter_name, '.'), TO_JSONB((@counter_value)::smallint))
 WHERE schema_id = @schema_id
 `
 
