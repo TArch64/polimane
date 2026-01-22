@@ -2,11 +2,13 @@ import type { Ref } from 'vue';
 import { type ISchema, isRefBead, isSpannableBead, type SchemaUpdate } from '@/models';
 import { getObjectEntries } from '@/helpers';
 import { type HttpBody, HttpTransport, useHttpClient } from '@/composables';
+import { useSchemaBeadsLimit } from '@/composables/subscription';
 
 export function useEditorSaveProcessor(schema: Ref<ISchema>) {
   const http = useHttpClient();
+  const schemaBeadsLimit = useSchemaBeadsLimit(schema);
 
-  function cleanupOrphanBeads(patch: Partial<ISchema>): void {
+  function cleanupOrphanRefs(patch: Partial<ISchema>): void {
     if (!patch.beads) {
       return;
     }
@@ -23,7 +25,11 @@ export function useEditorSaveProcessor(schema: Ref<ISchema>) {
   }
 
   return async (patch: SchemaUpdate) => {
-    cleanupOrphanBeads(patch);
+    cleanupOrphanRefs(patch);
+
+    if ('beads' in patch && schemaBeadsLimit.isReached) {
+      return;
+    }
 
     await http.patch<HttpBody, SchemaUpdate>(['/schemas', schema.value.id], patch, {
       // Chrome has issues with fetch sending big request body
