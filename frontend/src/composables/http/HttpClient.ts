@@ -1,4 +1,5 @@
 import { addBreadcrumb } from '@sentry/vue';
+import { markRaw } from 'vue';
 import { buildUrl, type UrlParams, type UrlPath } from '@/helpers';
 import {
   HttpLegacyTransport,
@@ -37,15 +38,15 @@ interface IRequestConfig<
 }
 
 export class HttpClient {
-  private readonly baseUrl;
-  private readonly middlewareExecutor;
-  private readonly transports: Partial<Record<HttpTransport, IHttpTransport>> = {};
+  #baseUrl;
+  #middlewareExecutor;
+  #transports: Partial<Record<HttpTransport, IHttpTransport>> = {};
 
   constructor(options: IHttpClientOptions) {
-    this.baseUrl = options.baseUrl;
+    this.#baseUrl = options.baseUrl;
 
-    this.middlewareExecutor = options.middlewareExecutor;
-    this.middlewareExecutor.client = this;
+    this.#middlewareExecutor = options.middlewareExecutor;
+    this.#middlewareExecutor.client = this;
   }
 
   get<R extends HttpBody, P extends UrlParams = UrlParams>(
@@ -53,7 +54,7 @@ export class HttpClient {
     params: P = {} as P,
     config: IHttpRequestConfig = {},
   ): Promise<R> {
-    return this.request({
+    return this.#request({
       method: 'GET',
       path,
       params,
@@ -66,7 +67,7 @@ export class HttpClient {
     body: B = {} as B,
     config: IHttpRequestConfig = {},
   ): Promise<R> {
-    return this.request({
+    return this.#request({
       method: 'DELETE',
       path,
       body,
@@ -79,7 +80,7 @@ export class HttpClient {
     body: B,
     config: IHttpRequestConfig = {},
   ): Promise<R> {
-    return this.request({
+    return this.#request({
       method: 'POST',
       path,
       body,
@@ -92,7 +93,7 @@ export class HttpClient {
     body: B,
     config: IHttpRequestConfig = {},
   ): Promise<R> {
-    return this.request({
+    return this.#request({
       method: 'PATCH',
       path,
       body,
@@ -101,14 +102,14 @@ export class HttpClient {
   }
 
   middleware<M extends MiddlewareConstructor>(Class: M): void {
-    this.middlewareExecutor.add(Class);
+    this.#middlewareExecutor.add(Class);
   }
 
   getMiddleware<M extends MiddlewareConstructor>(Class: M): InstanceType<M> | null {
-    return this.middlewareExecutor.get(Class);
+    return this.#middlewareExecutor.get(Class);
   }
 
-  private async request<
+  async #request<
     R extends HttpBody,
     P extends UrlParams,
     B extends HttpBody,
@@ -116,7 +117,7 @@ export class HttpClient {
     const body = config.body ? JSON.stringify(config.body) : undefined;
     const responseType = config.responseType ?? 'json';
 
-    const request = new Request(this.buildUrl(config), {
+    const request = new Request(this.#buildUrl(config), {
       method: config.method,
       body,
 
@@ -133,35 +134,35 @@ export class HttpClient {
       meta: config.meta ?? {},
     };
 
-    await this.middlewareExecutor.callBeforeRequestInterceptor(request, interceptorContext);
+    await this.#middlewareExecutor.callBeforeRequestInterceptor(request, interceptorContext);
 
     try {
-      const transport = this.getTransport(config);
+      const transport = this.#getTransport(config);
       const response = await transport.send(request);
 
       if (!response.ok) {
-        await this.handleError(response, interceptorContext);
+        await this.#handleError(response, interceptorContext);
       }
 
-      await this.middlewareExecutor.callResponseSuccessInterceptor(response, interceptorContext);
+      await this.#middlewareExecutor.callResponseSuccessInterceptor(response, interceptorContext);
       return response[responseType]();
     } catch (error) {
-      await this.handleUnexpectedError(error, interceptorContext, body);
+      await this.#handleUnexpectedError(error, interceptorContext, body);
       throw error;
     }
   }
 
-  private buildUrl(config: IRequestConfig): URL {
-    return buildUrl(this.baseUrl, config.path, config.params);
+  #buildUrl(config: IRequestConfig): URL {
+    return buildUrl(this.#baseUrl, config.path, config.params);
   }
 
-  private async handleError(response: Response, interceptorContext: IInterceptorContext): Promise<never> {
+  async #handleError(response: Response, interceptorContext: IInterceptorContext): Promise<never> {
     const error = await HttpError.fromResponse(response);
-    await this.middlewareExecutor.callResponseErrorInterceptor(error, interceptorContext);
+    await this.#middlewareExecutor.callResponseErrorInterceptor(error, interceptorContext);
     throw error;
   }
 
-  private async handleUnexpectedError(error: unknown, interceptorContext: IInterceptorContext, body?: BodyInit): Promise<void> {
+  async #handleUnexpectedError(error: unknown, interceptorContext: IInterceptorContext, body?: BodyInit): Promise<void> {
     addBreadcrumb({
       type: 'http-error',
       level: 'error',
@@ -172,20 +173,20 @@ export class HttpClient {
       },
     });
 
-    await this.middlewareExecutor.callResponseErrorInterceptor(error, interceptorContext);
+    await this.#middlewareExecutor.callResponseErrorInterceptor(error, interceptorContext);
   }
 
-  private getTransport(config: IRequestConfig): IHttpTransport {
+  #getTransport(config: IRequestConfig): IHttpTransport {
     const transport = config.transport ?? HttpTransport.MODERN;
 
-    if (!(transport in this.transports)) {
-      this.transports[transport] = this.createTransport(transport);
+    if (!(transport in this.#transports)) {
+      this.#transports[transport] = markRaw(this.#createTransport(transport));
     }
 
-    return this.transports[transport]!;
+    return this.#transports[transport]!;
   }
 
-  private createTransport(transport: HttpTransport): IHttpTransport {
+  #createTransport(transport: HttpTransport): IHttpTransport {
     switch (transport) {
       case HttpTransport.MODERN:
         return new HttpModernTransport();

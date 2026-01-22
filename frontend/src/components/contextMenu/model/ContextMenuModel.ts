@@ -35,7 +35,7 @@ export class ContextMenuModel {
   readonly position;
   readonly control;
   readonly actions;
-  readonly onHide = new Callback();
+  readonly onHide = Callback.create<[]>();
 
   private readonly state = shallowReactive<IState>({});
 
