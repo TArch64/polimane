@@ -5,7 +5,7 @@ import { EditorCursor, EditorCursorTarget } from '@editor/enums';
 import { Point } from '@/models';
 
 export const MIN_SCALE = 0.5;
-export const MAX_SCALE = 10;
+export const MAX_SCALE = 3;
 export const ZOOM_IN_STEP = -50;
 export const ZOOM_OUT_STEP = 25;
 

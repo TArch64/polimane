@@ -10,10 +10,10 @@ export class HttpLegacyTransport implements IHttpTransport {
       const xhr = new XMLHttpRequest();
 
       xhr.open(request.method, request.url);
-      this.setRequestHeaders(xhr, request.headers);
+      this.#setRequestHeaders(xhr, request.headers);
 
       xhr.withCredentials = request.credentials === 'include';
-      xhr.onload = () => resolve(this.buildResponse(xhr));
+      xhr.onload = () => resolve(this.#buildResponse(xhr));
       xhr.onerror = () => reject(NETWORK_ERROR);
       xhr.ontimeout = () => reject(TIMEOUT_ERROR);
       xhr.onabort = () => reject(ABORT_ERROR);
@@ -22,25 +22,25 @@ export class HttpLegacyTransport implements IHttpTransport {
         xhr.abort();
       });
 
-      xhr.send(await this.getRequestBody(request));
+      xhr.send(await this.#getRequestBody(request));
     });
   }
 
-  private setRequestHeaders(xhr: XMLHttpRequest, headers: Headers): void {
+  #setRequestHeaders(xhr: XMLHttpRequest, headers: Headers): void {
     for (const [key, value] of headers.entries()) {
       xhr.setRequestHeader(key, value);
     }
   }
 
-  private buildResponse(xhr: XMLHttpRequest): Response {
+  #buildResponse(xhr: XMLHttpRequest): Response {
     return new Response(xhr.responseText, {
       status: xhr.status,
       statusText: xhr.statusText,
-      headers: this.buildResponseHeaders(xhr),
+      headers: this.#buildResponseHeaders(xhr),
     });
   }
 
-  private buildResponseHeaders(xhr: XMLHttpRequest): Headers {
+  #buildResponseHeaders(xhr: XMLHttpRequest): Headers {
     const entries = xhr.getAllResponseHeaders()
       .split('\r\n')
       .map((line) => {
@@ -52,7 +52,7 @@ export class HttpLegacyTransport implements IHttpTransport {
     return new Headers(entries);
   }
 
-  private async getRequestBody(request: Request): Promise<XMLHttpRequestBodyInit | null> {
+  async #getRequestBody(request: Request): Promise<XMLHttpRequestBodyInit | null> {
     return request.body ? await request.clone().arrayBuffer() : null;
   }
 }

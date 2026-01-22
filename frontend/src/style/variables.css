@@ -2,6 +2,8 @@
   --color-white: #FFF;
   --color-black: #1A1A1A;
   --color-danger: #E7000B;
+  --color-warning: #FF8C00;
+  --color-info: #06C;
   --color-primary: var(--color-black);
 
   --color-divider: color-mix(in srgb, var(--color-black), var(--color-white) 80%);

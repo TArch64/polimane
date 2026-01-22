@@ -1,4 +1,4 @@
-import { type FunctionPlugin, inject, type InjectionKey } from 'vue';
+import { type FunctionPlugin, inject, type InjectionKey, markRaw } from 'vue';
 import { HttpClient } from './HttpClient';
 import { HttpMiddlewareExecutor } from './HttpMiddlewareExecutor';
 import { HttpAuthorizationMiddleware } from './HttpAuthorizationMiddleware';
@@ -11,10 +11,10 @@ export interface IPluginHttpClientOptions {
 }
 
 export const httpClientPlugin: FunctionPlugin<IPluginHttpClientOptions> = (app, options) => {
-  const client = new HttpClient({
+  const client = markRaw(new HttpClient({
     baseUrl: options.baseUrl,
-    middlewareExecutor: new HttpMiddlewareExecutor(),
-  });
+    middlewareExecutor: markRaw(new HttpMiddlewareExecutor()),
+  }));
 
   app.provide(Provider, client);
 

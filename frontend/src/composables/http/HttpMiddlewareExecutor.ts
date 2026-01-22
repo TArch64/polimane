@@ -27,19 +27,19 @@ export type HttpMiddleware
     | IHttpResponseSuccessInterceptor;
 
 export class HttpMiddlewareExecutor {
-  private readonly middlewares = new Map<MiddlewareConstructor, HttpMiddleware>();
+  #middlewares = new Map<MiddlewareConstructor, HttpMiddleware>();
   client!: HttpClient;
 
   get list(): HttpMiddleware[] {
-    return Array.from(this.middlewares.values());
+    return Array.from(this.#middlewares.values());
   }
 
   add<M extends MiddlewareConstructor>(Class: M): void {
-    this.middlewares.set(Class, Class.use(this.client));
+    this.#middlewares.set(Class, Class.use(this.client));
   }
 
   get<M extends MiddlewareConstructor>(Class: M): InstanceType<M> | null {
-    return (this.middlewares.get(Class) as InstanceType<M>) || null;
+    return (this.#middlewares.get(Class) as InstanceType<M>) || null;
   }
 
   async callBeforeRequestInterceptor(request: Request, ctx: IInterceptorContext): Promise<void> {
