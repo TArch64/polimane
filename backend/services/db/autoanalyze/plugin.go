@@ -116,6 +116,10 @@ func (p *Plugin) onExecute(db, query *gorm.DB) {
 	queryStr = strings.TrimSpace(queryStr)
 	queryStr = strings.Trim(queryStr, "\n")
 
+	if strings.HasPrefix(queryStr, "EXPLAIN") || strings.HasPrefix(queryStr, "explain") {
+		return
+	}
+
 	var err error
 	var explained string
 	if explained, err = p.explainQuery(db, queryStr); err != nil {
