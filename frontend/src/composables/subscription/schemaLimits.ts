@@ -11,7 +11,6 @@ export interface ISchemaLimit {
 
 function useSchemaLimit(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema>): ISchemaLimit {
   const sessionStore = useSessionStore();
-  const subscription = computed(() => sessionStore.user.subscription);
   const schema = computed(() => toValue(schemaRef));
 
   const current = computed({
@@ -19,7 +18,7 @@ function useSchemaLimit(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema>)
     set: (value: number) => schema.value.counters[name] = value,
   });
 
-  const max = computed(() => subscription.value.limits[name]);
+  const max = computed(() => sessionStore.getLimit(name));
   const isReached = computed(() => max.value !== undefined && current.value >= max.value);
 
   return reactive({

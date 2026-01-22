@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { nextTick, type Ref, ref, watch } from 'vue';
 import type { IUser } from '@/models';
 import { UpdateCountersMiddleware, useAuthorized, useHttpClient } from '@/composables';
+import { SubscriptionLimit } from '@/enums';
 
 export const useSessionStore = defineStore('session', () => {
   const http = useHttpClient();
@@ -38,6 +39,10 @@ export const useSessionStore = defineStore('session', () => {
     }
   }
 
+  function getLimit(name: SubscriptionLimit): number | undefined {
+    return user.value?.subscription.limits[name];
+  }
+
   watch(
     user,
     (user) => updateCountersMiddleware.user = user,
@@ -56,6 +61,7 @@ export const useSessionStore = defineStore('session', () => {
   return {
     user: user as Ref<IUser>,
     updateUser,
+    getLimit,
     isLoggedIn: authorized,
     refresh,
     logout,

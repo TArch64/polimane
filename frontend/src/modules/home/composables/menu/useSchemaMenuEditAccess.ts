@@ -8,18 +8,23 @@ import {
   SchemaAccessEditModal,
   useSchemaUsersStore,
 } from '@/modules/schemas/shared/modals/accessEdit';
+import { useSessionStore } from '@/stores';
+import { SubscriptionLimit } from '@/enums';
 
 export function useSchemaMenuEditAccess(schemaRef: MaybeRefOrGetter<ListSchema>): Ref<MaybeContextMenuAction> {
   const schema = computed(() => toValue(schemaRef));
 
   const schemaUsersStore = useSchemaUsersStore();
+  const sessionStore = useSessionStore();
 
   const permissions = useAccessPermissions(() => schema.value.access);
+  const sharedAccessLimit = sessionStore.getLimit(SubscriptionLimit.SHARED_ACCESS);
   const accessEditModal = useModal(SchemaAccessEditModal);
 
-  return computed(() => permissions.admin && {
+  return computed((): MaybeContextMenuAction => permissions.admin && {
     title: 'Редагувати Доступ',
     icon: PeopleIcon,
+    disabled: sharedAccessLimit === 1,
 
     async onAction() {
       await schemaUsersStore.load([schema.value.id]);

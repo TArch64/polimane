@@ -59,7 +59,7 @@
       <DropdownAction
         title="Редагувати Доступ"
         :icon="PeopleIcon"
-        :disabled="openAccessEditModal.isActive"
+        :disabled="openAccessEditModal.isActive || sharedAccessLimit === 1"
         @click="openAccessEditModal"
         v-if="editorStore.canEditAccess"
       />
@@ -110,18 +110,22 @@ import {
   SchemaAccessEditModal,
   useSchemaUsersStore,
 } from '@/modules/schemas/shared/modals/accessEdit';
+import { useSessionStore } from '@/stores';
+import { SubscriptionLimit } from '@/enums';
 import { useEditorStore, useHistoryStore, useSelectionStore } from '../stores';
 import { SchemaExportModal } from './modals';
 
 const router = useRouter();
 const route = useRoute<'schema-editor'>();
 
+const sessionStore = useSessionStore();
 const historyStore = useHistoryStore();
 const editorStore = useEditorStore();
 const schemaUsersStore = useSchemaUsersStore();
 const selectionStore = useSelectionStore();
 
 const isMobile = useMobileScreen();
+const sharedAccessLimit = sessionStore.getLimit(SubscriptionLimit.SHARED_ACCESS);
 
 const renameModal = useModal(SchemaRenameModal);
 const exportModal = useModal(SchemaExportModal);
