@@ -1,6 +1,7 @@
 <template>
   <BottomBarMetric
     label="Бісер"
+    :class="classes"
     :value="formattedValue"
     :max-value="formattedMaxValue"
   />
@@ -31,4 +32,16 @@ const formattedMaxValue = computed(() => {
     ? `${formattedMax.value} / ${formattedMax.value}`
     : '00 000';
 });
+
+const classes = computed(() => ({
+  'bottom-bar-beads-count--limit-reached': limit.isReached,
+}));
 </script>
+
+<style scoped>
+@layer page {
+  .bottom-bar-beads-count--limit-reached {
+    --metric-value-color: var(--color-danger);
+  }
+}
+</style>

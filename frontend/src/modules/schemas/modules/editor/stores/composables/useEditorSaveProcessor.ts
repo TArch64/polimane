@@ -27,7 +27,7 @@ export function useEditorSaveProcessor(schema: Ref<ISchema>) {
   return async (patch: SchemaUpdate) => {
     cleanupOrphanRefs(patch);
 
-    if ('beads' in patch && schemaBeadsLimit.isReached) {
+    if ('beads' in patch && schemaBeadsLimit.max && schemaBeadsLimit.current > schemaBeadsLimit.max) {
       return;
     }
 

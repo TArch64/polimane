@@ -20,6 +20,7 @@ import BottomBarZoom from './BottomBarZoom.vue';
     z-index: 10;
     background-color: var(--color-background-1);
     font-size: var(--font-sm);
+    color: var(--color-text-2);
     padding: 2px 0;
     border-top: var(--divider);
     display: flex;

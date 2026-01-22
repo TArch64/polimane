@@ -33,6 +33,7 @@ defineProps<{
 
   .bottom-bar-metric__value {
     position: relative;
+    color: var(--metric-value-color, inherit);
   }
 
   .bottom-bar-metric__mirror-value {

@@ -89,6 +89,7 @@ useHotKeys({
 @layer page {
   .canvas-editor {
     outline: none;
+    user-select: none;
     --editor-cursor: v-bind("cursor");
   }
 
