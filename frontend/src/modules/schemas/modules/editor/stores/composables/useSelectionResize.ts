@@ -18,7 +18,7 @@ import {
   serializeBeadPoint,
 } from '@/models';
 import { getObjectEntries, getObjectKeys, type ObjectEntries } from '@/helpers';
-import { useSchemaBeadsLimit } from '@/composables/subscription';
+import { useSchemaBeadsCounter } from '@/composables/subscription';
 import { useBeadsStore } from '../beadsStore';
 import type { IBeadSelection } from '../selectionStore';
 import { useCanvasStore } from '../canvasStore';
@@ -46,7 +46,7 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
   const canvasStore = useCanvasStore();
 
   const beadFactory = useBeadFactory();
-  const limit = useSchemaBeadsLimit(() => editorStore.schema);
+  const limit = useSchemaBeadsCounter(() => editorStore.schema);
 
   const translation = ref(0);
   const direction = ref<Direction | null>(null);

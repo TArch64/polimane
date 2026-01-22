@@ -14,7 +14,7 @@ import type { ListSchema } from '@/modules/home/stores';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { useConfirm } from '@/components/confirm';
 import { CornerUpLeftIcon, TrashIcon } from '@/components/icon';
-import { useSchemasCreatedLimit } from '@/composables/subscription';
+import { useSchemasCreatedCounter } from '@/composables/subscription';
 import { useDeletedSchemasStore } from '../stores';
 
 const props = defineProps<{
@@ -23,7 +23,7 @@ const props = defineProps<{
 
 const schemasStore = useDeletedSchemasStore();
 const router = useRouter();
-const schemasCreatedLimit = useSchemasCreatedLimit();
+const schemasCreatedCounter = useSchemasCreatedCounter();
 
 const deleteConfirm = useConfirm({
   danger: true,
@@ -42,7 +42,7 @@ const menuActions = computed((): MaybeContextMenuAction[] => [
   {
     title: 'Відновити Схему',
     icon: CornerUpLeftIcon,
-    disabled: schemasCreatedLimit.willReach(1),
+    disabled: schemasCreatedCounter.willReach(1),
 
     async onAction() {
       await schemasStore.restoreSchema(props.schema);

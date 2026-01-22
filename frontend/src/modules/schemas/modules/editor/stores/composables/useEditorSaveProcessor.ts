@@ -2,11 +2,11 @@ import type { Ref } from 'vue';
 import { type ISchema, isRefBead, isSpannableBead, type SchemaUpdate } from '@/models';
 import { getObjectEntries } from '@/helpers';
 import { type HttpBody, HttpTransport, useHttpClient } from '@/composables';
-import { useSchemaBeadsLimit } from '@/composables/subscription';
+import { useSchemaBeadsCounter } from '@/composables/subscription';
 
 export function useEditorSaveProcessor(schema: Ref<ISchema>) {
   const http = useHttpClient();
-  const schemaBeadsLimit = useSchemaBeadsLimit(schema);
+  const schemaBeadsCounter = useSchemaBeadsCounter(schema);
 
   function cleanupOrphanRefs(patch: Partial<ISchema>): void {
     if (!patch.beads) {
@@ -27,7 +27,7 @@ export function useEditorSaveProcessor(schema: Ref<ISchema>) {
   return async (patch: SchemaUpdate) => {
     cleanupOrphanRefs(patch);
 
-    if ('beads' in patch && schemaBeadsLimit.max && schemaBeadsLimit.current > schemaBeadsLimit.max) {
+    if ('beads' in patch && schemaBeadsCounter.max && schemaBeadsCounter.current > schemaBeadsCounter.max) {
       return;
     }
 

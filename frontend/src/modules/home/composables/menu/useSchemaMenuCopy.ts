@@ -3,7 +3,7 @@ import { useRoute, useRouter } from 'vue-router';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { type ListSchema, useHomeStore } from '@/modules/home/stores';
 import { CopyIcon } from '@/components/icon';
-import { useSchemasCreatedLimit } from '@/composables/subscription';
+import { useSchemasCreatedCounter } from '@/composables/subscription';
 
 export function useSchemaMenuCopy(schemaRef: MaybeRefOrGetter<ListSchema>): Ref<MaybeContextMenuAction> {
   const schema = computed(() => toValue(schemaRef));
@@ -12,12 +12,12 @@ export function useSchemaMenuCopy(schemaRef: MaybeRefOrGetter<ListSchema>): Ref<
 
   const router = useRouter();
   const route = useRoute();
-  const schemasCreatedLimit = useSchemasCreatedLimit();
+  const schemasCreatedCounter = useSchemasCreatedCounter();
 
   return computed(() => ({
     title: 'Зробити Копію',
     icon: CopyIcon,
-    disabled: schemasCreatedLimit.isReached,
+    disabled: schemasCreatedCounter.isReached,
 
     async onAction() {
       const created = await homeStore.copySchema.do(schema.value);

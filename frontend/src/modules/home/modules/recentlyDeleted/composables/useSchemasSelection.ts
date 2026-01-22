@@ -5,7 +5,7 @@ import type { ISchemaSelectionAdapter } from '@/modules/home/stores';
 import { useConfirm } from '@/components/confirm';
 import { useAsyncAction } from '@/composables';
 import { CornerUpLeftIcon, TrashIcon } from '@/components/icon';
-import { useSchemasCreatedLimit } from '@/composables/subscription';
+import { useSchemasCreatedCounter } from '@/composables/subscription';
 import { useDeletedSchemasStore } from '../stores';
 
 export function useSchemasSelection(): ISchemaSelectionAdapter {
@@ -13,7 +13,7 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
   const actionIds = computed(() => [...schemasStore.selected]);
 
   const router = useRouter();
-  const schemasCreatedLimit = useSchemasCreatedLimit();
+  const schemasCreatedCounter = useSchemasCreatedCounter();
 
   const deleteConfirm = useConfirm({
     danger: true,
@@ -44,7 +44,7 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
     {
       title: 'Відновити Схеми',
       icon: CornerUpLeftIcon,
-      disabled: schemasCreatedLimit.willReach(actionIds.value.length),
+      disabled: schemasCreatedCounter.willReach(actionIds.value.length),
       onAction: restoreSchemas,
     },
 

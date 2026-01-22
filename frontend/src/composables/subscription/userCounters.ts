@@ -2,14 +2,14 @@ import { computed, reactive } from 'vue';
 import { useSessionStore } from '@/stores';
 import { SubscriptionLimit, type UserLimit } from '@/enums';
 
-export interface IUserLimit {
+export interface IUserCounter {
   isReached: boolean;
   willReach: (value: number) => boolean;
   current: number;
   max: number;
 }
 
-function useUserLimit(name: UserLimit): IUserLimit {
+function useUserCounter(name: UserLimit): IUserCounter {
   const sessionStore = useSessionStore();
   const subscription = computed(() => sessionStore.user.subscription);
 
@@ -29,6 +29,6 @@ function useUserLimit(name: UserLimit): IUserLimit {
   });
 }
 
-export function useSchemasCreatedLimit() {
-  return useUserLimit(SubscriptionLimit.SCHEMAS_CREATED);
+export function useSchemasCreatedCounter() {
+  return useUserCounter(SubscriptionLimit.SCHEMAS_CREATED);
 }

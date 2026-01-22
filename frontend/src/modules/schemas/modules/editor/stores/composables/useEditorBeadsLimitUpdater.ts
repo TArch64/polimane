@@ -1,7 +1,7 @@
 import type { Ref } from 'vue';
 import { useThrottleFn } from '@vueuse/core';
 import { type ISchema, isRefBead, type SchemaBeads } from '@/models';
-import { useSchemaBeadsLimit } from '@/composables/subscription';
+import { useSchemaBeadsCounter } from '@/composables/subscription';
 import { UpdateCountersMiddleware, useHttpClient } from '@/composables';
 
 export interface IEditorBeadsLimitUpdater {
@@ -13,10 +13,10 @@ export function useEditorBeadsLimitUpdater(schema: Ref<ISchema>): IEditorBeadsLi
   const http = useHttpClient();
   const middleware = http.getMiddleware(UpdateCountersMiddleware)!;
 
-  const limit = useSchemaBeadsLimit(schema);
+  const counter = useSchemaBeadsCounter(schema);
 
   const onBeadsChange = useThrottleFn((beads: SchemaBeads) => {
-    limit.current = Object
+    counter.current = Object
       .values(beads)
       .filter((bead) => !isRefBead(bead))
       .length;

@@ -8,7 +8,7 @@
       <Button
         variant="primary"
         :prepend-icon="PlusIcon"
-        :disabled="schemasCreatedLimit.isReached"
+        :disabled="schemasCreatedCounter.isReached"
         @click="createModal.open()"
       >
         Нова Схема
@@ -22,8 +22,8 @@ import { HomeListEmpty, SchemaCreateModal } from '@/modules/home/components';
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
 import { PlusIcon } from '@/components/icon';
-import { useSchemasCreatedLimit } from '@/composables/subscription';
+import { useSchemasCreatedCounter } from '@/composables/subscription';
 
-const schemasCreatedLimit = useSchemasCreatedLimit();
+const schemasCreatedCounter = useSchemasCreatedCounter();
 const createModal = useModal(SchemaCreateModal);
 </script>

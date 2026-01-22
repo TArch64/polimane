@@ -4,7 +4,7 @@
     variant="primary"
     class="home-bar__create-schema"
     :prepend-icon="PlusIcon"
-    :disabled="schemasCreatedLimit.isReached"
+    :disabled="schemasCreatedCounter.isReached"
     @click="createModal.open()"
   >
     Нова Схема
@@ -16,9 +16,9 @@ import { PlusIcon } from '@/components/icon';
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
 import { SchemaCreateModal } from '@/modules/home/components/modals';
-import { useSchemasCreatedLimit } from '@/composables/subscription';
+import { useSchemasCreatedCounter } from '@/composables/subscription';
 
-const schemasCreatedLimit = useSchemasCreatedLimit();
+const schemasCreatedCounter = useSchemasCreatedCounter();
 const createModal = useModal(SchemaCreateModal);
 </script>
 

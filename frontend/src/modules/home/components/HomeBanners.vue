@@ -1,14 +1,14 @@
 <template>
-  <div class="home-banners" v-if="schemasCreatedLimit.isReached">
-    <SchemasCreatedLimitReached v-if="schemasCreatedLimit.isReached" />
+  <div class="home-banners" v-if="schemasCreatedCounter.isReached">
+    <SchemasCreatedLimitReached v-if="schemasCreatedCounter.isReached" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { useSchemasCreatedLimit } from '@/composables/subscription';
+import { useSchemasCreatedCounter } from '@/composables/subscription';
 import SchemasCreatedLimitReached from './SchemasCreatedLimitReached.vue';
 
-const schemasCreatedLimit = useSchemasCreatedLimit();
+const schemasCreatedCounter = useSchemasCreatedCounter();
 </script>
 
 <style scoped>

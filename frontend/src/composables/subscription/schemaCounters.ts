@@ -3,13 +3,13 @@ import { useSessionStore } from '@/stores';
 import { type SchemaLimit, SubscriptionLimit } from '@/enums';
 import type { ISchema } from '@/models';
 
-export interface ISchemaLimit {
+export interface ISchemaCounter {
   isReached: boolean;
   current: number;
   max?: number;
 }
 
-function useSchemaLimit(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema>): ISchemaLimit {
+function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema>): ISchemaCounter {
   const sessionStore = useSessionStore();
   const schema = computed(() => toValue(schemaRef));
 
@@ -28,10 +28,10 @@ function useSchemaLimit(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema>)
   });
 }
 
-export function useSchemaBeadsLimit(schemaRef: MaybeRefOrGetter<ISchema>) {
-  return useSchemaLimit(SubscriptionLimit.SCHEMA_BEADS, schemaRef);
+export function useSchemaBeadsCounter(schemaRef: MaybeRefOrGetter<ISchema>) {
+  return useSchemaCounter(SubscriptionLimit.SCHEMA_BEADS, schemaRef);
 }
 
-export function useSharedAccessLimit(schemaRef: MaybeRefOrGetter<ISchema>) {
-  return useSchemaLimit(SubscriptionLimit.SHARED_ACCESS, schemaRef);
+export function useSharedAccessCounter(schemaRef: MaybeRefOrGetter<ISchema>) {
+  return useSchemaCounter(SubscriptionLimit.SHARED_ACCESS, schemaRef);
 }

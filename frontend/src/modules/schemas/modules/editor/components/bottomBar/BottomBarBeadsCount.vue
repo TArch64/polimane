@@ -11,15 +11,15 @@
 import { useEditorStore } from '@editor/stores';
 import { computed } from 'vue';
 import { useNumberFormatter } from '@/composables';
-import { useSchemaBeadsLimit } from '@/composables/subscription';
+import { useSchemaBeadsCounter } from '@/composables/subscription';
 import BottomBarMetric from './BottomBarMetric.vue';
 
 const editorStore = useEditorStore();
 
-const limit = useSchemaBeadsLimit(() => editorStore.schema);
+const counter = useSchemaBeadsCounter(() => editorStore.schema);
 
-const formattedCurrent = useNumberFormatter(() => limit.current);
-const formattedMax = useNumberFormatter(() => limit.max);
+const formattedCurrent = useNumberFormatter(() => counter.current);
+const formattedMax = useNumberFormatter(() => counter.max);
 
 const formattedValue = computed(() => {
   return formattedMax.value
@@ -34,7 +34,7 @@ const formattedMaxValue = computed(() => {
 });
 
 const classes = computed(() => ({
-  'bottom-bar-beads-count--limit-reached': limit.isReached,
+  'bottom-bar-beads-count--limit-reached': counter.isReached,
 }));
 </script>
 
