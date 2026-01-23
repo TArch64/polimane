@@ -12,11 +12,11 @@ export interface ISchemaCounter {
 
 function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema>): ISchemaCounter {
   const sessionStore = useSessionStore();
-  const schema = computed(() => toValue(schemaRef));
+  const counters = computed(() => toValue(schemaRef).counters);
 
   const current = computed({
-    get: () => schema.value.counters[name],
-    set: (value: number) => schema.value.counters[name] = value,
+    get: () => counters.value[name],
+    set: (value: number) => counters.value[name] = value,
   });
 
   const max = computed(() => sessionStore.getLimit(name));

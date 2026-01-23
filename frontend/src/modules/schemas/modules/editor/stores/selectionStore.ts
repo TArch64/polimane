@@ -35,10 +35,7 @@ export const useSelectionStore = defineStore('schemas/editor/selection', () => {
     const to = parseBeadCoord(selected.value.to);
     const selectedBeads = beadsStore.getInArea(from, to);
 
-    for (const coord of getObjectKeys(selectedBeads)) {
-      beadsStore.remove(coord);
-    }
-
+    beadsStore.removeMany(getObjectKeys(selectedBeads));
     reset();
   }
 

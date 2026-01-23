@@ -12,7 +12,7 @@ import {
   serializeBeadCoord,
 } from '@/models';
 import { BeadKind, Direction } from '@/enums';
-import { getObjectEntries } from '@/helpers';
+import { deleteObjectKeys, getObjectEntries } from '@/helpers';
 import { useSchemaBeadsCounter } from '@/composables/subscription';
 import { useEditorStore } from './editorStore';
 
@@ -24,8 +24,8 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
   const editorStore = useEditorStore();
   const counter = useSchemaBeadsCounter(() => editorStore.schema);
 
-  function getColor(coord: BeadCoord) {
-    return editorStore.schema.beads[coord] ?? null;
+  function getBead(coord: BeadCoord) {
+    return editorStore.schema.beads[coord];
   }
 
   function checkExtendingPaint(coord: BeadCoord): Direction[] {
@@ -66,7 +66,7 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     for (let x = from.x; x <= to.x; x++) {
       for (let y = from.y; y <= to.y; y++) {
         const coord = serializeBeadCoord(x, y);
-        const bead = editorStore.schema.beads[coord];
+        const bead = getBead(coord);
         if (bead) yield [coord, bead];
       }
     }
@@ -101,7 +101,7 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     for (let [coord, bead] of iterateArea(from, to)) {
       if (isRefBead(bead)) {
         coord = getBeadSettings(bead).to;
-        bead = editorStore.schema.beads[coord]!;
+        bead = getBead(coord)!;
       }
 
       if (coord in beads) {
@@ -118,12 +118,17 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     return beads;
   }
 
-  function onBeadBeforeRemove(coord: BeadCoord): void {
-    const bead = editorStore.schema.beads[coord];
+  function unsetBeads(removingSet: Set<BeadCoord>): void {
+    editorStore.schema.beads = deleteObjectKeys(editorStore.schema.beads, removingSet);
+  }
+
+  function onBeadBeforeRemove(coord: BeadCoord, removingSet: Set<BeadCoord>): void {
+    const bead = getBead(coord);
     if (!bead) return;
 
     if (isRefBead(bead)) {
-      return remove(getBeadSettings(bead).to);
+      removingSet.add(getBeadSettings(bead).to);
+      return;
     }
 
     if (isSpannableBead(bead)) {
@@ -131,51 +136,84 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
 
       for (const [coord, bead] of getObjectEntries(spanBeads)) {
         if (bead.kind === BeadKind.REF) {
-          delete editorStore.schema.beads[coord];
+          removingSet.add(coord);
         }
       }
     }
   }
 
+  function removeInternal(coords: BeadCoord[]): void {
+    const removingSet = new Set(coords);
+
+    for (const coord of coords) {
+      onBeadBeforeRemove(coord, removingSet);
+    }
+
+    unsetBeads(removingSet);
+  }
+
   function remove(coord: BeadCoord): void {
-    onBeadBeforeRemove(coord);
-    delete editorStore.schema.beads[coord];
+    if (getBead(coord)) {
+      removeInternal([coord]);
+      counter.current--;
+    }
   }
 
-  function paint(coord: BeadCoord, color: SchemaBead | null): PaintEffect | null {
-    if (counter.isReached && color) {
-      return null;
-    }
-
-    const currentColor = getColor(coord);
-
-    if (currentColor === color) {
-      return null;
-    }
-
-    if (color) {
-      if (coord in editorStore.schema.beads) {
-        onBeadBeforeRemove(coord);
-      }
-
-      editorStore.schema.beads[coord] = color;
-
-      const extendingDirections = checkExtendingPaint(coord);
-
-      if (extendingDirections.length) {
-        extendSchemaSize(extendingDirections);
-        return PaintEffect.EXTENDED;
-      }
-
-      return null;
-    }
-
-    if (currentColor) {
-      remove(coord);
-    }
-
-    return null;
+  function removeMany(coords: BeadCoord[]) {
+    const existing = coords.filter(getBead);
+    removeInternal(existing);
+    counter.current -= existing.length;
   }
 
-  return { paint, remove, getInArea, getSpanBeads };
+  function tryExtendSchema(coord: BeadCoord): PaintEffect | null {
+    const extendingDirections = checkExtendingPaint(coord);
+
+    if (!extendingDirections.length) {
+      return null;
+    }
+
+    extendSchemaSize(extendingDirections);
+    return PaintEffect.EXTENDED;
+  }
+
+  function paintMany(beads: SchemaBeads): Set<PaintEffect> {
+    let localCounter = counter.current;
+    const effects = new Set<PaintEffect>();
+
+    const allowedSet = getObjectEntries(beads).filter(([coord, bead]) => {
+      if (getBead(coord)) return true;
+      if (localCounter >= counter.max!) return false;
+      if (!isRefBead(bead)) localCounter++;
+      return true;
+    });
+
+    if (allowedSet.length === 0) {
+      return effects;
+    }
+
+    editorStore.schema.beads = {
+      ...editorStore.schema.beads,
+      ...Object.fromEntries(allowedSet),
+    };
+
+    counter.current = localCounter;
+
+    for (const [coord] of allowedSet) {
+      const newEffect = tryExtendSchema(coord);
+
+      if (newEffect) {
+        effects.add(newEffect);
+      }
+    }
+
+    return effects;
+  }
+
+  return {
+    paintMany,
+    remove,
+    removeMany,
+    getInArea,
+    getSpanBeads,
+  };
 });

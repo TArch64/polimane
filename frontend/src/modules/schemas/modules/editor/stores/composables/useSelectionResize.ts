@@ -193,10 +193,7 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
       const templateBeads = capturedSequence.value[sequenceIndex.value]!;
       const newBeads = renderTemplate(templateBeads);
 
-      for (const [coord, bead] of newBeads) {
-        beadsStore.paint(coord, bead);
-      }
-
+      beadsStore.paintMany(Object.fromEntries(newBeads));
       sequenceIndex.value++;
       translation.value -= BEAD_SIZE;
       extendArea(BEAD_SIZE);
