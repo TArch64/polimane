@@ -156,10 +156,6 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
   }
 
   function extendTranslation(dir: Direction, delta: number) {
-    if (limit.isReached) {
-      return;
-    }
-
     translation.value += delta / canvasStore.scale;
 
     if (translation.value <= 0) {
