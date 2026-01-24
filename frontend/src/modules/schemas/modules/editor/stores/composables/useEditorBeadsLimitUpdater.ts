@@ -20,7 +20,7 @@ export function useEditorBeadsLimitUpdater(schema: Ref<ISchema>): IEditorBeadsLi
       .values(beads)
       .filter((bead) => !isRefBead(bead))
       .length;
-  }, 1000);
+  }, 500);
 
   const destroy = middleware.onSchemaUpdate.listen((schemaId, counters) => {
     if (schemaId === schema.value.id) {
