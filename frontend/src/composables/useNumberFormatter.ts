@@ -20,3 +20,10 @@ export const useIntPercentageFormatter = createFormatter({
   style: 'percent',
   maximumFractionDigits: 0,
 });
+
+export const useCurrencyFormatter = createFormatter({
+  style: 'currency',
+  currency: 'UAH',
+  maximumFractionDigits: 2,
+  minimumFractionDigits: 0,
+});

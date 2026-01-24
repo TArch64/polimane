@@ -45,6 +45,7 @@ func (c *Controller) Private(group fiber.Router) {
 		group.Get("", c.Current)
 		group.Patch("", c.Update)
 		group.Delete("", c.Delete)
+		group.Get("plans", c.Plans)
 
 		base.WithGroup(group, "email/verify", func(group fiber.Router) {
 			group.Post("", c.EmailVerify)

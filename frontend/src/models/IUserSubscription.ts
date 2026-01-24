@@ -1,10 +1,8 @@
-import { SubscriptionLimit, SubscriptionPlan, SubscriptionStatus, type UserLimit } from '@/enums';
-
-export type UserCounters = Record<UserLimit, number>;
-export type SubscriptionLimits = Partial<Record<SubscriptionLimit, number>>;
+import { SubscriptionPlanId, SubscriptionStatus } from '@/enums';
+import type { SubscriptionLimits, UserCounters } from './ISubscriptionPlan';
 
 export interface IUserSubscription {
-  plan: SubscriptionPlan;
+  planId: SubscriptionPlanId;
   status: SubscriptionStatus;
   counters: UserCounters;
   limits: SubscriptionLimits;

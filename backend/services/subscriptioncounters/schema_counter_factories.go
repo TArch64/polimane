@@ -20,7 +20,7 @@ func newSchemaBeads(deps *schemaCounterDeps) *SchemaCounter[uint16, int16] {
 
 		counterLimit: model.NewAccessor[*model.UserSubscription, *uint16](
 			func(target *model.UserSubscription) *uint16 {
-				return target.Limits().SchemaBeads
+				return target.Plan().Limits.SchemaBeads
 			}, nil,
 		),
 	})
@@ -42,7 +42,7 @@ func newSharedAccess(deps *schemaCounterDeps) *SchemaCounter[uint8, int8] {
 
 		counterLimit: model.NewAccessor[*model.UserSubscription, *uint8](
 			func(target *model.UserSubscription) *uint8 {
-				return target.Limits().SharedAccess
+				return target.Plan().Limits.SharedAccess
 			}, nil,
 		),
 	})

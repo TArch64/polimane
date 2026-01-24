@@ -4,7 +4,8 @@
 
 <script setup lang="ts">
 import { type Component, computed, markRaw } from 'vue';
-import { type ISubscriptionLimit, SubscriptionLimitType } from '../../stores';
+import { SubscriptionLimitType } from '@/enums';
+import type { ISubscriptionLimit } from '../../stores';
 import LimitUser from './LimitUser.vue';
 import LimitFeature from './LimitFeature.vue';
 

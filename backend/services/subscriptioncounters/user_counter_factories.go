@@ -20,7 +20,7 @@ func newSchemasCreated(deps *userCounterDeps) *UserCounter[uint16, int16] {
 
 		counterLimit: model.NewAccessor[*model.UserSubscription, *uint16](
 			func(target *model.UserSubscription) *uint16 {
-				return target.Limits().SchemasCreated
+				return target.Plan().Limits.SchemasCreated
 			}, nil,
 		),
 	})

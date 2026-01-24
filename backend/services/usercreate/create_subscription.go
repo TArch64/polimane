@@ -12,7 +12,7 @@ import (
 func (s *Service) createSubscription(ctx context.Context, tx *gorm.DB, user *model.User) error {
 	return s.userSubscriptions.InsertTx(ctx, tx, &model.UserSubscription{
 		UserID:         user.ID,
-		Plan:           model.SubscriptionBasic,
+		PlanID:         model.SubscriptionBasic,
 		TrialStartedAt: time.Now(),
 		TrialEndsAt:    time.Now().Add(model.SubscriptionTrialDuration),
 	})

@@ -9,18 +9,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Card } from '@/components/card';
-import { SubscriptionPlan } from '@/enums';
+import { getSubscriptionPlanName } from '@/enums';
 import { useSubscriptionStore } from '../stores';
 
 const subscriptionStore = useSubscriptionStore();
 
-const planTitles: Record<SubscriptionPlan, string> = {
-  [SubscriptionPlan.BETA]: 'Бета',
-  [SubscriptionPlan.BASIC]: 'Базова',
-  [SubscriptionPlan.PRO]: 'Продвинута',
-};
-
-const planTitle = computed(() => planTitles[subscriptionStore.subscription.plan]);
+const planTitle = computed(() => getSubscriptionPlanName(subscriptionStore.subscription.planId));
 </script>
 
 <style scoped>
@@ -33,7 +27,13 @@ const planTitle = computed(() => planTitles[subscriptionStore.subscription.plan]
   }
 
   .subscription-info__plan-title {
-    font-size: 28px;
+    font-size: var(--font-xlg);
+  }
+
+  @media (max-width: 768px) {
+    .subscription-info__plan-title {
+      font-size: var(--font-lg);
+    }
   }
 }
 </style>

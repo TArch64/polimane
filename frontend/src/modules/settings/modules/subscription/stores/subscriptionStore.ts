@@ -3,13 +3,10 @@ import { computed } from 'vue';
 import { useSessionStore } from '@/stores';
 import type { IUserSubscription, SubscriptionLimits, UserCounters } from '@/models';
 import { getObjectEntries } from '@/helpers';
+import { SubscriptionLimitType } from '@/enums';
+import { type IPlanLimitConfig, PLAN_LIMIT_CONFIGS } from './plansStore';
 
 type LimitKey = keyof SubscriptionLimits;
-
-export enum SubscriptionLimitType {
-  USER = 'user',
-  FEATURE = 'feature',
-}
 
 export interface ISubscriptionLimit {
   key: LimitKey;
@@ -19,29 +16,7 @@ export interface ISubscriptionLimit {
   used: number | null;
 }
 
-interface ILimitConfig {
-  type: SubscriptionLimitType;
-  title: string;
-}
-
-const LIMIT_KEYS: Record<LimitKey, ILimitConfig> = {
-  schemasCreated: {
-    type: SubscriptionLimitType.USER,
-    title: 'Створено Схем',
-  },
-
-  schemaBeads: {
-    type: SubscriptionLimitType.FEATURE,
-    title: 'Кількість Бісеру в Схемі',
-  },
-
-  sharedAccess: {
-    type: SubscriptionLimitType.FEATURE,
-    title: 'Користувачі з доступом до Схеми',
-  },
-};
-
-type LimitFactory = (subscription: IUserSubscription, key: LimitKey, config: ILimitConfig) => ISubscriptionLimit;
+type LimitFactory = (subscription: IUserSubscription, key: LimitKey, config: IPlanLimitConfig) => ISubscriptionLimit;
 
 const createUserLimit: LimitFactory = (subscription, key, config) => ({
   key,
@@ -69,7 +44,7 @@ export const useSubscriptionStore = defineStore('settings/subscription', () => {
   const limits = computed(() => {
     const limits: ISubscriptionLimit[] = [];
 
-    for (const [key, config] of getObjectEntries(LIMIT_KEYS)) {
+    for (const [key, config] of getObjectEntries(PLAN_LIMIT_CONFIGS)) {
       const createLimit = limitFactories[config.type];
       limits.push(createLimit(subscription.value, key, config));
     }

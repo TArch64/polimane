@@ -3,6 +3,7 @@ export * from './Direction';
 export * from './BeadKind';
 export * from './AccessLevel';
 export * from './SchemaLayout';
-export * from './SubscriptionPlan';
+export * from './SubscriptionPlanId';
 export * from './SubscriptionStatus';
 export * from './SubscriptionLimit';
+export * from './SubscriptionLimitType';

@@ -1,16 +1,16 @@
 -- +goose Up
-CREATE TYPE subscription_plan AS enum ('beta', 'basic', 'pro');
+CREATE TYPE subscription_plan_id AS enum ('beta', 'basic', 'pro');
 CREATE TYPE subscription_status AS enum ('active', 'canceled', 'unpaid');
 
 CREATE TABLE IF NOT EXISTS user_subscriptions
 (
-  user_id  uuid  NOT NULL,
-  plan             subscription_plan   NOT NULL,
-  status           subscription_status NOT NULL DEFAULT 'active',
-  counters jsonb NOT NULL DEFAULT '{}'::jsonb,
-  billing_try      smallint            NOT NULL DEFAULT 0,
-  trial_started_at timestamptz         NOT NULL,
-  trial_ends_at    timestamptz         NOT NULL,
+  user_id          uuid                 NOT NULL,
+  plan_id          subscription_plan_id NOT NULL,
+  status           subscription_status  NOT NULL DEFAULT 'active',
+  counters         jsonb                NOT NULL DEFAULT '{}'::jsonb,
+  billing_try      smallint             NOT NULL DEFAULT 0,
+  trial_started_at timestamptz          NOT NULL,
+  trial_ends_at    timestamptz          NOT NULL,
   canceled_at      timestamptz,
   last_billed_at   timestamptz,
   PRIMARY KEY (user_id),
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS user_subscriptions
 CREATE INDEX idx_user_subscriptions_status
   ON user_subscriptions (status);
 
-INSERT INTO user_subscriptions (user_id, plan, trial_started_at, trial_ends_at, counters)
+INSERT INTO user_subscriptions (user_id, plan_id, trial_started_at, trial_ends_at, counters)
 SELECT id,
        'beta',
        NOW(),
@@ -42,5 +42,5 @@ ON CONFLICT (user_id) DO NOTHING;
 
 -- +goose Down
 DROP TABLE IF EXISTS user_subscriptions;
-DROP TYPE IF EXISTS subscription_plan;
+DROP TYPE IF EXISTS subscription_plan_id;
 DROP TYPE IF EXISTS subscription_status;

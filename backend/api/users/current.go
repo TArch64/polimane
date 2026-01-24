@@ -17,7 +17,7 @@ type UserResponse struct {
 }
 
 type SubscriptionResponse struct {
-	Plan     model.SubscriptionPlan      `json:"plan"`
+	PlanID   model.SubscriptionPlanID    `json:"planId"`
 	Status   model.SubscriptionStatus    `json:"status"`
 	Counters *model.SubscriptionCounters `json:"counters"`
 	Limits   *model.SubscriptionLimits   `json:"limits"`
@@ -34,10 +34,10 @@ func (c *Controller) Current(ctx *fiber.Ctx) error {
 		EmailVerified: session.WorkosUser.EmailVerified,
 
 		Subscription: &SubscriptionResponse{
-			Plan:     session.User.Subscription.Plan,
+			PlanID:   session.User.Subscription.PlanID,
 			Status:   session.User.Subscription.Status,
 			Counters: session.User.Subscription.Counters.Data(),
-			Limits:   session.User.Subscription.Limits(),
+			Limits:   session.User.Subscription.Plan().Limits,
 		},
 	})
 }
