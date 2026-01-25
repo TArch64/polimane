@@ -3,7 +3,8 @@ import { computed } from 'vue';
 import { useSessionStore } from '@/stores';
 import type { IUserSubscription, SubscriptionLimits, UserCounters } from '@/models';
 import { getObjectEntries } from '@/helpers';
-import { SubscriptionLimitType } from '@/enums';
+import { SubscriptionLimitType, SubscriptionPlanId } from '@/enums';
+import { type HttpBody, useHttpClient } from '@/composables';
 import { type IPlanLimitConfig, PLAN_LIMIT_CONFIGS } from './plansStore';
 
 type LimitKey = keyof SubscriptionLimits;
@@ -37,7 +38,12 @@ const limitFactories: Record<SubscriptionLimitType, LimitFactory> = {
   [SubscriptionLimitType.FEATURE]: createFeatureLimit,
 };
 
+interface IChangePlanBody {
+  planId: SubscriptionPlanId;
+}
+
 export const useSubscriptionStore = defineStore('settings/subscription', () => {
+  const http = useHttpClient();
   const sessionStore = useSessionStore();
   const subscription = computed(() => sessionStore.user.subscription);
 
@@ -52,8 +58,21 @@ export const useSubscriptionStore = defineStore('settings/subscription', () => {
     return limits;
   });
 
+  async function changePlan(planId: SubscriptionPlanId): Promise<void> {
+    await http.post<HttpBody, IChangePlanBody>('/users/current/subscription/change', {
+      planId,
+    });
+
+    try {
+      await sessionStore.refresh();
+    } catch {
+      location.reload();
+    }
+  }
+
   return {
     subscription,
     limits,
+    changePlan,
   };
 });

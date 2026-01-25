@@ -11,6 +11,8 @@ import (
 	apischemas "polimane/backend/api/schemas"
 	apischemasusers "polimane/backend/api/schemas/users"
 	apiusers "polimane/backend/api/users"
+	apiauthfactors "polimane/backend/api/users/authfactors"
+	apisubscriptions "polimane/backend/api/users/subscriptions"
 	"polimane/backend/env"
 	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
@@ -32,6 +34,7 @@ import (
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/services/sentry"
 	"polimane/backend/services/subscriptioncounters"
+	"polimane/backend/services/subscriptionupdate"
 	"polimane/backend/services/usercreate"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
@@ -77,6 +80,7 @@ func main() {
 			logstdout.Provider,
 			logpersistent.Provider,
 			subscriptioncounters.Provider,
+			subscriptionupdate.Provider,
 			usercreate.Provider,
 
 			// api
@@ -84,9 +88,11 @@ func main() {
 			AsController(apiping.Provider),
 			AsController(apiauth.Provider),
 			AsController(apiusers.Provider),
+			apiauthfactors.Provider,   // users child controller
+			apisubscriptions.Provider, // users child controller
 			AsController(apischemas.Provider),
-			AsController(apifolders.Provider),
 			apischemasusers.Provider, // schemas child controller
+			AsController(apifolders.Provider),
 			api.OptionsProvider,
 			api.Provider,
 		),

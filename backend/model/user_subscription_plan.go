@@ -6,15 +6,13 @@ const (
 	SubscriptionBeta  SubscriptionPlanID = "beta"
 	SubscriptionBasic SubscriptionPlanID = "basic"
 	SubscriptionPro   SubscriptionPlanID = "pro"
-
-	YearlyDiscountModifier = 0.8
 )
 
 var (
 	BasicPlan = &SubscriptionPlan{
 		ID:           SubscriptionBasic,
 		MonthlyPrice: 100,
-		YearlyPrice:  (100 * 12) * YearlyDiscountModifier,
+		Tier:         1,
 
 		Limits: &SubscriptionLimits{
 			SchemasCreated: ptr[uint16](20),
@@ -26,7 +24,7 @@ var (
 	ProPlan = &SubscriptionPlan{
 		ID:           SubscriptionPro,
 		MonthlyPrice: 300,
-		YearlyPrice:  (300 * 12) * YearlyDiscountModifier,
+		Tier:         2,
 
 		Limits: &SubscriptionLimits{
 			SchemasCreated: ptr[uint16](100),
@@ -49,9 +47,13 @@ var (
 
 type SubscriptionPlan struct {
 	ID           SubscriptionPlanID  `json:"id"`
+	Tier         uint8               `json:"-"`
 	MonthlyPrice float32             `json:"monthlyPrice"`
-	YearlyPrice  float32             `json:"yearlyPrice"`
 	Limits       *SubscriptionLimits `json:"limits"`
+}
+
+func (s *SubscriptionPlan) IsBeta() bool {
+	return s.ID == SubscriptionBeta
 }
 
 type SubscriptionLimits struct {

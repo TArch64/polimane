@@ -33,7 +33,7 @@ export const usePlansStore = defineStore('settings/subscription/plans', () => {
 
   const plans = useAsyncData({
     async loader() {
-      return http.get<ISubscriptionPlan[]>('/users/current/plans');
+      return http.get<ISubscriptionPlan[]>('/users/current/subscription/plans');
     },
 
     once: true,

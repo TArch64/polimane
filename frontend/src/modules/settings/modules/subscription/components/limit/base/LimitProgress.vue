@@ -15,6 +15,7 @@
         :rx="corderRadius"
         :ry="corderRadius"
         fill="var(--color-primary)"
+        class="subscription-limit__progress-value"
       />
     </svg>
   </div>
@@ -41,6 +42,11 @@ const viewBox = computed(() => `0 0 ${width.value} ${height}`);
     display: block;
     height: v-bind("height + 'px'");
     width: 100%;
+  }
+
+  .subscription-limit__progress-value {
+    transition: width 0.3s ease-out;
+    will-change: width;
   }
 }
 </style>

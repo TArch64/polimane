@@ -1,4 +1,4 @@
-package users
+package subscriptions
 
 import (
 	"github.com/gofiber/fiber/v2"

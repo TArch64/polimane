@@ -27,6 +27,8 @@
         variant="primary"
         size="lg"
         class="subscription-plan__activate"
+        :loading="changePlan.isActive"
+        @click="changePlan"
         v-else
       >
         Обрати Підписку
@@ -40,7 +42,7 @@ import { computed } from 'vue';
 import type { ISubscriptionPlan } from '@/models';
 import { getSubscriptionPlanName, SubscriptionPlanId } from '@/enums';
 import { Card } from '@/components/card';
-import { useCurrencyFormatter } from '@/composables';
+import { useAsyncAction, useCurrencyFormatter } from '@/composables';
 import { Button } from '@/components/button';
 import { PLAN_LIMIT_CONFIGS, useSubscriptionStore } from '../../stores';
 import PlanLimit from './PlanLimit.vue';
@@ -63,6 +65,10 @@ const classes = computed(() => ({
 const formattedMonthlyPrice = useCurrencyFormatter(() => {
   return props.plan.monthlyPrice;
 });
+
+const changePlan = useAsyncAction(async () => {
+  await subscriptionStore.changePlan(props.plan.id);
+});
 </script>
 
 <style scoped>
@@ -70,6 +76,7 @@ const formattedMonthlyPrice = useCurrencyFormatter(() => {
   .subscription-plan {
     border: none;
     padding: 100px 40px;
+    border-radius: calc(var(--rounded-lg) - 1px);
   }
 
   .subscription-plan--control {

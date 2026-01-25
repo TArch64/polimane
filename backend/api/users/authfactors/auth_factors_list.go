@@ -1,4 +1,4 @@
-package users
+package authfactors
 
 import (
 	"github.com/gofiber/fiber/v2"
