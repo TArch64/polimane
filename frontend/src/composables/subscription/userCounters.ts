@@ -4,7 +4,7 @@ import { SubscriptionLimit, type UserLimit } from '@/enums';
 
 export interface IUserCounter {
   isReached: boolean;
-  willReach: (value: number) => boolean;
+  willOverlow: (value: number) => boolean;
   current: number;
   max: number;
 }
@@ -16,13 +16,13 @@ function useUserCounter(name: UserLimit): IUserCounter {
   const max = computed(() => sessionStore.plan.limits[name]!);
   const isReached = computed(() => current.value >= max.value);
 
-  function willReach(value: number): boolean {
+  function willOverlow(value: number): boolean {
     return current.value + value > max.value;
   }
 
   return reactive({
     isReached,
-    willReach,
+    willOverlow,
     current,
     max,
   });

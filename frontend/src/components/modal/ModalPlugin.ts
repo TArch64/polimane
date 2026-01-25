@@ -1,4 +1,5 @@
 import {
+  type App,
   type Component,
   type FunctionPlugin,
   inject,
@@ -17,11 +18,16 @@ interface IModalPluginState {
 
 export class ModalPlugin {
   static install: FunctionPlugin = (app) => {
-    app.provide(PROVIDER, new ModalPlugin());
+    app.provide(PROVIDER, new ModalPlugin(app));
   };
 
   static inject(): ModalPlugin {
     return inject(PROVIDER)!;
+  }
+
+  private constructor(
+    private readonly app: App,
+  ) {
   }
 
   private state: IModalPluginState = reactive({
@@ -33,7 +39,12 @@ export class ModalPlugin {
   }
 
   create<C extends Component, R = null>(component: C): ModalModel<C, R> {
-    const modal = new ModalModel<C, R>(newId(), markRaw(component));
+    const modal = new ModalModel<C, R>({
+      id: newId(),
+      component: markRaw(component),
+      app: this.app,
+    });
+
     this.state.modals.push(modal);
     return modal;
   }

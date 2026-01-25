@@ -59,7 +59,7 @@
       <DropdownAction
         title="Редагувати Доступ"
         :icon="PeopleIcon"
-        :disabled="openAccessEditModal.isActive || sharedAccessLimit === 1"
+        :disabled="sharedAccessLimit === 1"
         @click="openAccessEditModal"
         v-if="editorStore.canEditAccess"
       />
@@ -155,10 +155,11 @@ const openRenameModal = () => renameModal.open({
   updateSchema: (attrs) => void Object.assign(editorStore.schema, attrs),
 });
 
-const openAccessEditModal = useAsyncAction(async () => {
-  await schemaUsersStore.load([editorStore.schema.id]);
-  accessEditModal.open({});
-});
+function openAccessEditModal(): void {
+  accessEditModal.open({
+    schemaIds: [editorStore.schema.id],
+  });
+}
 
 const deleteConfirm = useConfirm({
   danger: true,

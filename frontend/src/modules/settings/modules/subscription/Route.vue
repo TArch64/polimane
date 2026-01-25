@@ -6,8 +6,8 @@
 
 <script setup lang="ts">
 import { definePreload } from '@/router/define';
+import { usePlansStore } from '@/stores';
 import { SubscriptionInfo, SubscriptionLimits, SubscriptionPlans } from './components';
-import { usePlansStore } from './stores';
 
 defineOptions({
   beforeRouteEnter: definePreload<'settings-subscription'>(async () => {

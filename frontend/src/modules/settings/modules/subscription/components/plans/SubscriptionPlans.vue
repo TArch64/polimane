@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { Card } from '@/components/card';
-import { usePlansStore } from '../../stores';
+import { usePlansStore } from '@/stores';
 import SubscriptionPlan from './SubscriptionPlan.vue';
 
 const plansStore = usePlansStore();

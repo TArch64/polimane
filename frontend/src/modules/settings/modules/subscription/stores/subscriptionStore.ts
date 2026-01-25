@@ -1,11 +1,10 @@
 import { defineStore } from 'pinia';
 import { computed } from 'vue';
-import { useSessionStore } from '@/stores';
+import { type IPlanLimitConfig, PLAN_LIMIT_CONFIGS, useSessionStore } from '@/stores';
 import type { IUserSubscription, SubscriptionLimits, UserCounters } from '@/models';
 import { getObjectEntries } from '@/helpers';
 import { SubscriptionLimitType, SubscriptionPlanId } from '@/enums';
 import { type HttpBody, useHttpClient } from '@/composables';
-import { type IPlanLimitConfig, PLAN_LIMIT_CONFIGS } from './plansStore';
 
 type LimitKey = keyof SubscriptionLimits;
 

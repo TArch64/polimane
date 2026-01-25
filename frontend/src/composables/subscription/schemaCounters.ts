@@ -7,7 +7,7 @@ export interface ISchemaCounter {
   isReached: boolean;
   current: number;
   max?: number;
-  willReach: (value: number) => boolean;
+  willOverlow: (value: number) => boolean;
 }
 
 function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema>): ISchemaCounter {
@@ -22,7 +22,7 @@ function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema
   const max = computed(() => sessionStore.getLimit(name));
   const isReached = computed(() => max.value !== undefined && current.value >= max.value);
 
-  function willReach(value: number): boolean {
+  function willOverlow(value: number): boolean {
     return max.value !== undefined && current.value + value > max.value;
   }
 
@@ -30,7 +30,7 @@ function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema
     isReached,
     current,
     max,
-    willReach,
+    willOverlow,
   });
 }
 

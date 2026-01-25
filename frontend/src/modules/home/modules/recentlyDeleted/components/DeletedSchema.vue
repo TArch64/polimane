@@ -1,20 +1,16 @@
 <template>
-  <HomeListSchema
-    disabled
-    :schema
-    :menuActions
-  />
+  <HomeListSchema disabled :schema :menuActions />
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { computed } from 'vue';
-import { HomeListSchema } from '@/modules/home/components';
+import { HomeListSchema, SchemasLimitReachedModal } from '@/modules/home/components';
 import type { ListSchema } from '@/modules/home/stores';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { useConfirm } from '@/components/confirm';
 import { CornerUpLeftIcon, TrashIcon } from '@/components/icon';
 import { useSchemasCreatedCounter } from '@/composables/subscription';
+import { useModal } from '@/components/modal';
 import { useDeletedSchemasStore } from '../stores';
 
 const props = defineProps<{
@@ -22,8 +18,10 @@ const props = defineProps<{
 }>();
 
 const schemasStore = useDeletedSchemasStore();
+
 const router = useRouter();
 const schemasCreatedCounter = useSchemasCreatedCounter();
+const schemasLimitReachedModal = useModal(SchemasLimitReachedModal);
 
 const deleteConfirm = useConfirm({
   danger: true,
@@ -37,21 +35,29 @@ async function onDeletableFinish() {
   }
 }
 
-const menuActions = computed((): MaybeContextMenuAction[] => [
+const menuActions: MaybeContextMenuAction[] = [
   {
     title: 'Відновити Схему',
     icon: CornerUpLeftIcon,
-    disabled: schemasCreatedCounter.willReach(1),
 
     async onAction() {
+      if (schemasCreatedCounter.isReached) {
+        void schemasLimitReachedModal.open({
+          actionTitle: 'відновити',
+          overflowCount: 1,
+        });
+
+        return;
+      }
+
       await schemasStore.restoreSchema(props.schema);
       await onDeletableFinish();
     },
   },
 
   {
-    danger: true,
     title: 'Видалити Остаточно',
+    danger: true,
     icon: TrashIcon,
 
     async onAction(event) {
@@ -65,5 +71,5 @@ const menuActions = computed((): MaybeContextMenuAction[] => [
       }
     },
   },
-]);
+];
 </script>

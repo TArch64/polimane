@@ -37,7 +37,7 @@ const classes = computed(() => {
   if (counter.isReached) {
     return 'bottom-bar-beads-count--limit-reached';
   }
-  if (counter.willReach(300)) {
+  if (counter.willOverlow(300)) {
     return 'bottom-bar-beads-count--limit-reach-soon';
   }
   return null;

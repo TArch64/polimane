@@ -28,24 +28,21 @@ export const PLAN_LIMIT_CONFIGS: Record<LimitKey, IPlanLimitConfig> = {
   },
 };
 
-export const usePlansStore = defineStore('settings/subscription/plans', () => {
+export const usePlansStore = defineStore('plans', () => {
   const http = useHttpClient();
 
   const plans = useAsyncData({
     async loader() {
-      return http.get<ISubscriptionPlan[]>('/users/current/subscription/plans');
+      const plans = await http.get<ISubscriptionPlan[]>('/users/current/subscription/plans');
+      return plans.sort((a, b) => a.tier - b.tier);
     },
 
     once: true,
     default: [],
   });
 
-  async function load(): Promise<void> {
-    await plans.load();
-  }
-
   return {
-    load,
+    load: plans.load,
     plans: toRef(plans, 'data'),
   };
 });

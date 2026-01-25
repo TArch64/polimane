@@ -13,7 +13,7 @@ import { useNumberFormatter } from '@/composables';
 import type { ISubscriptionPlan } from '@/models';
 import { SubscriptionLimit } from '@/enums';
 import { INFINITY_SYMBOL } from '@/config';
-import type { IPlanLimitConfig } from '../../stores';
+import type { IPlanLimitConfig } from '@/stores';
 
 const props = defineProps<{
   plan: ISubscriptionPlan;

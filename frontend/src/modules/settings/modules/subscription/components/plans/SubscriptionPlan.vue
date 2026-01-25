@@ -45,9 +45,9 @@ import { getSubscriptionPlanName, SubscriptionLimit, SubscriptionPlanId } from '
 import { Card } from '@/components/card';
 import { useAsyncAction, useCurrencyFormatter } from '@/composables';
 import { Button } from '@/components/button';
-import { useSessionStore } from '@/stores';
+import { PLAN_LIMIT_CONFIGS, useSessionStore } from '@/stores';
 import { useDowngradePlanConfirm } from '@/modules/settings/modules/subscription/composables';
-import { PLAN_LIMIT_CONFIGS, useSubscriptionStore } from '../../stores';
+import { useSubscriptionStore } from '../../stores';
 import PlanLimit from './PlanLimit.vue';
 
 const props = defineProps<{

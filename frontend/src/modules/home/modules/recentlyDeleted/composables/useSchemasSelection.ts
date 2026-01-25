@@ -6,6 +6,8 @@ import { useConfirm } from '@/components/confirm';
 import { useAsyncAction } from '@/composables';
 import { CornerUpLeftIcon, TrashIcon } from '@/components/icon';
 import { useSchemasCreatedCounter } from '@/composables/subscription';
+import { useModal } from '@/components/modal';
+import { SchemasLimitReachedModal } from '@/modules/home/components';
 import { useDeletedSchemasStore } from '../stores';
 
 export function useSchemasSelection(): ISchemaSelectionAdapter {
@@ -14,6 +16,7 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
 
   const router = useRouter();
   const schemasCreatedCounter = useSchemasCreatedCounter();
+  const schemasLimitReachedModal = useModal(SchemasLimitReachedModal);
 
   const deleteConfirm = useConfirm({
     danger: true,
@@ -39,12 +42,25 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
     await onDeletableComplete();
   });
 
-  const actions = computed((): MaybeContextMenuAction[] => [
+  const actions: MaybeContextMenuAction[] = [
     {
       title: 'Відновити Схеми',
       icon: CornerUpLeftIcon,
-      disabled: schemasCreatedCounter.willReach(actionIds.value.length),
-      onAction: restoreSchemas,
+
+      onAction() {
+        if (schemasCreatedCounter.willOverlow(actionIds.value.length)) {
+          const afterAdd = schemasCreatedCounter.current + actionIds.value.length;
+
+          void schemasLimitReachedModal.open({
+            actionTitle: 'відновити',
+            overflowCount: afterAdd - schemasCreatedCounter.max,
+          });
+
+          return;
+        }
+
+        return restoreSchemas();
+      },
     },
 
     {
@@ -62,7 +78,7 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
         }
       },
     },
-  ]);
+  ];
 
   return reactive({
     ids: toRef(schemasStore, 'selected'),
