@@ -14,7 +14,7 @@
         height="100%"
         :rx="corderRadius"
         :ry="corderRadius"
-        fill="var(--color-primary)"
+        :fill="color"
         class="subscription-limit__progress-value"
       />
     </svg>
@@ -25,15 +25,28 @@
 import { computed, ref } from 'vue';
 import { useElementSize } from '@vueuse/core';
 
-defineProps<{
+const props = defineProps<{
   value: number;
 }>();
 
 const wrapperRef = ref<HTMLElement | null>(null);
+
 const { width } = useElementSize(wrapperRef, undefined, { box: 'content-box' });
+
 const height = 7;
 const corderRadius = height / 2;
+
 const viewBox = computed(() => `0 0 ${width.value} ${height}`);
+
+const color = computed(() => {
+  if (props.value < 50) {
+    return 'var(--color-primary)';
+  }
+  if (props.value < 100) {
+    return 'var(--color-warning)';
+  }
+  return 'var(--color-danger)';
+});
 </script>
 
 <style scoped>
@@ -45,8 +58,8 @@ const viewBox = computed(() => `0 0 ${width.value} ${height}`);
   }
 
   .subscription-limit__progress-value {
-    transition: width 0.3s ease-out;
-    will-change: width;
+    transition: width 0.3s ease-out, fill 0.15s ease-out;
+    will-change: width, fill;
   }
 }
 </style>
