@@ -21,14 +21,14 @@ type LimitFactory = (subscription: IUserSubscription, key: LimitKey, config: IPl
 
 const createUserLimit: LimitFactory = (subscription, key, config) => ({
   key,
-  max: subscription.limits[key] ?? null,
+  max: subscription.plan.limits[key] ?? null,
   used: subscription.counters[key as keyof UserCounters] ?? null,
   ...config,
 });
 
 const createFeatureLimit: LimitFactory = (subscription, key, config) => ({
   key,
-  max: subscription.limits[key] ?? null,
+  max: subscription.plan.limits[key] ?? null,
   used: null,
   ...config,
 });
@@ -45,14 +45,13 @@ interface IChangePlanBody {
 export const useSubscriptionStore = defineStore('settings/subscription', () => {
   const http = useHttpClient();
   const sessionStore = useSessionStore();
-  const subscription = computed(() => sessionStore.user.subscription);
 
   const limits = computed(() => {
     const limits: ISubscriptionLimit[] = [];
 
     for (const [key, config] of getObjectEntries(PLAN_LIMIT_CONFIGS)) {
       const createLimit = limitFactories[config.type];
-      limits.push(createLimit(subscription.value, key, config));
+      limits.push(createLimit(sessionStore.subscription, key, config));
     }
 
     return limits;
@@ -70,9 +69,5 @@ export const useSubscriptionStore = defineStore('settings/subscription', () => {
     }
   }
 
-  return {
-    subscription,
-    limits,
-    changePlan,
-  };
+  return { limits, changePlan };
 });

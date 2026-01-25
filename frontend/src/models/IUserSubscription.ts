@@ -1,9 +1,10 @@
-import { SubscriptionPlanId, SubscriptionStatus } from '@/enums';
-import type { SubscriptionLimits, UserCounters } from './ISubscriptionPlan';
+import { SubscriptionStatus } from '@/enums';
+import type { ISubscriptionPlan, UserCounters } from './ISubscriptionPlan';
+
+export type UserActivePlan = Pick<ISubscriptionPlan, 'id' | 'tier' | 'limits'>;
 
 export interface IUserSubscription {
-  planId: SubscriptionPlanId;
   status: SubscriptionStatus;
   counters: UserCounters;
-  limits: SubscriptionLimits;
+  plan: UserActivePlan;
 }

@@ -10,11 +10,11 @@
 import { computed } from 'vue';
 import { Card } from '@/components/card';
 import { getSubscriptionPlanName } from '@/enums';
-import { useSubscriptionStore } from '../stores';
+import { useSessionStore } from '@/stores';
 
-const subscriptionStore = useSubscriptionStore();
+const sessionStore = useSessionStore();
 
-const planTitle = computed(() => getSubscriptionPlanName(subscriptionStore.subscription.planId));
+const planTitle = computed(() => getSubscriptionPlanName(sessionStore.plan.id));
 </script>
 
 <style scoped>

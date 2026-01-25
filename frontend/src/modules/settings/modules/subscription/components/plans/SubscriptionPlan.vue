@@ -10,7 +10,7 @@
           v-for="(config, limit) in PLAN_LIMIT_CONFIGS"
           :key="limit"
           :plan
-          :limit
+          :limit="limit as SubscriptionLimit"
           :config
         />
       </div>
@@ -40,10 +40,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { ISubscriptionPlan } from '@/models';
-import { getSubscriptionPlanName, SubscriptionPlanId } from '@/enums';
+import { getSubscriptionPlanName, SubscriptionLimit, SubscriptionPlanId } from '@/enums';
 import { Card } from '@/components/card';
 import { useAsyncAction, useCurrencyFormatter } from '@/composables';
 import { Button } from '@/components/button';
+import { useSessionStore } from '@/stores';
 import { PLAN_LIMIT_CONFIGS, useSubscriptionStore } from '../../stores';
 import PlanLimit from './PlanLimit.vue';
 
@@ -51,12 +52,13 @@ const props = defineProps<{
   plan: ISubscriptionPlan;
 }>();
 
+const sessionStore = useSessionStore();
 const subscriptionStore = useSubscriptionStore();
 
 const name = computed(() => getSubscriptionPlanName(props.plan.id));
 
 const isControl = computed(() => props.plan.id === SubscriptionPlanId.PRO);
-const isActive = computed(() => props.plan.id === subscriptionStore.subscription.planId);
+const isActive = computed(() => props.plan.id === sessionStore.plan.id);
 
 const classes = computed(() => ({
   'subscription-plan--control': isControl.value,

@@ -6,7 +6,7 @@ export type SubscriptionLimits = Partial<Record<SubscriptionLimit, number>>;
 
 export interface ISubscriptionPlan {
   id: SubscriptionPlanId;
+  tier: number;
   monthlyPrice: number;
-  yearlyPrice: number;
   limits: SubscriptionLimits;
 }

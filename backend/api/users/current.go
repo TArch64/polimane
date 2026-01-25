@@ -17,14 +17,20 @@ type UserResponse struct {
 }
 
 type SubscriptionResponse struct {
-	PlanID   model.SubscriptionPlanID    `json:"planId"`
 	Status   model.SubscriptionStatus    `json:"status"`
 	Counters *model.SubscriptionCounters `json:"counters"`
-	Limits   *model.SubscriptionLimits   `json:"limits"`
+	Plan     *PlanResponse               `json:"plan"`
+}
+
+type PlanResponse struct {
+	ID     model.SubscriptionPlanID  `json:"id"`
+	Tier   uint8                     `json:"tier"`
+	Limits *model.SubscriptionLimits `json:"limits"`
 }
 
 func (c *Controller) Current(ctx *fiber.Ctx) error {
 	session := auth.GetSession(ctx)
+	plan := session.User.Subscription.Plan()
 
 	return ctx.JSON(UserResponse{
 		ID:            session.User.ID,
@@ -34,10 +40,14 @@ func (c *Controller) Current(ctx *fiber.Ctx) error {
 		EmailVerified: session.WorkosUser.EmailVerified,
 
 		Subscription: &SubscriptionResponse{
-			PlanID:   session.User.Subscription.PlanID,
 			Status:   session.User.Subscription.Status,
 			Counters: session.User.Subscription.Counters.Data(),
-			Limits:   session.User.Subscription.Plan().Limits,
+
+			Plan: &PlanResponse{
+				ID:     plan.ID,
+				Tier:   plan.Tier,
+				Limits: plan.Limits,
+			},
 		},
 	})
 }

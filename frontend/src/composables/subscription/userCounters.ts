@@ -11,10 +11,9 @@ export interface IUserCounter {
 
 function useUserCounter(name: UserLimit): IUserCounter {
   const sessionStore = useSessionStore();
-  const subscription = computed(() => sessionStore.user.subscription);
 
-  const current = computed(() => subscription.value.counters[name]);
-  const max = computed(() => subscription.value.limits[name]!);
+  const current = computed(() => sessionStore.subscription.counters[name]);
+  const max = computed(() => sessionStore.plan.limits[name]!);
   const isReached = computed(() => current.value >= max.value);
 
   function willReach(value: number): boolean {

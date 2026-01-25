@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import { nextTick, type Ref, ref, watch } from 'vue';
-import type { IUser } from '@/models';
+import { computed, nextTick, type Ref, ref, watch } from 'vue';
+import type { IUser, IUserSubscription, UserActivePlan } from '@/models';
 import { UpdateCountersMiddleware, useAuthorized, useHttpClient } from '@/composables';
 import { SubscriptionLimit } from '@/enums';
 
@@ -8,8 +8,11 @@ export const useSessionStore = defineStore('session', () => {
   const http = useHttpClient();
   const updateCountersMiddleware = http.getMiddleware(UpdateCountersMiddleware)!;
 
-  const user = ref<IUser | null>(null);
   const authorized = useAuthorized();
+
+  const user = ref<IUser | null>(null);
+  const subscription = computed(() => user.value?.subscription);
+  const plan = computed(() => subscription.value?.plan);
 
   async function refresh(): Promise<void> {
     try {
@@ -39,9 +42,7 @@ export const useSessionStore = defineStore('session', () => {
     }
   }
 
-  function getLimit(name: SubscriptionLimit): number | undefined {
-    return user.value?.subscription.limits[name];
-  }
+  const getLimit = (name: SubscriptionLimit) => plan.value?.limits[name];
 
   watch(
     user,
@@ -60,6 +61,8 @@ export const useSessionStore = defineStore('session', () => {
 
   return {
     user: user as Ref<IUser>,
+    subscription: subscription as Ref<IUserSubscription>,
+    plan: plan as Ref<UserActivePlan>,
     updateUser,
     getLimit,
     isLoggedIn: authorized,

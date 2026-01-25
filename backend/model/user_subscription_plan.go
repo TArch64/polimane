@@ -47,7 +47,7 @@ var (
 
 type SubscriptionPlan struct {
 	ID           SubscriptionPlanID  `json:"id"`
-	Tier         uint8               `json:"-"`
+	Tier         uint8               `json:"tier"`
 	MonthlyPrice float32             `json:"monthlyPrice"`
 	Limits       *SubscriptionLimits `json:"limits"`
 }
