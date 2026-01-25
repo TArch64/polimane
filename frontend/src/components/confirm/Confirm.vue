@@ -79,10 +79,6 @@ function accept() {
 
 const message = computed(() => toValue(props.model.message));
 
-const backgroundColor = computed(() => {
-  return props.model.control ? 'var(--color-background-2)' : 'var(--color-background-1)';
-});
-
 onMounted(async () => {
   dialogRef.value.showPopover();
   await nextTick();
@@ -100,7 +96,7 @@ onBackdropClick(decline);
     width: 300px;
     padding: 12px;
     overflow-y: auto;
-    background-color: v-bind("backgroundColor");
+    background-color: var(--color-background-1);
     border: var(--divider);
     border-radius: var(--rounded-lg);
     box-shadow: var(--box-shadow);
@@ -108,7 +104,7 @@ onBackdropClick(decline);
   }
 
   .confirm__message:not(:has(+ .confirm__additional-condition)) {
-    margin-bottom: 4px;
+    margin-bottom: 8px;
   }
 
   .confirm__additional-condition {

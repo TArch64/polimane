@@ -8,8 +8,12 @@ const srgb = (value: number): ColorObject => ({
   coords: [value, value, value],
 });
 
-function sum(nums: number[]): number {
-  return nums.reduce((a, b) => a + b, 0);
+function sum(nums: Array<number | null>): number {
+  let result = 0;
+  for (const num of nums) {
+    if (num !== null) result += num;
+  }
+  return result;
 }
 
 export function useBackgroundAccessibleColor(targetContrast: number = AA_MIN_CONTRAST) {

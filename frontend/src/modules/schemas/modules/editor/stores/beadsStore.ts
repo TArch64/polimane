@@ -22,8 +22,8 @@ export enum PaintEffect {
 export const useBeadsStore = defineStore('schemas/editor/beads', () => {
   const editorStore = useEditorStore();
 
-  function getColor(coord: BeadCoord) {
-    return editorStore.schema.beads[coord] ?? null;
+  function getBead(coord: BeadCoord) {
+    return editorStore.schema.beads[coord];
   }
 
   function checkExtendingPaint(coord: BeadCoord): Direction[] {
@@ -64,7 +64,7 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     for (let x = from.x; x <= to.x; x++) {
       for (let y = from.y; y <= to.y; y++) {
         const coord = serializeBeadCoord(x, y);
-        const bead = editorStore.schema.beads[coord];
+        const bead = getBead(coord);
         if (bead) yield [coord, bead];
       }
     }
@@ -99,7 +99,7 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     for (let [coord, bead] of iterateArea(from, to)) {
       if (isRefBead(bead)) {
         coord = getBeadSettings(bead).to;
-        bead = editorStore.schema.beads[coord]!;
+        bead = getBead(coord)!;
       }
 
       if (coord in beads) {
@@ -117,7 +117,7 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
   }
 
   function onBeadBeforeRemove(coord: BeadCoord): void {
-    const bead = editorStore.schema.beads[coord];
+    const bead = getBead(coord);
     if (!bead) return;
 
     if (isRefBead(bead)) {
@@ -141,14 +141,14 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
   }
 
   function paint(coord: BeadCoord, color: SchemaBead | null): PaintEffect | null {
-    const currentColor = getColor(coord);
+    const current = getBead(coord);
 
-    if (currentColor === color) {
+    if (current === color) {
       return null;
     }
 
     if (color) {
-      if (coord in editorStore.schema.beads) {
+      if (current) {
         onBeadBeforeRemove(coord);
       }
 
@@ -164,7 +164,7 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
       return null;
     }
 
-    if (currentColor) {
+    if (current) {
       remove(coord);
     }
 

@@ -15,7 +15,6 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
 
   const deleteConfirm = useConfirm({
     danger: true,
-    control: false,
     message: () => `Ви впевнені, що хочете видалити остаточно ${actionIds.value.length} схем?`,
     acceptButton: 'Видалити',
   });

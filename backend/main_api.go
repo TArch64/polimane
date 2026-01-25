@@ -11,6 +11,7 @@ import (
 	apischemas "polimane/backend/api/schemas"
 	apischemasusers "polimane/backend/api/schemas/users"
 	apiusers "polimane/backend/api/users"
+	apiauthfactors "polimane/backend/api/users/authfactors"
 	"polimane/backend/env"
 	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
@@ -78,12 +79,14 @@ func main() {
 			AsController(apiping.Provider),
 			AsController(apiauth.Provider),
 			AsController(apiusers.Provider),
+			apiauthfactors.Provider, // users child controller
 			AsController(apischemas.Provider),
-			AsController(apifolders.Provider),
 			apischemasusers.Provider, // schemas child controller
+			AsController(apifolders.Provider),
 			api.OptionsProvider,
 			api.Provider,
 		),
+
 		fxlogger.Provider,
 		fx.Invoke(api.Start),
 	).Run()

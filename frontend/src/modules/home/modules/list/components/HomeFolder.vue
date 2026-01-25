@@ -42,7 +42,6 @@ const folderRoute = computed((): RouteLocationRaw => ({
 
 const deleteConfirm = useConfirm({
   danger: true,
-  control: false,
   message: 'Ви впевнені, що хочете видалити цю директорію?',
   acceptButton: 'Видалити',
   additionalCondition: 'Видалити всі схеми в директорії',

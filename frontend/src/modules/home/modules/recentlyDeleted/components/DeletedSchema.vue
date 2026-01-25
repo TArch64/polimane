@@ -24,7 +24,6 @@ const router = useRouter();
 
 const deleteConfirm = useConfirm({
   danger: true,
-  control: false,
   message: 'Ви впевнені, що хочете видалити цю схему остаточно?',
   acceptButton: 'Видалити',
 });

@@ -7,7 +7,7 @@ import (
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
-	"polimane/backend/api/schemas/users"
+	apischemasusers "polimane/backend/api/schemas/users"
 	"polimane/backend/model"
 	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemas "polimane/backend/repository/schemas"
@@ -31,7 +31,7 @@ type ControllerOptions struct {
 	Renderer         *views.Renderer
 	SchemaScreenshot *schemascreenshot.Service
 	SchemaDelete     *schemadelete.Service
-	UsersController  *users.Controller
+	UsersController  *apischemasusers.Controller
 }
 
 type Controller struct {
@@ -43,7 +43,7 @@ type Controller struct {
 	renderer         *views.Renderer
 	schemaScreenshot *schemascreenshot.Service
 	schemaDelete     *schemadelete.Service
-	usersController  *users.Controller
+	usersController  *apischemasusers.Controller
 }
 
 func Provider(options ControllerOptions) base.Controller {
