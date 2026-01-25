@@ -28,7 +28,8 @@
         size="lg"
         class="subscription-plan__activate"
         :loading="changePlan.isActive"
-        @click="changePlan"
+        :style="downgradePlanConfirm.anchorStyle"
+        @click="changePlanIntent"
         v-else
       >
         Обрати Підписку
@@ -38,13 +39,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import type { ISubscriptionPlan } from '@/models';
 import { getSubscriptionPlanName, SubscriptionLimit, SubscriptionPlanId } from '@/enums';
 import { Card } from '@/components/card';
 import { useAsyncAction, useCurrencyFormatter } from '@/composables';
 import { Button } from '@/components/button';
 import { useSessionStore } from '@/stores';
+import { useDowngradePlanConfirm } from '@/modules/settings/modules/subscription/composables';
 import { PLAN_LIMIT_CONFIGS, useSubscriptionStore } from '../../stores';
 import PlanLimit from './PlanLimit.vue';
 
@@ -55,10 +57,13 @@ const props = defineProps<{
 const sessionStore = useSessionStore();
 const subscriptionStore = useSubscriptionStore();
 
+const downgradePlanConfirm = useDowngradePlanConfirm(toRef(props, 'plan'));
+
 const name = computed(() => getSubscriptionPlanName(props.plan.id));
 
 const isControl = computed(() => props.plan.id === SubscriptionPlanId.PRO);
 const isActive = computed(() => props.plan.id === sessionStore.plan.id);
+const isLowerPlan = computed(() => props.plan.tier < sessionStore.plan.tier);
 
 const classes = computed(() => ({
   'subscription-plan--control': isControl.value,
@@ -71,6 +76,15 @@ const formattedMonthlyPrice = useCurrencyFormatter(() => {
 const changePlan = useAsyncAction(async () => {
   await subscriptionStore.changePlan(props.plan.id);
 });
+
+async function changePlanIntent(): Promise<void> {
+  if (isLowerPlan.value) {
+    const result = await downgradePlanConfirm.ask();
+    if (!result.isAccepted) return;
+  }
+
+  await changePlan();
+}
 </script>
 
 <style scoped>

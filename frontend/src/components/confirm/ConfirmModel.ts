@@ -32,7 +32,6 @@ export class ConfirmModel {
   readonly message;
   readonly topEl;
   readonly danger;
-  readonly control;
   readonly declineButton;
   readonly acceptButton;
   readonly additionalCondition;
@@ -47,7 +46,6 @@ export class ConfirmModel {
     this.message = options.message;
     this.topEl = options.topEl;
     this.danger = options.danger ?? false;
-    this.control = options.control ?? true;
     this.declineButton = options.declineButton ?? 'Відмінити';
     this.acceptButton = options.acceptButton ?? 'Підтвердити';
     this.additionalCondition = options.additionalCondition ?? '';

@@ -43,7 +43,6 @@ const deleteConfirm = useConfirm({
   message: 'Ви впевнені, що хочете видалити цю двухфакторну автентифікацію?',
   acceptButton: 'Видалити',
   danger: true,
-  control: false,
 });
 
 const deleteFactor = useAsyncAction(async () => {

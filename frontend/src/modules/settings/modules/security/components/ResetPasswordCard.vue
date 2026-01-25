@@ -32,7 +32,6 @@ const resetPasswordConfirm = useConfirm({
   message: 'Ви впевнені, що хочете скинути пароль?',
   acceptButton: 'Так',
   danger: true,
-  control: false,
 });
 
 const resetPassword = useAsyncAction(async (): Promise<void> => {

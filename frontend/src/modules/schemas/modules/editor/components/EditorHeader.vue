@@ -162,7 +162,6 @@ const openAccessEditModal = useAsyncAction(async () => {
 
 const deleteConfirm = useConfirm({
   danger: true,
-  control: false,
   message: 'Ви впевнені, що хочете видалити цю схему?',
   acceptButton: 'Видалити',
 });

@@ -30,7 +30,6 @@ const profileStore = useProfileStore();
 
 const deleteConfirm = useConfirm({
   danger: true,
-  control: false,
   message: 'Ви впевнені, що хочете видалити свій акаунт?',
   acceptButton: 'Видалити',
 });
