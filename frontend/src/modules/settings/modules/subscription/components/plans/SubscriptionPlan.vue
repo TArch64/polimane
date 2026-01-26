@@ -1,5 +1,5 @@
 <template>
-  <Card as="div" class="subscription-plan" :class="classes">
+  <Card as="div" class="subscription-plan" :variant="cardVariant">
     <div class="subscription-plan__column">
       <h3 class="subscription-plan__name">
         {{ name }}
@@ -16,7 +16,7 @@
       </div>
 
       <p class="subscription-plan__price">
-        {{ formattedMonthlyPrice }}/місяць
+        {{ formattedPrice }}/місяць
       </p>
 
       <p v-if="isActive">
@@ -45,8 +45,10 @@ import { getSubscriptionPlanName, SubscriptionLimit, SubscriptionPlanId } from '
 import { Card } from '@/components/card';
 import { useAsyncAction, useCurrencyFormatter } from '@/composables';
 import { Button } from '@/components/button';
-import { PLAN_LIMIT_CONFIGS, useSessionStore } from '@/stores';
+import { useSessionStore } from '@/stores';
 import { useDowngradePlanConfirm } from '@/modules/settings/modules/subscription/composables';
+import type { ComponentVariant } from '@/types';
+import { PLAN_LIMIT_CONFIGS } from '@/config';
 import { useSubscriptionStore } from '../../stores';
 import PlanLimit from './PlanLimit.vue';
 
@@ -62,16 +64,12 @@ const downgradePlanConfirm = useDowngradePlanConfirm(toRef(props, 'plan'));
 const name = computed(() => getSubscriptionPlanName(props.plan.id));
 
 const isControl = computed(() => props.plan.id === SubscriptionPlanId.PRO);
+const cardVariant = computed((): ComponentVariant => isControl.value ? 'inverted' : 'main');
+
 const isActive = computed(() => props.plan.id === sessionStore.plan.id);
 const isLowerPlan = computed(() => props.plan.tier < sessionStore.plan.tier);
 
-const classes = computed(() => ({
-  'subscription-plan--control': isControl.value,
-}));
-
-const formattedMonthlyPrice = useCurrencyFormatter(() => {
-  return props.plan.monthlyPrice;
-});
+const formattedPrice = useCurrencyFormatter(() => props.plan.monthlyPrice);
 
 const changePlan = useAsyncAction(async () => {
   await subscriptionStore.changePlan(props.plan.id);
@@ -93,16 +91,6 @@ async function changePlanIntent(): Promise<void> {
     border: none;
     padding: 100px 40px;
     border-radius: calc(var(--rounded-lg) - 1px);
-  }
-
-  .subscription-plan--control {
-    --card-background: color-mix(in srgb, var(--color-primary), var(--color-white) 10%);
-    --button-base-color: var(--color-white);
-    color: var(--color-white);
-
-    .subscription-plan__activate {
-      --button-foreground: var(--color-primary);
-    }
   }
 
   .subscription-plan__column {

@@ -52,7 +52,6 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
           const afterAdd = schemasCreatedCounter.current + actionIds.value.length;
 
           void schemasLimitReachedModal.open({
-            actionTitle: 'відновити',
             overflowCount: afterAdd - schemasCreatedCounter.max,
           });
 

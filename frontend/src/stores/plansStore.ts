@@ -1,32 +1,7 @@
 import { defineStore } from 'pinia';
 import { toRef } from 'vue';
 import { useAsyncData, useHttpClient } from '@/composables';
-import type { ISubscriptionPlan, SubscriptionLimits } from '@/models';
-import { SubscriptionLimitType } from '@/enums';
-
-type LimitKey = keyof SubscriptionLimits;
-
-export interface IPlanLimitConfig {
-  type: SubscriptionLimitType;
-  title: string;
-}
-
-export const PLAN_LIMIT_CONFIGS: Record<LimitKey, IPlanLimitConfig> = {
-  schemasCreated: {
-    type: SubscriptionLimitType.USER,
-    title: 'Схеми',
-  },
-
-  schemaBeads: {
-    type: SubscriptionLimitType.FEATURE,
-    title: 'Бісер в Схемі',
-  },
-
-  sharedAccess: {
-    type: SubscriptionLimitType.FEATURE,
-    title: 'Користувачі Схеми',
-  },
-};
+import type { ISubscriptionPlan } from '@/models';
 
 export const usePlansStore = defineStore('plans', () => {
   const http = useHttpClient();

@@ -1,1 +1,1 @@
-export type ComponentVariant = 'main' | 'control';
+export type ComponentVariant = 'main' | 'control' | 'inverted';

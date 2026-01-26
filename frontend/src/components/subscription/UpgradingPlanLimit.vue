@@ -1,8 +1,8 @@
 <template>
-  <p class="plan-limit">
+  <p class="upgrading-plan-limit">
     <span>{{ config.title }}</span>
 
-    <span class="plan-limit__value">
+    <span class="upgrading-plan-limit__value">
       {{ formattedLimit }}
     </span>
   </p>
@@ -28,13 +28,12 @@ const formattedLimit = useLimitFormatter({
 
 <style scoped>
 @layer page {
-  .plan-limit {
+  .upgrading-plan-limit {
     display: flex;
     justify-content: space-between;
-    font-size: var(--font-sm);
   }
 
-  .plan-limit__value {
+  .upgrading-plan-limit__value {
     font-weight: 500;
   }
 }

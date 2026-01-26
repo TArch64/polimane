@@ -43,7 +43,6 @@ const menuActions: MaybeContextMenuAction[] = [
     async onAction() {
       if (schemasCreatedCounter.isReached) {
         void schemasLimitReachedModal.open({
-          actionTitle: 'відновити',
           overflowCount: 1,
         });
 

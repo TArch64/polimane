@@ -1,1 +1,1 @@
-export { default as UpgradingPlan } from './UpgradingPlan.vue';
+export { default as LimitReachedModal } from './LimitReachedModal.vue';
