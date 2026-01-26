@@ -9,7 +9,11 @@
         {{ formattedPrice }}/місяць
       </p>
 
-      <Button variant="primary">
+      <Button
+        variant="primary"
+        :loading="upgradePlan.isActive"
+        @click="upgradePlan"
+      >
         Підписатися
       </Button>
     </div>
@@ -32,16 +36,28 @@ import { Card } from '@/components/card';
 import type { ISubscriptionPlan } from '@/models';
 import { getSubscriptionPlanName, SubscriptionLimit } from '@/enums';
 import { Button } from '@/components/button';
-import { useCurrencyFormatter } from '@/composables';
+import { useAsyncAction, useCurrencyFormatter } from '@/composables';
 import { PLAN_LIMIT_CONFIGS } from '@/config';
+import { useSessionStore } from '@/stores';
 import UpgradingPlanLimit from './UpgradingPlanLimit.vue';
 
 const props = defineProps<{
   plan: ISubscriptionPlan;
 }>();
 
+const emit = defineEmits<{
+  upgraded: [];
+}>();
+
+const sessionStore = useSessionStore();
+
 const name = computed(() => getSubscriptionPlanName(props.plan.id));
 const formattedPrice = useCurrencyFormatter(() => props.plan.monthlyPrice);
+
+const upgradePlan = useAsyncAction(async () => {
+  await sessionStore.changePlan(props.plan.id);
+  emit('upgraded');
+});
 </script>
 
 <style scoped>

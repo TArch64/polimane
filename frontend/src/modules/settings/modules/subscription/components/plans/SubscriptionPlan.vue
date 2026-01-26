@@ -49,7 +49,6 @@ import { useSessionStore } from '@/stores';
 import { useDowngradePlanConfirm } from '@/modules/settings/modules/subscription/composables';
 import type { ComponentVariant } from '@/types';
 import { PLAN_LIMIT_CONFIGS } from '@/config';
-import { useSubscriptionStore } from '../../stores';
 import PlanLimit from './PlanLimit.vue';
 
 const props = defineProps<{
@@ -57,7 +56,6 @@ const props = defineProps<{
 }>();
 
 const sessionStore = useSessionStore();
-const subscriptionStore = useSubscriptionStore();
 
 const downgradePlanConfirm = useDowngradePlanConfirm(toRef(props, 'plan'));
 
@@ -72,7 +70,7 @@ const isLowerPlan = computed(() => props.plan.tier < sessionStore.plan.tier);
 const formattedPrice = useCurrencyFormatter(() => props.plan.monthlyPrice);
 
 const changePlan = useAsyncAction(async () => {
-  await subscriptionStore.changePlan(props.plan.id);
+  await sessionStore.changePlan(props.plan.id);
 });
 
 async function changePlanIntent(): Promise<void> {

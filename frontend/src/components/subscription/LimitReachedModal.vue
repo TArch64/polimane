@@ -7,14 +7,15 @@
     <UpgradingPlan
       class="limit-reached__plan"
       :plan="nextPlan"
+      @upgraded="modal.close(true)"
       v-if="nextPlan"
     />
   </Modal>
 </template>
 
 <script setup lang="ts">
-import { computed, type Slot } from 'vue';
-import { Modal } from '@/components/modal';
+import type { Slot } from 'vue';
+import { Modal, useActiveModal } from '@/components/modal';
 import { usePlansStore, useSessionStore } from '@/stores';
 import type { ISubscriptionPlan } from '@/models';
 import UpgradingPlan from './UpgradingPlan.vue';
@@ -32,9 +33,10 @@ defineSlots<{
 const sessionStore = useSessionStore();
 const plansStore = usePlansStore();
 
-const nextPlan = computed(() => {
-  return plansStore.plans.find((plan) => plan.tier > sessionStore.plan.tier);
-});
+const modal = useActiveModal<boolean>();
+
+// Need to be static to avoid deactivating listener when upgrading to last plan
+const nextPlan = plansStore.plans.find((plan) => plan.tier > sessionStore.plan.tier);
 </script>
 
 <style scoped>

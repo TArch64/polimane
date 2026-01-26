@@ -3,7 +3,6 @@ import { useRouter } from 'vue-router';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import type { ISchemaSelectionAdapter } from '@/modules/home/stores';
 import { useConfirm } from '@/components/confirm';
-import { useAsyncAction } from '@/composables';
 import { CornerUpLeftIcon, TrashIcon } from '@/components/icon';
 import { useSchemasCreatedCounter } from '@/composables/subscription';
 import { useModal } from '@/components/modal';
@@ -32,33 +31,26 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
     }
   }
 
-  const deleteSchemas = useAsyncAction(async () => {
-    await schemasStore.deleteMany(actionIds.value);
-    await onDeletableComplete();
-  });
-
-  const restoreSchemas = useAsyncAction(async () => {
-    await schemasStore.restoreMany(actionIds.value);
-    await onDeletableComplete();
-  });
-
   const actions: MaybeContextMenuAction[] = [
     {
       title: 'Відновити Схеми',
       icon: CornerUpLeftIcon,
 
-      onAction() {
+      async onAction() {
         if (schemasCreatedCounter.willOverlow(actionIds.value.length)) {
           const afterAdd = schemasCreatedCounter.current + actionIds.value.length;
 
-          void schemasLimitReachedModal.open({
+          const isUpgraded = await schemasLimitReachedModal.open({
             overflowCount: afterAdd - schemasCreatedCounter.max,
           });
 
-          return;
+          if (!isUpgraded) {
+            return;
+          }
         }
 
-        return restoreSchemas();
+        await schemasStore.restoreMany(actionIds.value);
+        await onDeletableComplete();
       },
     },
 
@@ -73,7 +65,8 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
         });
 
         if (confirmation.isAccepted) {
-          await deleteSchemas();
+          await schemasStore.deleteMany(actionIds.value);
+          await onDeletableComplete();
         }
       },
     },

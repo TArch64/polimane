@@ -42,11 +42,13 @@ const menuActions: MaybeContextMenuAction[] = [
 
     async onAction() {
       if (schemasCreatedCounter.isReached) {
-        void schemasLimitReachedModal.open({
+        const isUpgraded = await schemasLimitReachedModal.open({
           overflowCount: 1,
         });
 
-        return;
+        if (!isUpgraded) {
+          return;
+        }
       }
 
       await schemasStore.restoreSchema(props.schema);

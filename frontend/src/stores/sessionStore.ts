@@ -1,8 +1,17 @@
 import { defineStore } from 'pinia';
 import { computed, nextTick, type Ref, ref, watch } from 'vue';
 import type { IUser, IUserSubscription, UserActivePlan } from '@/models';
-import { UpdateCountersMiddleware, useAuthorized, useHttpClient } from '@/composables';
-import { SubscriptionLimit } from '@/enums';
+import {
+  type HttpBody,
+  UpdateCountersMiddleware,
+  useAuthorized,
+  useHttpClient,
+} from '@/composables';
+import { SubscriptionLimit, SubscriptionPlanId } from '@/enums';
+
+interface IChangePlanBody {
+  planId: SubscriptionPlanId;
+}
 
 export const useSessionStore = defineStore('session', () => {
   const http = useHttpClient();
@@ -59,6 +68,18 @@ export const useSessionStore = defineStore('session', () => {
     });
   });
 
+  async function changePlan(planId: SubscriptionPlanId): Promise<void> {
+    await http.post<HttpBody, IChangePlanBody>('/users/current/subscription/change', {
+      planId,
+    });
+
+    try {
+      await refresh();
+    } catch {
+      location.reload();
+    }
+  }
+
   return {
     user: user as Ref<IUser>,
     subscription: subscription as Ref<IUserSubscription>,
@@ -69,5 +90,6 @@ export const useSessionStore = defineStore('session', () => {
     refresh,
     logout,
     onLogout,
+    changePlan,
   };
 });
