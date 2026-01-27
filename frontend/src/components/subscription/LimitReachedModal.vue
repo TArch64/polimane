@@ -6,7 +6,7 @@
 
     <SubscriptionPlans
       embedded
-      class="limit-reached__plan"
+      class="limit-reached__plans"
       @upgraded="modal.close(true)"
       v-if="nextPlan"
     />
@@ -49,7 +49,7 @@ const nextPlan = plansStore.plans.find((plan) => plan.tier > sessionStore.plan.t
     }
   }
 
-  .limit-reached__plan {
+  .limit-reached__plans {
     margin-bottom: 4px;
   }
 }

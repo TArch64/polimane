@@ -10,6 +10,10 @@
     <div class="banner__content">
       <slot />
     </div>
+
+    <div class="banner__actions" v-if="slots.actions">
+      <slot name="actions" />
+    </div>
   </section>
 </template>
 
@@ -28,8 +32,9 @@ const props = withDefaults(defineProps<{
   size: 'md',
 });
 
-defineSlots<{
+const slots = defineSlots<{
   default: Slot;
+  actions?: Slot;
 }>();
 
 const classes = computed(() => [
@@ -43,6 +48,7 @@ const classes = computed(() => [
 @layer components {
   .banner {
     display: flex;
+    align-items: center;;
 
     :deep(:where(p, h1, h2, h3, h4):not(:first-child)) {
       margin-top: var(--banner-text-spacing);
@@ -93,7 +99,14 @@ const classes = computed(() => [
     flex-grow: 1;
     flex-basis: 0;
     min-width: 0;
-    align-self: center;
+  }
+
+  .banner__actions {
+    display: flex;
+    flex-shrink: 0;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
   }
 }
 </style>
