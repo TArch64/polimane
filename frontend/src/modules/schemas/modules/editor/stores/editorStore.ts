@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { onScopeDispose, type Ref, ref, toRef } from 'vue';
 import type { ISchema } from '@/models';
-import { useAccessPermissions, useHttpClient } from '@/composables';
+import { type HttpBody, useAccessPermissions, useHttpClient } from '@/composables';
 import { AccessLevel } from '@/enums';
 import {
   useEditorBeadsLimitUpdater,
@@ -9,6 +9,10 @@ import {
   useEditorSaveProcessor,
 } from './composables';
 import { useHistoryStore } from './historyStore';
+
+export interface ISchemasRequest {
+  ids: string[];
+}
 
 export const useEditorStore = defineStore('schemas/editor', () => {
   const http = useHttpClient();
@@ -32,9 +36,18 @@ export const useEditorStore = defineStore('schemas/editor', () => {
   }
 
   async function deleteSchema(): Promise<void> {
-    saveDispatcher.disable();
-    saveDispatcher.abandon();
-    await http.delete(['/schemas', schema.value.id]);
+    try {
+      saveDispatcher.disable();
+
+      await http.delete<HttpBody, ISchemasRequest>(['/schemas', 'delete'], {
+        ids: [schema.value.id],
+      });
+
+      saveDispatcher.abandon();
+    } catch (error) {
+      saveDispatcher.enable();
+      throw error;
+    }
   }
 
   onScopeDispose(async () => {

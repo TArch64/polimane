@@ -106,10 +106,7 @@ import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
 import { SchemaRenameModal } from '@/modules/schemas/shared/modals/rename';
-import {
-  SchemaAccessEditModal,
-  useSchemaUsersStore,
-} from '@/modules/schemas/shared/modals/accessEdit';
+import { SchemaAccessEditModal } from '@/modules/schemas/shared/modals/accessEdit';
 import { useSessionStore } from '@/stores';
 import { SubscriptionLimit } from '@/enums';
 import { useEditorStore, useHistoryStore, useSelectionStore } from '../stores';
@@ -121,7 +118,6 @@ const route = useRoute<'schema-editor'>();
 const sessionStore = useSessionStore();
 const historyStore = useHistoryStore();
 const editorStore = useEditorStore();
-const schemaUsersStore = useSchemaUsersStore();
 const selectionStore = useSelectionStore();
 
 const isMobile = useMobileScreen();
