@@ -19,16 +19,16 @@ const props = defineProps<{
   schema: ListSchema;
 }>();
 
-const renameAction = useSchemaMenuCopy(() => props.schema);
+const copyAction = useSchemaMenuCopy(() => props.schema);
 const addToDirectoryAction = useSchemaMenuAddToDirectory(() => props.schema);
-const copyAction = useSchemaMenuRename(() => props.schema);
+const renameAction = useSchemaMenuRename(() => props.schema);
 const editAccessAction = useSchemaMenuEditAccess(() => props.schema);
 const deleteAction = useSchemaMenuDelete(() => props.schema);
 
 const menuActions = computed((): MaybeContextMenuAction[] => [
-  renameAction.value,
+  copyAction,
   addToDirectoryAction.value,
-  copyAction.value,
+  renameAction.value,
   editAccessAction.value,
   deleteAction.value,
 ]);

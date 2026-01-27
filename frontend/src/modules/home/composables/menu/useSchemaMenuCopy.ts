@@ -1,11 +1,13 @@
-import { computed, type MaybeRefOrGetter, type Ref, toValue } from 'vue';
+import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import type { MaybeContextMenuAction } from '@/components/contextMenu';
+import type { IContextMenuAction } from '@/components/contextMenu';
 import { type ListSchema, useHomeStore } from '@/modules/home/stores';
 import { CopyIcon } from '@/components/icon';
+import { useModal } from '@/components/modal';
+import { SchemasLimitReachedModal } from '@/modules/home/components';
 import { useSchemasCreatedCounter } from '@/composables/subscription';
 
-export function useSchemaMenuCopy(schemaRef: MaybeRefOrGetter<ListSchema>): Ref<MaybeContextMenuAction> {
+export function useSchemaMenuCopy(schemaRef: MaybeRefOrGetter<ListSchema>): IContextMenuAction {
   const schema = computed(() => toValue(schemaRef));
 
   const homeStore = useHomeStore();
@@ -13,13 +15,23 @@ export function useSchemaMenuCopy(schemaRef: MaybeRefOrGetter<ListSchema>): Ref<
   const router = useRouter();
   const route = useRoute();
   const schemasCreatedCounter = useSchemasCreatedCounter();
+  const schemasLimitReachedModal = useModal(SchemasLimitReachedModal);
 
-  return computed(() => ({
+  return {
     title: 'Зробити Копію',
     icon: CopyIcon,
-    disabled: schemasCreatedCounter.isReached,
 
     async onAction() {
+      if (schemasCreatedCounter.isReached) {
+        const isUpgraded = await schemasLimitReachedModal.open({
+          overflowCount: 1,
+        });
+
+        if (!isUpgraded) {
+          return;
+        }
+      }
+
       const created = await homeStore.copySchema.do(schema.value);
 
       await router.push({
@@ -28,5 +40,5 @@ export function useSchemaMenuCopy(schemaRef: MaybeRefOrGetter<ListSchema>): Ref<
         query: { from: route.path },
       });
     },
-  }));
+  };
 }
