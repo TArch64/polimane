@@ -1,7 +1,7 @@
 import type { Ref } from 'vue';
 import { type IConfirm, type IConfirmResult, useConfirm } from '@/components/confirm';
-import { useSchemasCreatedCounter } from '@/composables/subscription';
 import type { ISubscriptionPlan } from '@/models';
+import { useSchemasCreatedCounter } from './userCounters';
 
 export function useDowngradePlanConfirm(plan: Ref<ISubscriptionPlan>): IConfirm {
   const schemasCreatedCounter = useSchemasCreatedCounter();

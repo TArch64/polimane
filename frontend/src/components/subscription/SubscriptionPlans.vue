@@ -1,20 +1,36 @@
 <template>
-  <Card class="subscription-plans">
+  <Card class="subscription-plans" :class="classes">
     <SubscriptionPlan
       v-for="plan of plansStore.plans"
       :key="plan.id"
       :plan="plan"
       class="subscription-plans__item"
+      @upgraded="$emit('upgraded')"
     />
   </Card>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Card } from '@/components/card';
 import { usePlansStore } from '@/stores';
 import SubscriptionPlan from './SubscriptionPlan.vue';
 
+const props = withDefaults(defineProps<{
+  embedded?: boolean;
+}>(), {
+  embedded: false,
+});
+
+defineEmits<{
+  upgraded: [];
+}>();
+
 const plansStore = usePlansStore();
+
+const classes = computed(() => ({
+  'subscription-plans--embedded': props.embedded,
+}));
 </script>
 
 <style scoped>
@@ -23,6 +39,12 @@ const plansStore = usePlansStore();
     padding: 0;
     display: flex;
     min-width: 0;
+  }
+
+  .subscription-plans--embedded,
+  .subscription-plans--embedded:deep(.card:not(.card--inverted)) {
+    border: none;
+    box-shadow: none;
   }
 
   .subscription-plans__item {

@@ -1,12 +1,12 @@
 <template>
-  <Modal :title :footer="false">
+  <Modal :title :footer="false" :width="ModalWidth.LG">
     <div class="limit-reached__text">
       <slot :nextPlan name="description" />
     </div>
 
-    <UpgradingPlan
+    <SubscriptionPlans
+      embedded
       class="limit-reached__plan"
-      :plan="nextPlan"
       @upgraded="modal.close(true)"
       v-if="nextPlan"
     />
@@ -15,10 +15,10 @@
 
 <script setup lang="ts">
 import type { Slot } from 'vue';
-import { Modal, useActiveModal } from '@/components/modal';
+import { Modal, ModalWidth, useActiveModal } from '@/components/modal';
 import { usePlansStore, useSessionStore } from '@/stores';
 import type { ISubscriptionPlan } from '@/models';
-import UpgradingPlan from './UpgradingPlan.vue';
+import SubscriptionPlans from './SubscriptionPlans.vue';
 
 defineProps<{
   title: string;
@@ -42,7 +42,7 @@ const nextPlan = plansStore.plans.find((plan) => plan.tier > sessionStore.plan.t
 <style scoped>
 @layer components {
   .limit-reached__text {
-    margin-bottom: 16px;
+    margin-bottom: 24px;
 
     &:deep(p:not(:last-child)) {
       margin-bottom: 8px;

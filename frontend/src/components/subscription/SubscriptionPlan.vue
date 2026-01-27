@@ -46,13 +46,17 @@ import { Card } from '@/components/card';
 import { useAsyncAction, useCurrencyFormatter } from '@/composables';
 import { Button } from '@/components/button';
 import { useSessionStore } from '@/stores';
-import { useDowngradePlanConfirm } from '@/modules/settings/modules/subscription/composables';
 import type { ComponentVariant } from '@/types';
 import { PLAN_LIMIT_CONFIGS } from '@/config';
+import { useDowngradePlanConfirm } from '@/composables/subscription';
 import PlanLimit from './PlanLimit.vue';
 
 const props = defineProps<{
   plan: ISubscriptionPlan;
+}>();
+
+const emit = defineEmits<{
+  upgraded: [];
 }>();
 
 const sessionStore = useSessionStore();
@@ -74,12 +78,18 @@ const changePlan = useAsyncAction(async () => {
 });
 
 async function changePlanIntent(): Promise<void> {
-  if (isLowerPlan.value) {
+  const wasLowerPlan = isLowerPlan.value;
+
+  if (wasLowerPlan) {
     const result = await downgradePlanConfirm.ask();
     if (!result.isAccepted) return;
   }
 
   await changePlan();
+
+  if (!wasLowerPlan) {
+    emit('upgraded');
+  }
 }
 </script>
 
