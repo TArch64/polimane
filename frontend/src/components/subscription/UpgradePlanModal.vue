@@ -7,16 +7,23 @@
     <SubscriptionPlans
       embedded
       class="upgrade-plan__plans"
-      @upgraded="modal.close(null)"
+      @upgraded="modal.close(true)"
     />
   </Modal>
 </template>
 
 <script setup lang="ts">
 import { Modal, ModalWidth, useActiveModal } from '@/components/modal';
+import { usePlansStore } from '@/stores';
 import SubscriptionPlans from './SubscriptionPlans.vue';
 
-const modal = useActiveModal();
+defineOptions({
+  async beforeModalOpen(): Promise<void> {
+    await usePlansStore().load();
+  },
+});
+
+const modal = useActiveModal<boolean>();
 </script>
 
 <style scoped>
