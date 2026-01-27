@@ -58,8 +58,7 @@
 
       <DropdownAction
         title="Редагувати Доступ"
-        :icon="PeopleIcon"
-        :disabled="sharedAccessLimit === 1"
+        :icon="editAccessIcon"
         @click="openAccessEditModal"
         v-if="editorStore.canEditAccess"
       />
@@ -93,6 +92,7 @@ import {
   CornerUpRightIcon,
   EditIcon,
   FileTextIcon,
+  LockIcon,
   MoreHorizontalIcon,
   PeopleIcon,
   SaveIcon,
@@ -109,6 +109,7 @@ import { SchemaRenameModal } from '@/modules/schemas/shared/modals/rename';
 import { SchemaAccessEditModal } from '@/modules/schemas/shared/modals/accessEdit';
 import { useSessionStore } from '@/stores';
 import { SubscriptionLimit } from '@/enums';
+import { UpgradePlanModal } from '@/components/subscription';
 import { useEditorStore, useHistoryStore, useSelectionStore } from '../stores';
 import { SchemaExportModal } from './modals';
 
@@ -121,11 +122,15 @@ const editorStore = useEditorStore();
 const selectionStore = useSelectionStore();
 
 const isMobile = useMobileScreen();
-const sharedAccessLimit = sessionStore.getLimit(SubscriptionLimit.SHARED_ACCESS);
 
 const renameModal = useModal(SchemaRenameModal);
 const exportModal = useModal(SchemaExportModal);
 const accessEditModal = useModal(SchemaAccessEditModal);
+const upgradePlanModal = useModal(UpgradePlanModal);
+
+const sharedAccessLimit = computed(() => sessionStore.getLimit(SubscriptionLimit.SHARED_ACCESS));
+const isSharedAccessAvailable = computed(() => sharedAccessLimit.value! > 1);
+const editAccessIcon = computed(() => isSharedAccessAvailable.value ? PeopleIcon : LockIcon);
 
 const backLocation = computed((): RouteLocationRaw => {
   const from = route.query.from as string | undefined;
@@ -151,8 +156,13 @@ const openRenameModal = () => renameModal.open({
   updateSchema: (attrs) => void Object.assign(editorStore.schema, attrs),
 });
 
-function openAccessEditModal(): void {
-  accessEditModal.open({
+async function openAccessEditModal(): Promise<void> {
+  if (!isSharedAccessAvailable.value) {
+    const isUpgraded = await upgradePlanModal.open();
+    if (!isUpgraded) return;
+  }
+
+  void accessEditModal.open({
     schemaIds: [editorStore.schema.id],
   });
 }
