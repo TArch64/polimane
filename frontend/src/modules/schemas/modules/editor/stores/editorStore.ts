@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia';
-import { onScopeDispose, type Ref, ref, toRef } from 'vue';
+import { computed, onScopeDispose, type Ref, ref, toRef } from 'vue';
 import type { ISchema } from '@/models';
 import { type HttpBody, useAccessPermissions, useHttpClient } from '@/composables';
 import { AccessLevel } from '@/enums';
+import { useSchemasCreatedCounter } from '@/composables/subscription';
 import {
   useEditorBeadsLimitUpdater,
   useEditorSaveDispatcher,
@@ -23,6 +24,7 @@ export const useEditorStore = defineStore('schemas/editor', () => {
   const permissions = useAccessPermissions(() => schema.value?.access ?? AccessLevel.READ);
   const saveEditor = useEditorSaveProcessor(schema);
   const beadsLimitUpdater = useEditorBeadsLimitUpdater(schema);
+  const schemasCreatedCounter = useSchemasCreatedCounter();
 
   const saveDispatcher = useEditorSaveDispatcher(schema, {
     onSave: saveEditor,
@@ -50,6 +52,10 @@ export const useEditorStore = defineStore('schemas/editor', () => {
     }
   }
 
+  const canEdit = computed(() => {
+    return permissions.write && !schemasCreatedCounter.isReached;
+  });
+
   onScopeDispose(async () => {
     saveDispatcher.disable();
     await saveDispatcher.flush();
@@ -60,7 +66,8 @@ export const useEditorStore = defineStore('schemas/editor', () => {
     schema,
     loadSchema,
     deleteSchema,
-    canEdit: toRef(permissions, 'write'),
+    canEdit,
+    canEditName: toRef(permissions, 'write'),
     canEditAccess: toRef(permissions, 'admin'),
     canDelete: toRef(permissions, 'admin'),
     hasUnsavedChanges: toRef(saveDispatcher, 'hasUnsavedChanges'),

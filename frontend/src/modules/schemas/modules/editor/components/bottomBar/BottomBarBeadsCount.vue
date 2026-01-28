@@ -22,15 +22,14 @@ const formattedCurrent = useNumberFormatter(() => counter.current);
 const formattedMax = useNumberFormatter(() => counter.max);
 
 const formattedValue = computed(() => {
-  return formattedMax.value
-    ? `${formattedCurrent.value} / ${formattedMax.value}`
-    : formattedCurrent.value;
+  const current = formattedCurrent.value || '0';
+  const max = formattedMax.value;
+  return max ? `${current} / ${max}` : current;
 });
 
 const formattedMaxValue = computed(() => {
-  return formattedMax.value
-    ? `${formattedMax.value} / ${formattedMax.value}`
-    : '00 000';
+  const max = formattedMax.value;
+  return max ? `${max} / ${max}` : '00 000';
 });
 
 const classes = computed(() => {

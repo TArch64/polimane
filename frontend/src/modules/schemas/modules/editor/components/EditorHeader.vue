@@ -53,7 +53,7 @@
           title="Змінити назву"
         :icon="EditIcon"
         @click="openRenameModal"
-        v-if="editorStore.canEdit"
+          v-if="editorStore.canEditName"
       />
 
       <DropdownAction

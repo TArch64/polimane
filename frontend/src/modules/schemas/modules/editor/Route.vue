@@ -2,7 +2,7 @@
   <EditorHeader />
   <EditorToolbar v-if="isEditable" />
   <EditorCanvas class="editor__fill" />
-  <EditorBottomBar v-if="isEditable" />
+  <EditorBottomBar v-if="!isMobile" />
 </template>
 
 <script lang="ts" setup>
