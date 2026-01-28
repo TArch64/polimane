@@ -8,8 +8,7 @@
         <Button
             variant="primary"
             :prepend-icon="PlusIcon"
-            :disabled="schemasCreatedCounter.isReached"
-            @click="createModal.open()"
+            @click="createSchema({ overflowCount: 1 })"
         >
         Нова Схема
       </Button>
@@ -18,12 +17,21 @@
 </template>
 
 <script setup lang="ts">
-import { HomeListEmpty, SchemaCreateModal } from '@/modules/home/components';
+import {
+  HomeListEmpty,
+  SchemaCreateModal,
+  SchemasLimitReachedModal,
+} from '@/modules/home/components';
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
 import { PlusIcon } from '@/components/icon';
-import { useSchemasCreatedCounter } from '@/composables/subscription';
+import { useLimitedAction, useSchemasCreatedCounter } from '@/composables/subscription';
 
-const schemasCreatedCounter = useSchemasCreatedCounter();
 const createModal = useModal(SchemaCreateModal);
+
+const createSchema = useLimitedAction({
+  counter: useSchemasCreatedCounter(),
+  modal: useModal(SchemasLimitReachedModal),
+  onAction: () => void createModal.open(),
+});
 </script>
