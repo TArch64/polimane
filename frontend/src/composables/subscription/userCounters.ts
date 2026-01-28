@@ -1,11 +1,9 @@
 import { computed, reactive } from 'vue';
 import { useSessionStore } from '@/stores';
 import { SubscriptionLimit, type UserLimit } from '@/enums';
+import type { ICounter } from './counters';
 
-export interface IUserCounter {
-  isReached: boolean;
-  willOverlow: (value: number) => boolean;
-  current: number;
+export interface IUserCounter extends ICounter {
   max: number;
 }
 

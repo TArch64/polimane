@@ -6,7 +6,6 @@
   >
     <SubscriptionPlans
       embedded
-      class="upgrade-plan__plans"
       @upgraded="modal.close(true)"
     />
   </Modal>
@@ -25,11 +24,3 @@ defineOptions({
 
 const modal = useActiveModal<boolean>();
 </script>
-
-<style scoped>
-@layer components {
-  .upgrade-plan__plans {
-    margin-bottom: 4px;
-  }
-}
-</style>

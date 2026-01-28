@@ -113,6 +113,10 @@ onBackdropClick(close);
 
   .modal__body {
     padding: 8px 16px;
+
+    &:not(:has(+ .modal__footer)) {
+      padding-bottom: 12px;
+    }
   }
 
   .modal__footer {

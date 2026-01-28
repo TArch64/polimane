@@ -2,12 +2,9 @@ import { computed, type MaybeRefOrGetter, reactive, toValue } from 'vue';
 import { useSessionStore } from '@/stores';
 import { type SchemaLimit, SubscriptionLimit } from '@/enums';
 import type { ISchema } from '@/models';
+import type { ICounter } from './counters';
 
-export interface ISchemaCounter {
-  isReached: boolean;
-  current: number;
-  max?: number;
-  willOverlow: (value: number) => boolean;
+export interface ISchemaCounter extends ICounter {
 }
 
 function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema>): ISchemaCounter {

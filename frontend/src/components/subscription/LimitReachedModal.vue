@@ -1,5 +1,5 @@
 <template>
-  <Modal :title :footer="false" :width="ModalWidth.LG">
+  <Modal :title :width :footer="false">
     <div class="limit-reached__text">
       <slot :nextPlan name="description" />
     </div>
@@ -37,20 +37,19 @@ const modal = useActiveModal<boolean>();
 
 // Need to be static to avoid deactivating listener when upgrading to last plan
 const nextPlan = plansStore.plans.find((plan) => plan.tier > sessionStore.plan.tier);
+const width = nextPlan ? ModalWidth.LG : ModalWidth.MD;
 </script>
 
 <style scoped>
 @layer components {
   .limit-reached__text {
-    margin-bottom: 24px;
-
     &:deep(p:not(:last-child)) {
       margin-bottom: 8px;
     }
   }
 
   .limit-reached__plans {
-    margin-bottom: 4px;
+    margin-top: 24px;
   }
 }
 </style>

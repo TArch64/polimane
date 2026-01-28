@@ -13,3 +13,7 @@ export function getSubscriptionPlanName(planId: SubscriptionPlanId): string {
     [SubscriptionPlanId.PRO]: 'Продвинута',
   });
 }
+
+export function isMaxSubscriptionPlan(planId: SubscriptionPlanId): boolean {
+  return [SubscriptionPlanId.PRO, SubscriptionPlanId.BETA].includes(planId);
+}
