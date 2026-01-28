@@ -38,7 +38,8 @@ SELECT id,
             AND user_schemas.deleted_at IS NULL)
        )
 FROM users
-ON CONFLICT (user_id) DO NOTHING;
+ON CONFLICT (user_id)
+  DO UPDATE SET counters = excluded.counters;
 
 -- +goose Down
 DROP TABLE IF EXISTS user_subscriptions;
