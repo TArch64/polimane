@@ -53,7 +53,7 @@ export const useEditorStore = defineStore('schemas/editor', () => {
   }
 
   const canEdit = computed(() => {
-    return permissions.write && !schemasCreatedCounter.isReached;
+    return permissions.write && !schemasCreatedCounter.isOverflowed;
   });
 
   onScopeDispose(async () => {

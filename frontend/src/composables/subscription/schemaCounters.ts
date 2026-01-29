@@ -18,6 +18,7 @@ function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema
 
   const max = computed(() => sessionStore.getLimit(name));
   const isReached = computed(() => max.value !== undefined && current.value >= max.value);
+  const isOverflowed = computed(() => max.value !== undefined && current.value > max.value);
 
   function willOverlow(value: number): boolean {
     return max.value !== undefined && current.value + value > max.value;
@@ -25,6 +26,7 @@ function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema
 
   return reactive({
     isReached,
+    isOverflowed,
     current,
     max,
     willOverlow,
