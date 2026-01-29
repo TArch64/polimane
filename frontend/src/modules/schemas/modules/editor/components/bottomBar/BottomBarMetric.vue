@@ -8,7 +8,7 @@
       </span>
 
       <span class="bottom-bar-metric__actual-value">
-        {{ value }}
+        <slot>{{ value }}</slot>
       </span>
     </span>
   </p>
@@ -44,6 +44,7 @@ defineProps<{
     position: absolute;
     top: 0;
     right: 0;
+    display: flex;
   }
 }
 </style>
