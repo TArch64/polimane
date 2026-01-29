@@ -25,19 +25,19 @@ CREATE TABLE IF NOT EXISTS user_subscriptions
 CREATE INDEX idx_user_subscriptions_status
   ON user_subscriptions (status);
 
-INSERT INTO user_subscriptions (user_id, plan_id, trial_started_at, trial_ends_at, counters)
+WITH schema_count_by_user AS (SELECT user_id, COUNT(schema_id) AS count
+                              FROM user_schemas
+                              WHERE deleted_at IS NULL
+                              GROUP BY user_id)
+INSERT
+INTO user_subscriptions (user_id, plan_id, trial_started_at, trial_ends_at, counters)
 SELECT id,
        'beta',
        NOW(),
        NOW() + INTERVAL '14 days',
-       JSON_BUILD_OBJECT(
-         'schemasCreated',
-         (SELECT COUNT(user_schemas.schema_id)
-          FROM user_schemas
-          WHERE user_id = users.id
-            AND user_schemas.deleted_at IS NULL)
-       )
+       JSON_BUILD_OBJECT('schemasCreated', COALESCE(counter.count, 0))
 FROM users
+       LEFT JOIN schema_count_by_user AS counter ON counter.user_id = users.id
 ON CONFLICT (user_id)
   DO UPDATE SET counters = excluded.counters;
 
