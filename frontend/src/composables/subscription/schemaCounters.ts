@@ -17,8 +17,14 @@ function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema
   });
 
   const max = computed(() => sessionStore.getLimit(name));
+
+  const overflowed = computed(() => {
+    if (max.value === undefined) return 0;
+    return Math.max(0, current.value - max.value);
+  });
+
   const isReached = computed(() => max.value !== undefined && current.value >= max.value);
-  const isOverflowed = computed(() => max.value !== undefined && current.value > max.value);
+  const isOverflowed = computed(() => overflowed.value > 0);
 
   function willOverlow(value: number): boolean {
     return max.value !== undefined && current.value + value > max.value;
@@ -30,6 +36,7 @@ function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema
     current,
     max,
     willOverlow,
+    overflowed,
   });
 }
 

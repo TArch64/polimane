@@ -1,3 +1,5 @@
+export type ViewTransitionState = Pick<ViewTransition, 'ready' | 'finished'>;
+
 const fallback = (callback: () => Promise<void>) => ({
   ready: callback(),
   skipTransition: null!,

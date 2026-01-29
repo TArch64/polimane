@@ -1,34 +1,46 @@
 import { nextTick } from 'vue';
-import { startViewTransition } from '@/helpers';
+import { startViewTransition, type ViewTransitionState } from '@/helpers';
 
-export interface IRouteTransition {
-  start: (callback: ViewTransitionUpdateCallback) => Promise<void>;
+export interface IRouteTransition extends ViewTransitionState {
+  start: (callback: ViewTransitionUpdateCallback) => void;
 }
 
 let pending: ViewTransitionUpdateCallback[] = [];
-let resolvers: PromiseWithResolvers<void>;
+let readyResolver: PromiseWithResolvers<void>;
+let finishedResolver: PromiseWithResolvers<void>;
 
 export function useRouteTransition(): IRouteTransition {
   function doTransition(): void {
-    startViewTransition(async () => {
+    const transition = startViewTransition(async () => {
       for (const callback of pending) {
         await callback();
       }
       pending = [];
-      resolvers.resolve();
     });
+
+    transition.ready.then(() => readyResolver.resolve());
+    transition.finished.then(() => finishedResolver.resolve());
   }
 
-  function start(callback: ViewTransitionUpdateCallback): Promise<void> {
+  function start(callback: ViewTransitionUpdateCallback): void {
     pending.push(callback);
 
     if (pending.length === 1) {
-      resolvers = Promise.withResolvers();
+      finishedResolver = Promise.withResolvers();
+      readyResolver = Promise.withResolvers();
       nextTick().then(doTransition);
     }
-
-    return resolvers.promise;
   }
 
-  return { start };
+  return {
+    start,
+
+    get ready() {
+      return readyResolver.promise;
+    },
+
+    get finished() {
+      return finishedResolver.promise;
+    },
+  };
 }

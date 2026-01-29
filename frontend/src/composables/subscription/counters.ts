@@ -4,4 +4,5 @@ export interface ICounter {
   current: number;
   max?: number;
   willOverlow: (value: number) => boolean;
+  overflowed: number;
 }

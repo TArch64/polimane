@@ -10,9 +10,12 @@ import './colorLib';
 
 import { computed } from 'vue';
 import { useEventListener } from '@vueuse/core';
+import { SchemasLimitReachedModal } from '@editor/components/modals';
 import { definePreload } from '@/router/define';
 import { destroyStore, lazyDestroyStore } from '@/helpers';
 import { useMobileScreen } from '@/composables';
+import { useModal } from '@/components/modal';
+import { useSchemasCreatedCounter } from '@/composables/subscription';
 import {
   useBeadsStore,
   useCanvasStore,
@@ -47,6 +50,9 @@ defineOptions({
 
 const editorStore = useEditorStore();
 const isMobile = useMobileScreen();
+const schemasCreatedCounter = useSchemasCreatedCounter();
+const schemasLimitReachedModal = useModal(SchemasLimitReachedModal);
+
 useEditorBackgroundRenderer();
 provideHotKeysHandler();
 
@@ -58,6 +64,10 @@ useEventListener(window, 'beforeunload', (event) => {
     destroyStore(editorStore);
   }
 });
+
+if (schemasCreatedCounter.isOverflowed) {
+  schemasLimitReachedModal.open();
+}
 </script>
 
 <style scoped>

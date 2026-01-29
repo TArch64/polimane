@@ -13,7 +13,8 @@ function useUserCounter(name: UserLimit): IUserCounter {
   const current = computed(() => sessionStore.subscription.counters[name]);
   const max = computed(() => sessionStore.plan.limits[name]!);
   const isReached = computed(() => current.value >= max.value);
-  const isOverflowed = computed(() => current.value > max.value);
+  const overflowed = computed(() => Math.max(0, current.value - max.value));
+  const isOverflowed = computed(() => overflowed.value > 0);
 
   function willOverlow(value: number): boolean {
     return current.value + value > max.value;
@@ -23,6 +24,7 @@ function useUserCounter(name: UserLimit): IUserCounter {
     isReached,
     isOverflowed,
     willOverlow,
+    overflowed,
     current,
     max,
   });
