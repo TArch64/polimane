@@ -1,5 +1,11 @@
 <template>
-  <p class="bottom-bar-metric">
+  <Component
+    :is="tag"
+    type="button"
+    class="bottom-bar-metric"
+    :class="classes"
+    v-on="listeners"
+  >
     <span>{{ label }}</span>
 
     <span class="bottom-bar-metric__value">
@@ -11,15 +17,35 @@
         <slot>{{ value }}</slot>
       </span>
     </span>
-  </p>
+  </Component>
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { computed } from 'vue';
+
+const props = withDefaults(defineProps<{
   label: string;
   value: string;
   maxValue: string;
+  interactive?: boolean;
+}>(), {
+  interactive: false,
+});
+
+const emit = defineEmits<{
+  click: [];
 }>();
+
+const tag = computed(() => props.interactive ? 'button' : 'p');
+
+const classes = computed(() => ({
+  'bottom-bar-metric--interactive': props.interactive,
+}));
+
+const listeners = computed(() => props.interactive
+  ? { click: () => emit('click') }
+  : {},
+);
 </script>
 
 <style scoped>
@@ -27,8 +53,16 @@ defineProps<{
   .bottom-bar-metric {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    height: 100%;
     gap: 4px;
-    padding: 0 6px;
+    padding: 3px 6px;
+    line-height: 1;
+  }
+
+  .bottom-bar-metric--interactive {
+    cursor: pointer;
+    color: inherit;
   }
 
   .bottom-bar-metric__value {

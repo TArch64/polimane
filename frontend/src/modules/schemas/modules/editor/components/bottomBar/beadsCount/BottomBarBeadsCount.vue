@@ -1,24 +1,38 @@
 <template>
-  <BottomBarMetric
-    label="Бісер"
-    :class="classes"
-    :value="formattedValue"
-    :max-value="formattedMaxValue"
-  >
-    <Transition name="bottom-bar-beads-count__value-" mode="out-in" :duration="100">
-      <span :key="fillStatus">
-        {{ formattedValue }}
-      </span>
-    </Transition>
-  </BottomBarMetric>
+  <div>
+    <Popover
+      ref="popoverRef"
+      position-area="top center"
+    >
+      <template #activator="{ open, ref }">
+        <BottomBarMetric
+          label="Бісер"
+          :ref
+          :interactive="counter.isReached"
+          :class="classes"
+          :value="formattedValue"
+          :max-value="formattedMaxValue"
+          :disabled="!counter.isReached"
+          @click="open"
+        />
+      </template>
+
+      <BeadsLimitReachedPopover />
+    </Popover>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { useEditorStore } from '@editor/stores';
-import { computed } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
 import { useNumberFormatter } from '@/composables';
 import { useSchemaBeadsCounter } from '@/composables/subscription';
-import BottomBarMetric from './BottomBarMetric.vue';
+import { Popover } from '@/components/popover';
+import BottomBarMetric from '../BottomBarMetric.vue';
+import BeadsLimitReachedPopover from './BeadsLimitReachedPopover.vue';
+
+const popoverRef = ref<ComponentExposed<typeof Popover>>(null!);
 
 const editorStore = useEditorStore();
 
@@ -51,6 +65,18 @@ const fillStatus = computed(() => {
 const classes = computed(() => {
   return `bottom-bar-beads-count--${fillStatus.value}`;
 });
+
+watch(fillStatus, (newStatus) => {
+  if (newStatus === 'limit-reached') {
+    popoverRef.value.open();
+  }
+});
+
+onMounted(() => {
+  if (counter.isReached) {
+    popoverRef.value.open();
+  }
+});
 </script>
 
 <style scoped>
@@ -61,17 +87,6 @@ const classes = computed(() => {
 
   .bottom-bar-beads-count--limit-reached {
     --metric-value-color: var(--color-danger);
-  }
-
-  .bottom-bar-beads-count__value--enter-from,
-  .bottom-bar-beads-count__value--leave-to {
-    scale: 1.05;
-  }
-
-  .bottom-bar-beads-count__value--enter-active,
-  .bottom-bar-beads-count__value--leave-active {
-    transition: scale 0.1s ease-out;
-    will-change: scale;
   }
 }
 </style>

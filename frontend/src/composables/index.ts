@@ -16,3 +16,4 @@ export * from './useDeviceScreen';
 export * from './useInfinityScroll';
 export * from './usePluralFormatter';
 export * from './useNumberFormatter';
+export * from './usePopoverState';
