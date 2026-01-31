@@ -1,6 +1,8 @@
 <template>
   <HomeBarRouteActions>
-    <HomeBarCreateSchema />
+    <HomeBarCreateSchema
+      v-if="schemasStore.schemas.length"
+    />
 
     <Button icon variant="secondary" @click="openRenameModal">
       <EditIcon />
@@ -31,9 +33,10 @@ import { EditIcon, TrashIcon } from '@/components/icon';
 import { useModal } from '@/components/modal';
 import { useConfirm } from '@/components/confirm';
 import { useAsyncAction, useProgressBar } from '@/composables';
-import { useFolderStore } from './stores';
+import { useFolderSchemasStore, useFolderStore } from './stores';
 
 const folderStore = useFolderStore();
+const schemasStore = useFolderSchemasStore();
 
 const router = useRouter();
 const renameModal = useModal(FolderRenameModal);

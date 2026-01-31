@@ -1,20 +1,20 @@
 <template>
   <slot
     name="activator"
-    :open
-    :isOpened
+    :open="state.open"
+    :isOpened="state.isOpened"
     :activatorStyle="{ anchorName }"
   />
 
-  <Teleport to="body" v-if="isOpened || transitionState.isActive">
-    <FadeTransition :state="transitionState">
+  <Teleport to="body" v-if="state.isOpened || state.transition.isActive">
+    <FadeTransition :state="state.transition">
       <DropdownMenu
         ref="menuRef"
         class="dropdown-menu"
         :style="menuStyles"
-        @click="close"
+        @click="state.close"
         v-popover-shift
-        v-if="isOpened"
+        v-if="state.isOpened"
       >
         <slot />
       </DropdownMenu>
@@ -23,9 +23,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, type Slot, useId } from 'vue';
-import { waitClickComplete } from '@/helpers';
-import { useDomRef, useTransitionState } from '@/composables';
+import { type Slot, useId } from 'vue';
+import { useDomRef, usePopoverState } from '@/composables';
 import { vPopoverShift } from '@/directives';
 import { FadeTransition } from '@/components/transition';
 import DropdownMenu from './DropdownMenu.vue';
@@ -40,55 +39,11 @@ defineSlots<{
   default: Slot;
 }>();
 
-const transitionState = useTransitionState();
 const menuRef = useDomRef<HTMLElement | null>();
+const state = usePopoverState(menuRef);
 
 const anchorName = `--dropdown-${useId()}`;
-const isOpened = ref(false);
-
-const menuStyles = computed(() => ({
-  positionAnchor: anchorName,
-}));
-
-let closeController: AbortController | null = null;
-
-function close(): void {
-  closeController?.abort();
-  transitionState.on();
-  isOpened.value = false;
-}
-
-function closeEvent(event: Event): void {
-  if (menuRef.value?.contains(event.target as Node)) {
-    return;
-  }
-
-  close();
-}
-
-async function open() {
-  if (isOpened.value) {
-    return;
-  }
-
-  isOpened.value = true;
-  await nextTick();
-
-  menuRef.value!.showPopover();
-  await waitClickComplete();
-
-  closeController = new AbortController();
-
-  window.addEventListener('mousedown', closeEvent, {
-    signal: closeController.signal,
-    capture: true,
-  });
-
-  window.addEventListener('contextmenu', closeEvent, {
-    signal: closeController.signal,
-    capture: true,
-  });
-}
+const menuStyles = { positionAnchor: anchorName };
 </script>
 
 <style scoped>

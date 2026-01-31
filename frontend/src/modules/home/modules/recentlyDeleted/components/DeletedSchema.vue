@@ -1,9 +1,5 @@
 <template>
-  <HomeListSchema
-    disabled
-    :schema
-    :menuActions
-  />
+  <HomeListSchema disabled :schema :menuActions />
 </template>
 
 <script setup lang="ts">
@@ -20,6 +16,7 @@ const props = defineProps<{
 }>();
 
 const schemasStore = useDeletedSchemasStore();
+
 const router = useRouter();
 
 const deleteConfirm = useConfirm({
@@ -45,8 +42,8 @@ const menuActions: MaybeContextMenuAction[] = [
   },
 
   {
-    danger: true,
     title: 'Видалити Остаточно',
+    danger: true,
     icon: TrashIcon,
 
     async onAction(event) {

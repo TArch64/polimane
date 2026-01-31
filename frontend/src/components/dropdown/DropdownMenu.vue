@@ -1,41 +1,39 @@
 <template>
-  <div role="menu" popover="manual" class="dropdown-menu">
+  <Card :variant as="div" role="menu" popover="manual" class="dropdown-menu">
     <slot />
-  </div>
+  </Card>
 </template>
 
 <script setup lang="ts">
-import { computed, type Slot } from 'vue';
+import type { Slot } from 'vue';
+import type { ComponentVariant } from '@/types';
+import { Card } from '../card';
 
-const props = withDefaults(defineProps<{
-  control?: boolean;
+withDefaults(defineProps<{
+  variant?: ComponentVariant;
   viewTransitionName?: string;
 }>(), {
-  control: false,
+  variant: 'main',
   viewTransitionName: 'dropdown',
 });
 
 defineSlots<{
   default: Slot;
 }>();
-
-const backgroundColor = computed(() => {
-  return props.control ? 'var(--color-background-2)' : 'var(--color-background-1)';
-});
 </script>
 
 <style scoped>
 @layer components {
   .dropdown-menu {
-    background-color: v-bind("backgroundColor");
-    border: var(--divider);
-    border-radius: var(--rounded-lg);
-    box-shadow: var(--box-shadow);
     display: flex;
     flex-direction: column;
     gap: 4px;
     width: max-content;
     view-transition-name: v-bind("viewTransitionName");
+    --card-padding-top: 4px;
+    --card-padding-bottom: 4px;
+    --card-padding-left: 4px;
+    --card-padding-right: 4px;
   }
 }
 </style>

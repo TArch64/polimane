@@ -62,7 +62,7 @@ const slots = defineSlots<{
 }>();
 
 const classes = computed(() => [
-  `card--variant-${props.variant}`,
+  `card--${props.variant}`,
   {
     'card--interactable': props.interactable,
     'card--active': props.active,
@@ -76,19 +76,19 @@ const classes = computed(() => [
     padding: var(--card-padding-top) var(--card-padding-right) var(--card-padding-bottom) var(--card-padding-left);
     background-color: var(--card-background);
     border: var(--divider);
+    box-shadow: var(--box-shadow);
     border-radius: var(--rounded-lg);
-
     --card-padding-top: 8px;
     --card-padding-bottom: 8px;
     --card-padding-left: 12px;
     --card-padding-right: 12px;
   }
 
-  .card--variant-main {
+  .card--main {
     --card-background: var(--color-white);
   }
 
-  .card--variant-control {
+  .card--control {
     --card-background: var(--color-background-2);
   }
 

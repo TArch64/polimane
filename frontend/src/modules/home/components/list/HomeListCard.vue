@@ -52,7 +52,7 @@ const isContextMenuActive = ref(false);
 
 useContextMenu({
   el: cardRef,
-  control: false,
+  variant: 'main',
   title: toRef(props, 'menuTitle'),
   actions: toRef(props, 'menuActions'),
   isActive: isContextMenuActive,

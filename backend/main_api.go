@@ -31,6 +31,7 @@ import (
 	"polimane/backend/services/schemadelete"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/services/sentry"
+	"polimane/backend/services/usercreate"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
 	"polimane/backend/views"
@@ -73,6 +74,7 @@ func main() {
 			schemadelete.Provider,
 			logstdout.Provider,
 			logpersistent.Provider,
+			usercreate.Provider,
 
 			// api
 			apiauth.MiddlewareProvider,
@@ -86,7 +88,6 @@ func main() {
 			api.OptionsProvider,
 			api.Provider,
 		),
-
 		fxlogger.Provider,
 		fx.Invoke(api.Start),
 	).Run()

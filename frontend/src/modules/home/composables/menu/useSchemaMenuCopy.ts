@@ -1,10 +1,10 @@
-import { computed, type MaybeRefOrGetter, type Ref, toValue } from 'vue';
+import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import type { MaybeContextMenuAction } from '@/components/contextMenu';
+import type { IContextMenuAction } from '@/components/contextMenu';
 import { type ListSchema, useHomeStore } from '@/modules/home/stores';
 import { CopyIcon } from '@/components/icon';
 
-export function useSchemaMenuCopy(schemaRef: MaybeRefOrGetter<ListSchema>): Ref<MaybeContextMenuAction> {
+export function useSchemaMenuCopy(schemaRef: MaybeRefOrGetter<ListSchema>): IContextMenuAction {
   const schema = computed(() => toValue(schemaRef));
 
   const homeStore = useHomeStore();
@@ -12,7 +12,7 @@ export function useSchemaMenuCopy(schemaRef: MaybeRefOrGetter<ListSchema>): Ref<
   const router = useRouter();
   const route = useRoute();
 
-  return computed(() => ({
+  return {
     title: 'Зробити Копію',
     icon: CopyIcon,
 
@@ -25,5 +25,5 @@ export function useSchemaMenuCopy(schemaRef: MaybeRefOrGetter<ListSchema>): Ref<
         query: { from: route.path },
       });
     },
-  }));
+  };
 }

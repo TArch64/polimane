@@ -1,6 +1,6 @@
 import { shallowReactive } from 'vue';
 import { Callback, NodeRect, Point } from '@/models';
-import type { MaybeValue } from '@/types';
+import type { ComponentVariant, MaybeValue } from '@/types';
 import { ContextActionModel, type IContextMenuAction } from './ContextActionModel';
 import { ContextGroupModel, type IContextMenuGroup } from './ContextGroupModel';
 
@@ -20,7 +20,7 @@ export interface IContextMenuOptions {
   id: string;
   title: string;
   position: Point;
-  control?: boolean;
+  variant?: ComponentVariant;
   actions: ContextMenuItem[];
 }
 
@@ -33,7 +33,7 @@ export class ContextMenuModel {
   readonly id;
   readonly title;
   readonly position;
-  readonly control;
+  readonly variant;
   readonly actions;
   readonly onHide = Callback.create<[]>();
 
@@ -43,7 +43,7 @@ export class ContextMenuModel {
     this.id = options.id;
     this.title = options.title;
     this.position = options.position;
-    this.control = options.control ?? true;
+    this.variant = options.variant ?? 'control';
 
     this.actions = options.actions.map((item): ContextMenuItemModel => {
       return isContextMenuAction(item)

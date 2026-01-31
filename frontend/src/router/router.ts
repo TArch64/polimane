@@ -6,7 +6,7 @@ import { schemasRoute } from '@/modules/schemas';
 import { authRoute } from '@/modules/auth';
 import { settingsRoute } from '@/modules/settings';
 import { defineRedirectRoute } from '@/router/define';
-import { startViewTransition } from '@/helpers';
+import { useRouteTransition } from '@/composables';
 
 const routes = [
   authRoute,
@@ -29,13 +29,15 @@ export const router = createRouter({
 router.beforeEach(sessionMiddleware);
 
 router.beforeResolve(async (_, __, next) => {
-  const transition = startViewTransition(async () => {
+  const routeTransition = useRouteTransition();
+
+  routeTransition.start(async () => {
     next();
     await nextTick();
     await nextTick();
   });
 
-  await transition.ready;
+  await routeTransition.ready;
 });
 
 router.onError((error) => {

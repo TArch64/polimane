@@ -51,6 +51,18 @@ import SchemaNewUser from './SchemaNewUser.vue';
 import SchemaUser from './SchemaUser.vue';
 import SchemaInvitation from './SchemaInvitation.vue';
 
+interface IProps {
+  schemaIds: string[];
+}
+
+defineProps<IProps>();
+
+defineOptions({
+  async beforeModalOpen(props: IProps): Promise<void> {
+    await useSchemaUsersStore().load(props.schemaIds);
+  },
+});
+
 const usersStore = useSchemaUsersStore();
 </script>
 

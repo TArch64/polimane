@@ -1,4 +1,4 @@
-package users
+package usercreate
 
 import (
 	"context"
@@ -9,15 +9,16 @@ import (
 
 	"polimane/backend/model"
 	"polimane/backend/repository"
+	repositoryusers "polimane/backend/repository/users"
 )
 
-func (c *Client) CreateIfNeeded(ctx context.Context, workosUser *usermanagement.User) (*model.User, error) {
-	user, err := c.Get(ctx,
-		WorkosIDEq(workosUser.ID),
+func (s *Service) GetOrCreate(ctx context.Context, workosUser *usermanagement.User) (*model.User, error) {
+	user, err := s.users.Get(ctx,
+		repositoryusers.WorkosIDEq(workosUser.ID),
 		repository.IncludeSoftDeleted,
 	)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return c.CreateFromWorkos(ctx, workosUser)
+		return s.Create(ctx, workosUser)
 	}
 	if err != nil {
 		return nil, err

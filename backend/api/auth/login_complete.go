@@ -28,7 +28,7 @@ func (c *Controller) LoginComplete(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := c.users.CreateIfNeeded(reqCtx, &data.User)
+	user, err := c.userCreate.GetOrCreate(reqCtx, &data.User)
 	if err != nil {
 		return err
 	}

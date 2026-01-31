@@ -49,7 +49,7 @@ defineSlots<{
     align-content: start;
     align-items: end;
     gap: 20px;
-    padding: 12px;
+    padding: 0 12px;
     --list-columns: 4;
   }
 

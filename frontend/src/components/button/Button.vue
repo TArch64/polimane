@@ -86,6 +86,7 @@ const textClasses = computed(() => ({
     justify-content: center;
     cursor: pointer;
     position: relative;
+    user-select: none;
   }
 
   .button__prepend-icon {
@@ -173,6 +174,7 @@ const textClasses = computed(() => ({
     font-size: inherit;
     display: inline-flex;
     text-decoration: underline;
+    user-select: initial;
     --button-disabled-foreground: color-mix(in srgb, currentColor, transparent 70%);
 
     &:hover:not([disabled]) {

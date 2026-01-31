@@ -50,7 +50,7 @@
       </template>
 
       <DropdownAction
-          title="Змінити назву"
+        title="Змінити назву"
         :icon="EditIcon"
         @click="openRenameModal"
         v-if="editorStore.canEdit"
@@ -106,10 +106,7 @@ import { mergeAnchorName } from '@/helpers';
 import { Card } from '@/components/card';
 import { useModal } from '@/components/modal';
 import { SchemaRenameModal } from '@/modules/schemas/shared/modals/rename';
-import {
-  SchemaAccessEditModal,
-  useSchemaUsersStore,
-} from '@/modules/schemas/shared/modals/accessEdit';
+import { SchemaAccessEditModal } from '@/modules/schemas/shared/modals/accessEdit';
 import { useEditorStore, useHistoryStore, useSelectionStore } from '../stores';
 import { SchemaExportModal } from './modals';
 
@@ -118,7 +115,6 @@ const route = useRoute<'schema-editor'>();
 
 const historyStore = useHistoryStore();
 const editorStore = useEditorStore();
-const schemaUsersStore = useSchemaUsersStore();
 const selectionStore = useSelectionStore();
 
 const isMobile = useMobileScreen();
@@ -151,10 +147,11 @@ const openRenameModal = () => renameModal.open({
   updateSchema: (attrs) => void Object.assign(editorStore.schema, attrs),
 });
 
-const openAccessEditModal = useAsyncAction(async () => {
-  await schemaUsersStore.load([editorStore.schema.id]);
-  accessEditModal.open({});
-});
+async function openAccessEditModal(): Promise<void> {
+  void accessEditModal.open({
+    schemaIds: [editorStore.schema.id],
+  });
+}
 
 const deleteConfirm = useConfirm({
   danger: true,

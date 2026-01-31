@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="dialogRef" class="modal" @close="close">
+  <Card as="dialog" ref="dialogRef" class="modal" @close="close">
     <div class="modal__inner">
       <header class="modal__header">
         <h1 class="modal__title">
@@ -28,12 +28,13 @@
         </footer>
       </Form>
     </div>
-  </dialog>
+  </Card>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, type Slot } from 'vue';
-import { onBackdropClick } from '@/composables';
+import { onMounted, type Slot } from 'vue';
+import { onBackdropClick, useDomRef } from '@/composables';
+import { Card } from '../card';
 import { CloseIcon } from '../icon';
 import { Form } from '../form';
 import { Button } from '../button';
@@ -65,7 +66,7 @@ defineSlots<{
 const modal = useActiveModal();
 const close = () => modal.close(null);
 
-const dialogRef = ref<HTMLDialogElement>(null!);
+const dialogRef = useDomRef<HTMLDialogElement>();
 
 onMounted(() => dialogRef.value.showModal());
 onBackdropClick(close);
@@ -85,9 +86,6 @@ onBackdropClick(close);
     overflow-y: auto;
     max-width: v-bind("width + 'px'");
     max-height: 100%;
-    background-color: var(--color-background-1);
-    border: var(--divider);
-    border-radius: var(--rounded-lg);
     view-transition-name: modal;
 
     &::backdrop {
@@ -113,6 +111,10 @@ onBackdropClick(close);
 
   .modal__body {
     padding: 8px 16px;
+
+    &:not(:has(+ .modal__footer)) {
+      padding-bottom: 12px;
+    }
   }
 
   .modal__footer {

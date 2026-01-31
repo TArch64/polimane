@@ -24,14 +24,14 @@ const props = defineProps<{
 const folderStore = useFolderStore();
 const schemasStore = useFolderSchemasStore();
 
-const renameAction = useSchemaMenuCopy(() => props.schema);
+const copyAction = useSchemaMenuCopy(() => props.schema);
 const addToDirectoryAction = useSchemaMenuAddToDirectory(() => props.schema, folderStore.folder.id);
-const copyAction = useSchemaMenuRename(() => props.schema);
+const renameAction = useSchemaMenuRename(() => props.schema);
 const editAccessAction = useSchemaMenuEditAccess(() => props.schema);
 const deleteAction = useSchemaMenuDelete(() => props.schema);
 
 const menuActions = computed((): MaybeContextMenuAction[] => [
-  renameAction.value,
+  copyAction,
   addToDirectoryAction.value,
 
   {
@@ -40,7 +40,7 @@ const menuActions = computed((): MaybeContextMenuAction[] => [
     onAction: () => schemasStore.removeSchemaFromFolder(props.schema),
   },
 
-  copyAction.value,
+  renameAction.value,
   editAccessAction.value,
   deleteAction.value,
 ]);

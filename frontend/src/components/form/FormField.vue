@@ -33,7 +33,7 @@ const slots = defineSlots<{
 }>();
 
 const containerClasses = computed(() => [
-  `form-field__container--variant-${props.variant}`,
+  `form-field__container--${props.variant}`,
 ]);
 </script>
 
@@ -71,11 +71,11 @@ const containerClasses = computed(() => [
     }
   }
 
-  .form-field__container--variant-main {
+  .form-field__container--main {
     background-color: var(--color-background-1);
   }
 
-  .form-field__container--variant-control {
+  .form-field__container--control {
     background-color: var(--color-background-2);
   }
 

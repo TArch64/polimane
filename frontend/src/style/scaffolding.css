@@ -55,6 +55,12 @@ button {
   padding: 0;
 }
 
+a,
+button {
+  outline-offset: 3px;
+  outline-color: var(--color-primary);
+}
+
 ::view-transition-old(*),
 ::view-transition-new(*) {
   animation-duration: 0.15s;
