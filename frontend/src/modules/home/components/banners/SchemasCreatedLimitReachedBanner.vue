@@ -5,7 +5,7 @@
 
     <template #actions v-if="canUpgrade">
       <Button variant="primary" @click="upgradePlanModal.open()">
-        Оновити Підписку
+        Хочу Більше
       </Button>
     </template>
   </Banner>

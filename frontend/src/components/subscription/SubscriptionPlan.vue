@@ -32,7 +32,7 @@
         @click="changePlanIntent"
         v-else
       >
-        Обрати Підписку
+        Підписатися
       </Button>
     </div>
   </Card>
