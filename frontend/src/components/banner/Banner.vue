@@ -1,5 +1,5 @@
 <template>
-  <section class="banner" :class="classes">
+  <Card as="section" class="banner" :variant :class="classes">
     <Component
       :is="prependIcon"
       :size="28"
@@ -14,13 +14,14 @@
     <div class="banner__actions" v-if="slots.actions">
       <slot name="actions" />
     </div>
-  </section>
+  </Card>
 </template>
 
 <script setup lang="ts">
 import { computed, type Slot } from 'vue';
 import type { ComponentVariant } from '@/types';
-import type { IconComponent } from '@/components/icon';
+import type { IconComponent } from '../icon';
+import { Card } from '../card';
 
 const props = withDefaults(defineProps<{
   type?: 'info' | 'warning' | 'danger';
@@ -53,14 +54,6 @@ const classes = computed(() => [
     :deep(:where(p, h1, h2, h3, h4):not(:first-child)) {
       margin-top: var(--banner-text-spacing);
     }
-  }
-
-  .banner--main {
-    background-color: var(--color-background-1);
-  }
-
-  .banner--control {
-    background-color: var(--color-background-2);
   }
 
   .banner--sm {

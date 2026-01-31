@@ -1,12 +1,13 @@
 import { type MaybeRefOrGetter, reactive } from 'vue';
 import { NodeRect } from '@/models';
+import type { ComponentVariant } from '@/types';
 
 export interface IConfirmOptions {
   id: string;
   message: MaybeRefOrGetter<string>;
   topEl: MaybeRefOrGetter<HTMLElement>;
   danger?: boolean;
-  control?: boolean;
+  variant?: ComponentVariant;
   declineButton?: string;
   acceptButton?: string;
   additionalCondition?: string;

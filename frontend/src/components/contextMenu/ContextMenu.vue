@@ -3,7 +3,7 @@
     ref="menuRef"
     class="context-menu"
     view-transition-name="context-menu"
-    :control="menu.control"
+    :variant="menu.variant"
     :class="classes"
     v-popover-shift
   >

@@ -1,6 +1,7 @@
 import { computed, type MaybeRefOrGetter, ref, type Ref, toValue } from 'vue';
 import { useEventListener } from '@vueuse/core';
 import { Point } from '@/models';
+import type { ComponentVariant } from '@/types';
 import type { ContextMenuItem, MaybeContextMenuAction } from './model';
 import { ContextMenuPlugin } from './ContextMenuPlugin';
 
@@ -8,7 +9,7 @@ export interface IContextMenuViewOptions {
   el: MaybeRefOrGetter<HTMLElement | null>;
   title: MaybeRefOrGetter<string>;
   actions: MaybeRefOrGetter<MaybeContextMenuAction[]>;
-  control?: boolean;
+  variant?: ComponentVariant;
   isActive?: Ref<boolean>;
 }
 
@@ -34,7 +35,7 @@ export function useContextMenu(options: IContextMenuViewOptions) {
     const model = plugin.show({
       position: new Point(event.clientX, event.clientY),
       title: toValue(options.title),
-      control: options.control,
+      variant: options.variant,
       actions: availableActions.value,
     });
 

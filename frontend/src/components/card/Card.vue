@@ -78,7 +78,6 @@ const classes = computed(() => [
     border: var(--divider);
     box-shadow: var(--box-shadow);
     border-radius: var(--rounded-lg);
-
     --card-padding-top: 8px;
     --card-padding-bottom: 8px;
     --card-padding-left: 12px;

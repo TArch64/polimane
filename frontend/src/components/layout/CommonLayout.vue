@@ -77,7 +77,7 @@ usePageClass('app--common-layout');
 
 useContextMenu({
   el: selectionOverlayRef,
-  control: false,
+  variant: 'main',
   title: toRef(props, 'selectedTitle'),
   actions: toRef(props, 'selectedActions'),
 });
