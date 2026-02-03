@@ -2,8 +2,9 @@
   <SchemaAccessRow
     :displayName
     :editable="!isCurrentUser"
-    :uneven-access="user.isUnevenAccess"
     :access="user.access"
+    :even-access="user.isEvenAccess"
+    :all-access="user.isAllAccess"
     @update:access="updateAccess"
     @delete="deleteUser"
   />

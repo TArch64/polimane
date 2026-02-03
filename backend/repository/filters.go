@@ -17,12 +17,17 @@ func Where(expr string, args ...interface{}) Scope {
 	}
 }
 
-func IDEq(id model.ID) Scope {
-	return Where("id = ?", id)
+func IDEq(id model.ID, table ...string) Scope {
+	column := Column("id", table...)
+	return Where(column+" = ?", id)
 }
 
 func UserIDEq(id model.ID) Scope {
 	return Where("user_id = ?", id)
+}
+
+func UserIDsIn(ids []model.ID) Scope {
+	return Where("user_id IN (?)", ids)
 }
 
 func EmailEq(email string) Scope {
@@ -34,8 +39,16 @@ func IDsIn(IDs []model.ID, table ...string) Scope {
 	return Where(column+" IN (?)", IDs)
 }
 
+func SchemaIDEq(id model.ID) Scope {
+	return Where("schema_id = ?", id)
+}
+
 func SchemaIDsIn(IDs []model.ID) Scope {
 	return Where("schema_id IN (?)", IDs)
+}
+
+func AccessGTE(level model.AccessLevel) Scope {
+	return Where("access >= ?", level)
 }
 
 func SoftDeletedOnly(table ...string) Scope {

@@ -14,3 +14,9 @@ func Select(columns ...string) Scope {
 		})
 	}
 }
+
+func Table(name string) Scope {
+	return func(stmt *gorm.Statement) {
+		stmt.Table = name
+	}
+}
