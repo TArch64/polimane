@@ -6,7 +6,11 @@ import type { SchemaCounters } from './ISubscriptionPlan';
 export type SchemaSize = Record<Direction, number>;
 export type SchemaBeads<K extends BeadKind = BeadKind> = Record<BeadCoord, SchemaBead<K>>;
 
-export interface ISchema {
+export interface ISchemaCountersLike {
+  counters: SchemaCounters;
+}
+
+export interface ISchema extends ISchemaCountersLike {
   id: string;
   name: string;
   palette: string[];
@@ -19,7 +23,6 @@ export interface ISchema {
   screenshotPath: string | null;
   size: SchemaSize;
   beads: SchemaBeads;
-  counters: SchemaCounters;
 }
 
 export const SchemaUpdatableAttrs = [

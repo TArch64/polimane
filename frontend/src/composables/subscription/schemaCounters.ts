@@ -1,13 +1,13 @@
 import { computed, type MaybeRefOrGetter, reactive, toValue } from 'vue';
 import { useSessionStore } from '@/stores';
 import { type SchemaLimit, SubscriptionLimit } from '@/enums';
-import type { ISchema } from '@/models';
+import type { ISchemaCountersLike } from '@/models';
 import type { ICounter } from './counters';
 
 export interface ISchemaCounter extends ICounter {
 }
 
-function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema>): ISchemaCounter {
+function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchemaCountersLike>): ISchemaCounter {
   const sessionStore = useSessionStore();
   const counters = computed(() => toValue(schemaRef).counters);
 
@@ -40,10 +40,10 @@ function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema
   });
 }
 
-export function useSchemaBeadsCounter(schemaRef: MaybeRefOrGetter<ISchema>) {
+export function useSchemaBeadsCounter(schemaRef: MaybeRefOrGetter<ISchemaCountersLike>) {
   return useSchemaCounter(SubscriptionLimit.SCHEMA_BEADS, schemaRef);
 }
 
-export function useSharedAccessCounter(schemaRef: MaybeRefOrGetter<ISchema>) {
+export function useSchemasSharedAccessCounter(schemaRef: MaybeRefOrGetter<ISchemaCountersLike>) {
   return useSchemaCounter(SubscriptionLimit.SHARED_ACCESS, schemaRef);
 }

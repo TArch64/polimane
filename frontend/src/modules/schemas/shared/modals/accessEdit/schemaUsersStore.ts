@@ -4,8 +4,9 @@ import { type HttpBody, useAsyncData, useHttpClient } from '@/composables';
 import type { ISchemaUser, ISchemaUserInvitation } from '@/models';
 import { type UrlPath } from '@/helpers';
 import { AccessLevel } from '@/enums';
+import { useSchemasSharedAccessCounter } from '@/composables/subscription';
 
-type SchemaIdParams = {
+type SchemaIdsParams = {
   ids: string[];
 };
 
@@ -19,15 +20,15 @@ interface IAddUserResponse {
   invitation?: ISchemaUserInvitation;
 }
 
-interface IAddUserBody extends SchemaIdParams {
+interface IAddUserBody extends SchemaIdsParams {
   email: string;
 }
 
-interface IUpdateAccessBody extends SchemaIdParams {
+interface IUpdateAccessBody extends SchemaIdsParams {
   access: AccessLevel;
 }
 
-interface IDeleteInvitationBody extends SchemaIdParams {
+interface IDeleteInvitationBody extends SchemaIdsParams {
   email: string;
 }
 
@@ -45,7 +46,7 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
       const {
         users,
         invitations,
-      } = await http.get<ISchemaUserList, SchemaIdParams>(baseUrl.value, {
+      } = await http.get<ISchemaUserList, SchemaIdsParams>(baseUrl.value, {
         ids: schemaIds.value,
       });
 
@@ -74,6 +75,13 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
   const users = computed(() => list.data.users);
   const invitations = computed(() => list.data.invitations);
 
+  const counter = useSchemasSharedAccessCounter(() => ({
+    counters: {
+      schemaBeads: 0,
+      sharedAccess: users.value.length + invitations.value.length,
+    },
+  }));
+
   async function addUser(email: string): Promise<IAddUserResponse> {
     const response = await http.post<IAddUserResponse, IAddUserBody>(baseUrl.value, {
       ids: schemaIds.value,
@@ -95,7 +103,7 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
         state.users = state.users.filter((user) => user.id !== deleting.id);
       })
       .commit(async () => {
-        await http.delete<HttpBody, SchemaIdParams>([...baseUrl.value, deleting.id], {
+        await http.delete<HttpBody, SchemaIdsParams>([...baseUrl.value, deleting.id], {
           ids: schemaIds.value,
         });
       });
@@ -150,6 +158,7 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
   return {
     users,
     invitations,
+    counter,
     load,
     addUser,
     deleteUser,
