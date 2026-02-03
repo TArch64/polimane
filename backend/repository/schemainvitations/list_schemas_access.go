@@ -2,19 +2,22 @@ package schemainvitations
 
 import (
 	"context"
-
-	"gorm.io/gorm"
+	"fmt"
 
 	"polimane/backend/model"
 	"polimane/backend/repository"
 )
 
 func (c *Client) ListSchemasAccessOut(ctx context.Context, schemaIDs []model.ID, out interface{}) error {
-	return gorm.
-		G[*model.SchemaInvitation](c.DB).
-		Select("email, MIN(access) AS access, MIN(access) != MAX(access) as is_uneven_access").
-		Scopes(repository.SchemaIDsIn(schemaIDs)).
-		Group("email").
-		Order("email").
-		Scan(ctx, out)
+	return c.ListOut(ctx, out,
+		repository.Select(
+			"email",
+			"MIN(access) AS access",
+			"MIN(access) = MAX(access) AS is_even_access",
+			fmt.Sprintf("COUNT(schema_id) = %d AS is_all_access", len(schemaIDs)),
+		),
+		repository.SchemaIDsIn(schemaIDs),
+		repository.Group("email"),
+		repository.Order("email"),
+	)
 }

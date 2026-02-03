@@ -96,6 +96,6 @@ func (c *Controller) deletedSchemasFilter(user *model.User) []repository.Scope {
 	return []repository.Scope{
 		repository.SoftDeletedOnly("user_schemas"),
 		repository.UserIDEq(user.ID),
-		repositoryuserschemas.IncludeSchemasScope(),
+		repositoryuserschemas.IncludeSchemasScope,
 	}
 }

@@ -129,10 +129,7 @@ func (c *Controller) inviteUser(
 	}
 
 	return &AddUserResponse{
-		Invitation: &ListInvitation{
-			Email:  email,
-			Access: model.AccessRead,
-		},
+		Invitation: NewListInvitation(email, model.AccessRead),
 	}, nil
 }
 
@@ -165,6 +162,6 @@ func (c *Controller) addExistingUser(
 	}
 
 	return &AddUserResponse{
-		User: NewUserListItem(user, model.AccessRead),
+		User: NewListUser(user, model.AccessRead),
 	}, nil
 }

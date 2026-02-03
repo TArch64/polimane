@@ -102,12 +102,19 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
   }
 
   async function updateUserAccess(updating: ISchemaUser, access: AccessLevel): Promise<void> {
-    await http.patch<HttpBody, IUpdateAccessBody>([...baseUrl.value, updating.id, 'access'], {
-      ids: schemaIds.value,
-      access,
-    });
-
-    updating.access = access;
+    await list.optimisticUpdate()
+      .begin((state) => {
+        const user = state.users.find((user) => user.id === updating.id)!;
+        user.access = access;
+        user.isEvenAccess = true;
+        user.isAllAccess = true;
+      })
+      .commit(async () => {
+        await http.patch<HttpBody, IUpdateAccessBody>([...baseUrl.value, updating.id, 'access'], {
+          ids: schemaIds.value,
+          access,
+        });
+      });
   }
 
   async function deleteInvitation(deleting: ISchemaUserInvitation): Promise<void> {
@@ -124,13 +131,20 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
   }
 
   async function updateInvitationAccess(updating: ISchemaUserInvitation, access: AccessLevel): Promise<void> {
-    await http.patch<HttpBody, IUpdateInvitationAccessBody>([...baseUrl.value, 'invitations', 'access'], {
-      ids: schemaIds.value,
-      email: updating.email,
-      access,
-    });
-
-    updating.access = access;
+    await list.optimisticUpdate()
+      .begin((state) => {
+        const invitation = state.invitations.find((invitation) => invitation.email === updating.email)!;
+        invitation.access = access;
+        invitation.isEvenAccess = true;
+        invitation.isAllAccess = true;
+      })
+      .commit(async () => {
+        await http.patch<HttpBody, IUpdateInvitationAccessBody>([...baseUrl.value, 'invitations', 'access'], {
+          ids: schemaIds.value,
+          email: updating.email,
+          access,
+        });
+      });
   }
 
   return {

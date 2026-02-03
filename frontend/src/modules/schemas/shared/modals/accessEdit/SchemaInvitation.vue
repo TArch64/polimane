@@ -1,8 +1,9 @@
 <template>
   <SchemaAccessRow
     :display-name="invitation.email"
-    :uneven-access="invitation.isUnevenAccess"
     :access="invitation.access"
+    :even-access="invitation.isEvenAccess"
+    :all-access="invitation.isAllAccess"
     @update:access="updateAccess"
     @delete="deleteInvitation"
   />
