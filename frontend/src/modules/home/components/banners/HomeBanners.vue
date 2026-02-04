@@ -1,6 +1,6 @@
 <template>
   <div class="home-banners" v-if="schemasCreatedCounter.isReached">
-    <SchemasCreatedLimitReachedBanner v-if="schemasCreatedCounter.isReached" />
+    <SchemasCreatedLimitReachedBanner />
   </div>
 </template>
 
