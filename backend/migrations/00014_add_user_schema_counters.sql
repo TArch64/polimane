@@ -23,12 +23,12 @@ WHERE user_schemas.schema_id = schema_users_count.id;
 
 
 CREATE
-OR
-REPLACE
-FUNCTION jsonb_increment(
+  OR
+  REPLACE
+  FUNCTION jsonb_increment(
   target jsonb,
-  KEY TEXT,
-  delta SMALLINT
+  key text,
+  delta smallint
 ) RETURNS jsonb
   STABLE
   LANGUAGE sql AS
@@ -42,7 +42,7 @@ $$;
 
 -- +goose Down
 DROP
-FUNCTION jsonb_increment;
+  FUNCTION jsonb_increment;
 
 ALTER TABLE user_schemas
   DROP COLUMN IF EXISTS counters;
