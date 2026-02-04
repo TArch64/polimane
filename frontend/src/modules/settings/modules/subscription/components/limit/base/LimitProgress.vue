@@ -4,16 +4,16 @@
       <rect
         width="100%"
         height="100%"
-        :rx="corderRadius"
-        :ry="corderRadius"
+        :rx="cornerRadius"
+        :ry="cornerRadius"
         fill="var(--color-background-2)"
       />
 
       <rect
         :width="`${value}%`"
         height="100%"
-        :rx="corderRadius"
-        :ry="corderRadius"
+        :rx="cornerRadius"
+        :ry="cornerRadius"
         :fill="color"
         class="subscription-limit__progress-value"
       />
@@ -34,7 +34,7 @@ const wrapperRef = ref<HTMLElement | null>(null);
 const { width } = useElementSize(wrapperRef, undefined, { box: 'content-box' });
 
 const height = 7;
-const corderRadius = height / 2;
+const cornerRadius = height / 2;
 
 const viewBox = computed(() => `0 0 ${width.value} ${height}`);
 
