@@ -1,4 +1,4 @@
-package users
+package usersubscriptions
 
 import (
 	"go.uber.org/fx"
