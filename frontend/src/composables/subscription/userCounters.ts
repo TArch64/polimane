@@ -16,14 +16,14 @@ function useUserCounter(name: UserLimit): IUserCounter {
   const overflowed = computed(() => Math.max(0, current.value - max.value));
   const isOverflowed = computed(() => overflowed.value > 0);
 
-  function willOverlow(value: number): boolean {
+  function willOverflow(value: number): boolean {
     return current.value + value > max.value;
   }
 
   return reactive({
     isReached,
     isOverflowed,
-    willOverlow,
+    willOverflow,
     overflowed,
     current,
     max,

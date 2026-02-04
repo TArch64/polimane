@@ -56,7 +56,7 @@ const fillStatus = computed(() => {
   if (counter.isReached) {
     return 'limit-reached';
   }
-  if (counter.willOverlow(300)) {
+  if (counter.willOverflow(300)) {
     return 'limit-reach-soon';
   }
   return 'normal';

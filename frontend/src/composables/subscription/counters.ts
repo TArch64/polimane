@@ -3,6 +3,6 @@ export interface ICounter {
   isOverflowed: boolean;
   current: number;
   max?: number;
-  willOverlow: (value: number) => boolean;
+  willOverflow: (value: number) => boolean;
   overflowed: number;
 }

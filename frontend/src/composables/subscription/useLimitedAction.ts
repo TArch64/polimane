@@ -16,7 +16,7 @@ export function useLimitedAction<M extends Component>(options: ILimitedActionOpt
   const overflow = computed(() => toValue(options.overflow) ?? 1);
 
   function willOverflow(): boolean {
-    return options.counter.willOverlow(overflow.value);
+    return options.counter.willOverflow(overflow.value);
   }
 
   async function tryUpgrade(props: InferComponentProps<M>): Promise<void> {

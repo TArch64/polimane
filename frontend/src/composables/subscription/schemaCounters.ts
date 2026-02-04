@@ -26,7 +26,7 @@ function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema
   const isReached = computed(() => max.value !== undefined && current.value >= max.value);
   const isOverflowed = computed(() => overflowed.value > 0);
 
-  function willOverlow(value: number): boolean {
+  function willOverflow(value: number): boolean {
     return max.value !== undefined && current.value + value > max.value;
   }
 
@@ -35,7 +35,7 @@ function useSchemaCounter(name: SchemaLimit, schemaRef: MaybeRefOrGetter<ISchema
     isOverflowed,
     current,
     max,
-    willOverlow,
+    willOverflow,
     overflowed,
   });
 }
