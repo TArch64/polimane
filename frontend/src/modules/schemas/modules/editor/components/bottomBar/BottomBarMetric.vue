@@ -1,9 +1,9 @@
 <template>
   <Component
     :is="tag"
-    type="button"
     class="bottom-bar-metric"
     :class="classes"
+    v-bind="attrs"
     v-on="listeners"
   >
     <span>{{ label }}</span>
@@ -41,6 +41,10 @@ const tag = computed(() => props.interactive ? 'button' : 'p');
 const classes = computed(() => ({
   'bottom-bar-metric--interactive': props.interactive,
 }));
+
+const attrs = computed(() => props.interactive
+  ? { type: 'button' }
+  : {});
 
 const listeners = computed(() => props.interactive
   ? { click: () => emit('click') }
