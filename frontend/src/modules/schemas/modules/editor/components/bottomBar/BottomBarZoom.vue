@@ -1,6 +1,6 @@
 <template>
   <BottomBarMetric
-    label="Маштаб"
+      label="Масштаб"
     :value="formattedValue"
     :max-value="formattedMax"
   />
