@@ -4,6 +4,7 @@ import { type HttpBody, useAsyncData, useHttpClient } from '@/composables';
 import type { ISchemaUser, ISchemaUserInvitation } from '@/models';
 import { type UrlPath } from '@/helpers';
 import { AccessLevel } from '@/enums';
+import { useSchemasSharedAccessCounter } from '@/composables/subscription';
 
 type SchemaIdsParams = {
   ids: string[];
@@ -73,6 +74,13 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
 
   const users = computed(() => list.data.users);
   const invitations = computed(() => list.data.invitations);
+
+  const counter = useSchemasSharedAccessCounter(() => ({
+    counters: {
+      schemaBeads: 0,
+      sharedAccess: users.value.length + invitations.value.length,
+    },
+  }));
 
   async function addUser(email: string): Promise<IAddUserResponse> {
     const response = await http.post<IAddUserResponse, IAddUserBody>(baseUrl.value, {
@@ -150,6 +158,7 @@ export const useSchemaUsersStore = defineStore('schemas/users', () => {
   return {
     users,
     invitations,
+    counter,
     load,
     addUser,
     deleteUser,

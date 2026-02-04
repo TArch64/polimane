@@ -1,11 +1,16 @@
 import { AccessLevel, BeadKind, Direction, SchemaLayout } from '@/enums';
 import type { SchemaBead } from './ISchemaBead';
 import type { BeadCoord } from './SchemaBeadCoord';
+import type { SchemaCounters } from './ISubscriptionPlan';
 
 export type SchemaSize = Record<Direction, number>;
 export type SchemaBeads<K extends BeadKind = BeadKind> = Record<BeadCoord, SchemaBead<K>>;
 
-export interface ISchema {
+export interface ISchemaCountersLike {
+  counters: SchemaCounters;
+}
+
+export interface ISchema extends ISchemaCountersLike {
   id: string;
   name: string;
   palette: string[];

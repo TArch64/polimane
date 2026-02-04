@@ -4,6 +4,9 @@ import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import type { ISchemaSelectionAdapter } from '@/modules/home/stores';
 import { useConfirm } from '@/components/confirm';
 import { CornerUpLeftIcon, TrashIcon } from '@/components/icon';
+import { useLimitedAction, useSchemasCreatedCounter } from '@/composables/subscription';
+import { useModal } from '@/components/modal';
+import { SchemasLimitReachedModal } from '@/modules/home/components';
 import { useDeletedSchemasStore } from '../stores';
 
 export function useSchemasSelection(): ISchemaSelectionAdapter {
@@ -11,6 +14,7 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
   const actionIds = computed(() => [...schemasStore.selected]);
 
   const router = useRouter();
+  const schemasCreatedCounter = useSchemasCreatedCounter();
 
   const deleteConfirm = useConfirm({
     danger: true,
@@ -26,13 +30,25 @@ export function useSchemasSelection(): ISchemaSelectionAdapter {
     }
   }
 
+  const restoreSchema = useLimitedAction({
+    counter: schemasCreatedCounter,
+    overflow: () => actionIds.value.length,
+    modal: useModal(SchemasLimitReachedModal),
+
+    async onAction() {
+      await schemasStore.restoreMany(actionIds.value);
+      await onDeletableComplete();
+    },
+  });
+
   const actions: MaybeContextMenuAction[] = [
     {
       title: 'Відновити Схеми',
       icon: CornerUpLeftIcon,
+
       async onAction() {
-        await schemasStore.restoreMany(actionIds.value);
-        await onDeletableComplete();
+        const afterAdd = schemasCreatedCounter.current + actionIds.value.length;
+        return restoreSchema({ overflowCount: afterAdd - schemasCreatedCounter.max });
       },
     },
 

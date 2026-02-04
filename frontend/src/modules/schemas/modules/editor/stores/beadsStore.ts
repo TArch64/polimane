@@ -12,7 +12,8 @@ import {
   serializeBeadCoord,
 } from '@/models';
 import { BeadKind, Direction } from '@/enums';
-import { getObjectEntries } from '@/helpers';
+import { deleteObjectKeys, getObjectEntries } from '@/helpers';
+import { useSchemaBeadsCounter } from '@/composables/subscription';
 import { useEditorStore } from './editorStore';
 
 export enum PaintEffect {
@@ -21,6 +22,7 @@ export enum PaintEffect {
 
 export const useBeadsStore = defineStore('schemas/editor/beads', () => {
   const editorStore = useEditorStore();
+  const counter = useSchemaBeadsCounter(() => editorStore.schema);
 
   function getBead(coord: BeadCoord) {
     return editorStore.schema.beads[coord];
@@ -116,12 +118,17 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
     return beads;
   }
 
-  function onBeadBeforeRemove(coord: BeadCoord): void {
+  function unsetBeads(removingSet: Set<BeadCoord>): void {
+    editorStore.schema.beads = deleteObjectKeys(editorStore.schema.beads, removingSet);
+  }
+
+  function onBeadBeforeRemove(coord: BeadCoord, removingSet: Set<BeadCoord>): void {
     const bead = getBead(coord);
     if (!bead) return;
 
     if (isRefBead(bead)) {
-      return remove(getBeadSettings(bead).to);
+      removingSet.add(getBeadSettings(bead).to);
+      return;
     }
 
     if (isSpannableBead(bead)) {
@@ -129,47 +136,84 @@ export const useBeadsStore = defineStore('schemas/editor/beads', () => {
 
       for (const [coord, bead] of getObjectEntries(spanBeads)) {
         if (bead.kind === BeadKind.REF) {
-          delete editorStore.schema.beads[coord];
+          removingSet.add(coord);
         }
       }
     }
   }
 
+  function removeInternal(coords: BeadCoord[]): void {
+    const removingSet = new Set(coords);
+
+    for (const coord of coords) {
+      onBeadBeforeRemove(coord, removingSet);
+    }
+
+    unsetBeads(removingSet);
+  }
+
   function remove(coord: BeadCoord): void {
-    onBeadBeforeRemove(coord);
-    delete editorStore.schema.beads[coord];
+    if (getBead(coord)) {
+      removeInternal([coord]);
+      counter.current--;
+    }
   }
 
-  function paint(coord: BeadCoord, color: SchemaBead | null): PaintEffect | null {
-    const current = getBead(coord);
+  function removeMany(coords: BeadCoord[]) {
+    const existing = coords.filter(getBead);
+    removeInternal(existing);
+    counter.current -= existing.length;
+  }
 
-    if (current === color) {
+  function tryExtendSchema(coord: BeadCoord): PaintEffect | null {
+    const extendingDirections = checkExtendingPaint(coord);
+
+    if (!extendingDirections.length) {
       return null;
     }
 
-    if (color) {
-      if (current) {
-        onBeadBeforeRemove(coord);
-      }
-
-      editorStore.schema.beads[coord] = color;
-
-      const extendingDirections = checkExtendingPaint(coord);
-
-      if (extendingDirections.length) {
-        extendSchemaSize(extendingDirections);
-        return PaintEffect.EXTENDED;
-      }
-
-      return null;
-    }
-
-    if (current) {
-      remove(coord);
-    }
-
-    return null;
+    extendSchemaSize(extendingDirections);
+    return PaintEffect.EXTENDED;
   }
 
-  return { paint, remove, getInArea, getSpanBeads };
+  function paintMany(beads: SchemaBeads): Set<PaintEffect> {
+    let localCounter = counter.current;
+    const effects = new Set<PaintEffect>();
+
+    const allowedSet = getObjectEntries(beads).filter(([coord, bead]) => {
+      if (getBead(coord)) return true;
+      if (localCounter >= counter.max!) return false;
+      if (!isRefBead(bead)) localCounter++;
+      return true;
+    });
+
+    if (allowedSet.length === 0) {
+      return effects;
+    }
+
+    editorStore.schema.beads = {
+      ...editorStore.schema.beads,
+      ...Object.fromEntries(allowedSet),
+    };
+
+    counter.current = localCounter;
+
+    for (const [coord] of allowedSet) {
+      const newEffect = tryExtendSchema(coord);
+
+      if (newEffect) {
+        effects.add(newEffect);
+      }
+    }
+
+    return effects;
+  }
+
+  return {
+    paintMany,
+    remove,
+    removeMany,
+    getInArea,
+    getSpanBeads,
+  };
 });

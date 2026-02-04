@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue';
-import { createAnimatedFrame } from '@/helpers';
+import { createAnimatedFrame, type ObjectEntry } from '@/helpers';
 import {
   type BeadCoord,
   getBeadSettings,
@@ -7,6 +7,7 @@ import {
   isSpannableBead,
   Point,
   type SchemaBead,
+  type SchemaBeads,
   type SchemaSpannableBead,
   serializeBeadPoint,
 } from '@/models';
@@ -71,7 +72,7 @@ export const usePaintingTool = (options: IEditorToolOptions) => {
     };
   }
 
-  function paintCell(point: Point, color: string | null): PaintEffect | null {
+  function paintCell(point: Point, color: string): ObjectEntry<SchemaBeads> | null {
     let coord = serializeBeadPoint(point);
     let bead: SchemaBead | null;
 
@@ -101,7 +102,7 @@ export const usePaintingTool = (options: IEditorToolOptions) => {
       const kind = toolsStore.activeBead;
       bead = beadFactory.create(kind, color);
 
-      if (!!bead && isSpannableBead(bead)) {
+      if (isSpannableBead(bead)) {
         spanning = {
           coord,
           point,
@@ -110,9 +111,7 @@ export const usePaintingTool = (options: IEditorToolOptions) => {
       }
     }
 
-    const effect = beadsStore.paint(coord, bead);
-    lastPaintedPoint = point;
-    return effect;
+    return [coord, bead];
   }
 
   function buildSequence(current: Point): Point[] {
@@ -146,10 +145,28 @@ export const usePaintingTool = (options: IEditorToolOptions) => {
       restrictSpanningPoint(current);
     }
 
-    const points = buildSequence(current);
-    const effect = points.map((point) => paintCell(point, color));
+    const sequence = buildSequence(current);
+    if (!sequence.length) return;
 
-    if (effect.includes(PaintEffect.EXTENDED)) {
+    if (!color) {
+      const removing = sequence.map(serializeBeadPoint);
+      beadsStore.removeMany(removing);
+      lastPaintedPoint = current;
+      return;
+    }
+
+    const paintEntries = sequence
+      .map((point) => paintCell(point, color))
+      .filter((entry) => entry !== null);
+
+    if (!paintEntries.length) {
+      return;
+    }
+
+    const effects = beadsStore.paintMany(Object.fromEntries(paintEntries));
+    lastPaintedPoint = current;
+
+    if (effects.has(PaintEffect.EXTENDED)) {
       beadCoord.clearCache();
     }
   });

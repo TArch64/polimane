@@ -24,15 +24,10 @@ export function useBeadFactory() {
     [BeadKind.BUGLE]: buildBugle,
   };
 
-  function create(kind: BeadContentKind, color: string | null): SchemaBead | null {
-    if (!color) {
-      return null;
-    }
-    return {
-      kind,
-      [kind]: builders[kind](color),
-    };
-  }
+  const create = (kind: BeadContentKind, color: string): SchemaBead => ({
+    kind,
+    [kind]: builders[kind](color),
+  });
 
   const createRef = (to: BeadCoord): SchemaBead => ({
     kind: BeadKind.REF,

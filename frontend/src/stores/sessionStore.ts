@@ -1,12 +1,27 @@
 import { defineStore } from 'pinia';
-import { nextTick, type Ref, ref } from 'vue';
-import type { IUser } from '@/models';
-import { useAuthorized, useHttpClient } from '@/composables';
+import { computed, nextTick, type Ref, ref, watch } from 'vue';
+import type { IUser, IUserSubscription, UserActivePlan } from '@/models';
+import {
+  type HttpBody,
+  UpdateCountersMiddleware,
+  useAuthorized,
+  useHttpClient,
+} from '@/composables';
+import { SubscriptionLimit, SubscriptionPlanId } from '@/enums';
+
+interface IChangePlanBody {
+  planId: SubscriptionPlanId;
+}
 
 export const useSessionStore = defineStore('session', () => {
   const http = useHttpClient();
-  const user = ref<IUser | null>(null);
+  const updateCountersMiddleware = http.getMiddleware(UpdateCountersMiddleware)!;
+
   const authorized = useAuthorized();
+
+  const user = ref<IUser | null>(null);
+  const subscription = computed(() => user.value?.subscription);
+  const plan = computed(() => subscription.value?.plan);
 
   async function refresh(): Promise<void> {
     try {
@@ -36,12 +51,45 @@ export const useSessionStore = defineStore('session', () => {
     }
   }
 
+  const getLimit = (name: SubscriptionLimit) => plan.value?.limits[name];
+
+  watch(
+    user,
+    (user) => updateCountersMiddleware.user = user,
+    { immediate: true },
+  );
+
+  updateCountersMiddleware.onUserUpdate.listen((counters) => {
+    updateUser({
+      subscription: {
+        ...user.value!.subscription,
+        counters: counters,
+      },
+    });
+  });
+
+  async function changePlan(planId: SubscriptionPlanId): Promise<void> {
+    await http.post<HttpBody, IChangePlanBody>('/users/current/subscription/change', {
+      planId,
+    });
+
+    try {
+      await refresh();
+    } catch {
+      location.reload();
+    }
+  }
+
   return {
     user: user as Ref<IUser>,
+    subscription: subscription as Ref<IUserSubscription>,
+    plan: plan as Ref<UserActivePlan>,
     updateUser,
+    getLimit,
     isLoggedIn: authorized,
     refresh,
     logout,
     onLogout,
+    changePlan,
   };
 });

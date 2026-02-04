@@ -1,4 +1,6 @@
 export type * from './IUser';
+export type * from './IUserSubscription';
+export type * from './ISubscriptionPlan';
 export type * from './IFolder';
 export * from './ISchema';
 export * from './ISchemaBead';

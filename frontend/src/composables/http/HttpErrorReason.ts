@@ -3,4 +3,5 @@ export const enum HttpErrorReason {
   NOT_FOUND = 'NotFound',
   CODE_EXPIRED = 'CodeExpired',
   ALREADY_IN_USE_NAME = 'AlreadyInUse[Name]',
+  LIMIT_REACHED_SCHEMAS_CREATED = 'LimitReached[SchemasCreated]',
 }

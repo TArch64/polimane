@@ -2,6 +2,7 @@
   <EditorHeader />
   <EditorToolbar v-if="isEditable" />
   <EditorCanvas class="editor__fill" />
+  <EditorBottomBar v-if="!isMobile" />
 </template>
 
 <script lang="ts" setup>
@@ -9,9 +10,12 @@ import './colorLib';
 
 import { computed } from 'vue';
 import { useEventListener } from '@vueuse/core';
+import { SchemasLimitReachedModal } from '@editor/components/modals';
 import { definePreload } from '@/router/define';
 import { destroyStore, lazyDestroyStore } from '@/helpers';
 import { useMobileScreen } from '@/composables';
+import { useModal } from '@/components/modal';
+import { useSchemasCreatedCounter } from '@/composables/subscription';
 import {
   useBeadsStore,
   useCanvasStore,
@@ -20,7 +24,7 @@ import {
   useSelectionStore,
   useToolsStore,
 } from './stores';
-import { EditorCanvas, EditorHeader, EditorToolbar } from './components';
+import { EditorBottomBar, EditorCanvas, EditorHeader, EditorToolbar } from './components';
 import { provideHotKeysHandler, useEditorBackgroundRenderer } from './composables';
 
 defineProps<{
@@ -46,6 +50,9 @@ defineOptions({
 
 const editorStore = useEditorStore();
 const isMobile = useMobileScreen();
+const schemasCreatedCounter = useSchemasCreatedCounter();
+const schemasLimitReachedModal = useModal(SchemasLimitReachedModal);
+
 useEditorBackgroundRenderer();
 provideHotKeysHandler();
 
@@ -57,6 +64,10 @@ useEventListener(window, 'beforeunload', (event) => {
     destroyStore(editorStore);
   }
 });
+
+if (schemasCreatedCounter.isOverflowed) {
+  schemasLimitReachedModal.open();
+}
 </script>
 
 <style scoped>

@@ -4,11 +4,13 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { HomeListSchema } from '@/modules/home/components';
+import { HomeListSchema, SchemasLimitReachedModal } from '@/modules/home/components';
 import type { ListSchema } from '@/modules/home/stores';
 import type { MaybeContextMenuAction } from '@/components/contextMenu';
 import { useConfirm } from '@/components/confirm';
 import { CornerUpLeftIcon, TrashIcon } from '@/components/icon';
+import { useLimitedAction, useSchemasCreatedCounter } from '@/composables/subscription';
+import { useModal } from '@/components/modal';
 import { useDeletedSchemasStore } from '../stores';
 
 const props = defineProps<{
@@ -31,14 +33,21 @@ async function onDeletableFinish() {
   }
 }
 
+const restoreSchema = useLimitedAction({
+  counter: useSchemasCreatedCounter(),
+  modal: useModal(SchemasLimitReachedModal),
+
+  async onAction() {
+    await schemasStore.restoreSchema(props.schema);
+    await onDeletableFinish();
+  },
+});
+
 const menuActions: MaybeContextMenuAction[] = [
   {
     title: 'Відновити Схему',
     icon: CornerUpLeftIcon,
-    async onAction() {
-      await schemasStore.restoreSchema(props.schema);
-      await onDeletableFinish();
-    },
+    onAction: () => restoreSchema({ overflowCount: 1 }),
   },
 
   {

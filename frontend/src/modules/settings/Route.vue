@@ -21,7 +21,7 @@
 import type { RouteLocationRaw } from 'vue-router';
 import { CommonLayout } from '@/components/layout';
 import { Button } from '@/components/button';
-import { type IconComponent, PersonIcon, UnlockIcon } from '@/components/icon';
+import { CreditCartIcon, type IconComponent, PersonIcon, UnlockIcon } from '@/components/icon';
 
 interface ISettingsRoute {
   title: string;
@@ -40,6 +40,11 @@ const routes: ISettingsRoute[] = [
     icon: UnlockIcon,
     to: { name: 'settings-security' },
   },
+  {
+    title: 'Підписка',
+    icon: CreditCartIcon,
+    to: { name: 'settings-subscription' },
+  },
 ];
 </script>
 
@@ -48,7 +53,7 @@ const routes: ISettingsRoute[] = [
   .settings {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 24px;
   }
 }
 </style>

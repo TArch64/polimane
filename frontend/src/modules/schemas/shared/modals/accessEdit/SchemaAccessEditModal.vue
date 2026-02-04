@@ -1,6 +1,9 @@
 <template>
   <Modal :footer="false" title="Редагувати Доступ">
-    <SchemaNewUser class="access-edit__new-user" />
+    <SchemaNewUser
+      class="access-edit__new-user"
+      v-if="!usersStore.counter.isReached"
+    />
 
     <ModalBanner class="access-edit__banner">
       <p>

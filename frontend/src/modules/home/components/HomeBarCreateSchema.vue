@@ -4,7 +4,7 @@
     variant="primary"
     class="home-bar__create-schema"
     :prepend-icon="PlusIcon"
-    @click="createModal.open()"
+    @click="createSchema({ overflowCount: 1 })"
   >
     Нова Схема
   </Button>
@@ -14,9 +14,16 @@
 import { PlusIcon } from '@/components/icon';
 import { Button } from '@/components/button';
 import { useModal } from '@/components/modal';
-import { SchemaCreateModal } from '@/modules/home/components/modals';
+import { SchemaCreateModal, SchemasLimitReachedModal } from '@/modules/home/components/modals';
+import { useLimitedAction, useSchemasCreatedCounter } from '@/composables/subscription';
 
 const createModal = useModal(SchemaCreateModal);
+
+const createSchema = useLimitedAction({
+  counter: useSchemasCreatedCounter(),
+  modal: useModal(SchemasLimitReachedModal),
+  onAction: () => void createModal.open(),
+});
 </script>
 
 <style scoped>

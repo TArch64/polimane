@@ -18,9 +18,11 @@ import {
   serializeBeadPoint,
 } from '@/models';
 import { getObjectEntries, getObjectKeys, type ObjectEntries } from '@/helpers';
+import { useSchemaBeadsCounter } from '@/composables/subscription';
 import { useBeadsStore } from '../beadsStore';
 import type { IBeadSelection } from '../selectionStore';
 import { useCanvasStore } from '../canvasStore';
+import { useEditorStore } from '../editorStore';
 import type { ISelectionArea } from './useSelectionArea';
 import { useBeadFactory } from './useBeadFactory';
 
@@ -39,9 +41,12 @@ export interface ISelectionResize extends INodeRect {
 }
 
 export function useSelectionResize(options: ISelectionResizeOptions): ISelectionResize {
+  const editorStore = useEditorStore();
   const beadsStore = useBeadsStore();
   const canvasStore = useCanvasStore();
+
   const beadFactory = useBeadFactory();
+  const limit = useSchemaBeadsCounter(() => editorStore.schema);
 
   const translation = ref(0);
   const direction = ref<Direction | null>(null);
@@ -184,10 +189,7 @@ export function useSelectionResize(options: ISelectionResizeOptions): ISelection
       const templateBeads = capturedSequence.value[sequenceIndex.value]!;
       const newBeads = renderTemplate(templateBeads);
 
-      for (const [coord, bead] of newBeads) {
-        beadsStore.paint(coord, bead);
-      }
-
+      beadsStore.paintMany(Object.fromEntries(newBeads));
       sequenceIndex.value++;
       translation.value -= BEAD_SIZE;
       extendArea(BEAD_SIZE);

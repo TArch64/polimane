@@ -10,6 +10,7 @@
       <HomeTopBarActions />
     </template>
 
+    <HomeBanners />
     <RouterView />
   </CommonLayout>
 </template>
@@ -19,7 +20,7 @@ import { computed } from 'vue';
 import { CommonLayout } from '@/components/layout';
 import { SCHEMA_PLURAL, usePageClass, usePluralFormatter } from '@/composables';
 import { useHomeStore } from './stores';
-import { HomeTopBarActions } from './components';
+import { HomeBanners, HomeTopBarActions } from './components';
 
 defineProps<{
   folderId?: string; // used in child routes

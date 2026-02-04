@@ -92,6 +92,16 @@ const classes = computed(() => [
     --card-background: var(--color-background-2);
   }
 
+  .card--inverted {
+    --card-background: color-mix(in srgb, var(--color-primary), var(--color-white) 10%);
+    --button-base-color: var(--color-white);
+    color: var(--color-white);
+
+    :deep(.button--primary) {
+      --button-foreground: var(--color-primary);
+    }
+  }
+
   .card--interactable {
     transition: border-color 0.15s ease-out;
     will-change: border-color;
