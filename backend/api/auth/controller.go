@@ -6,8 +6,6 @@ import (
 
 	"polimane/backend/api/base"
 	"polimane/backend/env"
-	repositoryusers "polimane/backend/repository/users"
-	"polimane/backend/services/subscriptioncounters"
 	"polimane/backend/services/usercreate"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
@@ -17,12 +15,10 @@ const GroupPrefix = "auth"
 
 type ControllerOptions struct {
 	fx.In
-	Workos               *workos.Client
-	Env                  *env.Environment
-	Users                *repositoryusers.Client
-	Signals              *signal.Container
-	SubscriptionCounters *subscriptioncounters.Service
-	UserCreate           *usercreate.Service
+	Workos     *workos.Client
+	Env        *env.Environment
+	Signals    *signal.Container
+	UserCreate *usercreate.Service
 }
 
 type Controller struct {
