@@ -2,8 +2,11 @@ package schemas
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 
+	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
+	"polimane/backend/services/subscriptioncounters"
 )
 
 func (c *Controller) Restore(ctx *fiber.Ctx) (err error) {
@@ -16,9 +19,30 @@ func (c *Controller) Restore(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	if err = c.schemas.Restore(ctx.Context(), body.IDs); err != nil {
+	reqCtx := ctx.Context()
+	user := auth.GetSessionUser(ctx)
+
+	schemasLen := len(body.IDs)
+	if !c.subscriptionCounters.SchemasCreated.CanAdd(user, uint16(schemasLen)) {
+		return base.SchemasCreatedLimitReachedErr
+	}
+
+	err = c.schemas.DB.
+		WithContext(reqCtx).
+		Transaction(func(tx *gorm.DB) error {
+			if err = c.schemas.RestoreTx(reqCtx, tx, body.IDs); err != nil {
+				return err
+			}
+
+			return c.subscriptionCounters.SchemasCreated.ChangeTx(reqCtx, tx, subscriptioncounters.ChangeSet{
+				user.ID: int16(schemasLen),
+			})
+		})
+
+	if err != nil {
 		return err
 	}
 
+	base.SetResponseUserCounters(ctx, user.Subscription)
 	return base.NewSuccessResponse(ctx)
 }

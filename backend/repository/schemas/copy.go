@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"gorm.io/gorm"
+
 	"polimane/backend/model"
 	"polimane/backend/repository"
 )
@@ -22,7 +24,7 @@ type copyingSource struct {
 	FolderID *model.ID
 }
 
-func (c *Client) Copy(ctx context.Context, options *CopyOptions) (*model.Schema, error) {
+func (c *Client) CopyTx(ctx context.Context, tx *gorm.DB, options *CopyOptions) (*model.Schema, error) {
 	var source copyingSource
 	err := c.GetOut(ctx, &source,
 		repository.Select("schemas.*", "folder_id"),
@@ -38,7 +40,7 @@ func (c *Client) Copy(ctx context.Context, options *CopyOptions) (*model.Schema,
 		return nil, err
 	}
 
-	return c.Create(ctx, &CreateOptions{
+	return c.CreateTx(ctx, tx, &CreateOptions{
 		User:            options.User,
 		Name:            copyName,
 		Layout:          source.Layout,
