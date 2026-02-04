@@ -62,6 +62,7 @@ func (c *Controller) getAffectedUsersOnDelete(ctx context.Context, schemaIDs []m
 	}
 
 	changeSet := make(subscriptioncounters.ChangeSet)
+	defer rows.Close()
 
 	for rows.Next() {
 		var id model.ID
@@ -72,6 +73,10 @@ func (c *Controller) getAffectedUsersOnDelete(ctx context.Context, schemaIDs []m
 		}
 
 		changeSet[id] = -count
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return changeSet, err
