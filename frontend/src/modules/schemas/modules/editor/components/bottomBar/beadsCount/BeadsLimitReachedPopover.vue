@@ -1,6 +1,6 @@
 <template>
   <div class="beads-limit-reached-popover">
-    <p>Ви досягли максимальної кількості біресу для цієї схеми</p>
+    <p>Ви досягли максимальної кількості бісеру для цієї схеми</p>
 
     <Button
       variant="primary"
