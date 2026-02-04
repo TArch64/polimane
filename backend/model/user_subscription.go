@@ -20,7 +20,7 @@ var (
 
 type UserSubscription struct {
 	UserID         ID                       `gorm:"primaryKey" json:"-"`
-	PlanID         SubscriptionPlanID       `json:"plan" gorm:"plan"`
+	PlanID         SubscriptionPlanID       `json:"plan"`
 	Status         SubscriptionStatus       `json:"status" gorm:"default:active"`
 	Counters       SubscriptionCountersJSON `json:"counters" gorm:"default:'{}'::json"`
 	BillingTry     uint8                    `json:"-" gorm:"default:0"`
