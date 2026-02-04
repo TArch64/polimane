@@ -6,7 +6,6 @@ import (
 
 	"polimane/backend/api/base"
 	"polimane/backend/env"
-	repositoryusers "polimane/backend/repository/users"
 	"polimane/backend/services/usercreate"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
@@ -18,7 +17,6 @@ type ControllerOptions struct {
 	fx.In
 	Workos     *workos.Client
 	Env        *env.Environment
-	Users      *repositoryusers.Client
 	Signals    *signal.Container
 	UserCreate *usercreate.Service
 }

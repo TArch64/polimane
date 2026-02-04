@@ -17,6 +17,10 @@ func (s *Service) Create(ctx context.Context, workosUser *usermanagement.User) (
 				return err
 			}
 
+			if err = s.createSubscription(ctx, tx, user); err != nil {
+				return err
+			}
+
 			return s.acceptInvitations(ctx, tx, user)
 		})
 

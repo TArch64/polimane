@@ -10,6 +10,7 @@ import (
 	"polimane/backend/api/base"
 	"polimane/backend/model"
 	repositoryschemas "polimane/backend/repository/schemas"
+	"polimane/backend/services/subscriptioncounters"
 )
 
 type CreateBody struct {
@@ -33,8 +34,12 @@ func (c *Controller) Create(ctx *fiber.Ctx) (err error) {
 	}
 
 	user := auth.GetSessionUser(ctx)
-	reqCtx := ctx.Context()
 
+	if !c.subscriptionCounters.SchemasCreated.CanAdd(user, 1) {
+		return base.SchemasCreatedLimitReachedErr
+	}
+
+	reqCtx := ctx.Context()
 	folderID := body.FolderID()
 	if folderID != nil {
 		err = c.folders.HasAccess(reqCtx, user.ID, *folderID)
@@ -47,16 +52,32 @@ func (c *Controller) Create(ctx *fiber.Ctx) (err error) {
 		}
 	}
 
-	schema, err := c.schemas.Create(reqCtx, &repositoryschemas.CreateOptions{
-		User:     user,
-		Name:     body.Name,
-		Layout:   body.Layout,
-		FolderID: folderID,
-	})
+	var schema *model.Schema
+
+	err = c.schemas.DB.
+		WithContext(reqCtx).
+		Transaction(func(tx *gorm.DB) error {
+			schema, err = c.schemas.CreateTx(reqCtx, tx, &repositoryschemas.CreateOptions{
+				User:     user,
+				Name:     body.Name,
+				Layout:   body.Layout,
+				FolderID: folderID,
+			})
+
+			if err != nil {
+				return err
+			}
+
+			return c.subscriptionCounters.SchemasCreated.ChangeTx(reqCtx, tx, subscriptioncounters.ChangeSet{
+				user.ID: 1,
+			})
+		})
 
 	if err != nil {
 		return err
 	}
+
+	base.SetResponseUserCounters(ctx, user.Subscription)
 
 	if err = c.updateScreenshot(reqCtx, schema.ID, false); err != nil {
 		return err

@@ -12,7 +12,8 @@ import (
 
 type SchemaDetails struct {
 	model.Schema
-	Access model.AccessLevel `json:"access"`
+	Access   model.AccessLevel        `json:"access"`
+	Counters model.SchemaCountersJSON `json:"counters"`
 }
 
 func (c *Controller) ByID(ctx *fiber.Ctx) error {
@@ -25,7 +26,7 @@ func (c *Controller) ByID(ctx *fiber.Ctx) error {
 	user := auth.GetSessionUser(ctx)
 	err = c.schemas.GetOut(ctx.Context(), &schema,
 		repository.IDEq(schemaID),
-		repository.Select("schemas.*", "access"),
+		repository.Select("schemas.*", "access", "counters"),
 		repositoryschemas.IncludeUserSchemaScope(user.ID),
 	)
 

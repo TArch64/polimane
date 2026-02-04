@@ -16,6 +16,7 @@ import (
 	"polimane/backend/model"
 	"polimane/backend/repository"
 	repositoryschemasinvitations "polimane/backend/repository/schemainvitations"
+	"polimane/backend/services/subscriptioncounters"
 	"polimane/backend/services/workos"
 )
 
@@ -42,9 +43,7 @@ func (c *Controller) Add(ctx *fiber.Ctx) (err error) {
 		return err
 	}
 
-	user, err := c.users.Get(
-		reqCtx,
-		repository.Select("id", "email", "first_name", "last_name"),
+	user, err := c.users.GetWithSubscription(reqCtx,
 		repository.EmailEq(body.Email),
 	)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -60,13 +59,30 @@ func (c *Controller) Add(ctx *fiber.Ctx) (err error) {
 	if user == nil {
 		response, err = c.inviteUser(reqCtx, currentUser, body.IDs, body.Email)
 	} else {
-		response, err = c.addExistingUser(reqCtx, currentUser, body.IDs, user)
+		schemasLen := len(body.IDs)
+		if !c.subscriptionCounters.SchemasCreated.CanAdd(user, uint16(schemasLen)) {
+			return base.SchemasCreatedLimitReachedErr
+		}
+
+		err = c.userSchemas.DB.
+			WithContext(reqCtx).
+			Transaction(func(tx *gorm.DB) error {
+				response, err = c.addExistingUser(reqCtx, tx, currentUser, body.IDs, user)
+				if err != nil {
+					return err
+				}
+
+				return c.subscriptionCounters.SchemasCreated.ChangeTx(reqCtx, tx, subscriptioncounters.ChangeSet{
+					user.ID: int16(schemasLen),
+				})
+			})
 	}
 
 	if err != nil {
 		return err
 	}
 
+	base.SetResponseUserCounters(ctx, currentUser.Subscription)
 	return ctx.JSON(response)
 }
 
@@ -119,6 +135,7 @@ func (c *Controller) inviteUser(
 
 func (c *Controller) addExistingUser(
 	ctx context.Context,
+	tx *gorm.DB,
 	currentUser *model.User,
 	schemaIDs []model.ID,
 	user *model.User,
@@ -136,7 +153,7 @@ func (c *Controller) addExistingUser(
 		}
 	}
 
-	err := c.userSchemas.InsertMany(ctx,
+	err := c.userSchemas.InsertManyTx(ctx, tx,
 		&userSchemas,
 		clause.OnConflict{DoNothing: true},
 	)

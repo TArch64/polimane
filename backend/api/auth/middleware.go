@@ -57,6 +57,7 @@ func MiddlewareProvider(options MiddlewareOptions) *Middleware {
 	}
 
 	options.Signals.InvalidateUserCache.AddListener(middleware.invalidateUserCache)
+	options.Signals.UpdateUserCacheSync.AddListener(middleware.updateCachedUser)
 	options.Signals.InvalidateWorkosUserCache.AddListener(middleware.invalidateWorkosUserCache)
 	options.Signals.InvalidateAuthCache.AddListener(middleware.invalidateAuthCache)
 	return middleware
@@ -77,6 +78,12 @@ func (m *Middleware) invalidateUserCache(ctx context.Context, userID model.ID) {
 
 func (m *Middleware) invalidateWorkosUserCache(ctx context.Context, userID string) {
 	_ = m.workosUserCache.Invalidate(ctx, userID)
+}
+
+func (m *Middleware) updateCachedUser(ctx context.Context, event *signal.UpdateUserCacheEvent) {
+	if user := m.getCachedUser(ctx, event.UserID); user != nil {
+		event.Update(user)
+	}
 }
 
 func (m *Middleware) Handler(ctx *fiber.Ctx) error {
@@ -155,19 +162,30 @@ func (m *Middleware) getWorkosUser(ctx context.Context, accessTokenClaims *worko
 
 func (m *Middleware) getUser(ctx context.Context, id model.ID) (*model.User, error) {
 	return m.userCache.Get(ctx, id.String(), func() (*model.User, *time.Duration, error) {
-		user, err := m.users.Get(ctx, repository.IDEq(id))
+		user, err := m.users.GetWithSubscription(ctx,
+			repository.IDEq(id, "users"),
+		)
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil, m.newUnauthorizedErr(err, base.CustomErrorData{
 				"userId": id.String(),
 			})
 		}
+
 		if err != nil {
 			return nil, nil, err
 		}
 
 		return user, nil, nil
 	})
+}
+
+func (m *Middleware) getCachedUser(ctx context.Context, id model.ID) *model.User {
+	cached, err := m.userCache.Get(ctx, id.String(), nil)
+	if err != nil {
+		return nil
+	}
+	return cached
 }
 
 func (m *Middleware) newUnauthorizedErr(err error, extra ...base.CustomErrorData) error {

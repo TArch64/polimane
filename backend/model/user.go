@@ -9,5 +9,6 @@ type User struct {
 	LastName  string `json:"lastName"`
 
 	// Relations
-	Schemas []*Schema `gorm:"many2many:user_schemas" json:"-"`
+	Schemas      []*Schema         `gorm:"many2many:user_schemas" json:"-"`
+	Subscription *UserSubscription `json:"-"`
 }

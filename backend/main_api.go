@@ -12,12 +12,14 @@ import (
 	apischemasusers "polimane/backend/api/schemas/users"
 	apiusers "polimane/backend/api/users"
 	apiauthfactors "polimane/backend/api/users/authfactors"
+	apisubscriptions "polimane/backend/api/users/subscriptions"
 	"polimane/backend/env"
 	repositoryfolders "polimane/backend/repository/folders"
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryschemas "polimane/backend/repository/schemas"
 	repositoryusers "polimane/backend/repository/users"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
+	repositoryusersubscriptions "polimane/backend/repository/usersubscriptions"
 	"polimane/backend/services/appcontext"
 	"polimane/backend/services/awscloudwatch"
 	"polimane/backend/services/awsconfig"
@@ -31,6 +33,8 @@ import (
 	"polimane/backend/services/schemadelete"
 	"polimane/backend/services/schemascreenshot"
 	"polimane/backend/services/sentry"
+	"polimane/backend/services/subscriptioncounters"
+	"polimane/backend/services/subscriptionupdate"
 	"polimane/backend/services/usercreate"
 	"polimane/backend/services/workos"
 	"polimane/backend/signal"
@@ -57,6 +61,7 @@ func main() {
 			repositoryschemas.Provider,
 			repositoryschemainvitations.Provider,
 			repositoryfolders.Provider,
+			repositoryusersubscriptions.Provider,
 
 			// services
 			bitwarden.Provider,
@@ -74,6 +79,8 @@ func main() {
 			schemadelete.Provider,
 			logstdout.Provider,
 			logpersistent.Provider,
+			subscriptioncounters.Provider,
+			subscriptionupdate.Provider,
 			usercreate.Provider,
 
 			// api
@@ -81,7 +88,8 @@ func main() {
 			AsController(apiping.Provider),
 			AsController(apiauth.Provider),
 			AsController(apiusers.Provider),
-			apiauthfactors.Provider, // users child controller
+			apiauthfactors.Provider,   // users child controller
+			apisubscriptions.Provider, // users child controller
 			AsController(apischemas.Provider),
 			apischemasusers.Provider, // schemas child controller
 			AsController(apifolders.Provider),

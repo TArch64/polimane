@@ -10,6 +10,7 @@ import (
 	repositoryschemainvitations "polimane/backend/repository/schemainvitations"
 	repositoryusers "polimane/backend/repository/users"
 	repositoryuserschemas "polimane/backend/repository/userschemas"
+	"polimane/backend/services/subscriptioncounters"
 	"polimane/backend/services/workos"
 )
 
@@ -18,25 +19,28 @@ const ParamDefUserID = ":" + ParamUserID
 
 type ControllerOptions struct {
 	fx.In
-	Users             *repositoryusers.Client
-	UserSchemas       *repositoryuserschemas.Client
-	SchemaInvitations *repositoryschemainvitations.Client
-	Workos            *workos.Client
+	Users                *repositoryusers.Client
+	UserSchemas          *repositoryuserschemas.Client
+	SchemaInvitations    *repositoryschemainvitations.Client
+	Workos               *workos.Client
+	SubscriptionCounters *subscriptioncounters.Service
 }
 
 type Controller struct {
-	users             *repositoryusers.Client
-	userSchemas       *repositoryuserschemas.Client
-	schemaInvitations *repositoryschemainvitations.Client
-	workos            *workos.Client
+	users                *repositoryusers.Client
+	userSchemas          *repositoryuserschemas.Client
+	schemaInvitations    *repositoryschemainvitations.Client
+	workos               *workos.Client
+	subscriptionCounters *subscriptioncounters.Service
 }
 
 func Provider(options ControllerOptions) *Controller {
 	return &Controller{
-		users:             options.Users,
-		userSchemas:       options.UserSchemas,
-		schemaInvitations: options.SchemaInvitations,
-		workos:            options.Workos,
+		users:                options.Users,
+		userSchemas:          options.UserSchemas,
+		schemaInvitations:    options.SchemaInvitations,
+		workos:               options.Workos,
+		subscriptionCounters: options.SubscriptionCounters,
 	}
 }
 

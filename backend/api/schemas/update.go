@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/datatypes"
+	"gorm.io/gorm"
 
 	"polimane/backend/api/auth"
 	"polimane/backend/api/base"
@@ -23,9 +24,76 @@ type UpdateBody struct {
 	Beads           model.SchemaBeads   `json:"beads" validate:"omitempty"`
 }
 
-func collectUpdates(body *UpdateBody) *model.Schema {
+func (c *Controller) Update(ctx *fiber.Ctx) error {
+	schemaID, err := base.GetParamID(ctx, ParamSchemaID)
+	if err != nil {
+		return err
+	}
+
+	var body UpdateBody
+	if err = base.ParseBody(ctx, &body); err != nil {
+		return err
+	}
+
+	reqCtx := ctx.Context()
+	user := auth.GetSessionUser(ctx)
+
+	userSchema, err := c.userSchemas.Get(reqCtx,
+		repository.UserIDEq(user.ID),
+		repository.SchemaIDEq(schemaID),
+		repository.AccessGTE(model.AccessWrite),
+	)
+	if err != nil {
+		return err
+	}
+
+	updates, beadsCounter := c.collectUpdates(&body)
+	if updates == nil {
+		return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
+	}
+
+	if beadsCounter != nil &&
+		!c.subscriptionCounters.SchemaBeads.CanSet(user, *beadsCounter) {
+		return base.SchemasCreatedLimitReachedErr
+	}
+
+	err = c.schemas.DB.
+		WithContext(reqCtx).
+		Transaction(func(tx *gorm.DB) error {
+			err = c.schemas.UpdateTx(reqCtx, tx, *updates,
+				repository.IDEq(schemaID),
+			)
+			if err != nil {
+				return err
+			}
+
+			if beadsCounter != nil {
+				return c.subscriptionCounters.SchemaBeads.SetTx(reqCtx, tx, userSchema, *beadsCounter)
+			}
+
+			return nil
+		})
+
+	if err != nil {
+		return err
+	}
+
+	if beadsCounter != nil {
+		base.SetResponseSchemaCounters(ctx, userSchema)
+	}
+
+	needImmediateScreenshotUpdate := body.BackgroundColor != ""
+	if err = c.updateScreenshot(reqCtx, schemaID, needImmediateScreenshotUpdate); err != nil {
+		return err
+	}
+
+	return base.NewSuccessResponse(ctx)
+}
+
+func (c *Controller) collectUpdates(body *UpdateBody) (*model.Schema, *uint16) {
 	changed := false
 	updates := &model.Schema{}
+	var beadsCounter *uint16
 
 	if body.Name != "" {
 		changed = true
@@ -50,13 +118,15 @@ func collectUpdates(body *UpdateBody) *model.Schema {
 	if body.Beads != nil {
 		changed = true
 		updates.Beads = datatypes.NewJSONType(body.Beads)
+		beadsCount := body.Beads.CountVisible()
+		beadsCounter = &beadsCount
 	}
 
 	if changed {
-		return updates
+		return updates, beadsCounter
 	}
 
-	return nil
+	return nil, nil
 }
 
 func (c *Controller) updateScreenshot(ctx context.Context, schemaID model.ID, needImmediateUpdate bool) error {
@@ -80,43 +150,4 @@ func (c *Controller) updateScreenshot(ctx context.Context, schemaID model.ID, ne
 	return c.schemaScreenshot.Screenshot(ctx, &schemascreenshot.ScreenshotOptions{
 		Schema: schema,
 	})
-}
-
-func (c *Controller) Update(ctx *fiber.Ctx) error {
-	schemaID, err := base.GetParamID(ctx, ParamSchemaID)
-	if err != nil {
-		return err
-	}
-
-	var body UpdateBody
-	if err = base.ParseBody(ctx, &body); err != nil {
-		return err
-	}
-
-	user := auth.GetSessionUser(ctx)
-	reqCtx := ctx.Context()
-	err = c.userSchemas.HasAccess(reqCtx, user.ID, schemaID, model.AccessWrite)
-	if err != nil {
-		return err
-	}
-
-	updates := collectUpdates(&body)
-	if updates == nil {
-		return base.NewReasonedError(fiber.StatusBadRequest, "EmptyUpdatesInput")
-	}
-
-	err = c.schemas.Update(reqCtx, *updates,
-		repository.IDEq(schemaID),
-	)
-
-	if err != nil {
-		return err
-	}
-
-	needImmediateScreenshotUpdate := body.BackgroundColor != ""
-	if err = c.updateScreenshot(reqCtx, schemaID, needImmediateScreenshotUpdate); err != nil {
-		return err
-	}
-
-	return base.NewSuccessResponse(ctx)
 }

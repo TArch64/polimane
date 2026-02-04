@@ -6,6 +6,7 @@ import (
 
 	"polimane/backend/api/base"
 	apiauthfactors "polimane/backend/api/users/authfactors"
+	apisubscriptions "polimane/backend/api/users/subscriptions"
 	"polimane/backend/env"
 	repositoryusers "polimane/backend/repository/users"
 	"polimane/backend/services/workos"
@@ -14,28 +15,31 @@ import (
 
 type ControllerOptions struct {
 	fx.In
-	Env                   *env.Environment
-	Workos                *workos.Client
-	Users                 *repositoryusers.Client
-	Signals               *signal.Container
-	AuthFactorsController *apiauthfactors.Controller
+	Env                     *env.Environment
+	Workos                  *workos.Client
+	Users                   *repositoryusers.Client
+	Signals                 *signal.Container
+	AuthFactorsController   *apiauthfactors.Controller
+	SubscriptionsController *apisubscriptions.Controller
 }
 
 type Controller struct {
-	env                   *env.Environment
-	workos                *workos.Client
-	users                 *repositoryusers.Client
-	signals               *signal.Container
-	authFactorsController *apiauthfactors.Controller
+	env                     *env.Environment
+	workos                  *workos.Client
+	users                   *repositoryusers.Client
+	signals                 *signal.Container
+	authFactorsController   *apiauthfactors.Controller
+	subscriptionsController *apisubscriptions.Controller
 }
 
 func Provider(options ControllerOptions) base.Controller {
 	return &Controller{
-		env:                   options.Env,
-		workos:                options.Workos,
-		users:                 options.Users,
-		signals:               options.Signals,
-		authFactorsController: options.AuthFactorsController,
+		env:                     options.Env,
+		workos:                  options.Workos,
+		users:                   options.Users,
+		signals:                 options.Signals,
+		authFactorsController:   options.AuthFactorsController,
+		subscriptionsController: options.SubscriptionsController,
 	}
 }
 
@@ -48,6 +52,7 @@ func (c *Controller) Private(group fiber.Router) {
 		group.Delete("", c.Delete)
 
 		c.authFactorsController.Private(group)
+		c.subscriptionsController.Private(group)
 
 		base.WithGroup(group, "email/verify", func(group fiber.Router) {
 			group.Post("", c.EmailVerify)
