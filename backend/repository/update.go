@@ -24,7 +24,7 @@ func NamedUpdateValues[K comparable, V any](set map[K]V) (string, []any) {
 
 func buildUpdateValues[K comparable, V any](set map[K]V, row rowBuilder[K, V]) (string, []any) {
 	builder := strings.Builder{}
-	args := make([]any, len(set)*2)
+	var args []any
 	first := true
 
 	for key, value := range set {
